@@ -11,11 +11,8 @@
 #include <map>
 
 #include "RenderSystem.h"
-
-enum class TextureID
-{
-	Wall
-};
+#include "ResourceIdentifier.h"
+#include "LevelLoader.h"
 
 class Game
 {
@@ -39,6 +36,7 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
+	LevelLoader						_levelLoader;
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 	RenderSystem					_renderSystem;

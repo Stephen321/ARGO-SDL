@@ -7,11 +7,7 @@
 
 #include "LTimer.h"
 
-#include "rapidjson\document.h"
-#include "rapidjson\filereadstream.h"
 
-#include "Factory.h"
-using namespace rapidjson;
 
 Game::Game() 
 	: _running(false)
@@ -76,54 +72,16 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 
 void Game::LoadContent()
 {
-	Factory factory = Factory();
-	char* filename = "Media/Json/Map.json";
-	FILE* fp = NULL;
-	fopen_s(&fp, filename, "rb");
-	Document doc;
-	if (fp != NULL)
-	{
-		char readBuffer[65536];
-		FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-		doc.ParseStream(is);
-	}
-	else
-	{
-		std::cout << "ERROR LOADING : " << filename << std::endl;
-		system("PAUSE");
-		exit(0);
-	}
-	fclose(fp);
-
-	const Value& layerArray = doc["layers"];
-	const Value& layer = layerArray[0u];
-	const Value& dataArray = layer["data"];
-
-	int layerWidth = layer["width"].GetInt();
-	int layerHeight = layer["height"].GetInt();
-
-	const Value& tilesetsArray = doc["tilesets"];
-	const Value& tilesets = tilesetsArray[0u];
-	const char* textureLoc = tilesets["image"].GetString();
-	_textureHolder[TextureID::Wall] = IMG_LoadTexture(_renderer, textureLoc);
+	_levelLoader = LevelLoader();
+	const char* backgroundSpriteDir = "Media/Textures/BackgroundSprite.png";
+	_textureHolder[TextureID::Wall] = IMG_LoadTexture(_renderer, backgroundSpriteDir);
 	if (_textureHolder[TextureID::Wall] == NULL)
 	{
-		std::cout << "ERROR LOADING : " << textureLoc << std::endl;
+		std::cout << "ERROR LOADING : " << backgroundSpriteDir << std::endl;
 		system("PAUSE");
 		exit(0);
 	}
-	int tileWidth = doc["tilewidth"].GetInt();
-	int tileHeight = doc["tileheight"].GetInt();
-
-	for (int y = 0; y < layerHeight; y++)
-	{
-		for (int x = 0; x < layerWidth; x++)
-		{
-			_renderSystem.AddEntity(factory.CreateWall(_textureHolder[TextureID::Wall],x * tileWidth,y * tileHeight,tileWidth,tileHeight));
-		}
-	}
-
-
+	_levelLoader.LoadJson("Media/Json/map.json",_renderSystem, _textureHolder);
 	//_textureHolder[Textures::ID::Player] = IMG_LoadTexture(_renderer, "Media/Textures/Player.png");
 }
 
