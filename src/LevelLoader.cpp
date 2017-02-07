@@ -53,7 +53,7 @@ void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std
 			index++;
 		}
 	}
-
+	//////////////////////////////////fixup
 
 
 	const Value& entitylayer = layerArray[1];
@@ -62,6 +62,8 @@ void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std
 
 	const Value& entityDataArray = entitylayer["data"];
 
+	bool createCheakpoint = false;
+	int checkpointX, checkpointY;
 	index = 0;
 	for (int y = 0; y < entityLayerHeight; y++)
 	{
@@ -70,9 +72,10 @@ void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std
 			switch (entityDataArray[index].GetInt())
 			{
 			case 4:
-
+				renderSystem.AddEntity(factory.CreateFlag(_textureHolder[TextureID::Wall], x * tileWidth, y * tileHeight, tileWidth, tileHeight));
 				break;
 			case 5:
+				
 				break;
 			case 6:
 				renderSystem.AddEntity(factory.CreateWall(_textureHolder[TextureID::Wall], x * tileWidth, y * tileHeight, tileWidth, tileHeight));

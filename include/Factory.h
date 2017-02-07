@@ -16,6 +16,22 @@ public:
 		return tile;
 	}
 
+	Entity* CreateFlag(SDL_Texture* texture, float x, float y, float w, float h)
+	{
+		Entity* flag = new Entity(Entity::Type::Flag);
+		flag->AddComponent(new BoundsComponent(x, y, w, h));
+		flag->AddComponent(new SpriteComponent(texture));
+
+		return flag;
+	}
+	Entity* CreateCheakpoint(SDL_Texture* texture, float x, float y, float w, float h)
+	{
+		Entity* checkpoint = new Entity(Entity::Type::Checkpoint);
+		checkpoint->AddComponent(new BoundsComponent(x, y, w, h));
+		checkpoint->AddComponent(new SpriteComponent(texture));
+
+		return checkpoint;
+	}
 	Entity* CreateWall(SDL_Texture* texture, float x, float y, float w, float h) 
 	{
 		Entity* wall = new Entity(Entity::Type::Wall);
