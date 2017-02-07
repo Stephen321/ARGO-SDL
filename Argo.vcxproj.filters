@@ -75,6 +75,9 @@
     <ClInclude Include="include\LTimer.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">

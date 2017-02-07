@@ -10,9 +10,11 @@
 #include <queue>
 #include <map>
 
+#include "RenderSystem.h"
+
 enum class TextureID
 {
-
+	Wall
 };
 
 class Game
@@ -39,6 +41,7 @@ private:
 	SDL_Renderer*					_renderer;
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
+	RenderSystem					_renderSystem;
 
 	bool							_running;
 

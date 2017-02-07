@@ -10,6 +10,7 @@ public:
 	enum class Type
 	{
 		Player,
+		Wall
 	};
 
 public:
