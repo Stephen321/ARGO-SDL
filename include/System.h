@@ -7,14 +7,18 @@
 class System
 {
 public:
+	typedef std::map<Entity::Type,
+		std::vector<Entity*>>::iterator EntityMapIterator;
 									System();
 									~System();
 
 	void							AddEntity(Entity* gameObject);
 	void							RemoveEntity(Entity::Type tag, Entity* gameObject);
 
-private:
+	virtual void					Process(float dt = 0.f) = 0;
+
+protected:
 	std::map<Entity::Type, 
-		std::vector<Entity*>>		_gameObjects;
+		std::vector<Entity*>>		_entities;
 };
 

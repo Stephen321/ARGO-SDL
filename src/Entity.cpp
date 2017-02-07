@@ -10,6 +10,11 @@ Entity::Entity(Type type)
 
 Entity::~Entity()
 {
+	for (int i = 0; i < _components.size(); i++)
+	{
+		delete _components[i];
+		break;
+	}
 }
 
 
@@ -23,6 +28,7 @@ void Entity::RemoveComponent(Component::Type componentType)
 	{
 		if (_components.at(i)->GetType() == componentType)
 		{
+			delete _components[i];
 			_components.erase(_components.begin() + i);
 			break;
 		}

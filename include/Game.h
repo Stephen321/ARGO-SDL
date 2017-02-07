@@ -5,6 +5,12 @@
 
 #include "SDL_image.h"
 
+#include "Entity.h"
+#include "SpriteComponent.h"
+#include "BoundsComponent.h"
+
+#include "RenderSystem.h"
+
 #include <SDL.h>
 #include <vector>
 #include <queue>
@@ -12,7 +18,7 @@
 
 enum class TextureID
 {
-
+	Player,
 };
 
 class Game
@@ -43,6 +49,11 @@ private:
 	bool							_running;
 
 	unsigned int					_lastTime;//time of last update;
+
+
+	std::vector<Entity*>			_entities;
+	RenderSystem					_renderSystem;
+	
 };
 
 

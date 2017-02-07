@@ -10,13 +10,13 @@
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
+	, _renderSystem(_renderer)
 {
 }
 
 Game::~Game()
 {
 }
-
 
 bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
@@ -26,7 +26,13 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 	{//SETUP WHATEVER NEEDS TO BE SETUP
 		LoadContent();
 
+		Entity* player = new Entity(Entity::Type::Player);
 
+		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
+		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+		player->AddComponent(spriteComponent);
+		_entities.push_back(player);
+		_renderSystem.AddEntity(_entities.back());
 	}
 
 	return _running;
@@ -70,7 +76,8 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 
 void Game::LoadContent()
 {
-	//_textureHolder[Textures::ID::Player] = IMG_LoadTexture(_renderer, "Media/Textures/Player.png");
+	_textureHolder[TextureID::Player] = IMG_LoadTexture(_renderer, "Media/Player/player.png");
+
 }
 
 void Game::Update()
@@ -80,8 +87,6 @@ void Game::Update()
 
 
 	//UPDATE HERE
-
-
 	//save the curent time for next frame
 	_lastTime = currentTime;
 }
@@ -90,12 +95,12 @@ void Game::Render()
 {
 	SDL_RenderClear(_renderer);
 
-
 	//RENDER HERE
+	_renderSystem.Process();
 
 
 
-	SDL_SetRenderDrawColor(_renderer, 55, 55, 55, 255);
+	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
 	SDL_RenderPresent(_renderer);
 }
 
@@ -135,6 +140,9 @@ void Game::CleanUp()
 
 	//DESTROY HERE
 
+	for (int i = 0; i < _entities.size(); i++)
+		delete _entities[i];
+	_entities.clear();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
