@@ -85,13 +85,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\Box2D\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -111,13 +111,13 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64;$(ProjectDir)Dependencies\Box2D\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -139,16 +139,16 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;C:\Users\StartkaCZ\Documents\Visual Studio 2015\Projects\G4JP_D\Dependencies\Box2D\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D-d.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86\SDL2.dll"  "$(TargetDir)"
@@ -178,7 +178,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Box2D-d.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64\SDL2.dll"  "$(TargetDir)"
@@ -193,8 +193,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Component.h" />
+    <ClInclude Include="include\ConstHolder.h" />
     <ClInclude Include="include\ControlComponent.h" />
     <ClInclude Include="include\ControlSystem.h" />
     <ClInclude Include="include\Debug.h" />
@@ -202,6 +204,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\LTimer.h" />
+    <ClInclude Include="include\MyContactListener.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
     <ClInclude Include="include\PhysicsSystem.h" />
     <ClInclude Include="include\RenderSystem.h" />
@@ -223,6 +226,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MyContactListener.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\System.cpp" />

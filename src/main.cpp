@@ -2,15 +2,13 @@
 #include <thread>
 #include <string>
 
-#include <SDL.h>
-
 #include "LTimer.h"
 #include "Game.h"
+#include "ConstHolder.h"
 
 using namespace std;
 
-const int SCREEN_FPS = 60;
-const int SCREEN_TICKS_PER_FRAME = 0;// 1000 / SCREEN_FPS;
+const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 #undef main
 
