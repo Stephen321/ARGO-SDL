@@ -33,7 +33,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 	
 	_cameraSystem.Init(width, height);
 	if (_running)
-	{//SETUP WHATEVER NEEDS TO BE SETUP
+	{//SETUP WHATEVER NEEDS TO BE 
+
 		LoadContent();
 
 		Entity* player = new Entity(Entity::Type::Player);
@@ -124,7 +125,29 @@ void Game::Update()
 
 
 	//UPDATE HERE
+
 	_inputManager->ProcessInput();
+
+
+	const Uint8 *keystates = SDL_GetKeyboardState(NULL);
+
+	if (keystates[SDL_SCANCODE_RIGHT])//SDL_GetScancodeFromKey(SDLK_RIGHT)])
+	{
+		_controlSystem->MovePlayer(1, 0, _entities.back());
+	}
+	else if (keystates[SDL_SCANCODE_LEFT])//SDL_GetScancodeFromKey(SDLK_LEFT)])
+	{
+		_controlSystem->MovePlayer(-1, 0, _entities.back());
+	}
+	if (keystates[SDL_SCANCODE_UP])//SDL_GetScancodeFromKey(SDLK_UP)])
+	{
+		_controlSystem->MovePlayer(0, -1, _entities.back());
+	}
+	else if (keystates[SDL_SCANCODE_DOWN])//SDL_GetScancodeFromKey(SDLK_DOWN)])
+	{
+		_controlSystem->MovePlayer(0, 1, _entities.back());
+	}
+
 	_cameraSystem.Process();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
