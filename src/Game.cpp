@@ -10,7 +10,7 @@
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _renderSystem(_renderer)
+	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicSystem(),
 	_controlSystem()
 {
@@ -24,6 +24,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	_running = SetupSDL(title, xpos, ypos, width, height, flags);
 	
+	_cameraSystem.Init(width, height);
 	if (_running)
 	{//SETUP WHATEVER NEEDS TO BE SETUP
 		LoadContent();
@@ -36,6 +37,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
 		_entities.push_back(player);
 		_renderSystem.AddEntity(_entities.back());
+		_cameraSystem.AddEntity(_entities.back());
 
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
 		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
@@ -104,6 +106,7 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 void Game::LoadContent()
 {
 	_textureHolder[TextureID::Player] = IMG_LoadTexture(_renderer, "Media/Player/player.png");
+	_textureHolder[TextureID::TestBackground] = IMG_LoadTexture(_renderer, "Media/testBackground.png");
 
 }
 
@@ -115,6 +118,7 @@ void Game::Update()
 
 	//UPDATE HERE
 	_inputManager->ProcessInput();
+	_cameraSystem.Process();
 
 	//save the curent time for next frame
 	_lastTime = currentTime;
@@ -123,6 +127,11 @@ void Game::Update()
 void Game::Render()
 {
 	SDL_RenderClear(_renderer);
+
+	//test background in order to see the camera is following the player position
+
+	SDL_Rect backgroundRect = { 0, 0, 600, 600 };
+	SDL_RenderCopy(_renderer, _textureHolder[TextureID::TestBackground], NULL, &_cameraSystem.getCamera().worldToScreen(backgroundRect));
 
 	//RENDER HERE
 	_renderSystem.Process();

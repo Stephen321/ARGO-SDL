@@ -5,6 +5,7 @@
 
 #include "SDL_image.h"
 
+#include "Camera2D.h"
 #include "FLInputManager.h"
 
 #include "Entity.h"
@@ -15,6 +16,7 @@
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
+#include "CameraSystem.h"
 
 #include <SDL.h>
 #include <vector>
@@ -24,6 +26,7 @@
 enum class TextureID
 {
 	Player,
+	TestBackground,
 };
 
 class Game : public EventListener
@@ -63,6 +66,8 @@ private:
 	RenderSystem					_renderSystem;
 	PhysicsSystem					_physicSystem;
 	ControlSystem*					_controlSystem;
+	CameraSystem					_cameraSystem;
+
 	
 };
 
