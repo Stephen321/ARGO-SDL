@@ -11,10 +11,12 @@
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
+	, _renderSystem(_renderer, &_cameraSystem.getCamera())
+	, _physicSystem()
+	, _controlSystem()
 	, _gravity(0.f, -9.8f)
 	, _world(_gravity)
 	, _contactListener(MyContactListener())
-	, _renderSystem(_renderer)
 {
 	_world.SetContactListener(&_contactListener);
 	_world.SetAllowSleeping(false);
@@ -29,6 +31,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	_running = SetupSDL(title, xpos, ypos, width, height, flags);
 	
+	_cameraSystem.Init(width, height);
 	if (_running)
 	{//SETUP WHATEVER NEEDS TO BE SETUP
 		LoadContent();
@@ -38,8 +41,34 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
 		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 		player->AddComponent(spriteComponent);
+		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
 		_entities.push_back(player);
 		_renderSystem.AddEntity(_entities.back());
+		_cameraSystem.AddEntity(_entities.back());
+
+		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
+		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
+		_inputManager->AddKey(Event::w, wIn, this);
+		_inputManager->AddKey(Event::w, wInHold, this);
+
+		Command* aIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Press);
+		Command* aInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Hold);
+		_inputManager->AddKey(Event::a, aIn, this);
+		_inputManager->AddKey(Event::a, aInHold, this);
+
+		Command* sIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Press);
+		Command* sInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Hold);
+		_inputManager->AddKey(Event::s, sIn, this);
+		_inputManager->AddKey(Event::s, sInHold, this);
+
+		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Press);
+		Command* dInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Hold);
+		_inputManager->AddKey(Event::d, dIn, this);
+		_inputManager->AddKey(Event::d, dInHold, this);
+
+
+
+		_inputManager->AddListener(Event::ESCAPE, this);
 	}
 
 	return _running;
@@ -84,6 +113,7 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 void Game::LoadContent()
 {
 	_textureHolder[TextureID::Player] = IMG_LoadTexture(_renderer, "Media/Player/player.png");
+	_textureHolder[TextureID::TestBackground] = IMG_LoadTexture(_renderer, "Media/testBackground.png");
 
 }
 
@@ -94,6 +124,8 @@ void Game::Update()
 
 
 	//UPDATE HERE
+	_inputManager->ProcessInput();
+	_cameraSystem.Process();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
@@ -104,37 +136,17 @@ void Game::Render()
 {
 	SDL_RenderClear(_renderer);
 
+	//test background in order to see the camera is following the player position
+
+	SDL_Rect backgroundRect = { 0, 0, 600, 600 };
+	SDL_RenderCopy(_renderer, _textureHolder[TextureID::TestBackground], NULL, &_cameraSystem.getCamera().worldToScreen(backgroundRect));
+
 	//RENDER HERE
 	_renderSystem.Process();
 
 
-
 	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
 	SDL_RenderPresent(_renderer);
-}
-
-void Game::HandleEvents()
-{
-	SDL_Event event;
-
-	while (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym)
-			{
-			case SDLK_ESCAPE:
-				_running = false;
-				break;
-
-
-			default:
-				break;
-			}
-			break;
-		}
-	}
 }
 
 bool Game::IsRunning()
@@ -157,4 +169,17 @@ void Game::CleanUp()
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
 	SDL_Quit();
+}
+
+void Game::OnEvent(EventListener::Event evt)
+{
+	switch (evt)
+	{
+	case Event::ESCAPE: _running = false;
+	}
+}
+
+void Game::Test(int t)
+{
+	int i = t;
 }

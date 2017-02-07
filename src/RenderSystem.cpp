@@ -1,8 +1,9 @@
 #include "RenderSystem.h"
 
 
-RenderSystem::RenderSystem(SDL_Renderer *& renderer)
+RenderSystem::RenderSystem(SDL_Renderer *& renderer, Camera2D::Camera* camera)
 	: _renderer(renderer)
+	, _camera(camera)
 {
 }
 
@@ -20,7 +21,7 @@ void RenderSystem::Process(float dt)
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 			if (bound != nullptr && sprite != nullptr)
 			{
-				SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &bound->rect);
+				SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(bound->rect)); 
 			}
 		}
 	}
