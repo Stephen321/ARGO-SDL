@@ -15,9 +15,7 @@ public:
 	{
 	}
 
-	~PhysicsComponent()
-	{
-	}
+	~PhysicsComponent() {}
 
 public:
 	float	xVelocity;

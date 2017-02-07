@@ -18,6 +18,7 @@ void RenderSystem::Process(float dt)
 		{
 			BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
+			std::cout << "x: " << bound->rect.x << std::endl;
 			SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &bound->rect);
 		}
 	}

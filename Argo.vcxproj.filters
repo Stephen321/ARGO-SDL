@@ -75,6 +75,9 @@
     <ClInclude Include="include\LTimer.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\FLInputManager.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -104,6 +107,9 @@
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FLInputManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>

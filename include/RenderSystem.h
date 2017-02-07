@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include "SDL_render.h"
 #include "System.h"
 #include "BoundsComponent.h"

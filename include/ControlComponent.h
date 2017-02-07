@@ -2,7 +2,6 @@
 
 #include "Component.h"
 
-
 class ControlComponent : public Component
 {
 public:
@@ -16,5 +15,4 @@ public:
 	}
 
 public:
-	//TBD
 };

@@ -199,6 +199,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\ControlSystem.h" />
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\Entity.h" />
+    <ClInclude Include="include\FLInputManager.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\LTimer.h" />
@@ -220,6 +221,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   <ItemGroup>
     <ClCompile Include="src\ControlSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\FLInputManager.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />

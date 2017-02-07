@@ -31,7 +31,6 @@ int main(int argc, char** argv)
 	{
 		capTimer.start();
 
-		game->HandleEvents();
 		game->Update();
 		game->Render();
 
@@ -45,7 +44,6 @@ int main(int argc, char** argv)
 	}
 	while(game->IsRunning())
 	{
-		game->HandleEvents();
 		game->Update();
 		game->Render();
 	}
