@@ -2,8 +2,10 @@
 #define GAME_H
 
 #include "Debug.h"
+#include "MyContactListener.h"
 
 #include "SDL_image.h"
+#include "Box2D\Box2D.h"
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
@@ -56,6 +58,10 @@ private:
 	InputManager*					_inputManager = InputManager::GetInstance();
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
+
+	b2Vec2							 _gravity;
+	MyContactListener				 _contactListener;
+	b2World							 _world;
 
 	bool							_running;
 

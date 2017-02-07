@@ -19,7 +19,10 @@ void RenderSystem::Process(float dt)
 		{
 			BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
-			SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(bound->rect));
+			if (bound != nullptr && sprite != nullptr)
+			{
+				SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(bound->rect)); 
+			}
 		}
 	}
 }

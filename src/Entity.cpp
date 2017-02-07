@@ -44,6 +44,7 @@ Component* Entity::GetComponent(Component::Type componentType)
 			return _components.at(i);
 		}
 	}
+	return nullptr;
 }
 std::vector<Component*>& Entity::GetComponents()
 {

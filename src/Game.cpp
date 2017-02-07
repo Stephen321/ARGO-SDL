@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "Game.h"
+#include "ConstHolder.h"
 
 #include "LTimer.h"
 
@@ -11,13 +12,19 @@ Game::Game()
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
-	, _physicSystem(),
-	_controlSystem()
+	, _physicSystem()
+	, _controlSystem()
+	, _gravity(0.f, -9.8f)
+	, _world(_gravity)
+	, _contactListener(MyContactListener())
 {
+	_world.SetContactListener(&_contactListener);
+	_world.SetAllowSleeping(false);
 }
 
 Game::~Game()
 {
+	_world.~b2World();
 }
 
 bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
@@ -119,6 +126,7 @@ void Game::Update()
 	//UPDATE HERE
 	_inputManager->ProcessInput();
 	_cameraSystem.Process();
+	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
 	_lastTime = currentTime;
@@ -152,6 +160,7 @@ void Game::CleanUp()
 	DEBUG_MSG("Cleaning Up");
 
 	//DESTROY HERE
+	_world.SetAllowSleeping(true);
 
 	for (int i = 0; i < _entities.size(); i++)
 		delete _entities[i];

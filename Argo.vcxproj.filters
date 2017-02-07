@@ -22,9 +22,6 @@
     <Filter Include="Header Files\Other">
       <UniqueIdentifier>{07840672-1e06-463c-b336-c136e2dddae2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{40184404-b281-4f3f-86be-78db5e2f768b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Other">
       <UniqueIdentifier>{00375ab0-6b74-4dd0-9db7-9325c85b354d}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,15 @@
     <ClInclude Include="include\CameraSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\MyContactListener.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConstHolder.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -144,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="include\CameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MyContactListener.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
