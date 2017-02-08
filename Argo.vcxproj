@@ -22,6 +22,7 @@
     <ProjectGuid>{CF861C5B-5B54-4135-8F88-32F63FBF49A6}</ProjectGuid>
     <RootNamespace>Project1</RootNamespace>
     <ProjectName>Argo</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -155,6 +156,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
 </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
