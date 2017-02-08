@@ -12,11 +12,18 @@ void CameraSystem::Process(float dt)
 {
 	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 	{
+		Camera2D::Vector2 centre;
 		for (Entity* e : (*it).second)
 		{
 			BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-			_camera.setCentre(bound->x + bound->rect.w * 0.5f, bound->rect.y + bound->rect.h * 0.5f);
+			centre.x += bound->rect.x + bound->rect.w * 0.5f;
+			centre.y += bound->rect.y + bound->rect.h * 0.5f;
 		}
+		if ((*it).second.empty() == false)
+		{
+			centre /= (*it).second.size();
+		}
+		_camera.setCentre(centre);
 	}
 }
 

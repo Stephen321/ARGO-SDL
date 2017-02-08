@@ -8,12 +8,12 @@ class Entity
 {
 public:
 	enum class Type
-	{
-		Player,
+	{ //draw order is determined by the below order
 		Flag,
 		Checkpoint,
 		Wall,
 		Tile,
+		Player
 
 	};
 
