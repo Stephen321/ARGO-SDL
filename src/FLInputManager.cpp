@@ -40,9 +40,8 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	if (listeners.find(evt) == listeners.end())
 	{
 		listeners[evt] = new std::vector<EventListener*>();
+		listeners[evt]->push_back(listener);
 	}
-
-	listeners[evt]->push_back(listener);
 }
 
 //* Find a specific Event listener in the listeners dictionary, and call its onEvent() function
@@ -53,6 +52,9 @@ void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 		for (auto const &listener : *listeners[evt])
 		{
 			listener->OnEvent(evt);
+
+			std::cout << keyNames[evt] + ","
+				+ keyTypes[type] + "," << std::endl;
 		}
 	}
 
@@ -82,9 +84,6 @@ void InputManager::CheckPrevious(EventListener::Type type, EventListener::Event 
 		type = EventListener::Type::Hold;
 	}
 
-	//// 0 if false, 1 if true - Uncomment if debugging hold functionality
-	//std::cout << beingHeld[evt] << std::endl;
-
 	//* Run the Events Execute, now that type has been determined
 	Execute(type, evt);
 }
@@ -103,9 +102,9 @@ void InputManager::AddCommand(EventListener::Event evt, Command *command)
 //* Find a Command object in the commands dictionary, and call its execute function based on Event Type
 void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 {
+	//* Log Input
 	if (evt != 0)
 	{
-
 		if (type != EventListener::Type::Hold)
 		{
 			std::string newLine =
@@ -116,7 +115,6 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 			logEvent(newLine);
 			previousEvent = evt;
 		}
-
 		else if (type == EventListener::Type::Hold)
 		{
 			holdDuration++;
@@ -166,6 +164,7 @@ void InputManager::AddKey(EventListener::Event evt, Command* command, EventListe
 
 	//* Create a Listener for this Event
 	AddListener(evt, listener);
+
 	//* Create a Command for this Event
 	AddCommand(evt, toBind);
 }

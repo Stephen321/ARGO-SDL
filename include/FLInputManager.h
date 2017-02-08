@@ -162,6 +162,7 @@ public:
 		Press,
 		Release,
 		Hold,
+		Down,
 		None
 
 		//\\ Add your own events here
@@ -197,6 +198,7 @@ public:
 	virtual void executePress() {};
 	virtual void executeRelease() {};
 	virtual void executeHold() {};
+	virtual void executeDown() {};
 
 	void clearKeys()
 	{
