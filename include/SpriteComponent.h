@@ -16,6 +16,12 @@ public:
 		SDL_QueryTexture(texture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 	}
 
+	SpriteComponent(SDL_Texture* texture , SDL_Rect source)
+		: texture(texture), sourceRect(source)
+		, Component::Component(Component::Type::Sprite)
+	{
+	}
+
 	~SpriteComponent()
 	{
 	}

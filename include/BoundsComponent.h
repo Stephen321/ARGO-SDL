@@ -15,6 +15,16 @@ public:
 		, rect({(int)xPos, (int)yPos, (int)w, (int)h})
 	{
 	}
+	
+	BoundsComponent(SDL_Rect rect)
+		: Component::Component(Component::Type::Bounds)
+		, x(rect.x)
+		, y(rect.y)
+		, width(rect.w)
+		, height(rect.h)
+		, rect(rect)
+	{
+	}
 
 	~BoundsComponent()
 	{

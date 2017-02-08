@@ -10,6 +10,11 @@ public:
 	enum class Type
 	{
 		Player,
+		Flag,
+		Checkpoint,
+		Wall,
+		Tile,
+
 	};
 
 public:

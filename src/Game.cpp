@@ -1,3 +1,4 @@
+#include <string>
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -6,6 +7,7 @@
 #include "ConstHolder.h"
 
 #include "LTimer.h"
+
 
 
 Game::Game() 
@@ -112,8 +114,14 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 
 void Game::LoadContent()
 {
+	_textureHolder[TextureID::TilemapSpriteSheet] = IMG_LoadTexture(_renderer, "Media/Textures/BackgroundSprite.png");
 	_textureHolder[TextureID::Player] = IMG_LoadTexture(_renderer, "Media/Player/player.png");
 	_textureHolder[TextureID::TestBackground] = IMG_LoadTexture(_renderer, "Media/testBackground.png");
+	_textureHolder[TextureID::EntitySpriteSheet] = IMG_LoadTexture(_renderer, "Media/Textures/EntitySprite.png");
+
+	_levelLoader = LevelLoader();
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
+	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
 
@@ -121,6 +129,7 @@ void Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float deltaTime = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
+
 
 
 	//UPDATE HERE

@@ -25,11 +25,10 @@
 #include <queue>
 #include <map>
 
-enum class TextureID
-{
-	Player,
-	TestBackground,
-};
+#include "RenderSystem.h"
+#include "ResourceIdentifier.h"
+#include "LevelLoader.h"
+
 
 class Game : public EventListener
 {
@@ -55,6 +54,9 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
+
+	LevelLoader						_levelLoader;
+
 	InputManager*					_inputManager = InputManager::GetInstance();
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
