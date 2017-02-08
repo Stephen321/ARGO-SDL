@@ -114,9 +114,9 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 
 void Game::LoadContent()
 {
-	_textureHolder[TextureID::TilemapSpriteSheet] = IMG_LoadTexture(_renderer, "Media/Textures/BackgroundSprite.png");
-	_textureHolder[TextureID::Player] = IMG_LoadTexture(_renderer, "Media/Player/player.png");
-	_textureHolder[TextureID::EntitySpriteSheet] = IMG_LoadTexture(_renderer, "Media/Textures/EntitySprite.png");
+	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
+	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
 	_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
@@ -187,4 +187,27 @@ void Game::OnEvent(EventListener::Event evt)
 void Game::Test(int t)
 {
 	int i = t;
+}
+
+SDL_Texture * Game::loadTexture(const std::string & path)
+{
+	SDL_Texture* texture = NULL;
+
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
+	}
+	else
+	{
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		if (texture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+
+		SDL_FreeSurface(surface);
+	}
+
+	return texture;
 }

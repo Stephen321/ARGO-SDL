@@ -97,9 +97,7 @@
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86\SDL2.dll"  "$(TargetDir)"
 
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\SDL2_image.dll"  "$(TargetDir)"
-
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\libpng16-16.dll"  "$(TargetDir)"
+copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -123,9 +121,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64\SDL2.dll"  "$(TargetDir)"
 
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\SDL2_image.dll"  "$(TargetDir)"
-
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\libpng16-16.dll"  "$(TargetDir)"
+copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -153,9 +149,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86\SDL2.dll"  "$(TargetDir)"
 
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\SDL2_image.dll"  "$(TargetDir)"
-
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\libpng16-16.dll"  "$(TargetDir)"
+copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -183,9 +177,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64\SDL2.dll"  "$(TargetDir)"
 
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\SDL2_image.dll"  "$(TargetDir)"
-
-copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\libpng16-16.dll"  "$(TargetDir)"
+copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 

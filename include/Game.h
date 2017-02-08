@@ -46,7 +46,8 @@ public:
 	void							OnEvent(Event evt);
 	void							Test(int t);
 
-	bool							IsRunning();
+	bool							IsRunning(); 
+	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
 	bool							SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags);
