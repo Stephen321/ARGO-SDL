@@ -9,7 +9,15 @@ class SpriteComponent : public Component
 {
 public:
 	SpriteComponent(SDL_Texture* texture)
-		: _texture(texture)
+		: texture(texture)
+		, Component::Component(Component::Type::Sprite)
+	{
+		sourceRect = { 0, 0, 0, 0 };
+		SDL_QueryTexture(texture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+	}
+
+	SpriteComponent(SDL_Texture* texture , SDL_Rect source)
+		: texture(texture), sourceRect(source)
 		, Component::Component(Component::Type::Sprite)
 	{
 	}
@@ -19,5 +27,6 @@ public:
 	}
 
 public:
-	SDL_Texture* _texture;
+	SDL_Texture* texture;
+	SDL_Rect sourceRect;
 };

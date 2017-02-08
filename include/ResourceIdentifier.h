@@ -1,5 +1,8 @@
 #pragma once
 enum class TextureID
 {
-	Wall
+	Player,
+	TestBackground,
+	EntitySpriteSheet,
+	TilemapSpriteSheet
 };

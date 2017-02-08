@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-
 #include "Factory.h"
 #include "RenderSystem.h"
 #include "ResourceIdentifier.h"
@@ -14,7 +13,7 @@ class LevelLoader
 public:
 	LevelLoader() {};
 	~LevelLoader() {};
-	void LoadJson(const char* filename,  RenderSystem& renderSystem, std::map<TextureID, SDL_Texture*>& _textureHolder);
+	void LoadJson(const char* filename, std::vector<Entity*>& entities, RenderSystem& renderSystem, std::map<TextureID, SDL_Texture*>& _textureHolder);
 
 private:
 	

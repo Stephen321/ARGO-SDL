@@ -7,11 +7,22 @@ class BoundsComponent : public Component
 {
 public:
 	BoundsComponent(float xPos, float yPos, int w, int h)
-		: x(xPos)
+		: Component::Component(Component::Type::Bounds)
+		, x(xPos)
 		, y(yPos)
 		, width(w)
 		, height(h)
-		, Component::Component(Component::Type::Bounds)
+		, rect({(int)xPos, (int)yPos, (int)w, (int)h})
+	{
+	}
+	
+	BoundsComponent(SDL_Rect rect)
+		: Component::Component(Component::Type::Bounds)
+		, x(rect.x)
+		, y(rect.y)
+		, width(rect.w)
+		, height(rect.h)
+		, rect(rect)
 	{
 	}
 
@@ -20,6 +31,7 @@ public:
 	}
 
 public:
+	SDL_Rect rect;
 	float	x;
 	float	y;
 	

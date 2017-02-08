@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
-
-void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std::map<TextureID, SDL_Texture*>& _textureHolder)
+#include <string>
+void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities, RenderSystem& renderSystem, std::map<TextureID, SDL_Texture*>& _textureHolder)
 {
 	Factory factory = Factory();
 	FILE* fp = NULL;
@@ -25,12 +25,15 @@ void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std
 
 	const Value& layerArray = doc["layers"];
 
+	/*
+	Background layer
+	*/
 	const Value& backgroundLayer = layerArray[0u];
 	int backgroundLayerWidth = backgroundLayer["width"].GetInt();
 	int backgroundLayerHeight = backgroundLayer["height"].GetInt();
 
 	const Value& backgroundDataArray = backgroundLayer["data"];
-
+	
 	int index = 0;
 	for (int y = 0; y < backgroundLayerHeight; y++)
 	{
@@ -39,53 +42,78 @@ void LevelLoader::LoadJson(const char* filename, RenderSystem& renderSystem, std
 			switch (backgroundDataArray[index].GetInt())
 			{
 			case 1:
-
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			default:
-				break;
-			}
-
-			renderSystem.AddEntity(factory.CreateTile(_textureHolder[TextureID::Wall], x * tileWidth, y * tileHeight, tileWidth, tileHeight));
-			index++;
-		}
-	}
-	//////////////////////////////////fixup
-
-
-	const Value& entitylayer = layerArray[1];
-	int entityLayerWidth = entitylayer["width"].GetInt();
-	int entityLayerHeight = entitylayer["height"].GetInt();
-
-	const Value& entityDataArray = entitylayer["data"];
-
-	bool createCheakpoint = false;
-	int checkpointX, checkpointY;
-	index = 0;
-	for (int y = 0; y < entityLayerHeight; y++)
-	{
-		for (int x = 0; x < entityLayerWidth; x++)
-		{
-			switch (entityDataArray[index].GetInt())
 			{
-			case 4:
-				renderSystem.AddEntity(factory.CreateFlag(_textureHolder[TextureID::Wall], x * tileWidth, y * tileHeight, tileWidth, tileHeight));
-				break;
-			case 5:
+				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
+					SDL_Rect{ 0 * tileWidth, 0, tileWidth, tileHeight },
+					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
 				
 				break;
-			case 6:
-				renderSystem.AddEntity(factory.CreateWall(_textureHolder[TextureID::Wall], x * tileWidth, y * tileHeight, tileWidth, tileHeight));
+			}
+			case 2:
+			{
+				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
+					SDL_Rect{ 1 * tileWidth, 0, tileWidth, tileHeight },
+					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
 				break;
+			}
+			case 3:
+			{
+				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
+					SDL_Rect{ 2 * tileWidth, 0, tileWidth, tileHeight },
+					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
+				break;
+			}
 			default:
 				break;
 			}
-
-			
+			renderSystem.AddEntity(entities.back());
 			index++;
 		}
 	}
+
+	/*
+	Entity layer
+	*/
+	const Value& entitylayer = layerArray[1];
+
+	const Value& entityDataArray = entitylayer["objects"];
+
+	for (int i = 0; i < entityDataArray.Size(); i++)
+	{
+		const Value& entity = entityDataArray[i];
+		string entityType = entity["name"].GetString();
+		float x = entity["x"].GetFloat();
+		float y = entity["y"].GetFloat();
+		float w = entity["width"].GetFloat();
+		float h = entity["height"].GetFloat();
+		if (entityType == "checkpoint")
+		{
+			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
+				SDL_Rect{ 1 * tileWidth, 0, tileWidth, tileHeight },
+				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+		}
+		else if (entityType == "wall")
+		{
+			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
+				SDL_Rect{ 2 * tileWidth, 0, tileWidth, tileHeight },
+				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+		}
+		else if (entityType == "flag")
+		{
+			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
+				SDL_Rect{ 0 * tileWidth, 0, tileWidth, tileHeight },
+				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+		}
+		else
+		{
+			std::cout << "LOADING ERROR" << std::endl;
+		}
+		renderSystem.AddEntity(entities.back()); //for debugging
+	}
+
+
+	
+
+	
+
 }
