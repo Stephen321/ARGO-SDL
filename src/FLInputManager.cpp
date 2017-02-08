@@ -40,9 +40,8 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	if (listeners.find(evt) == listeners.end())
 	{
 		listeners[evt] = new std::vector<EventListener*>();
+		listeners[evt]->push_back(listener);
 	}
-
-	listeners[evt]->push_back(listener);
 }
 
 //* Find a specific Event listener in the listeners dictionary, and call its onEvent() function
@@ -82,9 +81,6 @@ void InputManager::CheckPrevious(EventListener::Type type, EventListener::Event 
 		type = EventListener::Type::Hold;
 	}
 
-	//// 0 if false, 1 if true - Uncomment if debugging hold functionality
-	//std::cout << beingHeld[evt] << std::endl;
-
 	//* Run the Events Execute, now that type has been determined
 	Execute(type, evt);
 }
@@ -103,9 +99,9 @@ void InputManager::AddCommand(EventListener::Event evt, Command *command)
 //* Find a Command object in the commands dictionary, and call its execute function based on Event Type
 void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 {
+	//* Log Input
 	if (evt != 0)
 	{
-
 		if (type != EventListener::Type::Hold)
 		{
 			std::string newLine =
@@ -116,7 +112,6 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 			logEvent(newLine);
 			previousEvent = evt;
 		}
-
 		else if (type == EventListener::Type::Hold)
 		{
 			holdDuration++;
@@ -166,6 +161,7 @@ void InputManager::AddKey(EventListener::Event evt, Command* command, EventListe
 
 	//* Create a Listener for this Event
 	AddListener(evt, listener);
+
 	//* Create a Command for this Event
 	AddCommand(evt, toBind);
 }
@@ -583,6 +579,90 @@ void InputManager::ProcessInput()
 			countedTriggerFrames = 0;
 		}
 	}
+}
+
+void InputManager::ConstantInput()
+{
+	const Uint8 *keystates = SDL_GetKeyboardState(NULL);
+
+	EventListener::Type type = EventListener::Type::Hold;
+
+	//* Get Key Event and call Input Manager Dispatch for that key
+	if (keystates[SDL_GetScancodeFromKey(SDLK_UNKNOWN)]) { Dispatch(type, EventListener::Event::UNKNOWN);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_RETURN)]) { Dispatch(type, EventListener::Event::RETURN);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_ESCAPE)]) { Dispatch(type, EventListener::Event::ESCAPE);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_BACKSPACE)]) { Dispatch(type, EventListener::Event::BACKSPACE);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_TAB)]) { Dispatch(type, EventListener::Event::TAB);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_SPACE)]) { Dispatch(type, EventListener::Event::SPACE);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_EXCLAIM)]) { Dispatch(type, EventListener::Event::EXCLAIM);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_QUOTEDBL)]) { Dispatch(type, EventListener::Event::QUOTEDBL);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_HASH)]) { Dispatch(type, EventListener::Event::HASH);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_PERCENT)]) { Dispatch(type, EventListener::Event::PERCENT);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_DOLLAR)]) { Dispatch(type, EventListener::Event::DOLLAR);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_AMPERSAND)]) { Dispatch(type, EventListener::Event::AMPERSAND);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_QUOTE)]) { Dispatch(type, EventListener::Event::QUOTE);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_LEFTPAREN)]) { Dispatch(type, EventListener::Event::LEFTPAREN);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_RIGHTPAREN)]) { Dispatch(type, EventListener::Event::RIGHTPAREN);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_ASTERISK)]) { Dispatch(type, EventListener::Event::ASTERISK);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_PLUS)]) { Dispatch(type, EventListener::Event::PLUS);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_COMMA)]) { Dispatch(type, EventListener::Event::COMMA);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_MINUS)]) { Dispatch(type, EventListener::Event::MINUS);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_PERIOD)]) { Dispatch(type, EventListener::Event::PERIOD);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_SLASH)]) { Dispatch(type, EventListener::Event::SLASH);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_0)]) { Dispatch(type, EventListener::Event::NUM_0);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_1)]) { Dispatch(type, EventListener::Event::NUM_1);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_2)]) { Dispatch(type, EventListener::Event::NUM_2);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_3)]) { Dispatch(type, EventListener::Event::NUM_3);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_4)]) { Dispatch(type, EventListener::Event::NUM_4);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_5)]) { Dispatch(type, EventListener::Event::NUM_5);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_6)]) { Dispatch(type, EventListener::Event::NUM_6);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_7)]) { Dispatch(type, EventListener::Event::NUM_7);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_8)]) { Dispatch(type, EventListener::Event::NUM_8);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_9)]) { Dispatch(type, EventListener::Event::NUM_9);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_COLON)]) { Dispatch(type, EventListener::Event::COLON);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_SEMICOLON)]) { Dispatch(type, EventListener::Event::SEMICOLON);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_LESS)]) { Dispatch(type, EventListener::Event::LESS);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_EQUALS)]) { Dispatch(type, EventListener::Event::EQUALS);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_GREATER)]) { Dispatch(type, EventListener::Event::GREATER);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_QUESTION)]) { Dispatch(type, EventListener::Event::QUESTION);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_AT)]) { Dispatch(type, EventListener::Event::AT);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_LEFTBRACKET)]) { Dispatch(type, EventListener::Event::LEFTBRACKET);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_BACKSLASH)]) { Dispatch(type, EventListener::Event::BACKSLASH);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_RIGHTBRACKET)]) { Dispatch(type, EventListener::Event::RIGHTBRACKET);	}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_CARET)]) { Dispatch(type, EventListener::Event::CARET);			}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_UNDERSCORE)]) { Dispatch(type, EventListener::Event::UNDERSCORE);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_BACKQUOTE)]) { Dispatch(type, EventListener::Event::BACKQUOTE);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_a)]) { Dispatch(type, EventListener::Event::a);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_b)]) { Dispatch(type, EventListener::Event::b);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_c)]) { Dispatch(type, EventListener::Event::c);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_d)]) { Dispatch(type, EventListener::Event::d);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_e)]) { Dispatch(type, EventListener::Event::e);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_f)]) { Dispatch(type, EventListener::Event::f);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_g)]) { Dispatch(type, EventListener::Event::g);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_h)]) { Dispatch(type, EventListener::Event::h);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_i)]) { Dispatch(type, EventListener::Event::i);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_j)]) { Dispatch(type, EventListener::Event::j);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_k)]) { Dispatch(type, EventListener::Event::k);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_l)]) { Dispatch(type, EventListener::Event::l);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_m)]) { Dispatch(type, EventListener::Event::m);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_n)]) { Dispatch(type, EventListener::Event::n);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_o)]) { Dispatch(type, EventListener::Event::o);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_p)]) { Dispatch(type, EventListener::Event::p);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_q)]) { Dispatch(type, EventListener::Event::q);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_r)]) { Dispatch(type, EventListener::Event::r);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_s)]) { Dispatch(type, EventListener::Event::s);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_t)]) { Dispatch(type, EventListener::Event::t);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_u)]) { Dispatch(type, EventListener::Event::u);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_v)]) { Dispatch(type, EventListener::Event::v);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_w)]) { Dispatch(type, EventListener::Event::w);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_x)]) { Dispatch(type, EventListener::Event::x);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_y)]) { Dispatch(type, EventListener::Event::y);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_z)]) { Dispatch(type, EventListener::Event::z);				}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_UP)]) { Dispatch(type, EventListener::Event::ARROW_UP);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_LEFT)]) { Dispatch(type, EventListener::Event::ARROW_LEFT);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_DOWN)]) { Dispatch(type, EventListener::Event::ARROW_DOWN);		}
+	if (keystates[SDL_GetScancodeFromKey(SDLK_RIGHT)]) { 	Dispatch(type, EventListener::Event::ARROW_RIGHT);	}
+
 }
 
 //// Controller  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

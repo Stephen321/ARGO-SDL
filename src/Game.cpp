@@ -36,7 +36,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 	
 	_cameraSystem.Init(width, height);
 	if (_running)
-	{//SETUP WHATEVER NEEDS TO BE SETUP
+	{//SETUP WHATEVER NEEDS TO BE 
+
 		LoadContent();
 
 		Entity* player = new Entity(Entity::Type::Player);
@@ -68,8 +69,6 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		Command* dInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Hold);
 		_inputManager->AddKey(Event::d, dIn, this);
 		_inputManager->AddKey(Event::d, dInHold, this);
-
-
 
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}
@@ -134,8 +133,10 @@ void Game::Update()
 
 
 	//UPDATE HERE
+
 	_inputManager->ProcessInput();
 	_cameraSystem.Process(dt);
+	//_inputManager->ConstantInput();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
@@ -153,7 +154,6 @@ void Game::Render()
 
 	//RENDER HERE
 	_renderSystem.Process();
-
 
 	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
 	SDL_RenderPresent(_renderer);
