@@ -68,11 +68,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SDL_SDK)\include;$(SDL_IMAGE_SDK)\include;$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SDL_SDK)\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SDL_SDK)\include;$(SDL_IMAGE_SDK)\include;$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SDL_SDK)\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

@@ -134,7 +134,7 @@ void Game::Update()
 
 	_inputManager->ProcessInput();
 	_cameraSystem.Process(dt);
-	//_inputManager->ConstantInput();
+	_inputManager->ConstantInput();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
