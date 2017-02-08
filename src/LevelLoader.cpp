@@ -19,7 +19,7 @@ void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities,
 		exit(0);
 	}
 	fclose(fp);
-
+	//
 	int tileWidth = doc["tilewidth"].GetInt();
 	int tileHeight = doc["tileheight"].GetInt();
 
