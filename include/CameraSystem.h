@@ -8,7 +8,7 @@
 class CameraSystem : public System
 {
 public:
-	CameraSystem();
+	CameraSystem(float updateRate = 0.f);
 	~CameraSystem();
 
 	void Process(float dt = 0.f) override;

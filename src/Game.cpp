@@ -13,6 +13,7 @@
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
+	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicSystem()
 	, _controlSystem()
@@ -125,16 +126,15 @@ void Game::LoadContent()
 void Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
-	float deltaTime = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
+	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
 
 
 	//UPDATE HERE
 
 	_inputManager->ProcessInput();
+	_cameraSystem.Process(dt);
 	//_inputManager->ConstantInput();
-
-	_cameraSystem.Process();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame

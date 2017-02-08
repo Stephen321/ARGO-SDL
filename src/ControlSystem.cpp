@@ -3,7 +3,8 @@
 #include "PhysicsComponent.h"
 #include "BoundsComponent.h"
 
-ControlSystem::ControlSystem()
+ControlSystem::ControlSystem(float updateRate)
+	: System(updateRate)
 {
 	
 }
@@ -15,6 +16,11 @@ ControlSystem::~ControlSystem()
 
 void ControlSystem::Process(float dt)
 {
+	System::Process(dt);
+	if (_canUpdate)
+	{
+		_canUpdate = false;
+	}
 }
 
 void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
