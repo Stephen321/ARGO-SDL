@@ -65,6 +65,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Press);
 		Command* dInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Hold);
 		_inputManager->AddKey(Event::d, dIn, this);
+		_inputManager->AddKey(Event::d, dInHold, this);
 
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}

@@ -52,9 +52,6 @@ void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 		for (auto const &listener : *listeners[evt])
 		{
 			listener->OnEvent(evt);
-
-			std::cout << keyNames[evt] + ","
-				+ keyTypes[type] + "," << std::endl;
 		}
 	}
 
