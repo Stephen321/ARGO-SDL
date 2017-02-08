@@ -134,7 +134,7 @@ void Game::Update()
 	//UPDATE HERE
 
 	_inputManager->ProcessInput();
-	//_inputManager->ConstantInput();
+	_inputManager->ConstantInput();
 
 	_cameraSystem.Process();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
