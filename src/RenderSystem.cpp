@@ -1,8 +1,9 @@
 #include "RenderSystem.h"
 
 
-RenderSystem::RenderSystem(SDL_Renderer *& renderer, Camera2D::Camera* camera)
-	: _renderer(renderer)
+RenderSystem::RenderSystem(SDL_Renderer *& renderer, Camera2D::Camera* camera, float updateRate)
+	: System(updateRate)
+	, _renderer(renderer)
 	, _camera(camera)
 {
 }
@@ -13,15 +14,20 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Process(float dt)
 {
-	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	System::Process(dt);
+	if (_canUpdate)
 	{
-		for (Entity* e : (*it).second)
+		_canUpdate = false;
+		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
-			BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-			SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
-			if (bound != nullptr && sprite != nullptr)
+			for (Entity* e : (*it).second)
 			{
-				SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(bound->rect)); 
+				BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
+				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
+				if (bound != nullptr && sprite != nullptr)
+				{
+					SDL_RenderCopy(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(bound->rect));
+				}
 			}
 		}
 	}

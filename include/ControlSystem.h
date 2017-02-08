@@ -8,7 +8,7 @@
 class ControlSystem : public System, public EventListener
 {
 public:
-	ControlSystem();
+	ControlSystem(float updateRate = 0.f);
 	~ControlSystem();
 
 	void Process(float dt = 0.f) override;

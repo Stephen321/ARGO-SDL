@@ -1,6 +1,7 @@
 #include "CameraSystem.h"
 
-CameraSystem::CameraSystem()
+CameraSystem::CameraSystem(float updateRate)
+	: System(updateRate)
 {
 }
 
@@ -10,12 +11,17 @@ CameraSystem::~CameraSystem()
 
 void CameraSystem::Process(float dt)
 {
-	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	System::Process(dt);
+	if (_canUpdate)
 	{
-		for (Entity* e : (*it).second)
+		_canUpdate = false;
+		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
-			BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-			_camera.setCentre(bound->x + bound->rect.w * 0.5f, bound->rect.y + bound->rect.h * 0.5f);
+			for (Entity* e : (*it).second)
+			{
+				BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
+				_camera.setCentre(bound->x + bound->rect.w * 0.5f, bound->rect.y + bound->rect.h * 0.5f);
+			}
 		}
 	}
 }

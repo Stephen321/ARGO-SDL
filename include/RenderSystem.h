@@ -9,7 +9,7 @@
 class RenderSystem : public System
 {
 public:
-	RenderSystem(SDL_Renderer*& renderer, Camera2D::Camera* camera);
+	RenderSystem(SDL_Renderer*& renderer, Camera2D::Camera* camera, float updateRate = 0.f);
 	~RenderSystem();
 
 	void Process(float dt = 0.f) override;

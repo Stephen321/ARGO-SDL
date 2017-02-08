@@ -2,7 +2,9 @@
 
 
 
-System::System()
+System::System(float updateRate)
+	: _canUpdate(false)
+	, _updateRate(updateRate)
 {
 }
 
@@ -26,5 +28,15 @@ void System::RemoveEntity(Entity::Type tag, Entity* gameObject)
 			_entities[tag].erase(_entities[tag].begin() + i);
 			break;
 		}
+	}
+}
+
+void System::Process(float dt)
+{
+	_timer += dt;
+	if (_timer >= _updateRate)
+	{
+		_timer = 0.f;
+		_canUpdate = true;
 	}
 }
