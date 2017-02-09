@@ -127,8 +127,6 @@ void Game::Update()
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
-	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
-
 	//UPDATE HERE
 
 	// Use yo Update using Poll Event (Menus, single presses)
@@ -229,11 +227,6 @@ void Game::Render()
 			}
 		}
 	}
-
-
-
-
-
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
