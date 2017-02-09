@@ -23,6 +23,7 @@ Game::Game()
 {
 	_world.SetContactListener(&_contactListener);
 	_world.SetAllowSleeping(false);
+	_world.SetGravity(b2Vec2(0, 9.81f));
 }
 
 Game::~Game()
@@ -73,6 +74,41 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}
 
+
+	b2BodyDef myBodyDef;
+	myBodyDef.type = b2_staticBody; //this will be a dynamic body
+	myBodyDef.position.Set(0, 300); //set the starting position
+	myBodyDef.angle = 45 * 3.1415926f / 180; //set the starting angle
+
+	b2Body* dynamicBody = _world.CreateBody(&myBodyDef);
+	b2PolygonShape boxShape;
+	boxShape.SetAsBox(200, 50);
+
+	b2FixtureDef boxFixtureDef;
+	boxFixtureDef.shape = &boxShape;
+	boxFixtureDef.density = 1;
+
+	dynamicBody->CreateFixture(&boxFixtureDef);
+
+
+
+	b2BodyDef myBodyDef2;
+	myBodyDef2.type = b2_dynamicBody; //this will be a dynamic body
+	myBodyDef2.position.Set(128, 0); //set the starting position
+	myBodyDef2.angle = 0; //set the starting angle
+	
+	b2Body* dynamicBody2 = _world.CreateBody(&myBodyDef2);
+	b2PolygonShape boxShape2;
+	boxShape2.SetAsBox(64, 64);
+
+	b2FixtureDef boxFixtureDef2;
+	boxFixtureDef2.shape = &boxShape2;
+	boxFixtureDef2.density = 1;
+	
+	dynamicBody2->CreateFixture(&boxFixtureDef2);
+
+
+
 	return _running;
 }
 bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags)
@@ -118,7 +154,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
+	//_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -143,12 +179,82 @@ void Game::Update()
 
 void Game::Render()
 {
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_renderer);
-
+	
 	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
 	_renderSystem.Process();
+
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
+	Camera cam = _cameraSystem.getCamera();
+	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
+	{
+		if (BodyIterator->IsActive())
+		{
+			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())
+			{
+
+				b2Shape::Type shapeType = b2Fixture->GetType();
+				if (shapeType == b2Shape::e_circle)
+				{
+				}
+				else if (shapeType == b2Shape::e_polygon)
+				{
+					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
+
+					int lenght = (int)polygonShape->GetVertexCount();
+
+					SDL_Point* points = new SDL_Point[lenght + 1];
+
+
+					for (int i = 0; i < lenght; i++)
+					{
+						Point worldPoint;
+						float verticesPosX = polygonShape->GetVertex(i).x; b2Fixture->GetBody()->GetPosition().x;
+						float verticesPosY = polygonShape->GetVertex(i).y; b2Fixture->GetBody()->GetPosition().y;
+						/*
+						float mag = sqrt(fixturePosX * fixturePosX + fixturePosY * fixturePosY);
+						if (mag != 0)
+						{
+						fixturePosX /= mag;
+						fixturePosY /= mag;
+						}*/
+						float angle = b2Fixture->GetBody()->GetAngle();
+						float s = sin(angle);
+						float c = cos(angle);
+
+						// translate point back to origin:
+						verticesPosX -= 0;
+						verticesPosY -= 0;
+
+						// rotate point
+						float xnew = verticesPosX* c - verticesPosY * s;
+						float ynew = verticesPosX * s + verticesPosY * c;
+
+						// translate point back:
+						verticesPosX = xnew + 0;
+						verticesPosY = ynew + 0;
+
+						worldPoint.x = verticesPosX + b2Fixture->GetBody()->GetPosition().x;;
+						worldPoint.y = verticesPosY + b2Fixture->GetBody()->GetPosition().y;;
+						worldPoint = cam.worldToScreen(worldPoint);
+						points[i].x = worldPoint.x;
+						points[i].y = worldPoint.y;
+					}
+
+					points[lenght].y = points[0].y;
+					points[lenght].x = points[0].x;
+
+
+
+					SDL_RenderDrawLines(_renderer, points, lenght + 1);
+				}
+			}
+		}
+	}
 
 	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
 	SDL_RenderPresent(_renderer);

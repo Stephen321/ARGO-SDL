@@ -25,10 +25,10 @@
 #include <queue>
 #include <map>
 
-#include "RenderSystem.h"
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
+using namespace Camera2D;
 
 class Game : public EventListener
 {
@@ -55,6 +55,8 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
+
+	
 
 	LevelLoader						_levelLoader;
 
