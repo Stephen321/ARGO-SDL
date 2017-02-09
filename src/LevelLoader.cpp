@@ -2,8 +2,7 @@
 #include "SpriteComponent.h"
 #include "BoundsComponent.h"
 
-#include <string>
-void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory &entityFactory, BodyFactory &bodyFactory)
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -42,7 +41,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	{
 		for (int x = 0; x < backgroundLayerWidth; x++)
 		{
-			Entity* tile = entityFactory.CreateEntity(Entity::Type::Tile);
+			Entity* tile = entityFactory->CreateEntity(Entity::Type::Tile);
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(tile->GetComponent(Component::Type::Sprite));
 			BoundsComponent* bounds = static_cast<BoundsComponent*>(tile->GetComponent(Component::Type::Bounds));
 
@@ -84,43 +83,46 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	{
 		const Value& entity = entityDataArray[i];
 		string entityType = entity["name"].GetString();
-		
+
+		float x = entity["x"].GetFloat();
+		float y = entity["y"].GetFloat();
+
 		if (entityType == "colliderBox")
 		{
-			float x = entity["x"].GetFloat();
-			float y = entity["y"].GetFloat();
 			float w = entity["width"].GetFloat();
 			float h = entity["height"].GetFloat();
-
-			
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f,h*.5f));	//create body
 		}
 		else if(entityType == "colliderPoly")
 		{
-			const Value& entityPolyArray = entity["polygon"];
+			const Value& entityPolyArray = entity["polygon"]; //loop json entity
 			int count = entityPolyArray.Size();
-			b2Vec2* vectices = new b2Vec2[count];
+			
+			b2Vec2* vertices = new b2Vec2[count];
 			for (int i = 0; i < count; i++)
 			{
 				const Value& entityPoly = entityPolyArray[i];
-				vectices[i].Set(entityPoly["x"].GetFloat(), entityPoly["y"].GetFloat());
+				vertices[i].Set(entityPoly["x"].GetFloat(), entityPoly["y"].GetFloat());
 			}
+
+			b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x,y), 0, vertices, count);	//create body
 			
 		}
-		else if (entity == "checkpoint")
+		else if (entityType == "checkpoint")
 		{
-			float x = entity["x"].GetFloat();
-			float y = entity["y"].GetFloat();
 			float w = entity["width"].GetFloat();
 			float h = entity["height"].GetFloat();
 
-		}
-		else if (entity == "flag")
-		{
-			float x = entity["x"].GetFloat();
-			float y = entity["y"].GetFloat();
-			float w = entity["width"].GetFloat();
-			float h = entity["height"].GetFloat();
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f, h*.5f));
 
 		}
+		else if (entityType == "flag")
+		{
+			float w = entity["width"].GetFloat();
+			float h = entity["height"].GetFloat();
+			//idk type :P
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f, h*.5f));
+		}
+
 	}
 }

@@ -13,15 +13,16 @@
 class EntityFactory
 {
 public: 
-	EntityFactory(RenderSystem& rs, PhysicsSystem& ps, ControlSystem* cs, std::map<TextureID, SDL_Texture*>& th);
+	EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th);
 	~EntityFactory();
 	
 	Entity* CreateEntity(Entity::Type t);
 
 private:
-	std::map<TextureID, SDL_Texture*>	_textureHolder;
-	RenderSystem						_renderSystem;
-	PhysicsSystem						_physicSystem;
+	std::map<TextureID, SDL_Texture*>*	_textureHolder;
+	RenderSystem*						_renderSystem;
+	CameraSystem*						_cameraSystem;
+	PhysicsSystem*						_physicSystem;
 	ControlSystem*						_controlSystem;
 
 	Entity*			CreatePlayerEntity();

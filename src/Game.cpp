@@ -17,13 +17,16 @@ Game::Game()
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicSystem()
 	, _controlSystem()
-	, _gravity(0.f, -9.8f)
+	, _gravity(0.f, 0.f)
 	, _world(_gravity)
 	, _contactListener(MyContactListener())
+	, _entityFactory(nullptr)
+	, _bodyFactory(nullptr)
 {
 	_world.SetContactListener(&_contactListener);
 	_world.SetAllowSleeping(false);
-	_world.SetGravity(b2Vec2(0, 9.81f));
+	_entityFactory = new EntityFactory(&_renderSystem, &_physicSystem, _controlSystem, &_cameraSystem, &_textureHolder);
+	_bodyFactory = new BodyFactory(&_world);
 }
 
 Game::~Game()
@@ -33,6 +36,7 @@ Game::~Game()
 
 bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
+
 	_running = SetupSDL(title, xpos, ypos, width, height, flags);
 	
 	_cameraSystem.Init(width, height);
@@ -41,15 +45,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		LoadContent();
 
-		Entity* player = new Entity(Entity::Type::Player);
-
-		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
-		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
-		player->AddComponent(spriteComponent);
-		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
+		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
 		_entities.push_back(player);
-		_renderSystem.AddEntity(_entities.back());
-		_cameraSystem.AddEntity(_entities.back());
 
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
 		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
@@ -73,41 +70,6 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}
-
-
-	b2BodyDef myBodyDef;
-	myBodyDef.type = b2_staticBody; //this will be a dynamic body
-	myBodyDef.position.Set(0, 300); //set the starting position
-	myBodyDef.angle = 45 * 3.1415926f / 180; //set the starting angle
-
-	b2Body* dynamicBody = _world.CreateBody(&myBodyDef);
-	b2PolygonShape boxShape;
-	boxShape.SetAsBox(200, 50);
-
-	b2FixtureDef boxFixtureDef;
-	boxFixtureDef.shape = &boxShape;
-	boxFixtureDef.density = 1;
-
-	dynamicBody->CreateFixture(&boxFixtureDef);
-
-
-
-	b2BodyDef myBodyDef2;
-	myBodyDef2.type = b2_dynamicBody; //this will be a dynamic body
-	myBodyDef2.position.Set(128, 0); //set the starting position
-	myBodyDef2.angle = 0; //set the starting angle
-	
-	b2Body* dynamicBody2 = _world.CreateBody(&myBodyDef2);
-	b2PolygonShape boxShape2;
-	boxShape2.SetAsBox(64, 64);
-
-	b2FixtureDef boxFixtureDef2;
-	boxFixtureDef2.shape = &boxShape2;
-	boxFixtureDef2.density = 1;
-	
-	dynamicBody2->CreateFixture(&boxFixtureDef2);
-
-
 
 	return _running;
 }
@@ -154,7 +116,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	//_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
+	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory);
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -204,24 +166,14 @@ void Game::Render()
 				else if (shapeType == b2Shape::e_polygon)
 				{
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
-
 					int lenght = (int)polygonShape->GetVertexCount();
-
 					SDL_Point* points = new SDL_Point[lenght + 1];
-
-
 					for (int i = 0; i < lenght; i++)
 					{
 						Point worldPoint;
 						float verticesPosX = polygonShape->GetVertex(i).x; b2Fixture->GetBody()->GetPosition().x;
 						float verticesPosY = polygonShape->GetVertex(i).y; b2Fixture->GetBody()->GetPosition().y;
-						/*
-						float mag = sqrt(fixturePosX * fixturePosX + fixturePosY * fixturePosY);
-						if (mag != 0)
-						{
-						fixturePosX /= mag;
-						fixturePosY /= mag;
-						}*/
+
 						float angle = b2Fixture->GetBody()->GetAngle();
 						float s = sin(angle);
 						float c = cos(angle);
@@ -244,12 +196,8 @@ void Game::Render()
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
 					}
-
 					points[lenght].y = points[0].y;
 					points[lenght].x = points[0].x;
-
-
-
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
 				}
 			}

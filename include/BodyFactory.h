@@ -4,15 +4,15 @@
 
 class BodyFactory
 {
-	b2World*			_b2world;
+	b2World*		_b2world;
 public:
-	BodyFactory(b2World *b2world);
+	BodyFactory(b2World* b2world);
 	~BodyFactory();
 
-	b2Body*			CreateCharacterBody();
-	b2Body*			CreateCollectibleBody();
-	b2Body*			CreateObstacleBody();
-	b2Body*			CreateProjectileBody();
+	b2Body*			CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2 size);
+	b2Body*			CreatePolyBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2* vertices, int count);
+
+
 
 private:
 	
