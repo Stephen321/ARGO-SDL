@@ -150,7 +150,12 @@ void Game::Render()
 	//RENDER HERE
 	_renderSystem.Process();
 
-	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
+	//test draw world bounds
+	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
 }
 
