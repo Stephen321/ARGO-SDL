@@ -14,6 +14,7 @@
 #include "SpriteComponent.h"
 #include "BoundsComponent.h"
 #include "PhysicsComponent.h"
+#include "CollisionComponent.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -28,6 +29,9 @@
 #include "RenderSystem.h"
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
+
+// Debug
+using namespace Camera2D;
 
 
 class Game : public EventListener
@@ -76,6 +80,8 @@ private:
 	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
+
+
 
 	
 };

@@ -7,9 +7,9 @@
 class CollisionComponent : public Component
 {
 public:
-	CollisionComponent(b2Body* b)
+	CollisionComponent(b2Body*& b)
 		: body(b)
-		, Component::Component(Component::Type::Bounds)
+		, Component::Component(Component::Type::Collider)
 	{
 	}
 
