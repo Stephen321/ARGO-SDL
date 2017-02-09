@@ -32,7 +32,8 @@
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
-using namespace Camera2D; //use for debugging box2d
+// Debug
+using namespace Camera2D;
 
 class Game : public EventListener
 {
@@ -83,6 +84,8 @@ private:
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
 	CollisionSystem					_collisionSystem;
+
+
 
 
 	

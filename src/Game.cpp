@@ -47,9 +47,16 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
 		CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
-		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(5, 5));
+		SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
+		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 2));
+		collider->body->SetUserData(player);
+		collider->body->SetFixedRotation(true);
 		_entities.push_back(player);
 
+
+
+
+		// Input
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Down);
 		_inputManager->AddKey(Event::w, wIn, this);
 
@@ -120,8 +127,6 @@ void Game::Update()
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
-
-
 	//UPDATE HERE
 
 	// Use yo Update using Poll Event (Menus, single presses)
@@ -132,8 +137,8 @@ void Game::Update()
 	_cameraSystem.Process(dt);
 	_physicsSystem.Process(dt);
 	_collisionSystem.Process(dt);
-	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
+	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;
 }
@@ -148,6 +153,12 @@ void Game::Render()
 	//RENDER HERE
 	_renderSystem.Process();
 
+	//test draw world bounds
+	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
+
+//DEBUG
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	Camera cam = _cameraSystem.getCamera();
@@ -165,14 +176,24 @@ void Game::Render()
 				else if (shapeType == b2Shape::e_polygon)
 				{
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
+
 					int lenght = (int)polygonShape->GetVertexCount();
+
 					SDL_Point* points = new SDL_Point[lenght + 1];
+
+
 					for (int i = 0; i < lenght; i++)
 					{
 						Point worldPoint;
 						float verticesPosX = polygonShape->GetVertex(i).x; b2Fixture->GetBody()->GetPosition().x;
 						float verticesPosY = polygonShape->GetVertex(i).y; b2Fixture->GetBody()->GetPosition().y;
-
+						/*
+						float mag = sqrt(fixturePosX * fixturePosX + fixturePosY * fixturePosY);
+						if (mag != 0)
+						{
+						fixturePosX /= mag;
+						fixturePosY /= mag;
+						}*/
 						float angle = b2Fixture->GetBody()->GetAngle();
 						float s = sin(angle);
 						float c = cos(angle);
@@ -194,24 +215,20 @@ void Game::Render()
 						worldPoint = cam.worldToScreen(worldPoint);
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
-
 					}
+
 					points[lenght].y = points[0].y;
 					points[lenght].x = points[0].x;
+
+
+
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
-					delete points;
 				}
 			}
 		}
 	}
 
-	SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
-
-	//test draw world bounds
-	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
 }
 
