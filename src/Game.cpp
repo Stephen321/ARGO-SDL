@@ -14,14 +14,14 @@ Game::Game()
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
+	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicSystem()
 	, _controlSystem()
 	, _gravity(0.f, -9.8f)
 	, _world(_gravity)
-	, _contactListener(MyContactListener())
 {
-	_world.SetContactListener(&_contactListener);
+	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
 }
 
@@ -46,9 +46,11 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 		player->AddComponent(spriteComponent);
 		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
+
 		_entities.push_back(player);
 		_renderSystem.AddEntity(_entities.back());
 		_cameraSystem.AddEntity(_entities.back());
+		_physicSystem.AddEntity(_entities.back());
 
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
 		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
@@ -131,10 +133,12 @@ void Game::Update()
 
 
 	//UPDATE HERE
-
-	_inputManager->ProcessInput();
-	_cameraSystem.Process(dt);
+	
 	_inputManager->ConstantInput();
+	_inputManager->ProcessInput();
+	_cameraSystem.Process(dt);;
+	_collisionSystem.Process(dt);
+
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame

@@ -7,14 +7,13 @@
 class Entity
 {
 public:
-	enum class Type
+	enum class Type : unsigned short
 	{ //draw order is determined by the below order
-		Flag,
-		Checkpoint,
-		Wall,
-		Tile,
-		Player
-
+		Flag = 0x0001,  //1
+		Checkpoint = 0x0002, // 10
+		Wall = 0x0004, // 100
+		Tile = 0x0008, //1000
+		Player = 0x0010 //10000  
 	};
 
 public:
