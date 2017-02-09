@@ -85,6 +85,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -101,6 +109,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -301,7 +325,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_847AEA30E8144131808F5142B42C30C6"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[DesktopFolder][Manufacturer]\\"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -383,7 +407,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SetupProject"
         "ProductCode" = "8:{E340BC59-7E21-4BAF-8205-44B231703E44}"
-        "PackageCode" = "8:{0F69FEF8-697A-456F-9F1C-CF694B415BC9}"
+        "PackageCode" = "8:{CBE9C0CB-B628-48AB-A7D0-FB72B6F67D91}"
         "UpgradeCode" = "8:{1A9E4493-64E8-461B-811F-9239AF725EEC}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -391,12 +415,12 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:Team_D"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:SetupProject"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
+        "ARPCONTACT" = "8:Team_D"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -904,7 +928,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_17BEE4C3C6AB4F35997698C846623B85"
             {
-            "SourcePath" = "8:..\\Release\\Argo.exe"
+            "SourcePath" = "8:..\\Release\\G4JP_1617_Team_D.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_847AEA30E8144131808F5142B42C30C6"
