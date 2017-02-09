@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "SDL_rect.h"
 
 
 class BoundsComponent : public Component
