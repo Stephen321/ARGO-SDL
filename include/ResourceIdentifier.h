@@ -2,6 +2,7 @@
 enum class TextureID
 {
 	Player,
+	Weapon,
 	EntitySpriteSheet,
-	TilemapSpriteSheet
+	TilemapSpriteSheet,
 };

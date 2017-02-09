@@ -99,9 +99,6 @@
     <ClInclude Include="include\MyContactListener.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\ConstHolder.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -110,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="include\ResourceIdentifier.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CollisionComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

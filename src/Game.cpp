@@ -16,7 +16,7 @@ Game::Game()
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicSystem()
-	, _controlSystem()
+	, _controlSystem(new ControlSystem(&_cameraSystem.getCamera(), 0.0f))
 	, _gravity(0.f, -9.8f)
 	, _world(_gravity)
 	, _contactListener(MyContactListener())
@@ -43,12 +43,41 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		Entity* player = new Entity(Entity::Type::Player);
 
 		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
-		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+
+		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, 1.0f, 1.0f, 0));
 		player->AddComponent(spriteComponent);
 		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
+
 		_entities.push_back(player);
+
 		_renderSystem.AddEntity(_entities.back());
 		_cameraSystem.AddEntity(_entities.back());
+		_controlSystem->AddEntity(_entities.back());
+
+
+
+		
+		Entity* weapon = new Entity(Entity::Type::Weapon);
+
+		spriteComponent = new SpriteComponent(_textureHolder[TextureID::Weapon]);
+
+		weapon->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, 1.0f, 1.0f, 0));
+		weapon->AddComponent(spriteComponent);
+
+		_entities.push_back(player);
+
+		_renderSystem.AddEntity(_entities.back());
+		_cameraSystem.AddEntity(_entities.back());
+		_controlSystem->AddEntity(_entities.back());
+
+
+
+
+
+
+
+
+
 
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
 		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
@@ -115,7 +144,10 @@ bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height
 void Game::LoadContent()
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
 	_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
@@ -131,11 +163,13 @@ void Game::Update()
 
 
 	//UPDATE HERE
-
-	_inputManager->ProcessInput();
-	_cameraSystem.Process(dt);
-	_inputManager->ConstantInput();
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
+	_inputManager->ProcessInput();
+
+	_cameraSystem.Process(dt);
+	_controlSystem->Process(dt);
+
+	_inputManager->ConstantInput();
 
 	//save the curent time for next frame
 	_lastTime = currentTime;

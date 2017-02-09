@@ -43,7 +43,7 @@ public:
 	void							LoadContent();
 	void							CleanUp();
 
-	void							OnEvent(Event evt);
+	void							OnEvent(Event evt) override;
 	void							Test(int t);
 
 	bool							IsRunning(); 

@@ -13,6 +13,7 @@ public:
 		Collider,
 		Sprite,
 		Control,
+		Aim,
 	};
 
 public:

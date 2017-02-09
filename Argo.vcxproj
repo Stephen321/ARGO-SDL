@@ -185,10 +185,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Camera2D.h" />
     <ClInclude Include="include\CameraSystem.h" />
+    <ClInclude Include="include\CollisionComponent.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
     <ClInclude Include="include\ControlComponent.h" />

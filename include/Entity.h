@@ -13,8 +13,8 @@ public:
 		Checkpoint,
 		Wall,
 		Tile,
-		Player
-
+		Weapon,
+		Player,
 	};
 
 public:
