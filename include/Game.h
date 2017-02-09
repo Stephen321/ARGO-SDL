@@ -73,7 +73,7 @@ private:
 
 	std::vector<Entity*>			_entities;
 	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicSystem;
+	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
 

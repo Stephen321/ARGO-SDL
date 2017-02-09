@@ -15,7 +15,7 @@ Game::Game()
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
-	, _physicSystem()
+	, _physicsSystem()
 	, _controlSystem()
 	, _gravity(0.f, -9.8f)
 	, _world(_gravity)
@@ -45,10 +45,11 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
 		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 		player->AddComponent(spriteComponent);
-		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
+		player->AddComponent(new PhysicsComponent(0.f, 0.f, 2.f, 2.f));
 		_entities.push_back(player);
 		_renderSystem.AddEntity(_entities.back());
 		_cameraSystem.AddEntity(_entities.back());
+		_physicsSystem.AddEntity(_entities.back());
 
 		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Down);
 		_inputManager->AddKey(Event::w, wIn, this);
@@ -130,6 +131,7 @@ void Game::Update()
 	_inputManager->ConstantInput();
 
 	_cameraSystem.Process(dt);
+	_physicsSystem.Process(dt);
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
