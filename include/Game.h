@@ -102,6 +102,12 @@ public:
 		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
 			m_functions[i]();
 	}
+
+	virtual void executeDown()
+	{
+		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
 };
 
 
