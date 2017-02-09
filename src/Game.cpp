@@ -14,16 +14,16 @@ Game::Game()
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
+	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicsSystem()
 	, _controlSystem()
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
-	, _contactListener(MyContactListener())
 	, _entityFactory(nullptr)
 	, _bodyFactory(nullptr)
 {
-	_world.SetContactListener(&_contactListener);
+	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
 	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
 	_bodyFactory = new BodyFactory(&_world);
@@ -46,6 +46,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		LoadContent();
 
 		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
+		CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
+		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(5, 5));
 		_entities.push_back(player);
 
 
@@ -146,8 +148,6 @@ void Game::Update()
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
-	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
-
 	//UPDATE HERE
 
 	// Use yo Update using Poll Event (Menus, single presses)
@@ -157,7 +157,9 @@ void Game::Update()
 
 	_cameraSystem.Process(dt);
 	_physicsSystem.Process(dt);
-	
+	_collisionSystem.Process(dt);
+  
+	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
 	_lastTime = currentTime;
@@ -306,11 +308,6 @@ void Game::Render()
 			}
 		}
 	}
-
-
-
-
-
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);

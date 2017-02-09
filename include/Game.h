@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "Debug.h"
-#include "MyContactListener.h"
 
 #include "SDL_image.h"
 #include "Box2D\Box2D.h"
@@ -23,6 +22,7 @@
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
+#include "CollisionSystem.h"
 
 #include <SDL.h>
 #include <vector>
@@ -71,7 +71,6 @@ private:
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 
 	b2Vec2							 _gravity;
-	MyContactListener				 _contactListener;
 	b2World							 _world;
 
 	bool							_running;
@@ -84,6 +83,8 @@ private:
 	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
+	CollisionSystem					_collisionSystem;
+
 
 
 
