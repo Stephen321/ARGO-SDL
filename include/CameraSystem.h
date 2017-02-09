@@ -3,6 +3,7 @@
 #include "SDL_Rect.h"
 #include "System.h"
 #include "BoundsComponent.h"
+#include "ConstHolder.h"
 
 
 class CameraSystem : public System

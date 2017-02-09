@@ -28,6 +28,18 @@ void CameraSystem::Process(float dt)
 			{
 				centre /= (*it).second.size();
 			}
+			float halfCamWidth = _camera.getSize().x * 0.5f;
+			float halfCamHeight = _camera.getSize().y* 0.5f;
+
+			if (centre.x < halfCamWidth)
+				centre.x = halfCamWidth;
+			else if (centre.x > WORLD_WIDTH - halfCamWidth)
+				centre.x = WORLD_WIDTH - halfCamWidth;
+
+			if (centre.y < halfCamHeight)
+				centre.y = halfCamHeight;
+			else if (centre.y > WORLD_HEIGHT - halfCamHeight)
+				centre.y = WORLD_HEIGHT - halfCamHeight;
 			_camera.setCentre(centre);
 		}
 	}
