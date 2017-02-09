@@ -196,6 +196,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Camera2D.h" />
     <ClInclude Include="include\CameraSystem.h" />
+    <ClInclude Include="include\CollisionComponent.h" />
+    <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
     <ClInclude Include="include\ControlComponent.h" />
@@ -206,10 +208,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\FLInputManager.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\HealthComponent.h" />
+    <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\PerlinNoise.h" />
-    <ClInclude Include="include\MyContactListener.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
     <ClInclude Include="include\PhysicsSystem.h" />
     <ClInclude Include="include\RenderSystem.h" />
@@ -232,6 +234,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="include\CameraSystem.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
+    <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ControlSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
@@ -241,7 +244,6 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
-    <ClCompile Include="src\MyContactListener.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\Shake.cpp" />

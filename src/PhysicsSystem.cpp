@@ -30,12 +30,7 @@ void PhysicsSystem::Process(float dt)
 				PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 				BoundsComponent* bounds = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
 				CollisionComponent* collision = static_cast<CollisionComponent*>(e->GetComponent(Component::Type::Collider));
-
-				bounds->x += physics->xVelocity;
-				bounds->y += physics->yVelocity;
-
-				bounds->rect.x = (int)bounds->x;
-				bounds->rect.y = (int)bounds->y;
+				
 				bounds->rect.x = (int)collision->body->GetPosition().x;
 				bounds->rect.y = (int)collision->body->GetPosition().y;
 
