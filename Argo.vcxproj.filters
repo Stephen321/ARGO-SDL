@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Camera">
       <UniqueIdentifier>{3213237f-25c4-4ac6-bfb4-179594720d32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Factory">
+      <UniqueIdentifier>{ea7c3112-7999-434a-8cc0-68a0a1f4cc6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Factory">
+      <UniqueIdentifier>{009abd5c-7c85-4726-a96d-b5151b79e69d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -111,6 +117,12 @@
     <ClInclude Include="include\ResourceIdentifier.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\BodyFactory.h">
+      <Filter>Header Files\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityFactory.h">
+      <Filter>Header Files\Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -162,6 +174,12 @@
     </ClCompile>
     <ClCompile Include="src\LevelLoader.cpp">
       <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityFactory.cpp">
+      <Filter>Source Files\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BodyFactory.cpp">
+      <Filter>Source Files\Factory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

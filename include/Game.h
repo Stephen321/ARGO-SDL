@@ -10,6 +10,9 @@
 #include "Camera2D.h"
 #include "FLInputManager.h"
 
+#include "EntityFactory.h"
+#include "BodyFactory.h"
+
 #include "Entity.h"
 #include "SpriteComponent.h"
 #include "BoundsComponent.h"
@@ -25,10 +28,10 @@
 #include <queue>
 #include <map>
 
-#include "RenderSystem.h"
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
+using namespace Camera2D; //use for debugging box2d
 
 class Game : public EventListener
 {
@@ -55,6 +58,9 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
+
+	EntityFactory*					_entityFactory;
+	BodyFactory*					_bodyFactory;
 
 	LevelLoader						_levelLoader;
 

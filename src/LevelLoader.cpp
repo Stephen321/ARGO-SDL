@@ -1,10 +1,11 @@
 #include "LevelLoader.h"
-#include <string>
-void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities, RenderSystem& renderSystem, std::map<TextureID, SDL_Texture*>& _textureHolder)
+#include "SpriteComponent.h"
+#include "BoundsComponent.h"
+
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
-	Factory factory = Factory();
 	FILE* fp = NULL;
-	fopen_s(&fp, filename, "rb");
+	fopen_s(&fp, path, "rb");
 	Document doc;
 	if (fp != NULL)
 	{
@@ -14,20 +15,21 @@ void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities,
 	}
 	else
 	{
-		std::cout << "ERROR LOADING : " << filename << std::endl;
+		std::cout << "ERROR LOADING : " << path << std::endl;
 		system("PAUSE");
 		exit(0);
 	}
 	fclose(fp);
-	//
+
+	/*
+	Background layer
+	*/
+
 	int tileWidth = doc["tilewidth"].GetInt();
 	int tileHeight = doc["tileheight"].GetInt();
 
 	const Value& layerArray = doc["layers"];
 
-	/*
-	Background layer
-	*/
 	const Value& backgroundLayer = layerArray[0u];
 	int backgroundLayerWidth = backgroundLayer["width"].GetInt();
 	int backgroundLayerHeight = backgroundLayer["height"].GetInt();
@@ -39,34 +41,33 @@ void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities,
 	{
 		for (int x = 0; x < backgroundLayerWidth; x++)
 		{
+			Entity* tile = entityFactory->CreateEntity(Entity::Type::Tile);
+			SpriteComponent* sprite = static_cast<SpriteComponent*>(tile->GetComponent(Component::Type::Sprite));
+			BoundsComponent* bounds = static_cast<BoundsComponent*>(tile->GetComponent(Component::Type::Bounds));
+
 			switch (backgroundDataArray[index].GetInt())
 			{
 			case 1:
 			{
-				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
-					SDL_Rect{ 0 * tileWidth, 0, tileWidth, tileHeight },
-					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
-				
+				sprite->sourceRect = { 0 * tileWidth, 0, tileWidth, tileHeight };
+				bounds->rect = SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight };
 				break;
 			}
 			case 2:
 			{
-				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
-					SDL_Rect{ 1 * tileWidth, 0, tileWidth, tileHeight },
-					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
+				sprite->sourceRect = { 1 * tileWidth, 0, tileWidth, tileHeight };
+				bounds->rect = SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight };
 				break;
 			}
 			case 3:
 			{
-				entities.push_back(factory.CreateTile(_textureHolder[TextureID::TilemapSpriteSheet],
-					SDL_Rect{ 2 * tileWidth, 0, tileWidth, tileHeight },
-					SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight }));
+				sprite->sourceRect = { 2 * tileWidth, 0, tileWidth, tileHeight };
+				bounds->rect = SDL_Rect{ x * tileWidth, y * tileHeight, tileWidth, tileHeight };
 				break;
 			}
 			default:
 				break;
 			}
-			renderSystem.AddEntity(entities.back());
 			index++;
 		}
 	}
@@ -74,46 +75,54 @@ void LevelLoader::LoadJson(const char* filename, std::vector<Entity*>& entities,
 	/*
 	Entity layer
 	*/
-	const Value& entitylayer = layerArray[1];
 
+	const Value& entitylayer = layerArray[1];
 	const Value& entityDataArray = entitylayer["objects"];
 
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
 		string entityType = entity["name"].GetString();
+
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
-		float w = entity["width"].GetFloat();
-		float h = entity["height"].GetFloat();
-		if (entityType == "checkpoint")
+
+		if (entityType == "colliderBox")
 		{
-			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
-				SDL_Rect{ 1 * tileWidth, 0, tileWidth, tileHeight },
-				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+			float w = entity["width"].GetFloat();
+			float h = entity["height"].GetFloat();
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f,h*.5f));	//create body
 		}
-		else if (entityType == "wall")
+		else if(entityType == "colliderPoly")
 		{
-			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
-				SDL_Rect{ 2 * tileWidth, 0, tileWidth, tileHeight },
-				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+			const Value& entityPolyArray = entity["polygon"]; //loop json entity
+			int count = entityPolyArray.Size();
+			
+			b2Vec2* vertices = new b2Vec2[count];
+			for (int i = 0; i < count; i++)
+			{
+				const Value& entityPoly = entityPolyArray[i];
+				vertices[i].Set(entityPoly["x"].GetFloat(), entityPoly["y"].GetFloat());
+			}
+
+			b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x,y), 0, vertices, count);	//create body
+			
+		}
+		else if (entityType == "checkpoint")
+		{
+			float w = entity["width"].GetFloat();
+			float h = entity["height"].GetFloat();
+
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f, h*.5f));
+
 		}
 		else if (entityType == "flag")
 		{
-			entities.push_back(factory.CreateWall(_textureHolder[TextureID::EntitySpriteSheet],
-				SDL_Rect{ 0 * tileWidth, 0, tileWidth, tileHeight },
-				SDL_Rect{ (int)x, (int)y , (int)w, (int)h }));
+			float w = entity["width"].GetFloat();
+			float h = entity["height"].GetFloat();
+			//idk type :P
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, b2Vec2(w*.5f, h*.5f));
 		}
-		else
-		{
-			std::cout << "LOADING ERROR" << std::endl;
-		}
-		renderSystem.AddEntity(entities.back()); //for debugging
+
 	}
-
-
-	
-
-	
-
 }
