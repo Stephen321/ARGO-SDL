@@ -1,11 +1,22 @@
 #pragma once
 
 #include "Component.h"
+#include "SDL_rect.h"
 
 
 class BoundsComponent : public Component
 {
 public:
+	BoundsComponent()
+		: Component::Component(Component::Type::Bounds)
+		, x(0)
+		, y(0)
+		, width(0)
+		, height(0)
+		, rect({ 0, 0, 0, 0 })
+	{
+	}
+
 	BoundsComponent(float xPos, float yPos, int w, int h)
 		: Component::Component(Component::Type::Bounds)
 		, x(xPos)

@@ -13,7 +13,11 @@ public:
 		Checkpoint = 0x0002, // 10
 		Wall = 0x0004, // 100
 		Tile = 0x0008, //1000
-		Player = 0x0010 //10000  
+		Obstacle = 0x0010,
+		Bullet = 0x0020,
+		PowerUp = 0x0040,
+		AI = 0x0080,
+		Player = 0x0100 
 	};
 
 public:

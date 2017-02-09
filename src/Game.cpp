@@ -16,13 +16,17 @@ Game::Game()
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
-	, _physicSystem()
+	, _physicsSystem()
 	, _controlSystem()
-	, _gravity(0.f, -9.8f)
+	, _gravity(0.f, 0.f)
 	, _world(_gravity)
+	, _entityFactory(nullptr)
+	, _bodyFactory(nullptr)
 {
 	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
+	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
+	_bodyFactory = new BodyFactory(&_world);
 }
 
 Game::~Game()
@@ -32,6 +36,7 @@ Game::~Game()
 
 bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
+
 	_running = SetupSDL(title, xpos, ypos, width, height, flags);
 	
 	_cameraSystem.Init(width, height);
@@ -40,37 +45,22 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		LoadContent();
 
-		Entity* player = new Entity(Entity::Type::Player);
-
-		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Player]);
-		player->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
-		player->AddComponent(spriteComponent);
-		player->AddComponent(new PhysicsComponent(0.f, 0.f, 0.f, 0.f));
-
+		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
+		CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
+		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(5, 5));
 		_entities.push_back(player);
-		_renderSystem.AddEntity(_entities.back());
-		_cameraSystem.AddEntity(_entities.back());
-		_physicSystem.AddEntity(_entities.back());
 
-		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Press);
-		Command* wInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Hold);
+		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Down);
 		_inputManager->AddKey(Event::w, wIn, this);
-		_inputManager->AddKey(Event::w, wInHold, this);
 
-		Command* aIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Press);
-		Command* aInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Hold);
+		Command* aIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Down);
 		_inputManager->AddKey(Event::a, aIn, this);
-		_inputManager->AddKey(Event::a, aInHold, this);
 
-		Command* sIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Press);
-		Command* sInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Hold);
+		Command* sIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Down);
 		_inputManager->AddKey(Event::s, sIn, this);
-		_inputManager->AddKey(Event::s, sInHold, this);
 
-		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Press);
-		Command* dInHold = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Hold);
+		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
 		_inputManager->AddKey(Event::d, dIn, this);
-		_inputManager->AddKey(Event::d, dInHold, this);
 
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}
@@ -120,7 +110,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities,_renderSystem, _textureHolder);
+	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory);
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -133,12 +123,15 @@ void Game::Update()
 
 
 	//UPDATE HERE
-	
-	_inputManager->ConstantInput();
-	_inputManager->ProcessInput();
-	_cameraSystem.Process(dt);;
-	_collisionSystem.Process(dt);
 
+	// Use yo Update using Poll Event (Menus, single presses)
+	_inputManager->ProcessInput();
+	// Use to Update constantly at frame rate
+	_inputManager->ConstantInput();
+
+	_cameraSystem.Process(dt);
+	_physicsSystem.Process(dt);
+	_collisionSystem.Process(dt);
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 
 	//save the curent time for next frame
@@ -147,14 +140,78 @@ void Game::Update()
 
 void Game::Render()
 {
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_renderer);
-
+	
 	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
 	_renderSystem.Process();
 
-	//SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
+	Camera cam = _cameraSystem.getCamera();
+	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
+	{
+		if (BodyIterator->IsActive())
+		{
+			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())
+			{
+
+				b2Shape::Type shapeType = b2Fixture->GetType();
+				if (shapeType == b2Shape::e_circle)
+				{
+				}
+				else if (shapeType == b2Shape::e_polygon)
+				{
+					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
+					int lenght = (int)polygonShape->GetVertexCount();
+					SDL_Point* points = new SDL_Point[lenght + 1];
+					for (int i = 0; i < lenght; i++)
+					{
+						Point worldPoint;
+						float verticesPosX = polygonShape->GetVertex(i).x; b2Fixture->GetBody()->GetPosition().x;
+						float verticesPosY = polygonShape->GetVertex(i).y; b2Fixture->GetBody()->GetPosition().y;
+
+						float angle = b2Fixture->GetBody()->GetAngle();
+						float s = sin(angle);
+						float c = cos(angle);
+
+						// translate point back to origin:
+						verticesPosX -= 0;
+						verticesPosY -= 0;
+
+						// rotate point
+						float xnew = verticesPosX* c - verticesPosY * s;
+						float ynew = verticesPosX * s + verticesPosY * c;
+
+						// translate point back:
+						verticesPosX = xnew + 0;
+						verticesPosY = ynew + 0;
+
+						worldPoint.x = verticesPosX + b2Fixture->GetBody()->GetPosition().x;;
+						worldPoint.y = verticesPosY + b2Fixture->GetBody()->GetPosition().y;;
+						worldPoint = cam.worldToScreen(worldPoint);
+						points[i].x = worldPoint.x;
+						points[i].y = worldPoint.y;
+
+					}
+					points[lenght].y = points[0].y;
+					points[lenght].x = points[0].x;
+					SDL_RenderDrawLines(_renderer, points, lenght + 1);
+					delete points;
+				}
+			}
+		}
+	}
+
+	SDL_SetRenderDrawColor(_renderer, 0, 55, 55, 255);
+
+	//test draw world bounds
+	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
+
 	SDL_RenderPresent(_renderer);
 }
 
@@ -184,7 +241,9 @@ void Game::OnEvent(EventListener::Event evt)
 {
 	switch (evt)
 	{
-	case Event::ESCAPE: _running = false;
+		case Event::ESCAPE:
+			_inputManager->saveFile();
+			_running = false;
 	}
 }
 
