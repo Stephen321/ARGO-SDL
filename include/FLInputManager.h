@@ -351,6 +351,9 @@ private:
 	//* Count Hold Time
 	float holdDuration = 0;
 
+	//* Detect Previous saved
+	bool saved = false;
+
 public:
 	//* Save the Log File
 	void saveFile();
