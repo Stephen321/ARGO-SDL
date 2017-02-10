@@ -5,7 +5,7 @@
 
 #include "Game.h"
 #include "ConstHolder.h"
-
+#include "Helpers.h"
 #include "LTimer.h"
 
 
@@ -48,9 +48,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
 		CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
 		SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
-		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 2));
+		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h * 0.5f));
 		collider->body->SetUserData(player);
-		collider->body->SetFixedRotation(true);
 		_entities.push_back(player);
 
 
@@ -161,7 +160,6 @@ void Game::Render()
 //DEBUG
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
-	Camera cam = _cameraSystem.getCamera();
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{
 		if (BodyIterator->IsActive())
@@ -210,9 +208,9 @@ void Game::Render()
 						verticesPosX = xnew + 0;
 						verticesPosY = ynew + 0;
 
-						worldPoint.x = verticesPosX + b2Fixture->GetBody()->GetPosition().x;;
-						worldPoint.y = verticesPosY + b2Fixture->GetBody()->GetPosition().y;;
-						worldPoint = cam.worldToScreen(worldPoint);
+						worldPoint.x = metersToPixels(verticesPosX + b2Fixture->GetBody()->GetPosition().x);
+						worldPoint.y = metersToPixels(verticesPosY + b2Fixture->GetBody()->GetPosition().y);
+						worldPoint = _cameraSystem.getCamera().worldToScreen(worldPoint);
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
 					}

@@ -29,7 +29,7 @@ inline int randomNumber(int min, int max)
 
 inline float metersToPixels(float meters)
 {
-	return meters * (1 / PIXELS_PER_METER);
+	return meters * PIXELS_PER_METER;
 }
 
 inline float pixelsToMeters(float pixels)
