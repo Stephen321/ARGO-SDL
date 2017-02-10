@@ -146,7 +146,7 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 			else if (type == EventListener::Type::Hold) { command->executeHold(); }
 			else if (type == EventListener::Type::Down) { command->executeDown(); }
 			else { command->execute(); }
-			std::cout << keyNames[evt] << " : " << keyTypes[type] << std::endl;
+			//std::cout << keyNames[evt] << " : " << keyTypes[type] << std::endl;
 		}
 	}
 

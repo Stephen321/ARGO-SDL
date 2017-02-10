@@ -5,7 +5,7 @@
 
 #include "Game.h"
 #include "ConstHolder.h"
-
+#include "Helpers.h"
 #include "LTimer.h"
 
 
@@ -44,8 +44,6 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 	{//SETUP WHATEVER NEEDS TO BE 
 
 		LoadContent();
-
-		
 
 		Entity* player = nullptr;
 		std::vector<Entity*>::iterator it = _entities.begin();
@@ -165,7 +163,6 @@ void Game::Render()
 //DEBUG
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
-	Camera cam = _cameraSystem.getCamera();
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{
 		if (BodyIterator->IsActive())
@@ -214,9 +211,9 @@ void Game::Render()
 						verticesPosX = xnew + 0;
 						verticesPosY = ynew + 0;
 
-						worldPoint.x = verticesPosX + b2Fixture->GetBody()->GetPosition().x;;
-						worldPoint.y = verticesPosY + b2Fixture->GetBody()->GetPosition().y;;
-						worldPoint = cam.worldToScreen(worldPoint);
+						worldPoint.x = metersToPixels(verticesPosX + b2Fixture->GetBody()->GetPosition().x);
+						worldPoint.y = metersToPixels(verticesPosY + b2Fixture->GetBody()->GetPosition().y);
+						worldPoint = _cameraSystem.getCamera().worldToScreen(worldPoint);
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
 					}

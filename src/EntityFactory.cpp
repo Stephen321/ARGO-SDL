@@ -60,7 +60,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(spriteComponent);
 	player->AddComponent(new BoundsComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	player->AddComponent(new HealthComponent(100, 100, true));
-	player->AddComponent(new PhysicsComponent(0, 0, 1.f, 1.f));
+	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ControlComponent());
 	player->AddComponent(new CollisionComponent(nullptr));
 	_renderSystem->AddEntity(player);
@@ -78,8 +78,7 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new BoundsComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
-	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0));
-	
+	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
 
 	_renderSystem->AddEntity(ai);
 	_physicSystem->AddEntity(ai);

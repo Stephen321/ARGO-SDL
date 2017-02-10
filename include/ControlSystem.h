@@ -14,6 +14,9 @@ public:
 
 	void MovePlayer(int _x, int _y, Entity*& entity);
 
-private:
+	//cant have these here due to the way moveplayer is being called by inputmanager (nullptr)
+//private:
+//	int _prevX;
+//	int _prevY;
 };
 

@@ -1,5 +1,6 @@
 #include "LevelLoader.h"
 #include "SpriteComponent.h"
+#include "Helpers.h"
 #include "BoundsComponent.h"
 #include "CollisionComponent.h"
 
@@ -160,7 +161,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				for (int i = 0; i < count; i++)
 				{
 					const Value& entityPoly = entityPolyArray[i];
-					vertices[i].Set(entityPoly["x"].GetFloat(), entityPoly["y"].GetFloat());
+					vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
 				}
 				b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, vertices, count, false);	//create body
 			
