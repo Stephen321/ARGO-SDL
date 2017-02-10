@@ -45,14 +45,17 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		LoadContent();
 
-		Entity* player = _entityFactory->CreateEntity(Entity::Type::Player);
-		CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
-		SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
-		collider->body = _bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(0, 0), 0.f, b2Vec2(spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h * 0.5f));
-		collider->body->SetUserData(player);
-		_entities.push_back(player);
-
-
+		Entity* player = nullptr;
+		std::vector<Entity*>::iterator it = _entities.begin();
+		while (it != _entities.end())
+		{
+			if ((*it)->GetType() == Entity::Type::Player)
+			{
+				player = *it;
+				break;
+			}
+			it++;
+		}
 
 
 		// Input
