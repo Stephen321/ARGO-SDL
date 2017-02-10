@@ -33,6 +33,6 @@ private:
 	Entity*			CreateCheckpointEntity();
 	Entity*			CreateFlagEntity();
 	Entity*			CreateTileEntity();
-
+	Entity*			CreatePointEntity();
 };
 #endif

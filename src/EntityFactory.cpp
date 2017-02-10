@@ -37,6 +37,9 @@ Entity* EntityFactory::CreateEntity(Entity::Type t)
 	case Entity::Type::Bullet:
 		entity = CreateBulletEntity();
 		break;
+	case Entity::Type::Point:
+		entity = CreatePointEntity();
+		break;
 	case Entity::Type::PowerUp:
 		entity = CreatePowerUpEntity();
 		break;
@@ -88,10 +91,7 @@ Entity* EntityFactory::CreateAIEntity()
 Entity* EntityFactory::CreateObstacleEntity()
 {
 	Entity* obstacle = new Entity(Entity::Type::Obstacle);
-	obstacle->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	obstacle->AddComponent(new BoundsComponent());
-
-	_renderSystem->AddEntity(obstacle);
 
 	return obstacle;
 }
@@ -150,4 +150,13 @@ Entity* EntityFactory::CreateTileEntity()
 	_renderSystem->AddEntity(tile);
 
 	return tile;
+}
+
+Entity* EntityFactory::CreatePointEntity()
+{
+	Entity* point = new Entity(Entity::Type::Point);
+	point->AddComponent(new BoundsComponent());
+	//_controlSystem->AddEntity(player);
+
+	return point;
 }

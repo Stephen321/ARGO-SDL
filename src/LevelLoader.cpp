@@ -105,15 +105,15 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		}
 		else if (entityName == "Checkpoint")
 		{
-			
-
+			Entity* checkpoint = entityFactory->CreateEntity(Entity::Type::Checkpoint);
 			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), 0, b2Vec2(w*.5f, h*.5f), true);
-
+			body->SetUserData(checkpoint);
 		}
 		else if (entityName == "Flag")
 		{
-			//idk type :P
+			Entity* flag = entityFactory->CreateEntity(Entity::Type::Flag);
 			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x + w*.5f, y + h*.5f), 0, b2Vec2(w*.5f, h*.5f), true);
+			body->SetUserData(flag);
 		}
 
 	}
@@ -129,7 +129,17 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
+		float w = entity["width"].GetFloat();
+		float h = entity["height"].GetFloat();
 
+
+		Entity* point = entityFactory->CreateEntity(Entity::Type::Point);
+		b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x + w*.5f, y + h*.5f), 0, b2Vec2(w*.5f, h*.5f), true);
+		body->SetUserData(point);
+
+		BoundsComponent* bounds = static_cast<BoundsComponent*>(point->GetComponent(Component::Type::Bounds));
+		bounds->x = x;
+		bounds->y = y;
 	}
 
 
@@ -149,23 +159,24 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		{
 			float w = entity["width"].GetFloat();
 			float h = entity["height"].GetFloat();
+			Entity* obstacle = entityFactory->CreateEntity(Entity::Type::Obstacle);
 			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), 0, b2Vec2(w*.5f, h*.5f), false);	//create body
+			body->SetUserData(obstacle);
 		}
 		else if (entityName == "Poly")
 		{
-			
-				const Value& entityPolyArray = entity["polygon"]; //loop json entity
-				int count = entityPolyArray.Size();
+			Entity* obstacle = entityFactory->CreateEntity(Entity::Type::Obstacle);
+			const Value& entityPolyArray = entity["polygon"]; //loop json entity
+			int count = entityPolyArray.Size();
 
-				b2Vec2* vertices = new b2Vec2[count];
-				for (int i = 0; i < count; i++)
-				{
-					const Value& entityPoly = entityPolyArray[i];
-					vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
-				}
-				b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, vertices, count, false);	//create body
-			
-
+			b2Vec2* vertices = new b2Vec2[count];
+			for (int i = 0; i < count; i++)
+			{
+				const Value& entityPoly = entityPolyArray[i];
+				vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
+			}
+			b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, vertices, count, false);	//create body
+			body->SetUserData(obstacle);
 		}
 	}
 }

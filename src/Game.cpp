@@ -161,12 +161,39 @@ void Game::Render()
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
 
 //DEBUG
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{
 		if (BodyIterator->IsActive())
 		{
+			Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
+			Entity::Type t = e->GetType();
+			if (t == Entity::Type::Player)
+			{
+				SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+			}
+			else if (t == Entity::Type::Checkpoint)
+			{
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+			}
+			else if (t == Entity::Type::Point)
+			{
+				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+			}
+			else if (t == Entity::Type::Flag)
+			{
+				SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
+			}
+			else if(t == Entity::Type::Obstacle)
+			{
+				SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+			}
+			else
+			{
+				SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+			}
+
 			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())
 			{
 
@@ -176,6 +203,8 @@ void Game::Render()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
+					
+
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
 					int lenght = (int)polygonShape->GetVertexCount();
@@ -224,6 +253,7 @@ void Game::Render()
 
 
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
+					delete points;
 				}
 			}
 		}
