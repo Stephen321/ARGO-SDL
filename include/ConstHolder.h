@@ -13,3 +13,5 @@ const int PIXELS_PER_METER = 100;
 
 const int MAX_PLAYER_VELOCITY = 10;
 const int PLAYER_ACCEL_RATE = 2;
+
+const int MAX_BULLET_VELOCITY = 50;

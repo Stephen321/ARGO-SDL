@@ -6,6 +6,8 @@
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
 
+
+
 EntityFactory::EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th) : 
 	_renderSystem(rs),
 	_cameraSystem(cs),
@@ -20,9 +22,11 @@ EntityFactory::~EntityFactory()
 
 }
 
+
 Entity* EntityFactory::CreateEntity(Entity::Type t)
 {
 	Entity* entity = nullptr;
+
 	switch (t)
 	{
 	case Entity::Type::Tile:
@@ -46,10 +50,16 @@ Entity* EntityFactory::CreateEntity(Entity::Type t)
 	case Entity::Type::Player:
 		entity = CreatePlayerEntity();
 		break;
-	default://flag
+	case Entity::Type::Weapon:
+		entity = CreateWeaponEntity();
+		break;
+	case Entity::Type::Flag:
 		entity = CreateFlagEntity();
 		break;
+	default:
+		break;
 	}
+
 	return entity;
 }
 
@@ -57,16 +67,17 @@ Entity* EntityFactory::CreatePlayerEntity()
 {
 	Entity* player = new Entity(Entity::Type::Player);
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
+
 	player->AddComponent(spriteComponent);
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ControlComponent());
 	player->AddComponent(new ColliderComponent(nullptr));
+
 	_renderSystem->AddEntity(player);
 	_physicSystem->AddEntity(player);
 	_cameraSystem->AddEntity(player);
-	//_controlSystem->AddEntity(player);
 
 	return player;
 }
@@ -107,13 +118,31 @@ Entity* EntityFactory::CreatePowerUpEntity()
 	return powerUp;
 }
 
+Entity* EntityFactory::CreateWeaponEntity()
+{
+	Entity* weapon = new Entity(Entity::Type::Weapon);
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon]);
+
+	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	weapon->AddComponent(spriteComponent);
+
+	_renderSystem->AddEntity(weapon);
+	_controlSystem->AddTurret(weapon);
+
+	return weapon;
+}
 Entity* EntityFactory::CreateBulletEntity()
 {
 	Entity* bullet = new Entity(Entity::Type::Bullet);
+
 	bullet->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
+	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
 	bullet->AddComponent(new TransformComponent());
+	bullet->AddComponent(new ColliderComponent(nullptr));
 
 	_renderSystem->AddEntity(bullet);
+	_physicSystem->AddEntity(bullet);
 
 	return bullet;
 }

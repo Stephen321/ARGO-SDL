@@ -1,5 +1,7 @@
 #include "BodyFactory.h"
 #include "Helpers.h"
+
+
 BodyFactory::BodyFactory(b2World* b2world) : _b2world(b2world)
 {
 
@@ -9,6 +11,7 @@ BodyFactory::~BodyFactory()
 {
 
 }
+
 
 b2Body* BodyFactory::CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2 size, bool isSensor)
 {

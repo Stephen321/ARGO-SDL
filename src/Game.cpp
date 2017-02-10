@@ -7,6 +7,7 @@
 #include "ConstHolder.h"
 #include "Helpers.h"
 #include "LTimer.h"
+#include <assert.h>
 
 
 
@@ -59,17 +60,9 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 
 		
-		Entity* weapon = new Entity(Entity::Type::Weapon);
+		Entity* weapon = _entityFactory->CreateEntity(Entity::Type::Weapon);
 
-		SpriteComponent* spriteComponent = new SpriteComponent(_textureHolder[TextureID::Weapon]);
-
-		weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
-		weapon->AddComponent(spriteComponent);
-
-		_entities.push_back(weapon);
-
-		_renderSystem.AddEntity(_entities.back());
-		_controlSystem->AddTurret(_entities.back());
+		assert(weapon != nullptr);
 		
 		_weaponSystem.AddEntity(player, weapon);
 
