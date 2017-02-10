@@ -61,14 +61,15 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		spriteComponent = new SpriteComponent(_textureHolder[TextureID::Weapon]);
 
-		weapon->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, 1.0f, 1.0f, 0));
+		weapon->AddComponent(new BoundsComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 		weapon->AddComponent(spriteComponent);
 
-		_entities.push_back(player);
+		_entities.push_back(weapon);
 
 		_renderSystem.AddEntity(_entities.back());
-		_cameraSystem.AddEntity(_entities.back());
-		_controlSystem->AddEntity(_entities.back());
+		_controlSystem->AddTurret(_entities.back());
+		
+		_weaponSystem.AddEntity(player, weapon);
 
 
 
@@ -167,6 +168,8 @@ void Game::Update()
 	_inputManager->ProcessInput();
 
 	_cameraSystem.Process(dt);
+	_weaponSystem.Process(dt);
+
 	_controlSystem->Process(dt);
 
 	_inputManager->ConstantInput();
@@ -202,7 +205,9 @@ void Game::CleanUp()
 	_world.SetAllowSleeping(true);
 
 	for (int i = 0; i < _entities.size(); i++)
+	{
 		delete _entities[i];
+	}
 	_entities.clear();
 
 	SDL_DestroyWindow(_window);

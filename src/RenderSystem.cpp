@@ -29,6 +29,8 @@ void RenderSystem::Process(float dt)
 				SDL_Rect scaledRect = bound->rect;
 				scaledRect.w *= bound->scaleX;
 				scaledRect.h *= bound->scaleY;
+				scaledRect.x -= bound->origin.x * bound->scaleX;
+				scaledRect.y -= bound->origin.y * bound->scaleY;
 
 				if (bound != nullptr && sprite != nullptr)
 				{

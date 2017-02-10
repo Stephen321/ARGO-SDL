@@ -9,12 +9,12 @@ class Entity
 public:
 	enum class Type
 	{ //draw order is determined by the below order
-		Flag,
 		Checkpoint,
 		Wall,
 		Tile,
-		Weapon,
 		Player,
+		Flag,
+		Weapon,
 	};
 
 public:

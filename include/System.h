@@ -24,4 +24,3 @@ protected:
 	float							_timer;
 	bool							_canUpdate;
 };
-

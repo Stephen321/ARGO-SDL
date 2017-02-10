@@ -24,22 +24,19 @@ void ControlSystem::Process(float dt)
 	{
 		_canUpdate = false;
 
-		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+		for (int i = 0; i < _turrets.size(); i++)
 		{
-			for (Entity* e : (*it).second)
-			{
-				BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-				
-				//initialize mouuse position
-				SDL_Point mouse;
-				SDL_GetMouseState(&mouse.x, &mouse.y);
+			BoundsComponent* bound = static_cast<BoundsComponent*>(_turrets[i]->GetComponent(Component::Type::Bounds));
 
-				//calculate mouse position to world
-				Camera2D::Point convertedPoint = _camera->screenToWorld(Camera2D::Point(mouse.x, mouse.y));
+			//initialize mouuse position
+			SDL_Point mouse;
+			SDL_GetMouseState(&mouse.x, &mouse.y);
 
-				Camera2D::Point difference = { convertedPoint.x - bound->rect.x + bound->origin.x, convertedPoint.y - bound->rect.y + bound->origin.y };
-				bound->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
-			}
+			//calculate mouse position to world
+			Camera2D::Point convertedPoint = _camera->screenToWorld(Camera2D::Point(mouse.x, mouse.y));
+
+			Camera2D::Point difference = { convertedPoint.x - bound->rect.x + bound->origin.x, convertedPoint.y - bound->rect.y + bound->origin.y };
+			bound->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 		}
 	}
 }
@@ -60,4 +57,21 @@ void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
 void ControlSystem::OnEvent(Event evt)
 {
 
+}
+
+
+void ControlSystem::AddTurret(Entity* entity)
+{
+	_turrets.push_back(entity);
+}
+void ControlSystem::RemoveTurret(Entity* entity)
+{
+	for (int i = 0; i < _turrets.size(); i++)
+	{
+		if (_turrets.at(i) == entity)
+		{
+			_turrets.erase(_turrets.begin() + i);
+			break;
+		}
+	}
 }

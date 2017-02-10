@@ -20,6 +20,8 @@
 #include "ControlSystem.h"
 #include "CameraSystem.h"
 
+#include "WeaponSystem.h"
+
 #include <SDL.h>
 #include <vector>
 #include <queue>
@@ -77,6 +79,7 @@ private:
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
 
+	WeaponSystem					_weaponSystem;
 	
 };
 
