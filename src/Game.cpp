@@ -58,7 +58,16 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			it++;
 		}
 
+		//CREATE A GUN COMPONENT WHICH HOLDS
+		//canfire
+		//fireTimer
+		//ammo
 
+		//GUN SYSTEM WHICH DEALS WITH GUN COMPONENT
+
+		//CREATE A FIRING SYSTEM WHICH TAKES A WEAPON, CHECKS IF IT IS TRIGGERED
+		//IF IT IS TRIGGERED, CREATE A BULLET AND ADD IT TO THE LIST OF ENTITITES
+		
 		
 		Entity* weapon = _entityFactory->CreateEntity(Entity::Type::Weapon);
 
