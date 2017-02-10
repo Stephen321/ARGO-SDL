@@ -191,9 +191,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="include\BodyFactory.h" />
-    <ClInclude Include="include\TransformComponent.h" />
+    <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Camera2D.h" />
     <ClInclude Include="include\CameraSystem.h" />
     <ClInclude Include="include\ColliderComponent.h" />
@@ -209,6 +208,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\Helpers.h" />
+    <ClInclude Include="include\InteractionSystem.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\PerlinNoise.h" />
@@ -219,9 +219,9 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Shake.h" />
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
+    <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
-    <ClInclude Include="InteractionSystem.h" />
-    <ClInclude Include="WeaponSystem.h" />
+    <ClInclude Include="include\WeaponSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
