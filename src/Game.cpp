@@ -160,6 +160,8 @@ void Game::Update()
 	_collisionSystem.Process(dt);
 	_weaponSystem.Process(dt);
 
+	_controlSystem->Process(dt);
+
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;

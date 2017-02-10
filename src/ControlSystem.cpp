@@ -46,8 +46,8 @@ void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
 
-	physics->xVelocity += x * physics->xAcceleration;
-	physics->yVelocity += y * physics->yAcceleration;
+	//physics->xVelocity += x * physics->xAcceleration;
+	//physics->yVelocity += y * physics->yAcceleration;
 
 	physics->xDir = x;
 	physics->yDir = y;
