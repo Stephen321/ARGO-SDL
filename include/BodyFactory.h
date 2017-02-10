@@ -9,8 +9,8 @@ public:
 	BodyFactory(b2World* b2world);
 	~BodyFactory();
 
-	b2Body*			CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2 size);
-	b2Body*			CreatePolyBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2* vertices, int count);
+	b2Body*			CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2 size,  bool isSensor);
+	b2Body*			CreatePolyBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2* vertices, int count, bool isSensor);
 
 
 
