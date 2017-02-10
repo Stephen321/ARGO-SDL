@@ -33,8 +33,8 @@ void PhysicsSystem::Process(float dt)
 				CollisionComponent* collision = static_cast<CollisionComponent*>(e->GetComponent(Component::Type::Collider));
 				float maxVelocity = physics->maxVelocity;
 
-				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG * dt : 0.f;
-				float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG * dt: 0.f;
+				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
+				float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
 
 				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?
 				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
