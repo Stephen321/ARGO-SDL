@@ -1,5 +1,5 @@
 #include "RenderSystem.h"
-#include "BoundsComponent.h"
+#include "TransformComponent.h"
 #include "SpriteComponent.h"
 
 RenderSystem::RenderSystem(SDL_Renderer *& renderer, Camera2D::Camera* camera, float updateRate)
@@ -23,7 +23,7 @@ void RenderSystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
-				BoundsComponent* bound = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
+				TransformComponent* bound = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
 				SDL_Rect scaledRect = bound->rect;

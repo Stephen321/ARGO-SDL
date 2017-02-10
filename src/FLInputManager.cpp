@@ -75,6 +75,11 @@ void InputManager::CheckPrevious(EventListener::Type type, EventListener::Event 
 		SetPrevious(evt, false);
 	}
 
+	if (type == EventListener::Type::Down)
+	{
+		Execute(type, evt);
+	}
+
 	//* If Events hold is true, set Event Type to Hold
 	if (beingHeld[evt])
 	{
@@ -102,7 +107,7 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 	//* Log Input
 	if (evt != 0)
 	{
-		if (type != EventListener::Type::Hold)
+		if (type != EventListener::Type::Hold && type != EventListener::Type::Down)
 		{
 			std::string newLine =
 				keyNames[evt] + ","
@@ -112,7 +117,7 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 			logEvent(newLine);
 			previousEvent = evt;
 		}
-		else if (type == EventListener::Type::Hold)
+		else if (type == EventListener::Type::Hold || type == EventListener::Type::Down)
 		{
 			holdDuration++;
 			logFileValues.pop_back();
@@ -139,7 +144,9 @@ void InputManager::Execute(EventListener::Type type, EventListener::Event evt)
 			if (type == EventListener::Type::Press) { command->executePress(); }
 			else if (type == EventListener::Type::Release) { command->executeRelease(); }
 			else if (type == EventListener::Type::Hold) { command->executeHold(); }
+			else if (type == EventListener::Type::Down) { command->executeDown(); }
 			else { command->execute(); }
+			//std::cout << keyNames[evt] << " : " << keyTypes[type] << std::endl;
 		}
 	}
 
@@ -585,7 +592,9 @@ void InputManager::ConstantInput()
 {
 	const Uint8 *keystates = SDL_GetKeyboardState(NULL);
 
-	EventListener::Type type = EventListener::Type::Hold;
+	EventListener::Type type = EventListener::Type::Down;
+
+	SDL_PumpEvents();
 
 	//* Get Key Event and call Input Manager Dispatch for that key
 	if (keystates[SDL_GetScancodeFromKey(SDLK_UNKNOWN)]) { Dispatch(type, EventListener::Event::UNKNOWN);			}
@@ -796,21 +805,26 @@ void InputManager::logEvent(std::string str)
 //* Save the Log File
 void InputManager::saveFile()
 {
-	logFileName = "Input Log = "
-		+ GetTimeStamp(true)
-		+ ".csv";
-
-	std::string log;
-
-	for (int i = 0; i < logFileValues.size(); i++)
+	if (saved == false)
 	{
-		log += logFileValues[i] + "\n";
-	}
+		logFileName = "Logs/Input Log = "
+			+ GetTimeStamp(true)
+			+ ".csv";
 
-	std::ofstream output_file(logFileName);
-	output_file << log;
-	logFileValues.clear();
-	log = "";
+		std::string log;
+
+		for (int i = 0; i < logFileValues.size(); i++)
+		{
+			log += logFileValues[i] + "\n";
+		}
+
+		std::ofstream output_file(logFileName);
+		output_file << log;
+		logFileValues.clear();
+		log = "";
+
+		saved = true;
+	}
 }
 
 //* Return the Current System Time
@@ -957,4 +971,5 @@ void InputManager::createKeyMap()
 	keyTypes[EventListener::Type::Press] = "Press";
 	keyTypes[EventListener::Type::Release] = "Release";
 	keyTypes[EventListener::Type::Hold] = "Hold";
+	keyTypes[EventListener::Type::Down] = "Down";
 }

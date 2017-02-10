@@ -1,6 +1,6 @@
 #include "WeaponSystem.h"
 
-#include "BoundsComponent.h"
+#include "TransformComponent.h"
 
 
 
@@ -25,8 +25,8 @@ void WeaponSystem::Process(float dt)
 		{
 			for (std::pair<Entity*, Entity*> e : (*it).second)
 			{
-				BoundsComponent* bound1 = static_cast<BoundsComponent*>(e.first->GetComponent(Component::Type::Bounds));
-				BoundsComponent* bound2 = static_cast<BoundsComponent*>(e.second->GetComponent(Component::Type::Bounds));
+				TransformComponent* bound1 = static_cast<TransformComponent*>(e.first->GetComponent(Component::Type::Transform));
+				TransformComponent* bound2 = static_cast<TransformComponent*>(e.second->GetComponent(Component::Type::Transform));
 
 				bound2->rect.x = bound1->rect.x;// +(cos(bound1->angle * M_PI / 180.0f) * (bound1->origin.x + bound2->origin.x));
 				bound2->rect.y = bound1->rect.y;// +(sin(bound1->angle * M_PI / 180.0f) * (bound1->origin.y + bound2->origin.y));

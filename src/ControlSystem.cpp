@@ -1,7 +1,8 @@
 #include "ControlSystem.h"
 
+#include "ControlComponent.h"
 #include "PhysicsComponent.h"
-#include "BoundsComponent.h"
+#include "TransformComponent.h"
 
 #include <iostream>
 
@@ -26,7 +27,7 @@ void ControlSystem::Process(float dt)
 
 		for (int i = 0; i < _turrets.size(); i++)
 		{
-			BoundsComponent* bound = static_cast<BoundsComponent*>(_turrets[i]->GetComponent(Component::Type::Bounds));
+			TransformComponent* bound = static_cast<TransformComponent*>(_turrets[i]->GetComponent(Component::Type::Transform));
 
 			//initialize mouuse position
 			SDL_Point mouse;
@@ -44,14 +45,12 @@ void ControlSystem::Process(float dt)
 void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	physics->xVelocity = x * 5;
-	physics->yVelocity = y * 5;
 
-	BoundsComponent* bounds = static_cast<BoundsComponent*>(entity->GetComponent(Component::Type::Bounds));
-	bounds->rect.x += physics->xVelocity;
-	bounds->rect.y += physics->yVelocity;
-	bounds->rect.x = (int)bounds->rect.x;
-	bounds->rect.y = (int)bounds->rect.y;
+	physics->xVelocity += x * physics->xAcceleration;
+	physics->yVelocity += y * physics->yAcceleration;
+
+	physics->xDir = x;
+	physics->yDir = y;
 }
 
 void ControlSystem::OnEvent(Event evt)

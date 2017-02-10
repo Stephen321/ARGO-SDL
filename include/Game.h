@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "Debug.h"
-#include "MyContactListener.h"
 
 #include "SDL_image.h"
 #include "Box2D\Box2D.h"
@@ -10,15 +9,20 @@
 #include "Camera2D.h"
 #include "FLInputManager.h"
 
+#include "EntityFactory.h"
+#include "BodyFactory.h"
+
 #include "Entity.h"
 #include "SpriteComponent.h"
-#include "BoundsComponent.h"
+#include "TransformComponent.h"
 #include "PhysicsComponent.h"
+#include "ColliderComponent.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
+#include "CollisionSystem.h"
 
 #include "WeaponSystem.h"
 
@@ -27,10 +31,11 @@
 #include <queue>
 #include <map>
 
-#include "RenderSystem.h"
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
+// Debug
+using namespace Camera2D;
 
 class Game : public EventListener
 {
@@ -58,6 +63,9 @@ private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
+	EntityFactory*					_entityFactory;
+	BodyFactory*					_bodyFactory;
+
 	LevelLoader						_levelLoader;
 
 	InputManager*					_inputManager = InputManager::GetInstance();
@@ -65,7 +73,6 @@ private:
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 
 	b2Vec2							 _gravity;
-	MyContactListener				 _contactListener;
 	b2World							 _world;
 
 	bool							_running;
@@ -75,9 +82,13 @@ private:
 
 	std::vector<Entity*>			_entities;
 	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicSystem;
+	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
+	CollisionSystem					_collisionSystem;
+
+
+
 
 	WeaponSystem					_weaponSystem;
 	
@@ -103,6 +114,12 @@ public:
 	virtual void executeHold()
 	{
 		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeDown()
+	{
+		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
 			m_functions[i]();
 	}
 };
