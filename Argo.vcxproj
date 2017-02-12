@@ -220,6 +220,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
     <ClInclude Include="include\Vector2.h" />
+    <ClInclude Include="SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -232,6 +233,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\CameraSystem.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />

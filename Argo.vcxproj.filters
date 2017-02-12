@@ -129,6 +129,9 @@
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -186,6 +189,9 @@
     </ClCompile>
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
