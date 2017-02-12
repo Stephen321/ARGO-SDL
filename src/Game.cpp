@@ -49,7 +49,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		std::vector<Entity*>::iterator it = _entities.begin();
 		while (it != _entities.end())
 		{
-			if ((*it)->GetType() == Entity::Type::Player)
+			if ((*it)->GetType() == EntityType::Player)
 			{
 				player = *it;
 				break;
@@ -168,24 +168,24 @@ void Game::Render()
 		if (BodyIterator->IsActive())
 		{
 			Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
-			Entity::Type t = e->GetType();
-			if (t == Entity::Type::Player)
+			EntityType t = e->GetType();
+			if (t == EntityType::Player)
 			{
 				SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 			}
-			else if (t == Entity::Type::Checkpoint)
+			else if (t == EntityType::Checkpoint)
 			{
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
 			}
-			else if (t == Entity::Type::Point)
+			else if (t == EntityType::Point)
 			{
 				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
 			}
-			else if (t == Entity::Type::Flag)
+			else if (t == EntityType::Flag)
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
 			}
-			else if(t == Entity::Type::Obstacle)
+			else if(t == EntityType::Obstacle)
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 			}

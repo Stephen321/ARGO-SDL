@@ -129,6 +129,9 @@
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">

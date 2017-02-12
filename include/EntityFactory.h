@@ -16,7 +16,7 @@ public:
 	EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th);
 	~EntityFactory();
 	
-	Entity* CreateEntity(Entity::Type t);
+	Entity* CreateEntity(EntityType t);
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;
