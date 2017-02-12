@@ -2,6 +2,9 @@
 #include <iostream>
 #include "PhysicsComponent.h"
 #include "CollisionComponent.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include "ConstHolder.h"
 
 
 CollisionSystem::CollisionSystem(float updateRate)
@@ -65,8 +68,27 @@ void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifo
 	b2Vec2 normal = worldManifold.normal;
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(player->GetComponent(Component::Type::Physics));
 	float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-	physics->xVelocity += -normal.x * (speed / physics->maxVelocity) * 5.f;
-	physics->yVelocity += -normal.y * (speed / physics->maxVelocity) * 5.f;
+	float normalAngle = atan2f(-normal.y, normal.x) * (180.f / M_PI);
+	float enterAngle = atan2f(-physics->yVelocity, physics->xVelocity) * (180.f / M_PI);
+	if (normalAngle < 0.f)
+		normalAngle += 360.f;
+	if (enterAngle < 0.f)
+		enterAngle += 360.f;
+	float exitAngle = 2 * normalAngle - 180.f - enterAngle;
+	if (exitAngle < 0.f)
+		exitAngle += 360.f;
+	exitAngle *= (M_PI / 180.f);
+	float normalScaler;
+	if (speed == 0.f)
+		normalScaler = 2.f;
+	else
+		normalScaler = 2 * (1 / speed);
+
+	//problem with 270/180/0/360 ???
+	//apply torque as well
+	std::cout << enterAngle << std::endl;
+	physics->xVelocity = (cos(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.x * normalScaler;
+	physics->yVelocity = (-sin(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.y * normalScaler;
 	static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 	
 

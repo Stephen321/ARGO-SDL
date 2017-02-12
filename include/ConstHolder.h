@@ -24,3 +24,4 @@ const uint16 FLAG_MASK = (uint16)EntityType::Player;
 const uint16 POWERUP_MASK = 0; //not used yet
 const uint16 OBSTACLE_MASK = (uint16)EntityType::Player;
 
+const float PLAYER_WALL_RESTITUTION = 0.5f;
