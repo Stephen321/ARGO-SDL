@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="188">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="361">
  <tileset firstgid="1" name="backgroundSpritesheet" tilewidth="64" tileheight="64" tilecount="4" columns="4">
-  <image source="../backgroundSpritesheet.png" width="256" height="64"/>
+  <image source="../../../ARGO_TEST/ARGO_TEXTURE/backgroundSpritesheet.png" width="256" height="64"/>
  </tileset>
  <layer name="Background" width="50" height="50">
   <data encoding="csv">
@@ -28,9 +28,9 @@
 1,1,1,2,2,2,2,1,1,1,1,1,3,3,3,3,3,3,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
 1,1,1,2,2,2,2,2,1,1,2,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,
 1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,
-1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,2,2,1,1,2,2,1,1,
-1,1,1,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,2,2,1,1,
-1,1,1,2,2,2,2,2,2,2,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,1,1,1,1,1,1,2,2,1,1,
+1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,2,2,2,2,2,2,1,1,
+1,1,1,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,1,1,1,2,2,2,2,1,1,
+1,1,1,2,2,2,2,2,2,2,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,1,1,1,1,2,2,2,2,1,1,
 1,1,1,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,3,1,1,1,1,1,1,2,2,2,1,1,
 1,1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,
 1,1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,
@@ -39,7 +39,7 @@
 1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,
 1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,
 1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,
-1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,
+1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,
 1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,
 1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,3,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,
 1,1,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,3,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,
@@ -61,131 +61,457 @@
   <object id="131" name="Checkpoint" type="2" x="1006.06" y="2772.73" width="348.485" height="257.576"/>
   <object id="132" name="Checkpoint" type="1" x="260.606" y="1439.39" width="227.273" height="272.727"/>
   <object id="133" name="Checkpoint" type="4" x="1530.42" y="163.394" width="264.121" height="257.455"/>
-  <object id="134" name="Checkpoint" type="3" x="2815.15" y="1015.15" width="230.303" height="357.576"/>
   <object id="135" name="Flag" x="1888" y="1456" width="64" height="64"/>
   <object id="136" name="PlayerSolo" x="378.061" y="325.333" width="64" height="64"/>
   <object id="138" name="PlayerSolo" x="2736" y="392" width="64" height="64"/>
   <object id="139" name="PlayerSolo" x="2660" y="2760" width="64" height="64"/>
   <object id="140" name="PlayerSolo" x="384" y="2616" width="64" height="64"/>
+  <object id="289" name="Checkpoint" type="3" x="2816" y="1088" width="192" height="256"/>
  </objectgroup>
  <objectgroup color="#00ffff" name="Waypoints">
-  <object id="81" x="1248" y="2700" width="40" height="40"/>
-  <object id="82" x="910.303" y="2907.27" width="40" height="40"/>
-  <object id="83" x="501.212" y="2719.39" width="40" height="40"/>
-  <object id="84" x="292.121" y="2010.3" width="40" height="40"/>
-  <object id="85" x="298.182" y="2283.03" width="40" height="40"/>
-  <object id="86" x="358.788" y="1601.21" width="40" height="40"/>
-  <object id="87" x="301.212" y="1189.09" width="40" height="40"/>
-  <object id="88" x="267.879" y="876.97" width="40" height="40"/>
-  <object id="89" x="576.97" y="246.667" width="40" height="40"/>
-  <object id="90" x="270.909" y="464.848" width="40" height="40"/>
-  <object id="91" x="952.727" y="210.303" width="40" height="40"/>
-  <object id="92" x="1428.48" y="216.364" width="40" height="40"/>
-  <object id="93" x="1601.21" y="470.909" width="40" height="40"/>
-  <object id="94" x="1910.3" y="195.152" width="40" height="40"/>
-  <object id="96" x="1573.94" y="883.03" width="40" height="40"/>
-  <object id="98" x="1758.79" y="1270.91" width="40" height="40"/>
-  <object id="99" x="1807.27" y="1680" width="40" height="40"/>
-  <object id="100" x="1619.39" y="2052.73" width="40" height="40"/>
-  <object id="101" x="1434.55" y="2358.79" width="40" height="40"/>
-  <object id="102" x="1202" y="1134" width="40" height="40"/>
-  <object id="104" x="918" y="1278" width="40" height="40"/>
-  <object id="105" x="638" y="1464" width="40" height="40"/>
-  <object id="106" x="1906" y="1468" width="40" height="40"/>
-  <object id="107" x="2294" y="1366" width="40" height="40"/>
-  <object id="108" x="2978" y="1320" width="40" height="40"/>
-  <object id="109" x="2692" y="1270" width="40" height="40"/>
-  <object id="110" x="2914" y="1070" width="40" height="40"/>
-  <object id="111" x="2904" y="704" width="40" height="40"/>
-  <object id="112" x="2524" y="228" width="40" height="40"/>
-  <object id="113" x="2840" y="442" width="40" height="40"/>
-  <object id="114" x="2234" y="126" width="40" height="40"/>
-  <object id="115" x="2994" y="1560" width="40" height="40"/>
-  <object id="116" x="2994" y="1826" width="40" height="40"/>
-  <object id="117" x="3056" y="2090" width="40" height="40"/>
-  <object id="118" x="3058" y="2330" width="40" height="40"/>
-  <object id="119" x="2864" y="2600" width="40" height="40"/>
-  <object id="120" x="2670" y="2770" width="40" height="40"/>
-  <object id="121" x="2312" y="2920" width="40" height="40"/>
-  <object id="122" x="1930" y="2964" width="40" height="40"/>
-  <object id="123" x="1230" y="2880" width="40" height="40"/>
-  <object id="124" x="1544" y="2934" width="40" height="40"/>
+  <object id="291" name="1" x="256" y="448" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[2]"/>
+   </properties>
+  </object>
+  <object id="293" name="2" x="398.667" y="273.333" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[3]"/>
+   </properties>
+  </object>
+  <object id="294" name="3" x="640" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[4]"/>
+   </properties>
+  </object>
+  <object id="295" name="4" x="1088" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[5]"/>
+   </properties>
+  </object>
+  <object id="296" name="5" x="1408" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[6,7]"/>
+   </properties>
+  </object>
+  <object id="297" name="8" x="1856" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[10,9]"/>
+   </properties>
+  </object>
+  <object id="298" name="7" x="1572" y="384" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[9,52]"/>
+   </properties>
+  </object>
+  <object id="299" name="6" x="1648" y="198.667" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[8,7,9]"/>
+   </properties>
+  </object>
+  <object id="300" name="52" x="1649.33" y="628" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[53]"/>
+   </properties>
+  </object>
+  <object id="301" name="53" x="1600" y="832" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[54]"/>
+   </properties>
+  </object>
+  <object id="302" name="54" x="1585.33" y="1009.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[55,59]"/>
+   </properties>
+  </object>
+  <object id="303" name="55" x="1344" y="1088" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[56]"/>
+   </properties>
+  </object>
+  <object id="304" name="59" x="1728" y="1152" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[60]"/>
+   </properties>
+  </object>
+  <object id="305" name="10" x="2112" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[11]"/>
+   </properties>
+  </object>
+  <object id="306" name="11" x="2368" y="192" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[12]"/>
+   </properties>
+  </object>
+  <object id="307" name="12" x="2560" y="256" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[13]"/>
+   </properties>
+  </object>
+  <object id="308" name="13" x="2752" y="384" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[14]"/>
+   </properties>
+  </object>
+  <object id="309" name="14" x="2880" y="576" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[15]"/>
+   </properties>
+  </object>
+  <object id="310" name="15" x="2944" y="768" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[16]"/>
+   </properties>
+  </object>
+  <object id="311" name="16" x="2880" y="960" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[17]"/>
+   </properties>
+  </object>
+  <object id="312" name="17" x="2942" y="1132" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[18,19]"/>
+   </properties>
+  </object>
+  <object id="313" name="19" x="2942" y="1308" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[20,21]"/>
+   </properties>
+  </object>
+  <object id="314" name="18" x="2746.67" y="1245.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[20,19]"/>
+   </properties>
+  </object>
+  <object id="315" name="63" x="2560" y="1344" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[18,20]"/>
+   </properties>
+  </object>
+  <object id="316" name="62" x="2304" y="1408" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[63]"/>
+   </properties>
+  </object>
+  <object id="317" name="60" x="1856" y="1344" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[61,64]"/>
+   </properties>
+  </object>
+  <object id="318" name="61" x="2048" y="1472" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[62,64]"/>
+   </properties>
+  </object>
+  <object id="319" name="64" x="1856" y="1600" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[65]"/>
+   </properties>
+  </object>
+  <object id="320" name="65" x="1792" y="1856" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[66]"/>
+   </properties>
+  </object>
+  <object id="321" name="66" x="1632" y="2016" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[67]"/>
+   </properties>
+  </object>
+  <object id="322" name="67" x="1453.33" y="2221.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[68]"/>
+   </properties>
+  </object>
+  <object id="323" name="68" x="1425.33" y="2414.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[69]"/>
+   </properties>
+  </object>
+  <object id="324" name="69" x="1264" y="2604" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[36]"/>
+   </properties>
+  </object>
+  <object id="325" name="56" x="1113.33" y="1182.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[57]"/>
+   </properties>
+  </object>
+  <object id="326" name="57" x="932" y="1317.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[58]"/>
+   </properties>
+  </object>
+  <object id="327" name="58" x="712.606" y="1467.15" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[46]"/>
+   </properties>
+  </object>
+  <object id="328" name="46" x="512.364" y="1536" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[]"/>
+   </properties>
+  </object>
+  <object id="329" name="47" x="320" y="1472" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[48]"/>
+   </properties>
+  </object>
+  <object id="330" name="45" x="320" y="1664" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[46,47]"/>
+   </properties>
+  </object>
+  <object id="331" name="48" x="301.333" y="1266.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[49]"/>
+   </properties>
+  </object>
+  <object id="332" name="50" x="256" y="832" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[51]"/>
+   </properties>
+  </object>
+  <object id="333" name="49" x="280" y="1034.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[50]"/>
+   </properties>
+  </object>
+  <object id="334" name="51" x="206.667" y="622.667" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[1]"/>
+   </properties>
+  </object>
+  <object id="335" name="44" x="285.333" y="1897.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[45]"/>
+   </properties>
+  </object>
+  <object id="336" name="43" x="268" y="2105.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[44]"/>
+   </properties>
+  </object>
+  <object id="337" name="42" x="262.667" y="2328" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[43]"/>
+   </properties>
+  </object>
+  <object id="339" name="41" x="300" y="2544" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[42]"/>
+   </properties>
+  </object>
+  <object id="340" name="40" x="368" y="2738.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[41]"/>
+   </properties>
+  </object>
+  <object id="341" name="39" x="576" y="2880" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[40]"/>
+   </properties>
+  </object>
+  <object id="342" name="38" x="812" y="2932" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[39]"/>
+   </properties>
+  </object>
+  <object id="343" name="37" x="1040" y="2930" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[38,36]"/>
+   </properties>
+  </object>
+  <object id="344" name="36" x="1185.33" y="2781.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[]"/>
+   </properties>
+  </object>
+  <object id="345" name="35" x="1286" y="2938" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[36,37]"/>
+   </properties>
+  </object>
+  <object id="346" name="34" x="1524" y="2988" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[35]"/>
+   </properties>
+  </object>
+  <object id="347" name="33" x="1768" y="2990.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[34]"/>
+   </properties>
+  </object>
+  <object id="348" name="32" x="1997.33" y="2957.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[33]"/>
+   </properties>
+  </object>
+  <object id="349" name="30" x="2240" y="2944" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[31]"/>
+   </properties>
+  </object>
+  <object id="350" name="29" x="2496" y="2880" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[30]"/>
+   </properties>
+  </object>
+  <object id="351" name="28" x="2688" y="2816" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[29]"/>
+   </properties>
+  </object>
+  <object id="352" name="27" x="2880" y="2688" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[28]"/>
+   </properties>
+  </object>
+  <object id="353" name="26" x="3008" y="2496" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[27]"/>
+   </properties>
+  </object>
+  <object id="354" name="25" x="3054.67" y="2289.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[26]"/>
+   </properties>
+  </object>
+  <object id="355" name="24" x="3053.33" y="2096" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[25]"/>
+   </properties>
+  </object>
+  <object id="356" name="23" x="3008" y="1920" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[24]"/>
+   </properties>
+  </object>
+  <object id="357" name="22" x="2990.67" y="1717.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[23]"/>
+   </properties>
+  </object>
+  <object id="358" name="21" x="2962.67" y="1522.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[22]"/>
+   </properties>
+  </object>
+  <object id="359" name="9" x="1876" y="405.333" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[52,10]"/>
+   </properties>
+  </object>
+  <object id="360" name="20" x="2780" y="1400" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[19]"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#ff0000" name="Colliders">
-  <object id="39" name="Poly" x="521.212" y="1729.45">
-   <polygon points="0,0 -100,418.715 90.9091,880.533 266.667,1016 381.818,960.582 684.848,640.388 687.879,369.455"/>
+  <object id="190" name="Poly" x="128" y="256">
+   <polygon points="0,0 -64,64 -64,0"/>
   </object>
-  <object id="40" name="Poly" x="540" y="1734">
-   <polygon points="0,0 782,-516 1056,-510 1120,-16 680,372"/>
+  <object id="191" name="Poly" x="320" y="128">
+   <polygon points="0,0 -64,64 -192,128 -192,0"/>
   </object>
-  <object id="66" name="Box" x="1858" y="646" width="126" height="376"/>
-  <object id="69" name="Box" x="1924" y="1026" width="380" height="250"/>
-  <object id="125" name="Poly" x="2250" y="1734.5">
-   <polygon points="0,0 130,946 440,950 698,694 758,560 760,378 696,132 174,2"/>
+  <object id="192" name="Box" x="0" y="320" width="64" height="448"/>
+  <object id="196" name="Poly" x="64" y="768">
+   <polygon points="0,0 128,128 128,1472 64,1536 0,1536"/>
   </object>
-  <object id="126" name="Poly" x="2248" y="1726.5">
-   <polygon points="0,0 -66,66 -260,384 -198,1090 58,1084 124,962"/>
+  <object id="197" name="Poly" x="128" y="2304">
+   <polygon points="0,0 0,128 -64,192 -64,0"/>
   </object>
-  <object id="127" name="Poly" x="1734" y="2494.5">
-   <polygon points="0,0 64,-188 258,-254 320,386"/>
+  <object id="200" name="Poly" x="64" y="2688">
+   <polygon points="0,0 64,64 64,192 0,192"/>
   </object>
-  <object id="128" name="Poly" x="1413.33" y="2784.5">
-   <polygon points="0,0 317.333,-288 638.667,94.6667 64,92"/>
+  <object id="201" name="Box" x="0" y="2496" width="64" height="192"/>
+  <object id="203" name="Poly" x="128" y="2880">
+   <polygon points="0,0 128,128 0,128"/>
   </object>
-  <object id="129" name="Poly" x="2816" y="1537.5">
-   <polygon points="0,0 -186,1 -376,199 124,331"/>
+  <object id="204" name="Poly" x="256" y="3008">
+   <polygon points="0,0 64,0 192,64 0,64"/>
   </object>
-  <object id="130" name="Box" x="2822" y="1471.5" width="124" height="193"/>
-  <object id="143" name="Poly" x="2177.33" y="384">
-   <polygon points="0,0 -194.667,256 129.333,830.667 384,830.667 572,701.333 573.333,193.333 442.667,65.3333 317.333,-1.33333"/>
+  <object id="205" name="Poly" x="448" y="3072">
+   <polygon points="0,0 128,0 192,64 0,64"/>
   </object>
-  <object id="147" name="Poly" x="392" y="514">
-   <polygon points="0,0 -6,568 60,828 124,890 246,892 372,824 502,696 62,-68"/>
+  <object id="206" name="Poly" x="1088" y="3136">
+   <polygon points="0,0 64,-64 256,-64 320,0"/>
   </object>
-  <object id="149" name="Poly" x="454" y="448">
-   <polygon points="0,0 254,-60 572,-60 1014,68 958,444 438,756"/>
+  <object id="208" name="Box" x="640" y="3136" width="448" height="64"/>
+  <object id="209" name="Box" x="1408" y="3136" width="512" height="64"/>
+  <object id="211" name="Poly" x="1920" y="3136">
+   <polygon points="0,0 64,-64 512,-64 640,0"/>
   </object>
-  <object id="150" name="Poly" x="62" y="316">
-   <polygon points="0,0 260,-192 260,-318 -65.0303,-319.03 -58.9697,2.18182"/>
+  <object id="212" name="Box" x="2560" y="3136" width="256" height="64"/>
+  <object id="215" name="Poly" x="2816" y="3136">
+   <polygon points="0,0 64,-128 128,-192 128,0"/>
   </object>
-  <object id="151" name="Poly" x="57.5758" y="830.303">
-   <polygon points="0,0 133.333,66.6667 130.303,1406.06 0,1663.64 -57.5758,1666.67 -54.5455,0"/>
+  <object id="217" name="Poly" x="2944" y="2944">
+   <polygon points="0,0 64,-128 192,-256 192,0"/>
   </object>
-  <object id="152" name="Box" x="3.0303" y="318.182" width="54.5455" height="512.121"/>
-  <object id="162" name="Poly" x="2630" y="2">
-   <polygon points="0,0 -2,182 128,252 190,0"/>
+  <object id="219" name="Box" x="3136" y="1920" width="64" height="768"/>
+  <object id="221" name="Poly" x="3136" y="1920">
+   <polygon points="0,0 -64,-64 -64,-576 0,-640"/>
   </object>
-  <object id="163" name="Poly" x="2824" y="2">
-   <polygon points="0,0 -64,254 250,572 376,573.758"/>
+  <object id="222" name="Poly" x="3136" y="1088">
+   <polygon points="0,0 -64,-64 -64,-320 0,-384"/>
   </object>
-  <object id="165" name="Poly" x="3140" y="580">
-   <polygon points="0,0 -2,124 -72,192 -68,444 58,442 58,0"/>
+  <object id="223" name="Box" x="3136" y="1088" width="64" height="192"/>
+  <object id="228" name="Box" x="3136" y="640" width="64" height="64"/>
+  <object id="234" name="Poly" x="3136" y="640">
+   <polygon points="0,0 -384,-384 0,-384"/>
   </object>
-  <object id="166" name="Poly" x="3198" y="1030">
-   <polygon points="0,0 -60,0 -62,252 -126,318 -122,824 0,822"/>
+  <object id="235" name="Poly" x="2752" y="256">
+   <polygon points="0,0 -128,-64 -192,-192 0,-192"/>
   </object>
-  <object id="167" name="Poly" x="3136" y="2690">
-   <polygon points="0,0 -258,322 -254,514 58,504"/>
+  <object id="240" name="Poly" x="704" y="384">
+   <polygon points="0,0 -256,64 -320,128 -320,704 -256,960 -192,1024 -64,1024 64,960"/>
   </object>
-  <object id="168" name="Box" x="3138" y="1856" width="70" height="832"/>
-  <object id="170" name="Poly" x="2880" y="3136">
-   <polygon points="0,0 -2,66 -1534,64 -1534,0 -958,0 -894,-64 -452,-64 -386,-2"/>
+  <object id="243" name="Poly" x="704" y="384">
+   <polygon points="0,0 320,0 192,832 64,960"/>
   </object>
-  <object id="174" name="Poly" x="1344" y="3072">
-   <polygon points="0,0 -192,0 -258,66 -766,66 -766,130 -4,126"/>
+  <object id="248" name="Poly" x="1216" y="1024">
+   <polygon points="0,0 128,-64 192,-128 256,-256 256,-512 192,-576 -64,-576"/>
   </object>
-  <object id="175" name="Poly" x="576" y="3074">
-   <polygon points="0,0 -258,-64 -572.97,126 -0.242424,126"/>
+  <object id="250" name="Poly" x="1152" y="448">
+   <polygon points="0,0 -128,-64 -256,768 0,640 64,576"/>
   </object>
-  <object id="176" name="Poly" x="315.152" y="3012.12">
-   <polygon points="0,0 -127.273,-66.6667 -318.182,-63.6364"/>
+  <object id="251" name="Poly" x="512" y="1728">
+   <polygon points="0,0 -64,128 -128,384 -128,512 -64,640 0,832 192,1024 384,1024"/>
   </object>
-  <object id="178" name="Poly" x="60.6061" y="2503.03">
-   <polygon points="0,0 3.0303,181.818 66.6667,251.515 63.6364,436.364 -60.6061,442.424 -54.5455,6.06061"/>
+  <object id="254" name="Poly" x="512" y="1728">
+   <polygon points="0,0 256,-128 704,512 704,704 384,1024"/>
   </object>
-  <object id="184" name="Poly" x="324" y="0">
-   <polygon points="0,0 -1,128 764,127.5 828,64 827.5,0.5"/>
+  <object id="259" name="Poly" x="1216" y="2240">
+   <polygon points="0,0 -448,-640 -384,-704 -256,-768 64,-128"/>
   </object>
-  <object id="185" name="Box" x="1154.67" y="1.33333" width="1472" height="64"/>
+  <object id="260" name="Poly" x="960" y="1472">
+   <polygon points="0,0 192,-192 320,-256 640,-256 704,-128 704,256 320,640"/>
+  </object>
+  <object id="268" name="Poly" x="1984" y="576">
+   <polygon points="0,0 192,-192 512,-192 640,-128 768,0 768,512 704,576 576,640"/>
+  </object>
+  <object id="269" name="Poly" x="2560" y="1216">
+   <polygon points="0,0 -256,64 -640,64 -704,-192 -704,-576 -576,-640"/>
+  </object>
+  <object id="271" name="Poly" x="1664" y="2496">
+   <polygon points="0,0 -256,256 -256,320 -192,384 384,384 640,320 768,192"/>
+  </object>
+  <object id="276" name="Poly" x="3008" y="2112">
+   <polygon points="0,0 0,192 -64,320 -320,576 -576,576 -1344,384 -1280,256 -960,-64"/>
+  </object>
+  <object id="278" name="Poly" x="3008" y="2112">
+   <polygon points="0,0 -960,-64 -832,-320 -768,-384 -512,-448 -64,-256"/>
+  </object>
+  <object id="279" name="Poly" x="2944" y="1856">
+   <polygon points="0,0 -448,-192 -384,-256 -320,-320 -128,-320 -64,-192"/>
+  </object>
+  <object id="281" name="Poly" x="320" y="64">
+   <polygon points="0,0 0,64 768,64 896,0"/>
+  </object>
+  <object id="287" name="Box" x="1216" y="0" width="1344" height="64"/>
  </objectgroup>
 </map>

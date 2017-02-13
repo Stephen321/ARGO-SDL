@@ -40,6 +40,9 @@
     <Filter Include="Source Files\Factory">
       <UniqueIdentifier>{009abd5c-7c85-4726-a96d-b5151b79e69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AStar">
+      <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -128,6 +131,15 @@
     </ClInclude>
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graph.h">
+      <Filter>Header Files\AStar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphArc.h">
+      <Filter>Header Files\AStar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphNode.h">
+      <Filter>Header Files\AStar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
