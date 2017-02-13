@@ -205,6 +205,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
+    <ClInclude Include="include\EntityType.h" />
     <ClInclude Include="include\FLInputManager.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\HealthComponent.h" />

@@ -316,15 +316,15 @@ void InputManager::ProcessInput()
 		//* Print Key Code on Press
 		if (evn.type == SDL_KEYDOWN) 
 		{ 
-			std::cout << evn.key.keysym.sym << std::endl; 
+			//std::cout << evn.key.keysym.sym << std::endl; 
 		}
 		else if (evn.type == SDL_CONTROLLERBUTTONDOWN) 
 		{ 
-			std::cout << std::to_string(evn.cbutton.button) << std::endl; 
+			//std::cout << std::to_string(evn.cbutton.button) << std::endl; 
 		}
 		else if (evn.type == SDL_MOUSEBUTTONDOWN) 
 		{
-			std::cout << std::to_string(evn.button.button) << std::endl;
+			//std::cout << std::to_string(evn.button.button) << std::endl;
 		}
 
 
