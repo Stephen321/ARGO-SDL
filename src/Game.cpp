@@ -84,6 +84,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
 		_inputManager->AddKey(Event::d, dIn, this);
 
+		//shooting
 		Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
 		_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
