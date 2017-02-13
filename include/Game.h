@@ -13,16 +13,14 @@
 #include "BodyFactory.h"
 
 #include "Entity.h"
-#include "SpriteComponent.h"
-#include "TransformComponent.h"
-#include "PhysicsComponent.h"
-#include "ColliderComponent.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
+#include "GunSystem.h"
+#include "FiringSystem.h"
 
 #include "WeaponSystem.h"
 
@@ -80,16 +78,16 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 
-	std::vector<Entity*>			_entities;
+	std::vector<Entity*>*			_entities;
+
 	RenderSystem					_renderSystem;
 	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
 	CollisionSystem					_collisionSystem;
 
-
-
-
+	GunSystem						_gunSystem;
+	FiringSystem*					_firingSystem;
 	WeaponSystem					_weaponSystem;
 	
 };

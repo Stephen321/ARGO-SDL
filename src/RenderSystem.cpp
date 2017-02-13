@@ -23,19 +23,19 @@ void RenderSystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
-				TransformComponent* bound = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-				SDL_Rect scaledRect = bound->rect;
-				scaledRect.w *= bound->scaleX;
-				scaledRect.h *= bound->scaleY;
-				scaledRect.x -= bound->origin.x * bound->scaleX;
-				scaledRect.y -= bound->origin.y * bound->scaleY;
+				SDL_Rect scaledRect = transform->rect;
+				scaledRect.w *= transform->scaleX;
+				scaledRect.h *= transform->scaleY;
+				scaledRect.x -= transform->origin.x * transform->scaleX;
+				scaledRect.y -= transform->origin.y * transform->scaleY;
 
-				if (bound != nullptr && sprite != nullptr)
+				if (transform != nullptr && sprite != nullptr)
 				{
 					//Render to screen
-					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(scaledRect), bound->angle, &bound->origin, SDL_FLIP_NONE);
+					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(scaledRect), transform->angle, &transform->origin, SDL_FLIP_NONE);
 				}
 			}
 		}

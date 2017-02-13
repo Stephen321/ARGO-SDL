@@ -40,11 +40,6 @@ int main(int argc, char** argv)
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
 		}
 	}
-	while(game->IsRunning())
-	{
-		game->Update();
-		game->Render();
-	}
 
 	DEBUG_MSG("Calling Cleanup");
 	game->CleanUp();

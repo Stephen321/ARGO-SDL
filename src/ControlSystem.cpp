@@ -3,6 +3,7 @@
 #include "ControlComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
+#include "GunComponent.h"
 
 #include <iostream>
 
@@ -27,7 +28,7 @@ void ControlSystem::Process(float dt)
 
 		for (int i = 0; i < _turrets.size(); i++)
 		{
-			TransformComponent* bound = static_cast<TransformComponent*>(_turrets[i]->GetComponent(Component::Type::Transform));
+			TransformComponent* transform = static_cast<TransformComponent*>(_turrets[i]->GetComponent(Component::Type::Transform));
 
 			//initialize mouuse position
 			SDL_Point mouse;
@@ -36,8 +37,8 @@ void ControlSystem::Process(float dt)
 			//calculate mouse position to world
 			Camera2D::Point convertedPoint = _camera->screenToWorld(Camera2D::Point(mouse.x, mouse.y));
 
-			Camera2D::Point difference = { convertedPoint.x - bound->rect.x + bound->origin.x, convertedPoint.y - bound->rect.y + bound->origin.y };
-			bound->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
+			Camera2D::Point difference = { convertedPoint.x - transform->rect.x + transform->origin.x, convertedPoint.y - transform->rect.y + transform->origin.y };
+			transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 		}
 	}
 }
@@ -46,11 +47,19 @@ void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
 
-	//physics->xVelocity += x * physics->xAcceleration;
-	//physics->yVelocity += y * physics->yAcceleration;
-
 	physics->xDir = x;
 	physics->yDir = y;
+}
+
+void ControlSystem::FireBullet(Entity*& entity)
+{
+	GunComponent* gun = static_cast<GunComponent*>(entity->GetComponent(Component::Type::Gun));
+	TransformComponent* transform = static_cast<TransformComponent*>(entity->GetComponent(Component::Type::Transform));
+	
+	if (gun->ammo > 0)
+	{
+		gun->triggered = true;
+	}
 }
 
 void ControlSystem::OnEvent(Event evt)

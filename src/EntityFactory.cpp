@@ -5,14 +5,17 @@
 #include "TransformComponent.h"
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
+#include "GunComponent.h"
 
 
 
-EntityFactory::EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th) : 
+EntityFactory::EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, GunSystem* gs, FiringSystem* fs, std::map<TextureID, SDL_Texture*>* th) :
 	_renderSystem(rs),
 	_cameraSystem(cs),
 	_physicSystem(ps),
 	_controlSystem(ctls),
+	_gunSystem(gs),
+	_firingSystem(fs),
 	_textureHolder(th)
 {
 }
@@ -126,9 +129,12 @@ Entity* EntityFactory::CreateWeaponEntity()
 
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
+	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
 
 	_renderSystem->AddEntity(weapon);
 	_controlSystem->AddTurret(weapon);
+	_gunSystem->AddEntity(weapon);
+	_firingSystem->AddEntity(weapon);
 
 	return weapon;
 }
@@ -136,9 +142,11 @@ Entity* EntityFactory::CreateBulletEntity()
 {
 	Entity* bullet = new Entity(Entity::Type::Bullet);
 
-	bullet->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet]);
+
+	bullet->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	bullet->AddComponent(spriteComponent);
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
-	bullet->AddComponent(new TransformComponent());
 	bullet->AddComponent(new ColliderComponent(nullptr));
 
 	_renderSystem->AddEntity(bullet);

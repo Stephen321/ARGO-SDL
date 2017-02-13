@@ -16,6 +16,8 @@ Game::Game()
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
+	, _firingSystem(new FiringSystem(0))
+	, _gunSystem(0)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicsSystem()
 	, _controlSystem(new ControlSystem(&_cameraSystem.getCamera(), 0.0f))
@@ -23,11 +25,15 @@ Game::Game()
 	, _world(_gravity)
 	, _entityFactory(nullptr)
 	, _bodyFactory(nullptr)
+	, _entities(new std::vector<Entity*>())
 {
 	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
-	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
+	
+	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_gunSystem, _firingSystem, &_textureHolder);
 	_bodyFactory = new BodyFactory(&_world);
+
+	_firingSystem->Initialize(_entities, _entityFactory, _bodyFactory);
 }
 
 Game::~Game()
@@ -47,8 +53,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		LoadContent();
 
 		Entity* player = nullptr;
-		std::vector<Entity*>::iterator it = _entities.begin();
-		while (it != _entities.end())
+		std::vector<Entity*>::iterator it = _entities->begin();
+		while (it != _entities->end())
 		{
 			if ((*it)->GetType() == Entity::Type::Player)
 			{
@@ -58,17 +64,6 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			it++;
 		}
 
-		//CREATE A GUN COMPONENT WHICH HOLDS
-		//canfire
-		//fireTimer
-		//ammo
-
-		//GUN SYSTEM WHICH DEALS WITH GUN COMPONENT
-
-		//CREATE A FIRING SYSTEM WHICH TAKES A WEAPON, CHECKS IF IT IS TRIGGERED
-		//IF IT IS TRIGGERED, CREATE A BULLET AND ADD IT TO THE LIST OF ENTITITES
-		
-		
 		Entity* weapon = _entityFactory->CreateEntity(Entity::Type::Weapon);
 
 		assert(weapon != nullptr);
@@ -88,6 +83,9 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
 		_inputManager->AddKey(Event::d, dIn, this);
+
+		Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
+		_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 		_inputManager->AddListener(Event::ESCAPE, this);
 	}
@@ -135,12 +133,13 @@ void Game::LoadContent()
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
 
+	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory);
+	_levelLoader.LoadJson("Media/Json/Map.json", _entities,_entityFactory, _bodyFactory);
 	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -161,6 +160,8 @@ void Game::Update()
 	_physicsSystem.Process(dt);
 	_collisionSystem.Process(dt);
 	_weaponSystem.Process(dt);
+	_gunSystem.Process(dt);
+	_firingSystem->Process(dt);
 
 	_controlSystem->Process(dt);
 
@@ -270,11 +271,11 @@ void Game::CleanUp()
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 
-	for (int i = 0; i < _entities.size(); i++)
+	for (int i = 0; i < _entities->size(); i++)
 	{
-		delete _entities[i];
+		delete _entities->at(i);
 	}
-	_entities.clear();
+	_entities->clear();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);

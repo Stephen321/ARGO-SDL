@@ -20,9 +20,9 @@ void CameraSystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
-				TransformComponent* bound = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-				centre.x += bound->rect.x + bound->rect.w * 0.5f;
-				centre.y += bound->rect.y + bound->rect.h * 0.5f;
+				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+				centre.x += transform->rect.x + transform->rect.w * 0.5f;
+				centre.y += transform->rect.y + transform->rect.h * 0.5f;
 			}
 			if ((*it).second.empty() == false)
 			{

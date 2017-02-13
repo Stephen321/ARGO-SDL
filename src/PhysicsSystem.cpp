@@ -29,8 +29,9 @@ void PhysicsSystem::Process(float dt)
 			for (Entity* e : (*it).second)
 			{
 				PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-				TransformComponent* bounds = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-				ColliderComponent* collision = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+
 				float maxVelocity = physics->maxVelocity;
 
 				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
@@ -49,14 +50,13 @@ void PhysicsSystem::Process(float dt)
 				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.1f) { physics->xVelocity = 0.f; }
 				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.1f) { physics->yVelocity = 0.f; }
 
-				collision->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
+				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				
-				bounds->rect.x = (int)metersToPixels(collision->body->GetPosition().x);
-				bounds->rect.y = (int)metersToPixels(collision->body->GetPosition().y);
+				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
 				physics->xDir = 0;
 				physics->yDir = 0;
-				std::cout << "Velcoity.x: " << collision->body->GetLinearVelocity().x << " y: " << collision->body->GetLinearVelocity().y << std::endl;
 			}
 		}
 	}

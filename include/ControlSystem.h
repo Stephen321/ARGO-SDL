@@ -15,7 +15,10 @@ public:
 	void					Process(float dt = 0.f) override;
 
 	void					MovePlayer(int _x, int _y, Entity*& entity);
+	void					FireBullet(Entity*& entity);
+
 	void					OnEvent(Event evt) override;
+
 	void					AddTurret(Entity* entity);
 	void					RemoveTurret(Entity* entity);
 

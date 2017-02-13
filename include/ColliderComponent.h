@@ -20,4 +20,3 @@ public:
 public:
 	b2Body* body;
 };
-

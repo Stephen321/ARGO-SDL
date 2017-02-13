@@ -25,13 +25,11 @@ void WeaponSystem::Process(float dt)
 		{
 			for (std::pair<Entity*, Entity*> e : (*it).second)
 			{
-				TransformComponent* bound1 = static_cast<TransformComponent*>(e.first->GetComponent(Component::Type::Transform));
-				TransformComponent* bound2 = static_cast<TransformComponent*>(e.second->GetComponent(Component::Type::Transform));
+				TransformComponent* transform1 = static_cast<TransformComponent*>(e.first->GetComponent(Component::Type::Transform));
+				TransformComponent* transform2 = static_cast<TransformComponent*>(e.second->GetComponent(Component::Type::Transform));
 
-				bound2->rect.x = bound1->rect.x;// +(cos(bound1->angle * M_PI / 180.0f) * (bound1->origin.x + bound2->origin.x));
-				bound2->rect.y = bound1->rect.y;// +(sin(bound1->angle * M_PI / 180.0f) * (bound1->origin.y + bound2->origin.y));
-
-				bound2->angle = bound1->angle;
+				transform2->rect.x = transform1->rect.x;
+				transform2->rect.y = transform1->rect.y;
 			}
 		}
 	}

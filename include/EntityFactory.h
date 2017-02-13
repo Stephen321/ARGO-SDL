@@ -9,11 +9,16 @@
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
+#include "GunSystem.h"
+#include "FiringSystem.h"
+
+
+class FiringSystem;
 
 class EntityFactory
 {
 public: 
-										EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th);
+										EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, GunSystem* gs, FiringSystem* fs, std::map<TextureID, SDL_Texture*>* th);
 										~EntityFactory();
 	
 	Entity*								CreateEntity(Entity::Type t);
@@ -36,5 +41,7 @@ private:
 	CameraSystem*						_cameraSystem;
 	PhysicsSystem*						_physicSystem;
 	ControlSystem*						_controlSystem;
+	GunSystem*							_gunSystem;
+	FiringSystem*						_firingSystem;
 };
 #endif
