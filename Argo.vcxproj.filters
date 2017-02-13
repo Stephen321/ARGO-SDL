@@ -140,12 +140,18 @@
     </ClInclude>
     <ClInclude Include="include\GraphNode.h">
       <Filter>Header Files\AStar</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="include\SceneManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\EntityType.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicTypes.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\test.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -135,11 +135,13 @@
                  "name":"1",
                  "properties":
                     {
-                     "neighbour":"[2]"
+                     "neighbour":[2],
+                     "node":1
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -154,18 +156,20 @@
                  "name":"2",
                  "properties":
                     {
-                     "neighbour":"[3]"
+                     "neighbour":[3],
+                     "node":2
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":398.666666666667,
-                 "y":273.333333333333
+                 "x":398.667,
+                 "y":273.333
                 }, 
                 {
                  "height":32,
@@ -173,11 +177,13 @@
                  "name":"3",
                  "properties":
                     {
-                     "neighbour":"[4]"
+                     "neighbour":[4],
+                     "node":3
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -192,11 +198,13 @@
                  "name":"4",
                  "properties":
                     {
-                     "neighbour":"[5]"
+                     "neighbour":[5],
+                     "node":4
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -211,11 +219,13 @@
                  "name":"5",
                  "properties":
                     {
-                     "neighbour":"[6,7]"
+                     "neighbour":[6,7],
+                     "node":5
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -230,18 +240,20 @@
                  "name":"8",
                  "properties":
                     {
-                     "neighbour":"[10,9]"
+                     "neighbour":[10,9],
+                     "node":8
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1856,
-                 "y":192
+                 "x":1876,
+                 "y":201.333333333333
                 }, 
                 {
                  "height":32,
@@ -249,18 +261,20 @@
                  "name":"7",
                  "properties":
                     {
-                     "neighbour":"[9,52]"
+                     "neighbour":[9,50],
+                     "node":7
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1572,
-                 "y":384
+                 "x":1636,
+                 "y":400
                 }, 
                 {
                  "height":32,
@@ -268,49 +282,55 @@
                  "name":"6",
                  "properties":
                     {
-                     "neighbour":"[8,7,9]"
+                     "neighbour":[8,7,9],
+                     "node":6
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":1648,
-                 "y":198.666666666667
+                 "y":198.667
                 }, 
                 {
                  "height":32,
                  "id":300,
-                 "name":"52",
+                 "name":"50",
                  "properties":
                     {
-                     "neighbour":"[53]"
+                     "neighbour":[51],
+                     "node":50
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1649.33333333333,
+                 "x":1649.33,
                  "y":628
                 }, 
                 {
                  "height":32,
                  "id":301,
-                 "name":"53",
+                 "name":"51",
                  "properties":
                     {
-                     "neighbour":"[54]"
+                     "neighbour":[52],
+                     "node":51
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -322,33 +342,37 @@
                 {
                  "height":32,
                  "id":302,
-                 "name":"54",
+                 "name":"52",
                  "properties":
                     {
-                     "neighbour":"[55,59]"
+                     "neighbour":[53,57],
+                     "node":52
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1585.33333333333,
-                 "y":1009.33333333333
+                 "x":1585.33,
+                 "y":1009.33
                 }, 
                 {
                  "height":32,
                  "id":303,
-                 "name":"55",
+                 "name":"53",
                  "properties":
                     {
-                     "neighbour":"[56]"
+                     "neighbour":[54],
+                     "node":53
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -360,14 +384,16 @@
                 {
                  "height":32,
                  "id":304,
-                 "name":"59",
+                 "name":"57",
                  "properties":
                     {
-                     "neighbour":"[60]"
+                     "neighbour":[58],
+                     "node":57
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -382,11 +408,13 @@
                  "name":"10",
                  "properties":
                     {
-                     "neighbour":"[11]"
+                     "neighbour":[11],
+                     "node":10
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -401,11 +429,13 @@
                  "name":"11",
                  "properties":
                     {
-                     "neighbour":"[12]"
+                     "neighbour":[12],
+                     "node":11
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -420,11 +450,13 @@
                  "name":"12",
                  "properties":
                     {
-                     "neighbour":"[13]"
+                     "neighbour":[13],
+                     "node":12
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -439,11 +471,13 @@
                  "name":"13",
                  "properties":
                     {
-                     "neighbour":"[14]"
+                     "neighbour":[14],
+                     "node":13
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -458,11 +492,13 @@
                  "name":"14",
                  "properties":
                     {
-                     "neighbour":"[15]"
+                     "neighbour":[15],
+                     "node":14
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -477,11 +513,13 @@
                  "name":"15",
                  "properties":
                     {
-                     "neighbour":"[16]"
+                     "neighbour":[16],
+                     "node":15
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -496,11 +534,13 @@
                  "name":"16",
                  "properties":
                     {
-                     "neighbour":"[17]"
+                     "neighbour":[17],
+                     "node":16
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -515,11 +555,13 @@
                  "name":"17",
                  "properties":
                     {
-                     "neighbour":"[18,19]"
+                     "neighbour":[18,19],
+                     "node":17
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -534,11 +576,13 @@
                  "name":"19",
                  "properties":
                     {
-                     "neighbour":"[20,21]"
+                     "neighbour":[20,21],
+                     "node":19
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -553,30 +597,34 @@
                  "name":"18",
                  "properties":
                     {
-                     "neighbour":"[20,19]"
+                     "neighbour":[20,19],
+                     "node":18
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":2746.66666666667,
-                 "y":1245.33333333333
+                 "x":2746.67,
+                 "y":1245.33
                 }, 
                 {
                  "height":32,
                  "id":315,
-                 "name":"63",
+                 "name":"61",
                  "properties":
                     {
-                     "neighbour":"[18,20]"
+                     "neighbour":[18,20],
+                     "node":61
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -588,14 +636,16 @@
                 {
                  "height":32,
                  "id":316,
-                 "name":"62",
+                 "name":"60",
                  "properties":
                     {
-                     "neighbour":"[63]"
+                     "neighbour":[61],
+                     "node":60
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -607,14 +657,16 @@
                 {
                  "height":32,
                  "id":317,
-                 "name":"60",
+                 "name":"58",
                  "properties":
                     {
-                     "neighbour":"[61,64]"
+                     "neighbour":[59,62],
+                     "node":58
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -626,14 +678,16 @@
                 {
                  "height":32,
                  "id":318,
-                 "name":"61",
+                 "name":"59",
                  "properties":
                     {
-                     "neighbour":"[62,64]"
+                     "neighbour":[60,62],
+                     "node":59
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -645,14 +699,16 @@
                 {
                  "height":32,
                  "id":319,
-                 "name":"64",
+                 "name":"62",
                  "properties":
                     {
-                     "neighbour":"[65]"
+                     "neighbour":[63],
+                     "node":62
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -664,14 +720,16 @@
                 {
                  "height":32,
                  "id":320,
-                 "name":"65",
+                 "name":"63",
                  "properties":
                     {
-                     "neighbour":"[66]"
+                     "neighbour":[64],
+                     "node":63
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -683,14 +741,16 @@
                 {
                  "height":32,
                  "id":321,
-                 "name":"66",
+                 "name":"64",
                  "properties":
                     {
-                     "neighbour":"[67]"
+                     "neighbour":[65],
+                     "node":64
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -702,52 +762,58 @@
                 {
                  "height":32,
                  "id":322,
-                 "name":"67",
+                 "name":"65",
                  "properties":
                     {
-                     "neighbour":"[68]"
+                     "neighbour":[66],
+                     "node":65
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1453.33333333333,
-                 "y":2221.33333333333
+                 "x":1453.33,
+                 "y":2221.33
                 }, 
                 {
                  "height":32,
                  "id":323,
-                 "name":"68",
+                 "name":"66",
                  "properties":
                     {
-                     "neighbour":"[69]"
+                     "neighbour":[67],
+                     "node":66
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1425.33333333333,
-                 "y":2414.66666666667
+                 "x":1425.33,
+                 "y":2414.67
                 }, 
                 {
                  "height":32,
                  "id":324,
-                 "name":"69",
+                 "name":"67",
                  "properties":
                     {
-                     "neighbour":"[36]"
+                     "neighbour":[35],
+                     "node":67
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -759,109 +825,121 @@
                 {
                  "height":32,
                  "id":325,
-                 "name":"56",
+                 "name":"54",
                  "properties":
                     {
-                     "neighbour":"[57]"
+                     "neighbour":[55],
+                     "node":54
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1113.33333333333,
-                 "y":1182.66666666667
+                 "x":1113.33,
+                 "y":1182.67
                 }, 
                 {
                  "height":32,
                  "id":326,
-                 "name":"57",
+                 "name":"55",
                  "properties":
                     {
-                     "neighbour":"[58]"
+                     "neighbour":[56],
+                     "node":55
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":932,
-                 "y":1317.33333333333
+                 "y":1317.33
                 }, 
                 {
                  "height":32,
                  "id":327,
-                 "name":"58",
+                 "name":"56",
                  "properties":
                     {
-                     "neighbour":"[46]"
+                     "neighbour":[45],
+                     "node":56
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":712.606060606061,
-                 "y":1467.15151515152
+                 "x":712.606,
+                 "y":1467.15
                 }, 
                 {
                  "height":32,
                  "id":328,
-                 "name":"46",
+                 "name":"45",
                  "properties":
                     {
-                     "neighbour":"[]"
+                     "neighbour":[46],
+                     "node":45
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":512.363636363636,
+                 "x":512.364,
                  "y":1536
                 }, 
                 {
                  "height":32,
                  "id":329,
-                 "name":"47",
+                 "name":"46",
                  "properties":
                     {
-                     "neighbour":"[48]"
+                     "neighbour":[47],
+                     "node":46
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":320,
-                 "y":1472
+                 "x":321.333333333333,
+                 "y":1448
                 }, 
                 {
                  "height":32,
                  "id":330,
-                 "name":"45",
+                 "name":"44",
                  "properties":
                     {
-                     "neighbour":"[46,47]"
+                     "neighbour":[45,46],
+                     "node":44
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -873,33 +951,37 @@
                 {
                  "height":32,
                  "id":331,
-                 "name":"48",
+                 "name":"47",
                  "properties":
                     {
-                     "neighbour":"[49]"
+                     "neighbour":[48],
+                     "node":47
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":301.333333333333,
-                 "y":1266.66666666667
+                 "x":301.333,
+                 "y":1266.67
                 }, 
                 {
                  "height":32,
                  "id":332,
-                 "name":"50",
+                 "name":"49",
                  "properties":
                     {
-                     "neighbour":"[51]"
+                     "neighbour":[0],
+                     "node":49
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -911,109 +993,121 @@
                 {
                  "height":32,
                  "id":333,
-                 "name":"49",
+                 "name":"48",
                  "properties":
                     {
-                     "neighbour":"[50]"
+                     "neighbour":[49],
+                     "node":48
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":280,
-                 "y":1034.66666666667
+                 "y":1034.67
                 }, 
                 {
                  "height":32,
                  "id":334,
-                 "name":"51",
+                 "name":"0",
                  "properties":
                     {
-                     "neighbour":"[1]"
+                     "neighbour":[1],
+                     "node":0
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":206.666666666667,
-                 "y":622.666666666667
+                 "x":206.667,
+                 "y":622.667
                 }, 
                 {
                  "height":32,
                  "id":335,
-                 "name":"44",
+                 "name":"43",
                  "properties":
                     {
-                     "neighbour":"[45]"
+                     "neighbour":[44],
+                     "node":43
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":285.333333333333,
-                 "y":1897.33333333333
+                 "x":285.333,
+                 "y":1897.33
                 }, 
                 {
                  "height":32,
                  "id":336,
-                 "name":"43",
+                 "name":"42",
                  "properties":
                     {
-                     "neighbour":"[44]"
+                     "neighbour":[43],
+                     "node":42
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":268,
-                 "y":2105.33333333333
+                 "y":2105.33
                 }, 
                 {
                  "height":32,
                  "id":337,
-                 "name":"42",
+                 "name":"41",
                  "properties":
                     {
-                     "neighbour":"[43]"
+                     "neighbour":[42],
+                     "node":41
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":262.666666666667,
+                 "x":262.667,
                  "y":2328
                 }, 
                 {
                  "height":32,
                  "id":339,
-                 "name":"41",
+                 "name":"40",
                  "properties":
                     {
-                     "neighbour":"[42]"
+                     "neighbour":[41],
+                     "node":40
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1025,33 +1119,37 @@
                 {
                  "height":32,
                  "id":340,
-                 "name":"40",
+                 "name":"39",
                  "properties":
                     {
-                     "neighbour":"[41]"
+                     "neighbour":[40],
+                     "node":39
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":368,
-                 "y":2738.66666666667
+                 "y":2738.67
                 }, 
                 {
                  "height":32,
                  "id":341,
-                 "name":"39",
+                 "name":"38",
                  "properties":
                     {
-                     "neighbour":"[40]"
+                     "neighbour":[39],
+                     "node":38
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1063,14 +1161,16 @@
                 {
                  "height":32,
                  "id":342,
-                 "name":"38",
+                 "name":"37",
                  "properties":
                     {
-                     "neighbour":"[39]"
+                     "neighbour":[38],
+                     "node":37
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1082,14 +1182,16 @@
                 {
                  "height":32,
                  "id":343,
-                 "name":"37",
+                 "name":"36",
                  "properties":
                     {
-                     "neighbour":"[38,36]"
+                     "neighbour":[37],
+                     "node":36
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1101,33 +1203,37 @@
                 {
                  "height":32,
                  "id":344,
-                 "name":"36",
+                 "name":"35",
                  "properties":
                     {
-                     "neighbour":"[]"
+                     "neighbour":[36],
+                     "node":35
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1185.33333333333,
-                 "y":2781.33333333333
+                 "x":1185.33,
+                 "y":2781.33
                 }, 
                 {
                  "height":32,
                  "id":345,
-                 "name":"35",
+                 "name":"34",
                  "properties":
                     {
-                     "neighbour":"[36,37]"
+                     "neighbour":[35,36],
+                     "node":34
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1139,14 +1245,16 @@
                 {
                  "height":32,
                  "id":346,
-                 "name":"34",
+                 "name":"33",
                  "properties":
                     {
-                     "neighbour":"[35]"
+                     "neighbour":[34],
+                     "node":33
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1158,40 +1266,44 @@
                 {
                  "height":32,
                  "id":347,
-                 "name":"33",
+                 "name":"32",
                  "properties":
                     {
-                     "neighbour":"[34]"
+                     "neighbour":[33],
+                     "node":32
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
                  "x":1768,
-                 "y":2990.66666666667
+                 "y":2990.67
                 }, 
                 {
                  "height":32,
                  "id":348,
-                 "name":"32",
+                 "name":"31",
                  "properties":
                     {
-                     "neighbour":"[33]"
+                     "neighbour":[33],
+                     "node":31
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1997.33333333333,
-                 "y":2957.33333333333
+                 "x":1997.33,
+                 "y":2957.33
                 }, 
                 {
                  "height":32,
@@ -1199,11 +1311,13 @@
                  "name":"30",
                  "properties":
                     {
-                     "neighbour":"[31]"
+                     "neighbour":[31],
+                     "node":30
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1218,11 +1332,13 @@
                  "name":"29",
                  "properties":
                     {
-                     "neighbour":"[30]"
+                     "neighbour":[30],
+                     "node":29
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1237,11 +1353,13 @@
                  "name":"28",
                  "properties":
                     {
-                     "neighbour":"[29]"
+                     "neighbour":[29],
+                     "node":28
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1256,11 +1374,13 @@
                  "name":"27",
                  "properties":
                     {
-                     "neighbour":"[28]"
+                     "neighbour":[28],
+                     "node":27
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1275,11 +1395,13 @@
                  "name":"26",
                  "properties":
                     {
-                     "neighbour":"[27]"
+                     "neighbour":[27],
+                     "node":26
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1294,18 +1416,20 @@
                  "name":"25",
                  "properties":
                     {
-                     "neighbour":"[26]"
+                     "neighbour":[26],
+                     "node":25
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":3054.66666666667,
-                 "y":2289.33333333333
+                 "x":3054.67,
+                 "y":2289.33
                 }, 
                 {
                  "height":32,
@@ -1313,17 +1437,19 @@
                  "name":"24",
                  "properties":
                     {
-                     "neighbour":"[25]"
+                     "neighbour":[25],
+                     "node":24
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":3053.33333333333,
+                 "x":3053.33,
                  "y":2096
                 }, 
                 {
@@ -1332,11 +1458,13 @@
                  "name":"23",
                  "properties":
                     {
-                     "neighbour":"[24]"
+                     "neighbour":[24],
+                     "node":23
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -1351,18 +1479,20 @@
                  "name":"22",
                  "properties":
                     {
-                     "neighbour":"[23]"
+                     "neighbour":[23],
+                     "node":22
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":2990.66666666667,
-                 "y":1717.33333333333
+                 "x":2990.67,
+                 "y":1717.33
                 }, 
                 {
                  "height":32,
@@ -1370,18 +1500,20 @@
                  "name":"21",
                  "properties":
                     {
-                     "neighbour":"[22]"
+                     "neighbour":[22],
+                     "node":21
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":2962.66666666667,
-                 "y":1522.66666666667
+                 "x":2962.67,
+                 "y":1522.67
                 }, 
                 {
                  "height":32,
@@ -1389,18 +1521,20 @@
                  "name":"9",
                  "properties":
                     {
-                     "neighbour":"[52,10]"
+                     "neighbour":[50,10],
+                     "node":9
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":1876,
-                 "y":405.333333333333
+                 "x":1948,
+                 "y":391.999666666667
                 }, 
                 {
                  "height":32,
@@ -1408,11 +1542,13 @@
                  "name":"20",
                  "properties":
                     {
-                     "neighbour":"[19]"
+                     "neighbour":[21],
+                     "node":20
                     },
                  "propertytypes":
                     {
-                     "neighbour":"string"
+                     "neighbour":"string",
+                     "node":"int"
                     },
                  "rotation":0,
                  "type":"",
@@ -2536,7 +2672,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":361,
+ "nextobjectid":363,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":64,

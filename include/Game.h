@@ -31,10 +31,8 @@
 
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
-#include "GraphNode.h"
-#include "GraphArc.h"
 #include "Graph.h"
-//#include "Graph.h"
+
 // Debug
 using namespace Camera2D;
 
@@ -92,8 +90,7 @@ private:
 	CameraSystem					_cameraSystem;
 	CollisionSystem					_collisionSystem;
 
-
-
+	Graph<string, int, int>			_map;
 
 	
 };

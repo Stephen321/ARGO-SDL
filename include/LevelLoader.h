@@ -7,6 +7,7 @@
 #include "Box2D\Box2D.h"
 #include "EntityFactory.h"
 #include "BodyFactory.h"
+#include "Graph.h"
 
 using namespace rapidjson;
 
@@ -15,7 +16,7 @@ class LevelLoader
 public:
 	LevelLoader() {};
 	~LevelLoader() {};
-	void LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory);
+	void LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string, int, int>* _map);
 
 private:
 	

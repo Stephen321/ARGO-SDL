@@ -22,6 +22,7 @@ Game::Game()
 	, _world(_gravity)
 	, _entityFactory(nullptr)
 	, _bodyFactory(nullptr)
+	, _map()
 {
 	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
@@ -36,6 +37,7 @@ Game::~Game()
 
 bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int height)
 {
+	
 	_running = SetupSDL(window, renderer);
 	
 	_cameraSystem.Init(width, height);
@@ -105,7 +107,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory);
+	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory, &_map);
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }

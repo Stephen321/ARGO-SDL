@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="361">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="363">
  <tileset firstgid="1" name="backgroundSpritesheet" tilewidth="64" tileheight="64" tilecount="4" columns="4">
   <image source="../../../ARGO_TEST/ARGO_TEXTURE/backgroundSpritesheet.png" width="256" height="64"/>
  </tileset>
@@ -72,341 +72,409 @@
   <object id="291" name="1" x="256" y="448" width="32" height="32">
    <properties>
     <property name="neighbour" value="[2]"/>
+    <property name="node" type="int" value="1"/>
    </properties>
   </object>
   <object id="293" name="2" x="398.667" y="273.333" width="32" height="32">
    <properties>
     <property name="neighbour" value="[3]"/>
+    <property name="node" type="int" value="2"/>
    </properties>
   </object>
   <object id="294" name="3" x="640" y="192" width="32" height="32">
    <properties>
     <property name="neighbour" value="[4]"/>
+    <property name="node" type="int" value="3"/>
    </properties>
   </object>
   <object id="295" name="4" x="1088" y="192" width="32" height="32">
    <properties>
     <property name="neighbour" value="[5]"/>
+    <property name="node" type="int" value="4"/>
    </properties>
   </object>
   <object id="296" name="5" x="1408" y="192" width="32" height="32">
    <properties>
     <property name="neighbour" value="[6,7]"/>
+    <property name="node" type="int" value="5"/>
    </properties>
   </object>
-  <object id="297" name="8" x="1856" y="192" width="32" height="32">
+  <object id="297" name="8" x="1876" y="201.333" width="32" height="32">
    <properties>
     <property name="neighbour" value="[10,9]"/>
+    <property name="node" type="int" value="8"/>
    </properties>
   </object>
-  <object id="298" name="7" x="1572" y="384" width="32" height="32">
+  <object id="298" name="7" x="1636" y="400" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[9,52]"/>
+    <property name="neighbour" value="[9,50]"/>
+    <property name="node" type="int" value="7"/>
    </properties>
   </object>
   <object id="299" name="6" x="1648" y="198.667" width="32" height="32">
    <properties>
     <property name="neighbour" value="[8,7,9]"/>
+    <property name="node" type="int" value="6"/>
    </properties>
   </object>
-  <object id="300" name="52" x="1649.33" y="628" width="32" height="32">
+  <object id="300" name="50" x="1649.33" y="628" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[53]"/>
+    <property name="neighbour" value="[51]"/>
+    <property name="node" type="int" value="50"/>
    </properties>
   </object>
-  <object id="301" name="53" x="1600" y="832" width="32" height="32">
+  <object id="301" name="51" x="1600" y="832" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[52]"/>
+    <property name="node" type="int" value="51"/>
+   </properties>
+  </object>
+  <object id="302" name="52" x="1585.33" y="1009.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[53,57]"/>
+    <property name="node" type="int" value="52"/>
+   </properties>
+  </object>
+  <object id="303" name="53" x="1344" y="1088" width="32" height="32">
    <properties>
     <property name="neighbour" value="[54]"/>
+    <property name="node" type="int" value="53"/>
    </properties>
   </object>
-  <object id="302" name="54" x="1585.33" y="1009.33" width="32" height="32">
+  <object id="304" name="57" x="1728" y="1152" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[55,59]"/>
-   </properties>
-  </object>
-  <object id="303" name="55" x="1344" y="1088" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[56]"/>
-   </properties>
-  </object>
-  <object id="304" name="59" x="1728" y="1152" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[60]"/>
+    <property name="neighbour" value="[58]"/>
+    <property name="node" type="int" value="57"/>
    </properties>
   </object>
   <object id="305" name="10" x="2112" y="192" width="32" height="32">
    <properties>
     <property name="neighbour" value="[11]"/>
+    <property name="node" type="int" value="10"/>
    </properties>
   </object>
   <object id="306" name="11" x="2368" y="192" width="32" height="32">
    <properties>
     <property name="neighbour" value="[12]"/>
+    <property name="node" type="int" value="11"/>
    </properties>
   </object>
   <object id="307" name="12" x="2560" y="256" width="32" height="32">
    <properties>
     <property name="neighbour" value="[13]"/>
+    <property name="node" type="int" value="12"/>
    </properties>
   </object>
   <object id="308" name="13" x="2752" y="384" width="32" height="32">
    <properties>
     <property name="neighbour" value="[14]"/>
+    <property name="node" type="int" value="13"/>
    </properties>
   </object>
   <object id="309" name="14" x="2880" y="576" width="32" height="32">
    <properties>
     <property name="neighbour" value="[15]"/>
+    <property name="node" type="int" value="14"/>
    </properties>
   </object>
   <object id="310" name="15" x="2944" y="768" width="32" height="32">
    <properties>
     <property name="neighbour" value="[16]"/>
+    <property name="node" type="int" value="15"/>
    </properties>
   </object>
   <object id="311" name="16" x="2880" y="960" width="32" height="32">
    <properties>
     <property name="neighbour" value="[17]"/>
+    <property name="node" type="int" value="16"/>
    </properties>
   </object>
   <object id="312" name="17" x="2942" y="1132" width="32" height="32">
    <properties>
     <property name="neighbour" value="[18,19]"/>
+    <property name="node" type="int" value="17"/>
    </properties>
   </object>
   <object id="313" name="19" x="2942" y="1308" width="32" height="32">
    <properties>
     <property name="neighbour" value="[20,21]"/>
+    <property name="node" type="int" value="19"/>
    </properties>
   </object>
   <object id="314" name="18" x="2746.67" y="1245.33" width="32" height="32">
    <properties>
     <property name="neighbour" value="[20,19]"/>
+    <property name="node" type="int" value="18"/>
    </properties>
   </object>
-  <object id="315" name="63" x="2560" y="1344" width="32" height="32">
+  <object id="315" name="61" x="2560" y="1344" width="32" height="32">
    <properties>
     <property name="neighbour" value="[18,20]"/>
+    <property name="node" type="int" value="61"/>
    </properties>
   </object>
-  <object id="316" name="62" x="2304" y="1408" width="32" height="32">
+  <object id="316" name="60" x="2304" y="1408" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[61]"/>
+    <property name="node" type="int" value="60"/>
+   </properties>
+  </object>
+  <object id="317" name="58" x="1856" y="1344" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[59,62]"/>
+    <property name="node" type="int" value="58"/>
+   </properties>
+  </object>
+  <object id="318" name="59" x="2048" y="1472" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[60,62]"/>
+    <property name="node" type="int" value="59"/>
+   </properties>
+  </object>
+  <object id="319" name="62" x="1856" y="1600" width="32" height="32">
    <properties>
     <property name="neighbour" value="[63]"/>
+    <property name="node" type="int" value="62"/>
    </properties>
   </object>
-  <object id="317" name="60" x="1856" y="1344" width="32" height="32">
+  <object id="320" name="63" x="1792" y="1856" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[61,64]"/>
+    <property name="neighbour" value="[64]"/>
+    <property name="node" type="int" value="63"/>
    </properties>
   </object>
-  <object id="318" name="61" x="2048" y="1472" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[62,64]"/>
-   </properties>
-  </object>
-  <object id="319" name="64" x="1856" y="1600" width="32" height="32">
+  <object id="321" name="64" x="1632" y="2016" width="32" height="32">
    <properties>
     <property name="neighbour" value="[65]"/>
+    <property name="node" type="int" value="64"/>
    </properties>
   </object>
-  <object id="320" name="65" x="1792" y="1856" width="32" height="32">
+  <object id="322" name="65" x="1453.33" y="2221.33" width="32" height="32">
    <properties>
     <property name="neighbour" value="[66]"/>
+    <property name="node" type="int" value="65"/>
    </properties>
   </object>
-  <object id="321" name="66" x="1632" y="2016" width="32" height="32">
+  <object id="323" name="66" x="1425.33" y="2414.67" width="32" height="32">
    <properties>
     <property name="neighbour" value="[67]"/>
+    <property name="node" type="int" value="66"/>
    </properties>
   </object>
-  <object id="322" name="67" x="1453.33" y="2221.33" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[68]"/>
-   </properties>
-  </object>
-  <object id="323" name="68" x="1425.33" y="2414.67" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[69]"/>
-   </properties>
-  </object>
-  <object id="324" name="69" x="1264" y="2604" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[36]"/>
-   </properties>
-  </object>
-  <object id="325" name="56" x="1113.33" y="1182.67" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[57]"/>
-   </properties>
-  </object>
-  <object id="326" name="57" x="932" y="1317.33" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[58]"/>
-   </properties>
-  </object>
-  <object id="327" name="58" x="712.606" y="1467.15" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[46]"/>
-   </properties>
-  </object>
-  <object id="328" name="46" x="512.364" y="1536" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[]"/>
-   </properties>
-  </object>
-  <object id="329" name="47" x="320" y="1472" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[48]"/>
-   </properties>
-  </object>
-  <object id="330" name="45" x="320" y="1664" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[46,47]"/>
-   </properties>
-  </object>
-  <object id="331" name="48" x="301.333" y="1266.67" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[49]"/>
-   </properties>
-  </object>
-  <object id="332" name="50" x="256" y="832" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[51]"/>
-   </properties>
-  </object>
-  <object id="333" name="49" x="280" y="1034.67" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[50]"/>
-   </properties>
-  </object>
-  <object id="334" name="51" x="206.667" y="622.667" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[1]"/>
-   </properties>
-  </object>
-  <object id="335" name="44" x="285.333" y="1897.33" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[45]"/>
-   </properties>
-  </object>
-  <object id="336" name="43" x="268" y="2105.33" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[44]"/>
-   </properties>
-  </object>
-  <object id="337" name="42" x="262.667" y="2328" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[43]"/>
-   </properties>
-  </object>
-  <object id="339" name="41" x="300" y="2544" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[42]"/>
-   </properties>
-  </object>
-  <object id="340" name="40" x="368" y="2738.67" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[41]"/>
-   </properties>
-  </object>
-  <object id="341" name="39" x="576" y="2880" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[40]"/>
-   </properties>
-  </object>
-  <object id="342" name="38" x="812" y="2932" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[39]"/>
-   </properties>
-  </object>
-  <object id="343" name="37" x="1040" y="2930" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[38,36]"/>
-   </properties>
-  </object>
-  <object id="344" name="36" x="1185.33" y="2781.33" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[]"/>
-   </properties>
-  </object>
-  <object id="345" name="35" x="1286" y="2938" width="32" height="32">
-   <properties>
-    <property name="neighbour" value="[36,37]"/>
-   </properties>
-  </object>
-  <object id="346" name="34" x="1524" y="2988" width="32" height="32">
+  <object id="324" name="67" x="1264" y="2604" width="32" height="32">
    <properties>
     <property name="neighbour" value="[35]"/>
+    <property name="node" type="int" value="67"/>
    </properties>
   </object>
-  <object id="347" name="33" x="1768" y="2990.67" width="32" height="32">
+  <object id="325" name="54" x="1113.33" y="1182.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[55]"/>
+    <property name="node" type="int" value="54"/>
+   </properties>
+  </object>
+  <object id="326" name="55" x="932" y="1317.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[56]"/>
+    <property name="node" type="int" value="55"/>
+   </properties>
+  </object>
+  <object id="327" name="56" x="712.606" y="1467.15" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[45]"/>
+    <property name="node" type="int" value="56"/>
+   </properties>
+  </object>
+  <object id="328" name="45" x="512.364" y="1536" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[46]"/>
+    <property name="node" type="int" value="45"/>
+   </properties>
+  </object>
+  <object id="329" name="46" x="321.333" y="1448" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[47]"/>
+    <property name="node" type="int" value="46"/>
+   </properties>
+  </object>
+  <object id="330" name="44" x="320" y="1664" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[45,46]"/>
+    <property name="node" type="int" value="44"/>
+   </properties>
+  </object>
+  <object id="331" name="47" x="301.333" y="1266.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[48]"/>
+    <property name="node" type="int" value="47"/>
+   </properties>
+  </object>
+  <object id="332" name="49" x="256" y="832" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[0]"/>
+    <property name="node" type="int" value="49"/>
+   </properties>
+  </object>
+  <object id="333" name="48" x="280" y="1034.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[49]"/>
+    <property name="node" type="int" value="48"/>
+   </properties>
+  </object>
+  <object id="334" name="0" x="206.667" y="622.667" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[1]"/>
+    <property name="node" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="335" name="43" x="285.333" y="1897.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[44]"/>
+    <property name="node" type="int" value="43"/>
+   </properties>
+  </object>
+  <object id="336" name="42" x="268" y="2105.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[43]"/>
+    <property name="node" type="int" value="42"/>
+   </properties>
+  </object>
+  <object id="337" name="41" x="262.667" y="2328" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[42]"/>
+    <property name="node" type="int" value="41"/>
+   </properties>
+  </object>
+  <object id="339" name="40" x="300" y="2544" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[41]"/>
+    <property name="node" type="int" value="40"/>
+   </properties>
+  </object>
+  <object id="340" name="39" x="368" y="2738.67" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[40]"/>
+    <property name="node" type="int" value="39"/>
+   </properties>
+  </object>
+  <object id="341" name="38" x="576" y="2880" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[39]"/>
+    <property name="node" type="int" value="38"/>
+   </properties>
+  </object>
+  <object id="342" name="37" x="812" y="2932" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[38]"/>
+    <property name="node" type="int" value="37"/>
+   </properties>
+  </object>
+  <object id="343" name="36" x="1040" y="2930" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[37]"/>
+    <property name="node" type="int" value="36"/>
+   </properties>
+  </object>
+  <object id="344" name="35" x="1185.33" y="2781.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[36]"/>
+    <property name="node" type="int" value="35"/>
+   </properties>
+  </object>
+  <object id="345" name="34" x="1286" y="2938" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[35,36]"/>
+    <property name="node" type="int" value="34"/>
+   </properties>
+  </object>
+  <object id="346" name="33" x="1524" y="2988" width="32" height="32">
    <properties>
     <property name="neighbour" value="[34]"/>
+    <property name="node" type="int" value="33"/>
    </properties>
   </object>
-  <object id="348" name="32" x="1997.33" y="2957.33" width="32" height="32">
+  <object id="347" name="32" x="1768" y="2990.67" width="32" height="32">
    <properties>
     <property name="neighbour" value="[33]"/>
+    <property name="node" type="int" value="32"/>
+   </properties>
+  </object>
+  <object id="348" name="31" x="1997.33" y="2957.33" width="32" height="32">
+   <properties>
+    <property name="neighbour" value="[33]"/>
+    <property name="node" type="int" value="31"/>
    </properties>
   </object>
   <object id="349" name="30" x="2240" y="2944" width="32" height="32">
    <properties>
     <property name="neighbour" value="[31]"/>
+    <property name="node" type="int" value="30"/>
    </properties>
   </object>
   <object id="350" name="29" x="2496" y="2880" width="32" height="32">
    <properties>
     <property name="neighbour" value="[30]"/>
+    <property name="node" type="int" value="29"/>
    </properties>
   </object>
   <object id="351" name="28" x="2688" y="2816" width="32" height="32">
    <properties>
     <property name="neighbour" value="[29]"/>
+    <property name="node" type="int" value="28"/>
    </properties>
   </object>
   <object id="352" name="27" x="2880" y="2688" width="32" height="32">
    <properties>
     <property name="neighbour" value="[28]"/>
+    <property name="node" type="int" value="27"/>
    </properties>
   </object>
   <object id="353" name="26" x="3008" y="2496" width="32" height="32">
    <properties>
     <property name="neighbour" value="[27]"/>
+    <property name="node" type="int" value="26"/>
    </properties>
   </object>
   <object id="354" name="25" x="3054.67" y="2289.33" width="32" height="32">
    <properties>
     <property name="neighbour" value="[26]"/>
+    <property name="node" type="int" value="25"/>
    </properties>
   </object>
   <object id="355" name="24" x="3053.33" y="2096" width="32" height="32">
    <properties>
     <property name="neighbour" value="[25]"/>
+    <property name="node" type="int" value="24"/>
    </properties>
   </object>
   <object id="356" name="23" x="3008" y="1920" width="32" height="32">
    <properties>
     <property name="neighbour" value="[24]"/>
+    <property name="node" type="int" value="23"/>
    </properties>
   </object>
   <object id="357" name="22" x="2990.67" y="1717.33" width="32" height="32">
    <properties>
     <property name="neighbour" value="[23]"/>
+    <property name="node" type="int" value="22"/>
    </properties>
   </object>
   <object id="358" name="21" x="2962.67" y="1522.67" width="32" height="32">
    <properties>
     <property name="neighbour" value="[22]"/>
+    <property name="node" type="int" value="21"/>
    </properties>
   </object>
-  <object id="359" name="9" x="1876" y="405.333" width="32" height="32">
+  <object id="359" name="9" x="1948" y="392" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[52,10]"/>
+    <property name="neighbour" value="[50,10]"/>
+    <property name="node" type="int" value="9"/>
    </properties>
   </object>
   <object id="360" name="20" x="2780" y="1400" width="32" height="32">
    <properties>
-    <property name="neighbour" value="[19]"/>
+    <property name="neighbour" value="[21]"/>
+    <property name="node" type="int" value="20"/>
    </properties>
   </object>
  </objectgroup>

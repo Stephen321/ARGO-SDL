@@ -3,8 +3,9 @@
 #include "Helpers.h"
 #include "BoundsComponent.h"
 #include "CollisionComponent.h"
+#include "BasicTypes.h"
 
-void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string, int, int>* _map)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -129,18 +130,27 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 	
 	//Waypoints
 	const Value& wayPointLayer = layerArray[2];
-	const Value& wapPointArray = wayPointLayer["objects"];
+	const Value& wayPointArray = wayPointLayer["objects"];
+	//adding node
+	int wayPointSize = wayPointArray.Size();
 
-	for (int i = 0; i < wapPointArray.Size(); i++)
+	_map->init(wayPointSize);
+
+	for (int i = 0; i < wayPointSize; i++)
 	{
-		const Value& entity = wapPointArray[i];
-		string entityName = entity["name"].GetString();
+		const Value& entity = wayPointArray[i];
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
 		float w = entity["width"].GetFloat();
 		float h = entity["height"].GetFloat();
+		
+		Vector2 position = Vector2(x, y);
 
+		const Value& properties = entity["properties"];
+		int currentNode = properties["node"].GetInt();
+
+		_map->addNode("", currentNode, position);
 
 		Entity* point = entityFactory->CreateEntity(EntityType::Point);
 		b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f), (uint16)point->GetType(), 0, true);
@@ -151,8 +161,23 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		bounds->y = y;
 		//entities->push_back(point); instead push back to pathfinder?
 	}
+	//adding arch
+	for (int i = 0; i < wayPointSize; i++)
+	{
+		const Value& entity = wayPointArray[i];
+		const Value& properties = entity["properties"];
+		const Value& neighbour = properties["neighbour"];
 
+		int fromNode = properties["node"].GetInt();
+		for (int j = 0; j< neighbour.Size(); j++)
+		{
+			int toNode = neighbour[j].GetInt();
+			_map->addArc(fromNode, toNode, (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length() , false);
+		}
+	}
+		
 
+	
 	//Colliders
 	const Value& colliderLayer = layerArray[3];
 	const Value& colliderDataArray = colliderLayer["objects"];

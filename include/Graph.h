@@ -4,7 +4,7 @@
 #include <list>
 #include <queue>
 
-using namespace std;
+
 
 template <class DataType, class NodeType, class ArcType> class GraphArc;
 template <class DataType, class NodeType, class ArcType> class GraphNode;
@@ -21,7 +21,7 @@ private:
     // typedef the classes to make our lives easier.
     typedef GraphArc<DataType, NodeType, ArcType> Arc;
 	typedef GraphNode<DataType, NodeType, ArcType> Node;
-
+	
 // ----------------------------------------------------------------
 //  Description:    An array of all the nodes in the graph.
 // ----------------------------------------------------------------
@@ -50,6 +50,7 @@ private:
 
 public:           
     // Constructor and destructor functions
+	Graph();
     Graph( int size );
     ~Graph();
 
@@ -57,16 +58,17 @@ public:
     Node** nodeArray() const {
        return m_pNodes;
     }
-
+	
     // Public member functions.
-	//bool addNode(DataType data, int index, sf::Vector2f position);
+	void init(int size);
+	bool addNode(DataType data, int index, Vector2 position);
     void removeNode( int index );
     bool addArc( int from, int to, ArcType weight, bool directed = true );
     void removeArc( int from, int to );
 	Arc* getArc(int from, int to);
 	void reset();
 	int getMaxNodes();
-
+	
 	//Pathfinding Assignment
 	void aStar(Node* pStart, Node* pDest, std::vector<Node *>& path);
 	void setHeuristics(Node* pDest);
@@ -94,6 +96,21 @@ Graph<DataType, NodeType, ArcType>::Graph(int size) : m_maxNodes(size) {
    m_count = 0;
 }
 
+//init
+template<class DataType, class NodeType, class ArcType>
+void Graph<DataType, NodeType, ArcType>::init(int size)
+{
+	m_maxNodes = size;
+	int i;
+	m_pNodes = new Node *[m_maxNodes];
+	// go through every index and clear it to null (0)
+	for (i = 0; i < m_maxNodes; i++) {
+		m_pNodes[i] = 0;
+	}
+
+	// set the node count to 0.
+	m_count = 0;
+}
 // ----------------------------------------------------------------
 //  Name:           ~Graph
 //  Description:    destructor, This deletes every node
@@ -119,26 +136,26 @@ Graph<DataType, NodeType, ArcType>::~Graph() {
 //                  The second parameter is the index to store the node.
 //  Return Value:   true if successful
 // ----------------------------------------------------------------
-/*
+
 template<class DataType, class NodeType, class ArcType>
-bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index) {
+bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index, Vector2 position) {
    bool nodeNotPresent = false;
    // find out if a node does not exist at that index.
    if ( m_pNodes[index] == 0) {
       nodeNotPresent = true;
       // create a new node, put the data in it, and unmark it.
-	  m_pNodes[index] = new Node(font);
+	  m_pNodes[index] = new Node();
 	  m_pNodes[index]->setData(data);
       m_pNodes[index]->setMarked(false);
 	  m_pNodes[index]->setPosition(position);
-	  m_pNodes[index]->setColour(sf::Color::Blue);
+	 // m_pNodes[index]->setColour(sf::Color::Blue);
 
       // increase the count and return success.
       m_count++;
     }
         
     return nodeNotPresent;
-}*/
+}
 
 // ----------------------------------------------------------------
 //  Name:           removeNode
@@ -338,7 +355,7 @@ template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::setHeuristics(Node* pDest){
 	if (pDest != 0) {
 		for (int i = 0; i < m_count; i++){
-			sf::Vector2f vectorTo = pDest->getPosition() - m_pNodes[i]->getPosition();
+			Vector2 vectorTo = pDest->getPosition() - m_pNodes[i]->getPosition();
 			int Hc = (int)(sqrt((vectorTo.x * vectorTo.x) + (vectorTo.y * vectorTo.y)));
 			m_pNodes[i]->setHCost(Hc);
 		}

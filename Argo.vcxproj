@@ -192,6 +192,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="include\BasicTypes.h" />
     <ClInclude Include="include\BodyFactory.h" />
     <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Camera2D.h" />
@@ -224,6 +225,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Shake.h" />
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
+    <ClInclude Include="include\test.h" />
     <ClInclude Include="include\Vector2.h" />
   </ItemGroup>
   <ItemGroup>

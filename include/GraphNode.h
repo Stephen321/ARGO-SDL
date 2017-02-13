@@ -2,6 +2,7 @@
 #define GRAPHNODE_H
 
 #include <list>
+//#include "BasicTypes.h"
 
 // Forward references
 template <typename DataType, typename NodeType, typename ArcType> class GraphArc;
@@ -31,14 +32,15 @@ private:
 // Description: list of arcs that the node has.
 // -------------------------------------------------------
     list<Arc> m_arcList;
-
+	
 // -------------------------------------------------------
 // Description: This remembers if the node is marked.
 // -------------------------------------------------------
     bool m_marked;
-
+	
 	Node* m_prevNode; 
 
+	Vector2 m_position;
 	//sf::CircleShape m_shape;
 
 	//sf::Text m_nameTxt;
@@ -63,17 +65,17 @@ public:
     // Manipulator functions
 	void setData(DataType data) {
 		m_data = data;
-		m_nameTxt.setString(m_data);
+		//m_nameTxt.setString(m_data);
     }
 
 	void setHCost(NodeType hCost) {
 		m_hCost = hCost;
-		m_hCostTxt.setString("H(n)= " + to_string(m_hCost));
+		//m_hCostTxt.setString("H(n)= " + to_string(m_hCost));
 	}
 
 	void setGCost(NodeType gCost) {
 		m_gCost = gCost;
-		m_gCostTxt.setString("G(n)= " + to_string(m_gCost));
+		//m_gCostTxt.setString("G(n)= " + to_string(m_gCost));
 	}
 
 	NodeType const & hCost() const {
@@ -96,22 +98,20 @@ public:
 		m_prevNode = previous;
 	}
 
-	/*
-	void setPosition(sf::Vector2f newPosition){
+	
+	void setPosition(Vector2 newPosition){
+		/*
 		m_nameTxt.setPosition(newPosition);
 		m_hCostTxt.setPosition(newPosition.x - RADIUS, newPosition.y - RADIUS);
 		m_gCostTxt.setPosition(newPosition.x - RADIUS, newPosition.y - (RADIUS / 2));
-		m_shape.setPosition(newPosition);
+		m_shape.setPosition(newPosition);*/
+		m_position = newPosition;
 	}
 
-	sf::Vector2f getPosition(){
-		return m_shape.getPosition();
+	Vector2 getPosition(){
+		return m_position;
 	}
-
-	sf::CircleShape const & getShape() const{
-		return m_shape;
-	}
-	*/
+	
 
 
 	void reset();
@@ -178,12 +178,12 @@ template<typename DataType, typename NodeType, typename ArcType>
 void  GraphNode<DataType, NodeType, ArcType>::reset() {
 	m_marked = false;
 	m_prevNode = 0;
-	m_shape.setFillColor(sf::Color::Blue);
+	//m_shape.setFillColor(sf::Color::Blue);
 	m_hCost = -1;
 	m_gCost = -1;
 
-	m_hCostTxt.setString("H(n)= ?");
-	m_gCostTxt.setString("G(n)= ?");
+	//m_hCostTxt.setString("H(n)= ?");
+	//m_gCostTxt.setString("G(n)= ?");
 }
 // ----------------------------------------------------------------
 //  Name:           addArc
@@ -200,7 +200,7 @@ void GraphNode<DataType, NodeType, ArcType>::addArc(Node* pNode, ArcType weight)
    Arc a;
    a.setNode(pNode);
    a.setWeight(weight);
-   a.setLine(m_shape.getPosition(), pNode->getPosition());
+   a.setLine(m_position pNode->getPosition());
    // Add it to the arc list.
    m_arcList.push_back( a );
 }
