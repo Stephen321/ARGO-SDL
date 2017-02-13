@@ -91,6 +91,7 @@ private:
 	CollisionSystem					_collisionSystem;
 
 
+	CurrentScene					_swapScene;
 
 
 	

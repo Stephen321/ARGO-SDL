@@ -14,6 +14,9 @@ public:
 
 	void MovePlayer(int _x, int _y, Entity*& entity);
 
+
+	int ChangeToScene(int scene);
+
 	//cant have these here due to the way moveplayer is being called by inputmanager (nullptr)
 //private:
 //	int _prevX;

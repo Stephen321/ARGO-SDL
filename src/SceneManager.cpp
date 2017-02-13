@@ -32,7 +32,7 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 	_currentScene.push_back(_menu);
 	_currentScene.push_back(_game);
 
-	_runningScene = 1;
+	_runningScene = 0;
 
 	return _running;
 }
@@ -80,6 +80,15 @@ void SceneManager::Update()
 	{
 		_runningScene = _currentScene[_runningScene]->Update();
 		_currentScene[_runningScene]->Render();
+
+		if (_runningScene == 0)
+		{
+			cout << "menu\t";
+		}
+		if (_runningScene == 1)
+		{
+			cout << "game\t";
+		}
 	}
 
 	else

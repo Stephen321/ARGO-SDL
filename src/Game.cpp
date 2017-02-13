@@ -56,6 +56,8 @@ bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int
 			it++;
 		}
 
+		_swapScene = CurrentScene::game;
+
 		BindInput(player);
 	}
 
@@ -130,7 +132,7 @@ int Game::Update()
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
-	return CurrentScene::game;
+	return _swapScene;
 }
 
 void Game::Render()
@@ -155,6 +157,7 @@ void Game::Render()
 
 bool Game::IsRunning()
 {
+	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
 	return _running;
 }
 
@@ -224,6 +227,9 @@ void Game::BindInput(Entity* player)
 
 	Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
+
+	Command* backIn = new InputCommand([&]() { _swapScene = static_cast<CurrentScene>(_controlSystem->ChangeToScene(0)); }, Type::Press);
+	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }

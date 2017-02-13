@@ -30,7 +30,9 @@ bool MainMenu::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width,
 
 		BindInput();
 
-		SetupText(32, "Test", 100, 100);
+		SetupText(32, "Press Enter to go to Game", 100, 100);
+
+		_swapScene = CurrentScene::mainMenu;
 	}
 
 	return _running;
@@ -96,7 +98,7 @@ int MainMenu::Update()
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
-	return CurrentScene::mainMenu;
+	return _swapScene;
 }
 
 void MainMenu::Render()
@@ -123,6 +125,7 @@ void MainMenu::Render()
 
 bool MainMenu::IsRunning()
 {
+	if (_swapScene != CurrentScene::mainMenu) { _swapScene = CurrentScene::mainMenu; }
 	return _running;
 }
 
@@ -166,10 +169,10 @@ void MainMenu::SetupText(int fontSize, string message, int x, int y)
 void MainMenu::DebugText()
 {
 
-
 }
 
 void MainMenu::BindInput()
 {
-	_inputManager->AddListener(Event::ESCAPE, this);
+	Command* enterIn = new InputCommand([&]() { _swapScene = static_cast<CurrentScene>(_controlSystem->ChangeToScene(1)); }, Type::Press);
+	_inputManager->AddKey(Event::RETURN, enterIn, this);
 }

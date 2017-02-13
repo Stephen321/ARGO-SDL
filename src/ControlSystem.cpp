@@ -3,6 +3,8 @@
 #include "ControlComponent.h"
 #include "PhysicsComponent.h"
 
+#include "SceneManager.h"
+
 ControlSystem::ControlSystem(float updateRate)
 	: System(updateRate)
 {
@@ -31,4 +33,9 @@ void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
 
 	physics->xDir = x;
 	physics->yDir = y;
+}
+
+int ControlSystem::ChangeToScene(int scene)
+{
+	return scene;
 }

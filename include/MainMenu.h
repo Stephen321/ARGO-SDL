@@ -13,6 +13,10 @@
 
 #include "CameraSystem.h"
 
+#include <vector>
+#include <queue>
+#include <map>
+
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
@@ -25,7 +29,7 @@ public:
 	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
 
 	void							Render() override;
-	int							Update() override;
+	int								Update() override;
 
 	void							LoadContent();
 	void							CleanUp();
@@ -66,5 +70,7 @@ private:
 	TTF_Font*						_font = NULL;
 	SDL_Surface*					_surface = NULL;
 	SDL_Rect						_textRectangle;
+
+	CurrentScene					_swapScene;
 };
 
