@@ -6,6 +6,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+SetupProject/d_??.zip
+SetupProject/d_?.zip
 
 Logs/
 # User-specific files (MonoDevelop/Xamarin Studio)

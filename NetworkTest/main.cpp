@@ -15,7 +15,6 @@
 //
 //	UDPsocket socket = SDLNet_UDP_Open(4000);
 //
-//	// Allocate memory for the packet
 //	UDPpacket* packet = SDLNet_AllocPacket(256);
 //	packet->address.host = serverIp.host;
 //	packet->address.port = serverIp.port;
@@ -43,13 +42,9 @@ int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDLNet_Init();
-
-	IPaddress myIp;
-	SDLNet_ResolveHost(&myIp, "127.0.0.1", 4000);
-
+	
 	UDPsocket socket = SDLNet_UDP_Open(4023);
 
-	// Allocate memory for the packet
 	UDPpacket* packet = SDLNet_AllocPacket(256);
 
 	std::string msg;
@@ -57,7 +52,7 @@ int main(int argc, char** argv)
 	int count = 0;
 	while (true)
 	{
-		if (count > 100000000)
+		if (count > 100000)
 		{
 			std::cout << "waiting for message....." << std::endl;
 			count = 0;
