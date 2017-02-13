@@ -51,12 +51,12 @@ void PhysicsSystem::Process(float dt)
 
 				collision->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				
-				bounds->rect.x = (int)metersToPixels(collision->body->GetPosition().x);
-				bounds->rect.y = (int)metersToPixels(collision->body->GetPosition().y);
+				bounds->rect.x = (int)metersToPixels(collision->body->GetPosition().x) - bounds->rect.w * 0.5f;
+				bounds->rect.y = (int)metersToPixels(collision->body->GetPosition().y) - bounds->rect.h * 0.5f;
 
 				physics->xDir = 0;
 				physics->yDir = 0;
-				std::cout << "Velcoity.x: " << collision->body->GetLinearVelocity().x << " y: " << collision->body->GetLinearVelocity().y << std::endl;
+				//std::cout << "Velcoity.x: " << collision->body->GetLinearVelocity().x << " y: " << collision->body->GetLinearVelocity().y << std::endl;
 			}
 		}
 	}

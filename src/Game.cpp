@@ -34,10 +34,9 @@ Game::~Game()
 	_world.~b2World();
 }
 
-bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
+bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int height)
 {
-
-	_running = SetupSDL(title, xpos, ypos, width, height, flags);
+	_running = SetupSDL(window, renderer);
 	
 	_cameraSystem.Init(width, height);
 	if (_running)
@@ -49,7 +48,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		std::vector<Entity*>::iterator it = _entities.begin();
 		while (it != _entities.end())
 		{
-			if ((*it)->GetType() == Entity::Type::Player)
+			if ((*it)->GetType() == EntityType::Player)
 			{
 				player = *it;
 				break;
@@ -57,36 +56,23 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			it++;
 		}
 
-
-		// Input
-		Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Down);
-		_inputManager->AddKey(Event::w, wIn, this);
-
-		Command* aIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Down);
-		_inputManager->AddKey(Event::a, aIn, this);
-
-		Command* sIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Down);
-		_inputManager->AddKey(Event::s, sIn, this);
-
-		Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
-		_inputManager->AddKey(Event::d, dIn, this);
-
-		_inputManager->AddListener(Event::ESCAPE, this);
+		BindInput(player);
 	}
 
 	return _running;
 }
-bool Game::SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags)
+
+bool Game::SetupSDL(SDL_Window*	window, SDL_Renderer* renderer)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		DEBUG_MSG("SDL Init success");
-		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+		_window = window;
 
 		if (_window != 0)
 		{
 			DEBUG_MSG("Window creation success");
-			_renderer = SDL_CreateRenderer(_window, -1, 0);
+			_renderer = renderer;
 			if (_renderer != 0)
 			{
 				DEBUG_MSG("Renderer creation success");
@@ -160,32 +146,117 @@ void Game::Render()
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
 
-//DEBUG
-	
+	DebugBox2D();
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_RenderPresent(_renderer);
+}
+
+bool Game::IsRunning()
+{
+	return _running;
+}
+
+
+void Game::CleanUp()
+{
+	DEBUG_MSG("Cleaning Up");
+
+	//DESTROY HERE
+	_world.SetAllowSleeping(true);
+
+	for (int i = 0; i < _entities.size(); i++)
+		delete _entities[i];
+	_entities.clear();
+
+	SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
+}
+
+void Game::OnEvent(EventListener::Event evt)
+{
+	switch (evt)
+	{
+		case Event::ESCAPE:
+			_inputManager->saveFile();
+			_running = false;
+	}
+}
+
+void Game::Test(int t)
+{
+	int i = t;
+}
+
+SDL_Texture * Game::loadTexture(const std::string & path)
+{
+	SDL_Texture* texture = NULL;
+
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
+	}
+	else
+	{
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		if (texture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+
+		SDL_FreeSurface(surface);
+	}
+
+	return texture;
+}
+
+void Game::BindInput(Entity* player)
+{
+	Command* wIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, -1, player), Type::Down);
+	_inputManager->AddKey(Event::w, wIn, this);
+
+	Command* aIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, -1, player), Type::Down);
+	_inputManager->AddKey(Event::a, aIn, this);
+
+	Command* sIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, 1, player), Type::Down);
+	_inputManager->AddKey(Event::s, sIn, this);
+
+	Command* dIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, 1, player), Type::Down);
+	_inputManager->AddKey(Event::d, dIn, this);
+
+	_inputManager->AddListener(Event::ESCAPE, this);
+}
+
+void Game::DebugBox2D()
+{
+	//DEBUG
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{
 		if (BodyIterator->IsActive())
 		{
 			Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
-			Entity::Type t = e->GetType();
-			if (t == Entity::Type::Player)
+			EntityType t = e->GetType();
+			if (t == EntityType::Player)
 			{
 				SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 			}
-			else if (t == Entity::Type::Checkpoint)
+			else if (t == EntityType::Checkpoint)
 			{
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
 			}
-			else if (t == Entity::Type::Point)
+			else if (t == EntityType::Point)
 			{
 				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
 			}
-			else if (t == Entity::Type::Flag)
+			else if (t == EntityType::Flag)
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
 			}
-			else if(t == Entity::Type::Obstacle)
+			else if(t == EntityType::Obstacle)
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 			}
@@ -258,67 +329,4 @@ void Game::Render()
 			}
 		}
 	}
-
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-	SDL_RenderPresent(_renderer);
-}
-
-bool Game::IsRunning()
-{
-	return _running;
-}
-
-
-void Game::CleanUp()
-{
-	DEBUG_MSG("Cleaning Up");
-
-	//DESTROY HERE
-	_world.SetAllowSleeping(true);
-
-	for (int i = 0; i < _entities.size(); i++)
-		delete _entities[i];
-	_entities.clear();
-
-	SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
-}
-
-void Game::OnEvent(EventListener::Event evt)
-{
-	switch (evt)
-	{
-		case Event::ESCAPE:
-			_inputManager->saveFile();
-			_running = false;
-	}
-}
-
-void Game::Test(int t)
-{
-	int i = t;
-}
-
-SDL_Texture * Game::loadTexture(const std::string & path)
-{
-	SDL_Texture* texture = NULL;
-
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(_renderer, surface);
-		if (texture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-
-		SDL_FreeSurface(surface);
-	}
-
-	return texture;
 }

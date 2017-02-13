@@ -140,6 +140,12 @@
     </ClInclude>
     <ClInclude Include="include\GraphNode.h">
       <Filter>Header Files\AStar</Filter>
+	</ClInclude>
+    <ClInclude Include="include\SceneManager.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +204,9 @@
     </ClCompile>
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

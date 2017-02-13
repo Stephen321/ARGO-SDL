@@ -205,6 +205,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
+    <ClInclude Include="include\EntityType.h" />
     <ClInclude Include="include\FLInputManager.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\Graph.h" />
@@ -219,6 +220,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\PhysicsSystem.h" />
     <ClInclude Include="include\RenderSystem.h" />
     <ClInclude Include="include\ResourceIdentifier.h" />
+    <ClInclude Include="include\SceneManager.h" />
     <ClInclude Include="include\Shake.h" />
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
@@ -249,6 +251,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
+    <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
   </ItemGroup>

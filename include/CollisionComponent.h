@@ -7,8 +7,8 @@
 class CollisionComponent : public Component
 {
 public:
-	CollisionComponent(b2Body* b)
-		: body(b)
+	CollisionComponent()
+		: body(nullptr)
 		, Component::Component(Component::Type::Collider)
 	{
 	}

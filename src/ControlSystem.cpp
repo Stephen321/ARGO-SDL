@@ -22,13 +22,14 @@ void ControlSystem::Process(float dt)
 		_canUpdate = false;
 	}
 }
-
-void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
+void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	//physics->xVelocity += x * physics->xAcceleration;
-	//physics->yVelocity += y * physics->yAcceleration;
+	physics->xDir = dir;
+}
 
-	physics->xDir = x;
-	physics->yDir = y;
+void ControlSystem::MoveVertical(int dir, Entity*& entity)
+{
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	physics->yDir = dir;
 }

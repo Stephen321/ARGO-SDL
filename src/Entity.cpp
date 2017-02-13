@@ -2,7 +2,7 @@
 
 
 
-Entity::Entity(Type type)
+Entity::Entity(EntityType type)
 	: _type(type)
 {
 }
@@ -51,7 +51,46 @@ std::vector<Component*>& Entity::GetComponents()
 	return _components;
 }
 
-Entity::Type Entity::GetType() const
+EntityType Entity::GetType() const
 {
 	return _type;
+}
+
+std::string Entity::GetTypeAsString() const
+{
+	std::string s;
+	switch (_type)
+	{
+	case EntityType::Flag:
+		s = "Flag";
+		break;
+	case EntityType::Checkpoint:
+		s = "Checkpoint";
+		break;
+	case EntityType::Wall:
+		s = "Wall";
+		break;
+	case EntityType::Tile:
+		s = "Tile";
+		break;
+	case EntityType::Obstacle:
+		s = "Obstacle";
+		break;
+	case EntityType::Bullet:
+		s = "Bullet";
+		break;
+	case EntityType::PowerUp:
+		s = "PowerUp";
+		break;
+	case EntityType::AI:
+		s = "AI";
+		break;
+	case EntityType::Player:
+		s = "Player";
+		break;
+	case EntityType::Point:
+		s = "Point";
+		break;
+	}
+	return s;
 }
