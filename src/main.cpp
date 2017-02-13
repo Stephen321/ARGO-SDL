@@ -3,8 +3,10 @@
 #include <string>
 
 #include "LTimer.h"
-#include "Game.h"
 #include "ConstHolder.h"
+
+#include "SceneManager.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -15,22 +17,20 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 int main(int argc, char** argv)
 {
 	srand(time(NULL));
-	Game* game = new Game();
+	SceneManager* sceneManager = new SceneManager();
 
 	//Adjust screen positions as needed
 	DEBUG_MSG("Game Initialising");
-	game->Initialize("Argo",100,100,1600,900, SDL_WINDOW_INPUT_FOCUS);
+	sceneManager->Initialize("Argo",100,100,1600,900, SDL_WINDOW_INPUT_FOCUS);
 
 	DEBUG_MSG("Game Loop Starting......");
 	LTimer capTimer;//to cap framerate
 
-
-	while (game->IsRunning())
+	while (sceneManager->IsRunning())
 	{
 		capTimer.start();
 
-		game->Update();
-		game->Render();
+		sceneManager->Update();
 
 		int frameTicks = capTimer.getTicks();//time since start of frame
 
@@ -43,7 +43,6 @@ int main(int argc, char** argv)
 
 	DEBUG_MSG("Calling Cleanup");
 	game->CleanUp();
-
 
 	//system("PAUSE");
 	

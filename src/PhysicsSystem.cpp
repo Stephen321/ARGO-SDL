@@ -37,7 +37,7 @@ void PhysicsSystem::Process(float dt)
 				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
 				float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
 
-				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?
+				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
 
 				float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
@@ -52,8 +52,8 @@ void PhysicsSystem::Process(float dt)
 
 				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				
-				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+				transform->rect.x = (int)metersToPixels(collision->body->GetPosition().x) - transform->origin.x;
+				transform->rect.y = (int)metersToPixels(collision->body->GetPosition().y) - transform->origin.y;
 
 				physics->xDir = 0;
 				physics->yDir = 0;

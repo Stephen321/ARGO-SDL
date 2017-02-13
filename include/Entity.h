@@ -3,26 +3,12 @@
 #include "Component.h"
 
 #include <vector>
+#include "EntityType.h"
 
 class Entity
 {
 public:
-	enum class Type : unsigned short
-	{ //draw order is determined by the below order
-		Flag = 0x0001,  //1
-		Checkpoint = 0x0002, // 10
-		Wall = 0x0004, // 100
-		Tile = 0x0008, //1000
-		Obstacle = 0x0010,
-		Bullet = 0x0020,
-		PowerUp = 0x0040,
-		AI = 0x0080,
-		Player = 0x0100,
-		Weapon = 0x0200,
-	};
-
-public:
-								Entity(Type type);
+								Entity(EntityType type);
 								~Entity();
 
 	void						AddComponent(Component* component);
@@ -30,10 +16,11 @@ public:
 
 	Component*					GetComponent(Component::Type componentType);
 	std::vector<Component*>&	GetComponents();
-	Type						GetType() const;
+	EntityType						GetType() const;
+	std::string					GetTypeAsString() const;
 
 private:
 	std::vector<Component*>		_components;
-	Type						_type;
+	EntityType						_type;
 };
 

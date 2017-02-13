@@ -7,18 +7,18 @@
 class System
 {
 public:
-	typedef std::map<Entity::Type,
+	typedef std::map<EntityType,
 		std::vector<Entity*>>::iterator EntityMapIterator;
 									System(float updateRate = 0.f);
 									~System();
 
 	void							AddEntity(Entity* gameObject);
-	void							RemoveEntity(Entity::Type tag, Entity* gameObject);
+	void							RemoveEntity(EntityType tag, Entity* gameObject);
 
 	virtual void					Process(float dt = 0.f);
 
 protected:
-	std::map<Entity::Type, 
+	std::map<EntityType, 
 		std::vector<Entity*>>		_entities;
 	float							_updateRate;
 	float							_timer;

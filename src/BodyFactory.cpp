@@ -13,7 +13,7 @@ BodyFactory::~BodyFactory()
 }
 
 
-b2Body* BodyFactory::CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2 size, bool isSensor)
+b2Body* BodyFactory::CreateBoxBody(b2BodyType type, b2Vec2 pos, b2Vec2 size, uint16 categoryBit, uint16 maskBits, bool isSensor)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = type;
@@ -29,19 +29,20 @@ b2Body* BodyFactory::CreateBoxBody(b2BodyType type, b2Vec2 pos, float rotation, 
 	fixtureDef.shape = &boxShape;
 	fixtureDef.density = 1;
 	fixtureDef.isSensor = isSensor;
+	fixtureDef.filter.categoryBits = categoryBit;
+	fixtureDef.filter.maskBits = maskBits;
 
 	body->CreateFixture(&fixtureDef);
-	body->SetFixedRotation(true);
+
 	return body;
 }
 
-b2Body* BodyFactory::CreatePolyBody(b2BodyType type, b2Vec2 pos, float rotation, b2Vec2* vertices, int count, bool isSensor)
+b2Body* BodyFactory::CreatePolyBody(b2BodyType type, b2Vec2 pos, b2Vec2* vertices, int count, uint16 categoryBit, uint16 maskBits, bool isSensor)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = type;
 	bodyDef.position.x = pixelsToMeters(pos.x);
 	bodyDef.position.y = pixelsToMeters(pos.y);
-	bodyDef.angle = rotation;
 	b2Body* body = _b2world->CreateBody(&bodyDef);
 
 	b2PolygonShape boxShape;
@@ -51,6 +52,9 @@ b2Body* BodyFactory::CreatePolyBody(b2BodyType type, b2Vec2 pos, float rotation,
 	fixtureDef.shape = &boxShape;
 	fixtureDef.density = 1;
 	fixtureDef.isSensor = isSensor;
+	fixtureDef.filter.categoryBits = categoryBit;
+	fixtureDef.filter.maskBits = maskBits;
+
 	body->CreateFixture(&fixtureDef);
 
 	return body;

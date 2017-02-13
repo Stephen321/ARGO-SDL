@@ -43,13 +43,19 @@ void ControlSystem::Process(float dt)
 	}
 }
 
-void ControlSystem::MovePlayer(int x, int y, Entity*& entity)
+void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
 
 	physics->xDir = x;
 	physics->yDir = y;
 }
+void ControlSystem::MoveVertical(int dir, Entity*& entity)
+{
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	physics->yDir = dir;
+}
+
 
 void ControlSystem::FireBullet(Entity*& entity)
 {

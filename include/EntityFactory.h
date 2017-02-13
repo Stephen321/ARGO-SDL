@@ -20,8 +20,8 @@ class EntityFactory
 public: 
 										EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, GunSystem* gs, FiringSystem* fs, std::map<TextureID, SDL_Texture*>* th);
 										~EntityFactory();
-	
-	Entity*								CreateEntity(Entity::Type t);
+
+	Entity*								CreateEntity(EntityType t);
 
 private:
 	Entity*								CreateWeaponEntity();
@@ -33,6 +33,7 @@ private:
 	Entity*								CreateCheckpointEntity();
 	Entity*								CreateFlagEntity();
 	Entity*								CreateTileEntity();
+	Entity*								CreatePointEntity();
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;

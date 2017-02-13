@@ -43,7 +43,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 	{
 		for (int x = 0; x < backgroundLayerWidth; x++)
 		{
-			Entity* tile = entityFactory->CreateEntity(Entity::Type::Tile);
+			Entity* tile = entityFactory->CreateEntity(EntityType::Tile);
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(tile->GetComponent(Component::Type::Sprite));
 			TransformComponent* bounds = static_cast<TransformComponent*>(tile->GetComponent(Component::Type::Transform));
 
@@ -71,6 +71,8 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				break;
 			}
 			index++;
+
+			entities->push_back(tile); 
 		}
 	}
 
@@ -91,12 +93,15 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		if (entityName == "PlayerSolo")
 		{
 			if (!createPlayer)
-			{
+			{ //it would be really nice if we could move all of this body creation stuff into the entity factory some how
 				createPlayer = true;
+
 				Entity* player = entityFactory->CreateEntity(Entity::Type::Player);
 				ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
+
 				SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
-				collider->body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x + w*.5f, y + h*.5f), 0.f, b2Vec2(spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 2), false);
+				collider->body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x, y), b2Vec2(spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 2),
+															(uint16)player->GetType(), PLAYER_MASK, false);
 				collider->body->SetUserData(player);
 				collider->body->SetFixedRotation(true);
 				entities->push_back(player);
@@ -105,15 +110,21 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		}
 		else if (entityName == "Checkpoint")
 		{
-			
-
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), 0, b2Vec2(w*.5f, h*.5f), true);
-
+			Entity* checkpoint = entityFactory->CreateEntity(EntityType::Checkpoint);
+			CollisionComponent* collider = static_cast<CollisionComponent*>(checkpoint->GetComponent(Component::Type::Collider));
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), b2Vec2(w*.5f, h*.5f),
+				(uint16)checkpoint->GetType(), CHECKPOINT_MASK, true);
+			body->SetUserData(checkpoint);
+			entities->push_back(checkpoint);
 		}
 		else if (entityName == "Flag")
 		{
-			//idk type :P
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x + w*.5f, y + h*.5f), 0, b2Vec2(w*.5f, h*.5f), true);
+			Entity* flag = entityFactory->CreateEntity(EntityType::Flag);
+			CollisionComponent* collider = static_cast<CollisionComponent*>(flag->GetComponent(Component::Type::Collider));
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f),
+				(uint16)flag->GetType(), FLAG_MASK, true);
+			body->SetUserData(flag);
+			entities->push_back(flag);
 		}
 
 	}
@@ -129,7 +140,18 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
+		float w = entity["width"].GetFloat();
+		float h = entity["height"].GetFloat();
 
+
+		Entity* point = entityFactory->CreateEntity(EntityType::Point);
+		b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f), (uint16)point->GetType(), 0, true);
+		body->SetUserData(point);
+
+		BoundsComponent* bounds = static_cast<BoundsComponent*>(point->GetComponent(Component::Type::Bounds));
+		bounds->x = x;
+		bounds->y = y;
+		//entities->push_back(point); instead push back to pathfinder?
 	}
 
 
@@ -149,23 +171,30 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		{
 			float w = entity["width"].GetFloat();
 			float h = entity["height"].GetFloat();
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), 0, b2Vec2(w*.5f, h*.5f), false);	//create body
+			Entity* obstacle = entityFactory->CreateEntity(EntityType::Obstacle);
+			CollisionComponent* collider = static_cast<CollisionComponent*>(obstacle->GetComponent(Component::Type::Collider));
+			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), b2Vec2(w*.5f, h*.5f),
+				(uint16)obstacle->GetType(), OBSTACLE_MASK, false);//create body
+			body->SetUserData(obstacle);
+			entities->push_back(obstacle);
 		}
 		else if (entityName == "Poly")
 		{
-			
-				const Value& entityPolyArray = entity["polygon"]; //loop json entity
-				int count = entityPolyArray.Size();
+			Entity* obstacle = entityFactory->CreateEntity(EntityType::Obstacle);
+			CollisionComponent* collider = static_cast<CollisionComponent*>(obstacle->GetComponent(Component::Type::Collider));
+			const Value& entityPolyArray = entity["polygon"]; //loop json entity
+			int count = entityPolyArray.Size();
 
-				b2Vec2* vertices = new b2Vec2[count];
-				for (int i = 0; i < count; i++)
-				{
-					const Value& entityPoly = entityPolyArray[i];
-					vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
-				}
-				b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), 0, vertices, count, false);	//create body
-			
-
+			b2Vec2* vertices = new b2Vec2[count];
+			for (int i = 0; i < count; i++)
+			{
+				const Value& entityPoly = entityPolyArray[i];
+				vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
+			}
+			b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), vertices, count,
+				(uint16)obstacle->GetType(), OBSTACLE_MASK, false);	//create body
+			body->SetUserData(obstacle);
+			entities->push_back(obstacle);
 		}
 	}
 }

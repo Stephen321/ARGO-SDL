@@ -26,31 +26,34 @@ EntityFactory::~EntityFactory()
 }
 
 
-Entity* EntityFactory::CreateEntity(Entity::Type t)
+Entity* EntityFactory::CreateEntity(EntityType t)
 {
 	Entity* entity = nullptr;
 
 	switch (t)
 	{
-	case Entity::Type::Tile:
+	case EntityType::Tile:
 		entity = CreateTileEntity();
 		break;
-	case Entity::Type::Checkpoint:
+	case EntityType::Checkpoint:
 		entity = CreateCheckpointEntity();
 		break;
-	case Entity::Type::Obstacle:
+	case EntityType::Obstacle:
 		entity = CreateObstacleEntity();
 		break;
-	case Entity::Type::Bullet:
+	case EntityType::Bullet:
 		entity = CreateBulletEntity();
 		break;
-	case Entity::Type::PowerUp:
+	case EntityType::Point:
+		entity = CreatePointEntity();
+		break;
+	case EntityType::PowerUp:
 		entity = CreatePowerUpEntity();
 		break;
-	case Entity::Type::AI:
+	case EntityType::AI:
 		entity = CreateAIEntity();
 		break;
-	case Entity::Type::Player:
+	case EntityType::Player:
 		entity = CreatePlayerEntity();
 		break;
 	case Entity::Type::Weapon:
@@ -68,7 +71,7 @@ Entity* EntityFactory::CreateEntity(Entity::Type t)
 
 Entity* EntityFactory::CreatePlayerEntity()
 {
-	Entity* player = new Entity(Entity::Type::Player);
+	Entity* player = new Entity(EntityType::Player);
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
 
 	player->AddComponent(spriteComponent);
@@ -87,12 +90,13 @@ Entity* EntityFactory::CreatePlayerEntity()
 
 Entity* EntityFactory::CreateAIEntity()
 {
-	Entity* ai = new Entity(Entity::Type::AI);
+	Entity* ai = new Entity(EntityType::AI);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
+	ai->AddComponent(new CollisionComponent());
 
 	_renderSystem->AddEntity(ai);
 	_physicSystem->AddEntity(ai);
@@ -101,9 +105,11 @@ Entity* EntityFactory::CreateAIEntity()
 }
 Entity* EntityFactory::CreateObstacleEntity()
 {
+
 	Entity* obstacle = new Entity(Entity::Type::Obstacle);
 	obstacle->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	obstacle->AddComponent(new TransformComponent());
+	obstacle->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(obstacle);
 
@@ -112,9 +118,10 @@ Entity* EntityFactory::CreateObstacleEntity()
 
 Entity* EntityFactory::CreatePowerUpEntity()
 {
-	Entity* powerUp = new Entity(Entity::Type::PowerUp);
+	Entity* powerUp = new Entity(EntityType::PowerUp);
 	powerUp->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	powerUp->AddComponent(new TransformComponent());
+	powerUp->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(powerUp);
 
@@ -140,14 +147,14 @@ Entity* EntityFactory::CreateWeaponEntity()
 }
 Entity* EntityFactory::CreateBulletEntity()
 {
-	Entity* bullet = new Entity(Entity::Type::Bullet);
+	Entity* bullet = new Entity(EntityType::Bullet);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet]);
 
 	bullet->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	bullet->AddComponent(spriteComponent);
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
-	bullet->AddComponent(new ColliderComponent(nullptr));
+	bullet->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(bullet);
 	_physicSystem->AddEntity(bullet);
@@ -158,9 +165,10 @@ Entity* EntityFactory::CreateBulletEntity()
 
 Entity* EntityFactory::CreateCheckpointEntity()
 {
-	Entity* checkpoint = new Entity(Entity::Type::Checkpoint);
+	Entity* checkpoint = new Entity(EntityType::Checkpoint);
 	checkpoint->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	checkpoint->AddComponent(new TransformComponent());
+	checkpoint->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(checkpoint);
 
@@ -169,9 +177,11 @@ Entity* EntityFactory::CreateCheckpointEntity()
 
 Entity* EntityFactory::CreateFlagEntity()
 {
-	Entity* flag = new Entity(Entity::Type::Flag);
+	Entity* flag = new Entity(EntityType::Flag);
 	flag->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	flag->AddComponent(new TransformComponent());
+	flag->AddComponent(new ColliderComponent());
+
 
 	_renderSystem->AddEntity(flag);
 
@@ -180,11 +190,20 @@ Entity* EntityFactory::CreateFlagEntity()
 
 Entity* EntityFactory::CreateTileEntity()
 {
-	Entity* tile = new Entity(Entity::Type::Tile);
+	Entity* tile = new Entity(EntityType::Tile);
 	tile->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet]));
 	tile->AddComponent(new TransformComponent());
 
 	_renderSystem->AddEntity(tile);
 
 	return tile;
+}
+
+Entity* EntityFactory::CreatePointEntity()
+{
+	Entity* point = new Entity(EntityType::Point);
+	point->AddComponent(new TransformComponent());
+	//_controlSystem->AddEntity(player);
+
+	return point;
 }

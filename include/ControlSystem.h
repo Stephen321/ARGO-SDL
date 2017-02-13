@@ -14,7 +14,9 @@ public:
 
 	void					Process(float dt = 0.f) override;
 
-	void					MovePlayer(int _x, int _y, Entity*& entity);
+	void					MoveHorizontal(int dir, Entity*& entity);
+	void					MoveVertical(int dir, Entity*& entity);
+
 	void					FireBullet(Entity*& entity);
 
 	void					OnEvent(Event evt) override;
@@ -22,8 +24,11 @@ public:
 	void					AddTurret(Entity* entity);
 	void					RemoveTurret(Entity* entity);
 
+
+
 private:
 	Camera2D::Camera*		_camera;
 	std::vector<Entity*>	_turrets;
+
 };
 
