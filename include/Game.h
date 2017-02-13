@@ -41,7 +41,7 @@ public:
 									Game();
 									~Game();
 
-	bool							Initialize(const char* title, int xpos, int ypos, int width, int height, int flags);
+	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
 	
 	void							Render();
 	void							Update();
@@ -55,7 +55,11 @@ public:
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	bool							SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags);
+	bool							SetupSDL(SDL_Window* window, SDL_Renderer* renderer);
+
+	void							BindInput(Entity* player);
+
+	void							DebugBox2D();
 
 private:
 	SDL_Window*						_window;
