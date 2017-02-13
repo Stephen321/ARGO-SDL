@@ -9,13 +9,14 @@
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
+#include "Scene.h"
 
 #include "CameraSystem.h"
 
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
-class MainMenu : public EventListener
+class MainMenu : public EventListener, public Scene
 {
 public:
 	MainMenu();
@@ -23,15 +24,15 @@ public:
 
 	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
 
-	void							Render();
-	void							Update();
+	void							Render() override;
+	int							Update() override;
 
 	void							LoadContent();
 	void							CleanUp();
 
 	void							OnEvent(Event evt);
 
-	bool							IsRunning();
+	bool							IsRunning() override;
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:

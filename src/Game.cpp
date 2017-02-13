@@ -110,7 +110,7 @@ void Game::LoadContent()
 
 }
 
-void Game::Update()
+int Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
@@ -129,6 +129,8 @@ void Game::Update()
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;
+
+	return CurrentScene::game;
 }
 
 void Game::Render()
@@ -175,11 +177,14 @@ void Game::CleanUp()
 
 void Game::OnEvent(EventListener::Event evt)
 {
-	switch (evt)
+	if (_running)
 	{
+		switch (evt)
+		{
 		case Event::ESCAPE:
 			_inputManager->saveFile();
 			_running = false;
+		}
 	}
 }
 

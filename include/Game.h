@@ -8,6 +8,7 @@
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
+#include "Scene.h"
 
 #include "EntityFactory.h"
 #include "BodyFactory.h"
@@ -35,7 +36,7 @@
 // Debug
 using namespace Camera2D;
 
-class Game : public EventListener
+class Game : public EventListener, public Scene
 {
 public:
 									Game();
@@ -43,15 +44,15 @@ public:
 
 	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
 	
-	void							Render();
-	void							Update();
+	void							Render() override;
+	int								Update() override;
 
 	void							LoadContent();
 	void							CleanUp();
 
 	void							OnEvent(Event evt);
 
-	bool							IsRunning(); 
+	bool							IsRunning() override;
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:

@@ -13,7 +13,7 @@ SceneManager::SceneManager()
 SceneManager::~SceneManager()
 {
 	DEBUG_MSG("Calling Cleanup");
-	game->CleanUp();
+	_game->CleanUp();
 }
 
 bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
@@ -23,11 +23,16 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	_cameraSystem.Init(width, height);
 
-	menu = new MainMenu();
-	menu->Initialize(_window, _renderer, width, height);
+	_menu = new MainMenu();
+	_menu->Initialize(_window, _renderer, width, height);
 
-	game = new Game();
-	//game->Initialize(_window, _renderer, width, height);
+	_game = new Game();
+	_game->Initialize(_window, _renderer, width, height);
+
+	_currentScene.push_back(_menu);
+	_currentScene.push_back(_game);
+
+	_runningScene = 1;
 
 	return _running;
 }
@@ -71,18 +76,11 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 
 void SceneManager::Update()
 {
-	if (menu->IsRunning())
+	if (_currentScene[_runningScene]->IsRunning())
 	{
-		menu->Update();
-		menu->Render();
+		_runningScene = _currentScene[_runningScene]->Update();
+		_currentScene[_runningScene]->Render();
 	}
-
-	else if (game->IsRunning())
-	{
-		game->Update();
-		game->Render();
-	}
-
 
 	else
 	{

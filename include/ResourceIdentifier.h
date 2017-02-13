@@ -4,5 +4,4 @@ enum class TextureID
 	Player,
 	EntitySpriteSheet,
 	TilemapSpriteSheet,
-	Text
 };

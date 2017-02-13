@@ -81,7 +81,7 @@ void MainMenu::LoadContent()
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 }
 
-void MainMenu::Update()
+int MainMenu::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
@@ -95,6 +95,8 @@ void MainMenu::Update()
 
 	//save the curent time for next frame
 	_lastTime = currentTime;
+
+	return CurrentScene::mainMenu;
 }
 
 void MainMenu::Render()
@@ -127,10 +129,13 @@ bool MainMenu::IsRunning()
 
 void MainMenu::OnEvent(EventListener::Event evt)
 {
-	switch (evt)
+	if (_running)
 	{
-	case Event::ESCAPE: 
-		_running = false;
+		switch (evt)
+		{
+		case Event::ESCAPE:
+			_running = false;
+		}
 	}
 }
 
