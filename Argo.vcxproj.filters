@@ -129,7 +129,7 @@
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
+    <ClInclude Include="include\SceneManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
   </ItemGroup>
@@ -190,7 +190,7 @@
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
+    <ClCompile Include="src\SceneManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
