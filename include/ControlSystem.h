@@ -12,11 +12,7 @@ public:
 
 	void Process(float dt = 0.f) override;
 
-	void MovePlayer(int _x, int _y, Entity*& entity);
-
-	//cant have these here due to the way moveplayer is being called by inputmanager (nullptr)
-//private:
-//	int _prevX;
-//	int _prevY;
+	void MoveHorizontal(int dir, Entity*& entity);
+	void MoveVertical(int dir, Entity*& entity);
 };
 

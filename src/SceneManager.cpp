@@ -65,7 +65,7 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 
 void SceneManager::Update()
 {
-	while (game->IsRunning())
+	if (game->IsRunning())
 	{
 		game->Update();
 		game->Render();
