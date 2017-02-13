@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Debug.h"
-
 #include "SDL_image.h"
 #include "Box2D\Box2D.h"
 
@@ -34,8 +32,8 @@
 #include "GraphNode.h"
 #include "GraphArc.h"
 #include "Graph.h"
-//#include "Graph.h"
-// Debug
+
+
 using namespace Camera2D;
 
 class Game : public EventListener
@@ -44,7 +42,7 @@ public:
 									Game();
 									~Game();
 
-	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
+	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 	
 	void							Render();
 	void							Update();
@@ -52,14 +50,11 @@ public:
 	void							CleanUp();
 
 	void							OnEvent(Event evt) override;
-	void							Test(int t);
 
 	bool							IsRunning(); 
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	bool							SetupSDL(SDL_Window* window, SDL_Renderer* renderer);
-
 	void							BindInput(Entity* player);
 
 	void							DebugBox2D();
@@ -98,6 +93,9 @@ private:
 	WeaponSystem					_weaponSystem;
 	
 };
+
+
+
 
 class InputCommand : public Command
 {

@@ -7,6 +7,7 @@
 
 #include "SceneManager.h"
 #include "Game.h"
+#include "Debug.h"
 
 using namespace std;
 
@@ -40,9 +41,6 @@ int main(int argc, char** argv)
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
 		}
 	}
-
-	DEBUG_MSG("Calling Cleanup");
-	game->CleanUp();
 
 	//system("PAUSE");
 	

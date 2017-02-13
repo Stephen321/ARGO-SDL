@@ -19,7 +19,7 @@ void InteractionSystem::AddEntity(Entity* gameObject, Entity* otherObject)
 	_entities[gameObject->GetType()].push_back(std::pair<Entity*, Entity*>(gameObject, otherObject));
 }
 
-void InteractionSystem::RemoveEntity(Entity::Type tag, Entity* gameObject)
+void InteractionSystem::RemoveEntity(EntityType tag, Entity* gameObject)
 {
 	for (int i = 0; i < _entities[tag].size(); i++)
 	{

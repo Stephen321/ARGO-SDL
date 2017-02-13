@@ -1,4 +1,3 @@
-
 #include "PhysicsSystem.h"
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
@@ -52,8 +51,8 @@ void PhysicsSystem::Process(float dt)
 
 				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				
-				transform->rect.x = (int)metersToPixels(collision->body->GetPosition().x) - transform->origin.x;
-				transform->rect.y = (int)metersToPixels(collision->body->GetPosition().y) - transform->origin.y;
+				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
 				physics->xDir = 0;
 				physics->yDir = 0;

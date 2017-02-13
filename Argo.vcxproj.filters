@@ -60,9 +60,6 @@
     <ClInclude Include="include\Component.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\BoundsComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\System.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -138,15 +135,9 @@
     <ClInclude Include="include\InteractionSystem.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GunComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="GunSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="include\FiringSystem.h">
       <Filter>Header Files\Systems</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="include\Graph.h">
       <Filter>Header Files\AStar</Filter>
     </ClInclude>
@@ -155,12 +146,18 @@
     </ClInclude>
     <ClInclude Include="include\GraphNode.h">
       <Filter>Header Files\AStar</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="include\SceneManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\EntityType.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GunSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GunComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -231,7 +228,7 @@
     </ClCompile>
     <ClCompile Include="src\GunSystem.cpp">
       <Filter>Source Files\Systems</Filter>
-	</ClInclude>
+    </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>

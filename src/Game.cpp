@@ -7,12 +7,13 @@
 #include "ConstHolder.h"
 #include "Helpers.h"
 #include "LTimer.h"
+
 #include <assert.h>
 
 
 
 Game::Game() 
-	: _running(false)
+	: _running(true)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
@@ -41,84 +42,43 @@ Game::~Game()
 	_world.~b2World();
 }
 
-bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int height)
+void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 {
-	_running = SetupSDL(window, renderer);
-	
+	_window = window;
+	_renderer = renderer;
+
 	_cameraSystem.Init(width, height);
-	if (_running)
-	{//SETUP WHATEVER NEEDS TO BE 
 
-		LoadContent();
+	LoadContent();
 
-		Entity* player = nullptr;
-		std::vector<Entity*>::iterator it = _entities->begin();
-		while (it != _entities->end())
+	Entity* player = nullptr;
+	std::vector<Entity*>::iterator it = _entities->begin();
+	while (it != _entities->end())
+	{
+		if ((*it)->GetType() == EntityType::Player)
 		{
-			if ((*it)->GetType() == EntityType::Player)
-			{
-				player = *it;
-				break;
-			}
-			it++;
+			player = *it;
+			break;
 		}
+		it++;
+	}
 
 
 
-		//Add a function for this
-		Entity* weapon = _entityFactory->CreateEntity(Entity::Type::Weapon);
+	//Add a function for this
+	Entity* weapon = _entityFactory->CreateEntity(EntityType::Weapon);
 
-		assert(weapon != nullptr);
+	assert(weapon != nullptr);
 		
-		_weaponSystem.AddEntity(player, weapon);
+	_weaponSystem.AddEntity(player, weapon);
 
-		//shooting
-		Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
-		_inputManager->AddKey(Event::SPACE, spaceIn, this);
+	//shooting
+	Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 
 
-		BindInput(player);
-	}
-
-	return _running;
-}
-
-bool Game::SetupSDL(SDL_Window*	window, SDL_Renderer* renderer)
-{
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
-	{
-		DEBUG_MSG("SDL Init success");
-		_window = window;
-
-		if (_window != 0)
-		{
-			DEBUG_MSG("Window creation success");
-			_renderer = renderer;
-			if (_renderer != 0)
-			{
-				DEBUG_MSG("Renderer creation success");
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			}
-			else
-			{
-				DEBUG_MSG("Renderer init fail");
-				return false;
-			}
-		}
-		else
-		{
-			DEBUG_MSG("Window init fail");
-			return false;
-		}
-	}
-	else
-	{
-		DEBUG_MSG("SDL init fail");
-		return false;
-	}
-
-	return true;
+	BindInput(player);
 }
 
 void Game::LoadContent()
@@ -191,14 +151,12 @@ bool Game::IsRunning()
 
 void Game::CleanUp()
 {
-	DEBUG_MSG("Cleaning Up");
-
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 
-	for (int i = 0; i < _entities.size(); i++)
-		delete _entities[i];
-	_entities.clear();
+	for (int i = 0; i < _entities->size(); i++)
+		delete _entities->at(i);
+	_entities->clear();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
@@ -358,66 +316,4 @@ void Game::DebugBox2D()
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
-}
-
-bool Game::IsRunning()
-{
-	return _running;
-}
-
-
-void Game::CleanUp()
-{
-	DEBUG_MSG("Cleaning Up");
-
-	//DESTROY HERE
-	_world.SetAllowSleeping(true);
-
-	for (int i = 0; i < _entities->size(); i++)
-	{
-		delete _entities->at(i);
-	}
-	_entities->clear();
-
-	SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
-}
-
-void Game::OnEvent(EventListener::Event evt)
-{
-	switch (evt)
-	{
-		case Event::ESCAPE:
-			_inputManager->saveFile();
-			_running = false;
-	}
-}
-
-void Game::Test(int t)
-{
-	int i = t;
-}
-
-SDL_Texture * Game::loadTexture(const std::string & path)
-{
-	SDL_Texture* texture = NULL;
-
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(_renderer, surface);
-		if (texture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-
-		SDL_FreeSurface(surface);
-	}
-
-	return texture;
 }

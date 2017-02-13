@@ -47,8 +47,7 @@ void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
 
-	physics->xDir = x;
-	physics->yDir = y;
+	physics->xDir = dir;
 }
 void ControlSystem::MoveVertical(int dir, Entity*& entity)
 {

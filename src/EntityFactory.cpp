@@ -56,12 +56,13 @@ Entity* EntityFactory::CreateEntity(EntityType t)
 	case EntityType::Player:
 		entity = CreatePlayerEntity();
 		break;
-	case Entity::Type::Weapon:
+	case EntityType::Weapon:
 		entity = CreateWeaponEntity();
 		break;
-	case Entity::Type::Flag:
+	case EntityType::Flag:
 		entity = CreateFlagEntity();
 		break;
+
 	default:
 		break;
 	}
@@ -79,7 +80,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ControlComponent());
-	player->AddComponent(new ColliderComponent(nullptr));
+	player->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(player);
 	_physicSystem->AddEntity(player);
@@ -96,7 +97,7 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
-	ai->AddComponent(new CollisionComponent());
+	ai->AddComponent(new ColliderComponent());
 
 	_renderSystem->AddEntity(ai);
 	_physicSystem->AddEntity(ai);
@@ -106,7 +107,7 @@ Entity* EntityFactory::CreateAIEntity()
 Entity* EntityFactory::CreateObstacleEntity()
 {
 
-	Entity* obstacle = new Entity(Entity::Type::Obstacle);
+	Entity* obstacle = new Entity(EntityType::Obstacle);
 	obstacle->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	obstacle->AddComponent(new TransformComponent());
 	obstacle->AddComponent(new ColliderComponent());
@@ -130,7 +131,7 @@ Entity* EntityFactory::CreatePowerUpEntity()
 
 Entity* EntityFactory::CreateWeaponEntity()
 {
-	Entity* weapon = new Entity(Entity::Type::Weapon);
+	Entity* weapon = new Entity(EntityType::Weapon);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon]);
 
