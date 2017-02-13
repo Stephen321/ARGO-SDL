@@ -13,7 +13,6 @@ Entity::~Entity()
 	for (int i = 0; i < _components.size(); i++)
 	{
 		delete _components[i];
-		break;
 	}
 }
 

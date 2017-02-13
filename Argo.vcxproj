@@ -191,12 +191,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="include\BodyFactory.h" />
-    <ClInclude Include="include\BoundsComponent.h" />
     <ClInclude Include="include\Camera2D.h" />
     <ClInclude Include="include\CameraSystem.h" />
-    <ClInclude Include="include\CollisionComponent.h" />
+    <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
@@ -205,14 +203,18 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
+    <ClInclude Include="include\FiringSystem.h" />
     <ClInclude Include="include\EntityType.h" />
     <ClInclude Include="include\FLInputManager.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\GraphArc.h" />
     <ClInclude Include="include\GraphNode.h" />
+    <ClInclude Include="include\GunComponent.h" />
+    <ClInclude Include="include\GunSystem.h" />
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\Helpers.h" />
+    <ClInclude Include="include\InteractionSystem.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\PerlinNoise.h" />
@@ -224,7 +226,9 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Shake.h" />
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
+    <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
+    <ClInclude Include="include\WeaponSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -243,8 +247,11 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\ControlSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
+    <ClCompile Include="src\FiringSystem.cpp" />
     <ClCompile Include="src\FLInputManager.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GunSystem.cpp" />
+    <ClCompile Include="src\InteractionSystem.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -254,6 +261,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
+    <ClCompile Include="src\WeaponSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

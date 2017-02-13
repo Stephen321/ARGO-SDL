@@ -1,8 +1,8 @@
 #include "LevelLoader.h"
 #include "SpriteComponent.h"
 #include "Helpers.h"
-#include "BoundsComponent.h"
-#include "CollisionComponent.h"
+#include "TransformComponent.h"
+#include "ColliderComponent.h"
 
 void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
@@ -45,7 +45,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		{
 			Entity* tile = entityFactory->CreateEntity(EntityType::Tile);
 			SpriteComponent* sprite = static_cast<SpriteComponent*>(tile->GetComponent(Component::Type::Sprite));
-			BoundsComponent* bounds = static_cast<BoundsComponent*>(tile->GetComponent(Component::Type::Bounds));
+			TransformComponent* bounds = static_cast<TransformComponent*>(tile->GetComponent(Component::Type::Transform));
 
 			switch (backgroundDataArray[index].GetInt())
 			{
@@ -95,11 +95,22 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 			if (!createPlayer)
 			{ //it would be really nice if we could move all of this body creation stuff into the entity factory some how
 				createPlayer = true;
+
 				Entity* player = entityFactory->CreateEntity(EntityType::Player);
-				CollisionComponent* collider = static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider));
-				SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
-				collider->body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x, y), b2Vec2(spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 2),
-															(uint16)player->GetType(), PLAYER_MASK, false);
+				ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
+				TransformComponent* transform = static_cast<TransformComponent*>(player->GetComponent(Component::Type::Transform));
+
+				transform->rect.x = x;
+				transform->rect.y = y;
+
+				collider->body = bodyFactory->CreateBoxBody(
+					  b2BodyType::b2_dynamicBody
+					, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+					, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+					, (uint16)player->GetType()
+					, PLAYER_MASK
+					, false);
+
 				collider->body->SetUserData(player);
 				collider->body->SetFixedRotation(true);
 				entities->push_back(player);
@@ -109,18 +120,32 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		else if (entityName == "Checkpoint")
 		{
 			Entity* checkpoint = entityFactory->CreateEntity(EntityType::Checkpoint);
-			CollisionComponent* collider = static_cast<CollisionComponent*>(checkpoint->GetComponent(Component::Type::Collider));
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), b2Vec2(w*.5f, h*.5f),
-				(uint16)checkpoint->GetType(), CHECKPOINT_MASK, true);
+			ColliderComponent* collider = static_cast<ColliderComponent*>(checkpoint->GetComponent(Component::Type::Collider));
+
+			b2Body* body = bodyFactory->CreateBoxBody(
+				b2BodyType::b2_staticBody
+				, b2Vec2(x +w*.5f, y+h*.5f)
+				, b2Vec2(w*.5f, h*.5f)
+				, (uint16)checkpoint->GetType()
+				, CHECKPOINT_MASK
+				, true);
+
 			body->SetUserData(checkpoint);
 			entities->push_back(checkpoint);
 		}
 		else if (entityName == "Flag")
 		{
 			Entity* flag = entityFactory->CreateEntity(EntityType::Flag);
-			CollisionComponent* collider = static_cast<CollisionComponent*>(flag->GetComponent(Component::Type::Collider));
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_dynamicBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f),
-				(uint16)flag->GetType(), FLAG_MASK, true);
+			ColliderComponent* collider = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
+
+			b2Body* body = bodyFactory->CreateBoxBody(
+				b2BodyType::b2_dynamicBody
+				, b2Vec2(x + w*.5f, y + h*.5f)
+				, b2Vec2(w*.5f, h*.5f)
+				, (uint16)flag->GetType()
+				, FLAG_MASK
+				, true);
+
 			body->SetUserData(flag);
 			entities->push_back(flag);
 		}
@@ -143,12 +168,20 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 
 
 		Entity* point = entityFactory->CreateEntity(EntityType::Point);
-		b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f), (uint16)point->GetType(), 0, true);
+
+		b2Body* body = bodyFactory->CreateBoxBody(
+			b2BodyType::b2_staticBody
+			, b2Vec2(x + w*.5f, y + h*.5f)
+			, b2Vec2(w*.5f, h*.5f)
+			, (uint16)point->GetType()
+			, 0
+			, true);
+
 		body->SetUserData(point);
 
-		BoundsComponent* bounds = static_cast<BoundsComponent*>(point->GetComponent(Component::Type::Bounds));
-		bounds->x = x;
-		bounds->y = y;
+		TransformComponent* transform = static_cast<TransformComponent*>(point->GetComponent(Component::Type::Transform));
+		transform->rect.x = x;
+		transform->rect.y = y;
 		//entities->push_back(point); instead push back to pathfinder?
 	}
 
@@ -170,16 +203,23 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 			float w = entity["width"].GetFloat();
 			float h = entity["height"].GetFloat();
 			Entity* obstacle = entityFactory->CreateEntity(EntityType::Obstacle);
-			CollisionComponent* collider = static_cast<CollisionComponent*>(obstacle->GetComponent(Component::Type::Collider));
-			b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x +w*.5f, y+h*.5f), b2Vec2(w*.5f, h*.5f),
-				(uint16)obstacle->GetType(), OBSTACLE_MASK, false);//create body
+			ColliderComponent* collider = static_cast<ColliderComponent*>(obstacle->GetComponent(Component::Type::Collider));
+
+			b2Body* body = bodyFactory->CreateBoxBody(
+				b2BodyType::b2_staticBody
+				, b2Vec2(x +w*.5f, y+h*.5f)
+				, b2Vec2(w*.5f, h*.5f)
+				, (uint16)obstacle->GetType()
+				, OBSTACLE_MASK
+				, false);//create body
+
 			body->SetUserData(obstacle);
 			entities->push_back(obstacle);
 		}
 		else if (entityName == "Poly")
 		{
 			Entity* obstacle = entityFactory->CreateEntity(EntityType::Obstacle);
-			CollisionComponent* collider = static_cast<CollisionComponent*>(obstacle->GetComponent(Component::Type::Collider));
+			ColliderComponent* collider = static_cast<ColliderComponent*>(obstacle->GetComponent(Component::Type::Collider));
 			const Value& entityPolyArray = entity["polygon"]; //loop json entity
 			int count = entityPolyArray.Size();
 
@@ -189,8 +229,15 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				const Value& entityPoly = entityPolyArray[i];
 				vertices[i].Set(pixelsToMeters(entityPoly["x"].GetFloat()), pixelsToMeters(entityPoly["y"].GetFloat()));
 			}
-			b2Body* body = bodyFactory->CreatePolyBody(b2BodyType::b2_staticBody, b2Vec2(x, y), vertices, count,
-				(uint16)obstacle->GetType(), OBSTACLE_MASK, false);	//create body
+			b2Body* body = bodyFactory->CreatePolyBody(
+				b2BodyType::b2_staticBody
+				, b2Vec2(x, y)
+				, vertices
+				, count
+				, (uint16)obstacle->GetType()
+				, OBSTACLE_MASK
+				, false);	//create body
+
 			body->SetUserData(obstacle);
 			entities->push_back(obstacle);
 		}

@@ -4,20 +4,19 @@
 #include "Box2D\Box2D.h"
 
 
-class CollisionComponent : public Component
+class ColliderComponent : public Component
 {
 public:
-	CollisionComponent()
+	ColliderComponent()
 		: body(nullptr)
 		, Component::Component(Component::Type::Collider)
 	{
 	}
 
-	~CollisionComponent()
+	~ColliderComponent()
 	{
 	}
 
 public:
 	b2Body* body;
 };
-

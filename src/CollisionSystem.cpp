@@ -1,7 +1,7 @@
 #include "CollisionSystem.h"
 #include <iostream>
 #include "PhysicsComponent.h"
-#include "CollisionComponent.h"
+#include "ColliderComponent.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "ConstHolder.h"
@@ -89,7 +89,7 @@ void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifo
 	std::cout << enterAngle << std::endl;
 	physics->xVelocity = (cos(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.x * normalScaler;
 	physics->yVelocity = (-sin(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.y * normalScaler;
-	static_cast<CollisionComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
+	static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
 	
 
 	std::cout << player->GetTypeAsString().c_str() << " pre solve with " << other->GetTypeAsString().c_str() << std::endl;
