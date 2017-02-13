@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-
+#include "Debug.h"
 
 
 SceneManager::SceneManager()
@@ -15,13 +15,15 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
-
 	_running = SetupSDL(title, xpos, ypos, width, height, flags);
 
-	_cameraSystem.Init(width, height);
+	if (_running)
+	{
+		_cameraSystem.Init(width, height);
 
-	game = new Game();
-	game->Initialize(_window, _renderer, width, height);
+		game = new Game();
+		game->Initialize(_window, _renderer, width, height);
+	}
 
 	return _running;
 }

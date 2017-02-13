@@ -1,8 +1,7 @@
-
 #include "PhysicsSystem.h"
-#include "BoundsComponent.h"
+#include "TransformComponent.h"
 #include "PhysicsComponent.h"
-#include "CollisionComponent.h"
+#include "ColliderComponent.h"
 #include "ConstHolder.h"
 #include "Helpers.h"
 
@@ -29,14 +28,15 @@ void PhysicsSystem::Process(float dt)
 			for (Entity* e : (*it).second)
 			{
 				PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-				BoundsComponent* bounds = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-				CollisionComponent* collision = static_cast<CollisionComponent*>(e->GetComponent(Component::Type::Collider));
+				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+
 				float maxVelocity = physics->maxVelocity;
 
 				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
 				float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
 
-				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?
+				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
 
 				float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
@@ -49,14 +49,13 @@ void PhysicsSystem::Process(float dt)
 				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.1f) { physics->xVelocity = 0.f; }
 				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.1f) { physics->yVelocity = 0.f; }
 
-				collision->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
+				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				
-				bounds->rect.x = (int)metersToPixels(collision->body->GetPosition().x) - bounds->rect.w * 0.5f;
-				bounds->rect.y = (int)metersToPixels(collision->body->GetPosition().y) - bounds->rect.h * 0.5f;
+				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
 				physics->xDir = 0;
 				physics->yDir = 0;
-				//std::cout << "Velcoity.x: " << collision->body->GetLinearVelocity().x << " y: " << collision->body->GetLinearVelocity().y << std::endl;
 			}
 		}
 	}

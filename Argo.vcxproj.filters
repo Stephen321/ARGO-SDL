@@ -40,6 +40,9 @@
     <Filter Include="Source Files\Factory">
       <UniqueIdentifier>{009abd5c-7c85-4726-a96d-b5151b79e69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AStar">
+      <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -55,9 +58,6 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Component.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BoundsComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\System.h">
@@ -114,20 +114,38 @@
     <ClInclude Include="include\CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\CollisionComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\BodyFactory.h">
       <Filter>Header Files\Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\EntityFactory.h">
       <Filter>Header Files\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WeaponSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InteractionSystem.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FiringSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Graph.h">
+      <Filter>Header Files\AStar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphArc.h">
+      <Filter>Header Files\AStar</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphNode.h">
+      <Filter>Header Files\AStar</Filter>
     </ClInclude>
     <ClInclude Include="include\SceneManager.h">
       <Filter>Header Files\Other</Filter>
@@ -137,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="include\BasicTypes.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GunSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GunComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +219,18 @@
     </ClCompile>
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InteractionSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FiringSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GunSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
       <Filter>Source Files\Other</Filter>
