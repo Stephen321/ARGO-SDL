@@ -3,5 +3,6 @@ enum class TextureID
 {
 	Player,
 	EntitySpriteSheet,
-	TilemapSpriteSheet
+	TilemapSpriteSheet,
+	Text
 };

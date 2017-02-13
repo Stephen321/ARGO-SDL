@@ -4,6 +4,7 @@
 
 #include "Camera2D.h"
 
+#include "MainMenu.h"
 #include "Game.h"
 
 #include "CameraSystem.h"
@@ -31,6 +32,7 @@ private:
 	CameraSystem					_cameraSystem;
 
 private:
+	MainMenu* menu;
 	Game* game;
 };
 

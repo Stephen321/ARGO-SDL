@@ -1,48 +1,28 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
-#include "Debug.h"
+#include <SDL.h>
 
 #include "SDL_image.h"
-#include "Box2D\Box2D.h"
+#include "SDL_ttf.h"
+
+#include "Debug.h"
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
 
-#include "EntityFactory.h"
-#include "BodyFactory.h"
-
-#include "Entity.h"
-#include "SpriteComponent.h"
-#include "BoundsComponent.h"
-#include "PhysicsComponent.h"
-#include "CollisionComponent.h"
-
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "ControlSystem.h"
 #include "CameraSystem.h"
-#include "CollisionSystem.h"
-
-#include <SDL.h>
-#include <vector>
-#include <queue>
-#include <map>
 
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
-// Debug
-using namespace Camera2D;
-
-class Game : public EventListener
+class MainMenu : public EventListener
 {
 public:
-									Game();
-									~Game();
+	MainMenu();
+	~MainMenu();
 
 	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
-	
+
 	void							Render();
 	void							Update();
 
@@ -51,22 +31,20 @@ public:
 
 	void							OnEvent(Event evt);
 
-	bool							IsRunning(); 
+	bool							IsRunning();
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
 	bool							SetupSDL(SDL_Window* window, SDL_Renderer* renderer);
 
-	void							BindInput(Entity* player);
+	void							BindInput();
 
-	void							DebugBox2D();
+	void							SetupText(int fontSize, string message, int x, int y);
+	void							DebugText();
 
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
-
-	EntityFactory*					_entityFactory;
-	BodyFactory*					_bodyFactory;
 
 	LevelLoader						_levelLoader;
 
@@ -74,27 +52,18 @@ private:
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 
-	b2Vec2							 _gravity;
-	b2World							 _world;
-
 	bool							_running;
 
 	unsigned int					_lastTime;//time of last update;
 
-
-	std::vector<Entity*>			_entities;
 	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
-	CollisionSystem					_collisionSystem;
 
 
-
-
-	
+	SDL_Texture*					_textTexture = NULL;
+	TTF_Font*						_font = NULL;
+	SDL_Surface*					_surface = NULL;
+	SDL_Rect						_textRectangle;
 };
-
-
-#endif
 

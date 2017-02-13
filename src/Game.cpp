@@ -140,13 +140,12 @@ void Game::Render()
 
 	//RENDER HERE
 	_renderSystem.Process();
+	DebugBox2D();
 
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	DebugBox2D();
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
@@ -182,11 +181,6 @@ void Game::OnEvent(EventListener::Event evt)
 			_inputManager->saveFile();
 			_running = false;
 	}
-}
-
-void Game::Test(int t)
-{
-	int i = t;
 }
 
 SDL_Texture * Game::loadTexture(const std::string & path)

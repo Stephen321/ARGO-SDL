@@ -1,5 +1,8 @@
 #include "SceneManager.h"
 
+#include "ConstHolder.h"
+#include "Helpers.h"
+#include "LTimer.h"
 
 
 SceneManager::SceneManager()
@@ -20,8 +23,11 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	_cameraSystem.Init(width, height);
 
+	menu = new MainMenu();
+	menu->Initialize(_window, _renderer, width, height);
+
 	game = new Game();
-	game->Initialize(_window, _renderer, width, height);
+	//game->Initialize(_window, _renderer, width, height);
 
 	return _running;
 }
@@ -65,14 +71,20 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 
 void SceneManager::Update()
 {
-	while (game->IsRunning())
+	if (menu->IsRunning())
+	{
+		menu->Update();
+		menu->Render();
+	}
+
+	else if (game->IsRunning())
 	{
 		game->Update();
 		game->Render();
 	}
 
 
-	if(!game->IsRunning())
+	else
 	{
 		_running = false;
 	}
