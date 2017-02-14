@@ -3,8 +3,9 @@
 
 #include <list>
 #include <queue>
-
-
+#include "BasicTypes.h"
+using namespace helper;
+using namespace std;
 
 template <class DataType, class NodeType, class ArcType> class GraphArc;
 template <class DataType, class NodeType, class ArcType> class GraphNode;
@@ -50,7 +51,7 @@ private:
 
 public:           
     // Constructor and destructor functions
-	Graph();
+	Graph() {};
     Graph( int size );
     ~Graph();
 
@@ -61,7 +62,7 @@ public:
 	
     // Public member functions.
 	void init(int size);
-	bool addNode(DataType data, int index, Vector2 position);
+	bool addNode(DataType data, int index, helper::Vector2 position);
     void removeNode( int index );
     bool addArc( int from, int to, ArcType weight, bool directed = true );
     void removeArc( int from, int to );
@@ -73,7 +74,7 @@ public:
 	void aStar(Node* pStart, Node* pDest, std::vector<Node *>& path);
 	void setHeuristics(Node* pDest);
 	//void drawNodes() const;
-	//void drawArcs() const;
+	void drawArcs(SDL_Renderer* renderer) const;
 
 };
 
@@ -372,14 +373,14 @@ void Graph<DataType, NodeType, ArcType>::drawNodes(sf::RenderTarget& target) con
 		m_pNodes[i]->drawText(target);
 	}
 }
-
+*/
 //draw arcs
 template<class DataType, class NodeType, class ArcType>
-void Graph<DataType, NodeType, ArcType>::drawArcs(sf::RenderTarget& target) const{
+void Graph<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer) const{
 	for (int i = 0; i < m_count; i++)
-		m_pNodes[i]->drawArcs(target);
+		m_pNodes[i]->drawArcs(renderer);
 }
-*/
+
 
 
 #include "GraphNode.h"

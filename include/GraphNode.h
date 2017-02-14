@@ -2,7 +2,8 @@
 #define GRAPHNODE_H
 
 #include <list>
-//#include "BasicTypes.h"
+#include "BasicTypes.h"
+using namespace std;
 
 // Forward references
 template <typename DataType, typename NodeType, typename ArcType> class GraphArc;
@@ -40,7 +41,7 @@ private:
 	
 	Node* m_prevNode; 
 
-	Vector2 m_position;
+	helper::Vector2 m_position;
 	//sf::CircleShape m_shape;
 
 	//sf::Text m_nameTxt;
@@ -99,7 +100,7 @@ public:
 	}
 
 	
-	void setPosition(Vector2 newPosition){
+	void setPosition(helper::Vector2 newPosition){
 		/*
 		m_nameTxt.setPosition(newPosition);
 		m_hCostTxt.setPosition(newPosition.x - RADIUS, newPosition.y - RADIUS);
@@ -108,7 +109,7 @@ public:
 		m_position = newPosition;
 	}
 
-	Vector2 getPosition(){
+	helper::Vector2 getPosition(){
 		return m_position;
 	}
 	
@@ -123,7 +124,7 @@ public:
     Arc* getArc( Node* pNode );    
     void addArc( Node* pNode, ArcType pWeight );
 	void removeArc(Node* pNode);
-	//void drawArcs(sf::RenderTarget& target) const;
+	void drawArcs(SDL_Renderer* renderer) const;
 	//void drawText(sf::RenderTarget& target) const;
 	GraphNode();
 };
@@ -200,7 +201,7 @@ void GraphNode<DataType, NodeType, ArcType>::addArc(Node* pNode, ArcType weight)
    Arc a;
    a.setNode(pNode);
    a.setWeight(weight);
-   a.setLine(m_position pNode->getPosition());
+   a.setLine(m_position, pNode->getPosition());
    // Add it to the arc list.
    m_arcList.push_back( a );
 }
@@ -228,15 +229,14 @@ void GraphNode<DataType, NodeType, ArcType>::removeArc(Node* pNode) {
      }
 }
 
-/*
 
 template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::drawArcs() const{
+void GraphNode<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer) const{
 	int arcs = m_arcList.size();
 	for (auto a : m_arcList)
-		target.draw(a);
+		a.draw(renderer);
 }
-
+/*
 template<typename DataType, typename NodeType, typename ArcType>
 void GraphNode<DataType, NodeType, ArcType>::drawText(sf::RenderTarget& target) const{
 	target.draw(m_nameTxt);

@@ -233,7 +233,16 @@ void Game::BindInput(Entity* player)
 
 void Game::DebugBox2D()
 {
-	//DEBUG
+	//DEBUG ASTAR
+	
+	SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+	SDL_Point* points = new SDL_Point[2];
+	points[0] = { 0,0 };
+	points[1] = { 500,500 };
+	SDL_RenderDrawLines(_renderer, points, 2);
+
+	_map.drawArcs(_renderer);
+	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())

@@ -3,42 +3,33 @@
 
 #include "GraphNode.h"
 #include <iostream>
-// -------------------------------------------------------
-// Name:        GraphArc
-// Description: This is the arc class. The arc class
-//              points to a graph node, and contains a 
-//              weight.
-// -------------------------------------------------------
+
+#include "SDL.h" //for debuging
+
+using namespace helper;
 
 template<class DataType, class NodeType, class ArcType>
 class GraphArc {
 private:
 
-// -------------------------------------------------------
-// Description: pointer to the node that the arc points to
-// -------------------------------------------------------
 	GraphNode<DataType, NodeType, ArcType>* m_pNode;
 
-// -------------------------------------------------------
-// Description: Weight of the arc
-// -------------------------------------------------------
     ArcType m_weight;
 
-
-	//sf::Vertex m_line[2];
+	SDL_Point points[2];
 
 public:
 
-	/*
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const{
-		target.draw(m_line, 2, sf::Lines);
+	
+	virtual void draw(SDL_Renderer* renderer) const{
+		SDL_RenderDrawLines(renderer, points, 2);
 	}
 
-	void setLine(sf::Vector2f start, sf::Vector2f end){
-		m_line[0] = start;
-		m_line[1] = end;
+	void setLine(helper::Vector2 start, helper::Vector2 end){
+		points[0] = { (int)start.x, (int)start.y };
+		points[1] = { (int)end.x, (int)end.y };
 	}
-	*/
+	
     // Accessor functions
     GraphNode<DataType, NodeType, ArcType>* node() const {
         return m_pNode;
