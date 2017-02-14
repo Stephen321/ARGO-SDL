@@ -45,6 +45,7 @@ Component* Entity::GetComponent(Component::Type componentType)
 	}
 	return nullptr;
 }
+
 std::vector<Component*>& Entity::GetComponents()
 {
 	return _components;

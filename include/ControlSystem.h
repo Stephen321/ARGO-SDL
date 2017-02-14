@@ -24,6 +24,7 @@ public:
 	void					AddTurret(Entity* entity);
 	void					RemoveTurret(Entity* entity);
 
+	void					RotateEntity(Entity* entity);
 
 	int						ChangeToScene(int scene);
 
