@@ -99,6 +99,7 @@ void SystemManager::AddEntity(InteractionSystemType type, Entity* actor, Entity*
 	_interactionSystems[type]->AddEntity(actor, item);
 }
 
+#pragma region Get Systems
 
 RenderSystem* SystemManager::GetRenderSystem()
 {
@@ -136,12 +137,18 @@ FiringSystem*  SystemManager::GetFiringSystem()
 	return firingSystem;
 }
 
-				 
+#pragma endregion
+
+#pragma region Get Interaction Systems
+
 WeaponSystem* SystemManager::GetWeaponInteractionSystem()
 {
 	WeaponSystem* weaponInteractionSystemType = static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon]);
 	return weaponInteractionSystemType;
 }
+
+#pragma endregion
+
 
 
 Camera2D::Camera& SystemManager::GetCamera()
