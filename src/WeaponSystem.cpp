@@ -4,7 +4,8 @@
 
 
 
-WeaponSystem::WeaponSystem()
+WeaponSystem::WeaponSystem(float updateRate)
+	: InteractionSystem(updateRate)
 {
 }
 

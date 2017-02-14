@@ -24,7 +24,7 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	if (_running)
 	{
-		_cameraSystem.Init(width, height);
+		_cameraSystem.Initialize(width, height);
 
 		_menu = new MainMenu();
 		_menu->Initialize(_window, _renderer, width, height);

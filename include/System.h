@@ -7,8 +7,8 @@
 class System
 {
 public:
-	typedef std::map<EntityType,
-		std::vector<Entity*>>::iterator EntityMapIterator;
+	typedef std::map<EntityType, std::vector<Entity*>>::iterator EntityMapIterator;
+
 									System(float updateRate = 0.f);
 									~System();
 

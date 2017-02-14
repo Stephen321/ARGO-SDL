@@ -8,10 +8,10 @@ MainMenu::MainMenu()
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _renderSystem(_renderer, &_cameraSystem.getCamera())
+	, _renderSystem()
 	, _controlSystem()
 {
-
+	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 }
 
 
@@ -23,7 +23,7 @@ bool MainMenu::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width,
 {
 	_running = SetupSDL(window, renderer);
 
-	_cameraSystem.Init(width, height);
+	_cameraSystem.Initialize(width, height);
 	if (_running)
 	{//SETUP WHATEVER NEEDS TO BE 
 		LoadContent();
@@ -32,7 +32,7 @@ bool MainMenu::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width,
 
 		SetupText(32, "Press Enter to go to Game", 100, 100);
 
-		_swapScene = CurrentScene::mainMenu;
+		_swapScene = CurrentScene::MAIN_MENU;
 	}
 
 	return _running;
@@ -125,7 +125,7 @@ void MainMenu::Render()
 
 bool MainMenu::IsRunning()
 {
-	if (_swapScene != CurrentScene::mainMenu) { _swapScene = CurrentScene::mainMenu; }
+	if (_swapScene != CurrentScene::MAIN_MENU) { _swapScene = CurrentScene::MAIN_MENU; }
 	return _running;
 }
 
@@ -173,6 +173,6 @@ void MainMenu::DebugText()
 
 void MainMenu::BindInput()
 {
-	Command* enterIn = new InputCommand([&]() { _swapScene = static_cast<CurrentScene>(_controlSystem->ChangeToScene(1)); }, Type::Press);
+	Command* enterIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::GAME; }, Type::Press);
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
 }
