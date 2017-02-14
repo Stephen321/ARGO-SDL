@@ -94,7 +94,6 @@ private:
 	FiringSystem*					_firingSystem;
 	WeaponSystem					_weaponSystem;
 
-
 	CurrentScene					_swapScene;
 };
 

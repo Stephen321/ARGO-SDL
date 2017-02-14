@@ -45,7 +45,7 @@
     </Filter>
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{c2f0286d-2c25-44d7-accd-d4cc5e8ce013}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="Header Files\AStar">
       <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
     </Filter>
@@ -138,9 +138,6 @@
     <ClInclude Include="include\MainMenu.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Scenes</Filter>
-	</ClInclude>  
     <ClInclude Include="include\TransformComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -176,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="include\GunComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +253,7 @@
     <ClCompile Include="src\MainMenu.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="src\Scene.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>

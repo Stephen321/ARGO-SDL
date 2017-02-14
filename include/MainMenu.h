@@ -44,8 +44,8 @@ private:
 
 	void							BindInput();
 
-	void							SetupText(int fontSize, string message, int x, int y);
-	void							DebugText();
+	void							CreateText(string message, int x, int y);
+	void							CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
 private:
 	SDL_Window*						_window;
@@ -66,11 +66,19 @@ private:
 	CameraSystem					_cameraSystem;
 
 
-	SDL_Texture*					_textTexture = NULL;
 	TTF_Font*						_font = NULL;
-	SDL_Surface*					_surface = NULL;
-	SDL_Rect						_textRectangle;
+	std::vector<SDL_Texture*>		_textTexture;
+	std::vector<SDL_Surface*>		_surface;
+	std::vector<SDL_Rect>			_textRectangle;
 
 	CurrentScene					_swapScene;
+	int								_fontSize;
+
+private:
+	void							MoveUp();
+	void							MoveDown();
+
+	int								GetPressedItem();
+	int								_selectedItemIndex;
 };
 
