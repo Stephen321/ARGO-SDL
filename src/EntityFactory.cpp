@@ -142,7 +142,6 @@ Entity* EntityFactory::CreateWeaponEntity()
 	_systemManager->AddEntity(SystemManager::SystemType::Render, weapon);
 	_systemManager->GetControlSystem()->AddTurret(weapon);
 	_systemManager->AddEntity(SystemManager::SystemType::Gun, weapon);
-	_systemManager->AddEntity(SystemManager::SystemType::Firing, weapon);
 
 	return weapon;
 }

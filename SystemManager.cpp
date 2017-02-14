@@ -50,12 +50,8 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 
 	//SETUP GUN SYSTEM
 	GunSystem* gunSystem = new GunSystem(0);
+	gunSystem->Initialize(entities, entityFactory, bodyFactory);
 	_systems[SystemType::Gun] = gunSystem;
-
-	//SETUP FIRING SYSTEM
-	FiringSystem* firingSystem = new FiringSystem(0);
-	firingSystem->Initialize(entities, entityFactory, bodyFactory);
-	_systems[SystemType::Firing] = firingSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -130,11 +126,6 @@ GunSystem* SystemManager::GetGunSystem()
 {
 	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
 	return gunSystem;
-}
-FiringSystem*  SystemManager::GetFiringSystem()
-{
-	FiringSystem* firingSystem = static_cast<FiringSystem*>(_systems[SystemType::Firing]);
-	return firingSystem;
 }
 
 #pragma endregion
