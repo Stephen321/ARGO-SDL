@@ -8,12 +8,13 @@ public:
 	enum class Type
 	{
 		Health,
-		Bounds,
+		Transform,
 		Physics,
 		Collider,
 		Sprite,
 		Control,
 		AI,
+		Gun,
 	};
 
 public:

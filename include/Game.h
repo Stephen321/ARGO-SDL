@@ -1,28 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Debug.h"
-
 #include "SDL_image.h"
 #include "Box2D\Box2D.h"
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
+#include "Scene.h"
 
 #include "EntityFactory.h"
 #include "BodyFactory.h"
 
 #include "Entity.h"
-#include "SpriteComponent.h"
-#include "BoundsComponent.h"
-#include "PhysicsComponent.h"
-#include "CollisionComponent.h"
-
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "ControlSystem.h"
-#include "CameraSystem.h"
-#include "CollisionSystem.h"
+#include "SystemManager.h"
 
 #include <SDL.h>
 #include <vector>
@@ -32,34 +22,34 @@
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 #include "Graph.h"
+#include "FunctionMaster.h"
+
+
+typedef GraphNode<string, int, int> Node;
 
 // Debug
 using namespace Camera2D;
 
-typedef GraphNode<string, int, int> Node;
-
-class Game : public EventListener
+class Game : public EventListener, public Scene
 {
 public:
 									Game();
 									~Game();
 
-	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
+	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 	
-	void							Render();
-	void							Update();
+	void							Render() override;
+	int								Update() override;
+
 	void							LoadContent();
 	void							CleanUp();
 
-	void							OnEvent(Event evt);
-	void							Test(int t);
+	void							OnEvent(Event evt) override;
 
-	bool							IsRunning(); 
+	bool							IsRunning() override;
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	bool							SetupSDL(SDL_Window* window, SDL_Renderer* renderer);
-
 	void							BindInput(Entity* player);
 
 	void							DebugBox2D();
@@ -68,8 +58,8 @@ private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
-	EntityFactory*					_entityFactory;
-	BodyFactory*					_bodyFactory;
+	EntityFactory					_entityFactory;
+	BodyFactory						_bodyFactory;
 
 	LevelLoader						_levelLoader;
 
@@ -86,47 +76,15 @@ private:
 
 
 	std::vector<Entity*>			_entities;
-	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicsSystem;
-	ControlSystem*					_controlSystem;
-	CameraSystem					_cameraSystem;
-	CollisionSystem					_collisionSystem;
 
 	Graph<string, int, int>			_map;
 
-	
+	SystemManager					_systemManager;
+	FunctionMaster					_functionMaster;
+
+	CurrentScene					_swapScene;
+
 };
-
-class InputCommand : public Command
-{
-public:
-	InputCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
-
-	virtual void executePress()
-	{
-		for (int i = 0; m_type == EventListener::Type::Press && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeRelease()
-	{
-		for (int i = 0; m_type == EventListener::Type::Release && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeHold()
-	{
-		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeDown()
-	{
-		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-};
-
 
 #endif
 

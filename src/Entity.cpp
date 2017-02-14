@@ -13,7 +13,6 @@ Entity::~Entity()
 	for (int i = 0; i < _components.size(); i++)
 	{
 		delete _components[i];
-		break;
 	}
 }
 
@@ -46,6 +45,7 @@ Component* Entity::GetComponent(Component::Type componentType)
 	}
 	return nullptr;
 }
+
 std::vector<Component*>& Entity::GetComponents()
 {
 	return _components;

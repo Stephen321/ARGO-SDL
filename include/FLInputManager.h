@@ -472,3 +472,34 @@ public:
 
 	//\\ Add new Command* here for custom inputs
 };
+
+// Input
+class InputCommand : public Command
+{
+public:
+	InputCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
+
+	virtual void executePress()
+	{
+		for (int i = 0; m_type == EventListener::Type::Press && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeRelease()
+	{
+		for (int i = 0; m_type == EventListener::Type::Release && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeHold()
+	{
+		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+
+	virtual void executeDown()
+	{
+		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
+			m_functions[i]();
+	}
+};

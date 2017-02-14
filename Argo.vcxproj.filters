@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Factory">
       <UniqueIdentifier>{009abd5c-7c85-4726-a96d-b5151b79e69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{4b72acfb-6827-43c8-8cd5-32b68f09cbea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{c2f0286d-2c25-44d7-accd-d4cc5e8ce013}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\AStar">
       <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
     </Filter>
@@ -60,9 +66,6 @@
     <ClInclude Include="include\Component.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\BoundsComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\System.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -79,9 +82,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Entity.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Game.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\LTimer.h">
@@ -117,9 +117,6 @@
     <ClInclude Include="include\CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\CollisionComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\BodyFactory.h">
       <Filter>Header Files\Factory</Filter>
     </ClInclude>
@@ -128,6 +125,27 @@
     </ClInclude>
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManager.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MainMenu.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WeaponSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\Graph.h">
       <Filter>Header Files\AStar</Filter>
@@ -156,6 +174,24 @@
     <ClInclude Include="src\AIComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="include\GunSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GunComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InteractionSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FunctionMaster.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SystemManager.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -178,13 +214,7 @@
     <ClCompile Include="src\Entity.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.cpp">
-      <Filter>Source Files\Other</Filter>
-    </ClCompile>
     <ClCompile Include="src\LTimer.cpp">
-      <Filter>Source Files\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\FLInputManager.cpp">
@@ -199,9 +229,6 @@
     <ClCompile Include="src\PerlinNoise.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="include\CameraSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="src\LevelLoader.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
@@ -214,10 +241,39 @@
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InteractionSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GunSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainMenu.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FunctionMaster.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\AISystem.cpp">
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SystemManager.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,27 +8,16 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
-
+#include <assert.h>
 
 Game::Game() 
-	: _running(false)
+	: _running(true)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
-	, _renderSystem(_renderer, &_cameraSystem.getCamera())
-	, _physicsSystem()
-	, _controlSystem()
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
-	, _entityFactory(nullptr)
-	, _bodyFactory(nullptr)
 	, _map()
 {
-	_world.SetContactListener(&_collisionSystem);
-	_world.SetAllowSleeping(false);
-	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
-	_bodyFactory = new BodyFactory(&_world);
-	
+
 }
 
 Game::~Game()
@@ -36,96 +25,71 @@ Game::~Game()
 	_world.~b2World();
 }
 
-bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int height)
+void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 {
-	
-	_running = SetupSDL(window, renderer);
-	
-	_cameraSystem.Init(width, height);
-	if (_running)
-	{//SETUP WHATEVER NEEDS TO BE 
+	_window = window;
+	_renderer = renderer;
 
-		LoadContent();
 
-		Entity* player = nullptr;
-		std::vector<Entity*>::iterator it = _entities.begin();
-		while (it != _entities.end())
-		{
-			if ((*it)->GetType() == EntityType::Player)
-			{
-				player = *it;
-				break;
-			}
-			it++;
-		}
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
 
-		BindInput(player);
-	}
+	_world.SetAllowSleeping(false);
 
-	return _running;
-}
+	_entityFactory.Initialize(&_systemManager, &_textureHolder);
+	_bodyFactory.Initialize(&_world);
 
-bool Game::SetupSDL(SDL_Window*	window, SDL_Renderer* renderer)
-{
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
+	LoadContent();
+
+	Entity* player = nullptr;
+	std::vector<Entity*>::iterator it = _entities.begin();
+	while (it != _entities.end())
 	{
-		DEBUG_MSG("SDL Init success");
-		_window = window;
+		if ((*it)->GetType() == EntityType::Player)
+		{
+			player = *it;
+			break;
+		}
 
-		if (_window != 0)
-		{
-			DEBUG_MSG("Window creation success");
-			_renderer = renderer;
-			if (_renderer != 0)
-			{
-				DEBUG_MSG("Renderer creation success");
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			}
-			else
-			{
-				DEBUG_MSG("Renderer init fail");
-				return false;
-			}
-		}
-		else
-		{
-			DEBUG_MSG("Window init fail");
-			return false;
-		}
-	}
-	else
-	{
-		DEBUG_MSG("SDL init fail");
-		return false;
+		_swapScene = CurrentScene::GAME;
+		it++;
 	}
 
-	return true;
+
+
+
+	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
+
+	assert(weapon != nullptr);
+		
+	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
+
+	//shooting
+	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, this, weapon), Type::Press);
+	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
+
+
+	BindInput(player);
 }
 
 void Game::LoadContent()
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory, &_map);
 
-	int originNode = 1;
-	_map.nodeArray()[originNode]->setColour(SDL_Color{0,255,0,255});
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_map);
 
-	int destNode = 60;
-	_map.nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
-	_map.setHeuristics(_map.nodeArray()[destNode]);
-	vector<Node*> path;
-	_map.aStar(_map.nodeArray()[originNode], _map.nodeArray()[destNode], path);
-	_map.nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
-	_map.nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+	
 
-	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
 
-void Game::Update()
+int Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
@@ -137,13 +101,13 @@ void Game::Update()
 	// Use to Update constantly at frame rate
 	_inputManager->ConstantInput();
 
-	_cameraSystem.Process(dt);
-	_physicsSystem.Process(dt);
-	_collisionSystem.Process(dt);
+	_systemManager.Process(dt);
 
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;
+
+	return (int)_swapScene;
 }
 
 void Game::Render()
@@ -154,14 +118,14 @@ void Game::Render()
 	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
-	_renderSystem.Process();
+	_systemManager.Render();
+
+	DebugBox2D();
 
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	DebugBox2D();
+	SDL_RenderDrawRect(_renderer, &_systemManager.GetCamera().worldToScreen(r));
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
@@ -169,19 +133,21 @@ void Game::Render()
 
 bool Game::IsRunning()
 {
+	if (_swapScene != CurrentScene::GAME) { _swapScene = CurrentScene::GAME; }
 	return _running;
 }
 
 
 void Game::CleanUp()
 {
-	DEBUG_MSG("Cleaning Up");
-
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 
 	for (int i = 0; i < _entities.size(); i++)
-		delete _entities[i];
+	{
+		delete _entities.at(i);
+	}
+
 	_entities.clear();
 
 	SDL_DestroyWindow(_window);
@@ -191,17 +157,15 @@ void Game::CleanUp()
 
 void Game::OnEvent(EventListener::Event evt)
 {
-	switch (evt)
+	if (_running)
 	{
+		switch (evt)
+		{
 		case Event::ESCAPE:
 			_inputManager->saveFile();
 			_running = false;
+		}
 	}
-}
-
-void Game::Test(int t)
-{
-	int i = t;
 }
 
 SDL_Texture * Game::loadTexture(const std::string & path)
@@ -229,17 +193,20 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 
 void Game::BindInput(Entity* player)
 {
-	Command* wIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, -1, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, 1, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
+
+	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
@@ -250,10 +217,10 @@ void Game::DebugBox2D()
 	
 	//SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 
-	_map.drawNodes(_renderer, &_cameraSystem.getCamera());
+	_map.drawNodes(_renderer, &_systemManager.GetCamera());
 
 
-	_map.drawArcs(_renderer, &_cameraSystem.getCamera());
+	_map.drawArcs(_renderer, &_systemManager.GetCamera());
 	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
@@ -336,7 +303,7 @@ void Game::DebugBox2D()
 
 						worldPoint.x = metersToPixels(verticesPosX + b2Fixture->GetBody()->GetPosition().x);
 						worldPoint.y = metersToPixels(verticesPosY + b2Fixture->GetBody()->GetPosition().y);
-						worldPoint = _cameraSystem.getCamera().worldToScreen(worldPoint);
+						worldPoint = _systemManager.GetCamera().worldToScreen(worldPoint);
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
 					}
@@ -352,4 +319,7 @@ void Game::DebugBox2D()
 			}
 		}
 	}
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_RenderPresent(_renderer);
 }

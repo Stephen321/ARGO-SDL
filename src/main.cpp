@@ -7,6 +7,7 @@
 
 #include "SceneManager.h"
 #include "Game.h"
+#include "Debug.h"
 
 using namespace std;
 
