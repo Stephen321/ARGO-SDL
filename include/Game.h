@@ -6,6 +6,7 @@
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
+#include "Scene.h"
 
 #include "EntityFactory.h"
 #include "BodyFactory.h"
@@ -36,7 +37,7 @@
 
 using namespace Camera2D;
 
-class Game : public EventListener
+class Game : public EventListener, public Scene
 {
 public:
 									Game();
@@ -44,18 +45,19 @@ public:
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 	
-	void							Render();
-	void							Update();
+	void							Render() override;
+	int								Update() override;
+
 	void							LoadContent();
 	void							CleanUp();
 
 	void							OnEvent(Event evt) override;
 
-	bool							IsRunning(); 
+	bool							IsRunning() override;
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	void							BindInput(Entity* player);
+	void							BindInput(Entity* player, Entity* weapon);
 
 	void							DebugBox2D();
 
@@ -91,42 +93,10 @@ private:
 	GunSystem						_gunSystem;
 	FiringSystem*					_firingSystem;
 	WeaponSystem					_weaponSystem;
-	
+
+
+	CurrentScene					_swapScene;
 };
-
-
-
-
-class InputCommand : public Command
-{
-public:
-	InputCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
-
-	virtual void executePress()
-	{
-		for (int i = 0; m_type == EventListener::Type::Press && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeRelease()
-	{
-		for (int i = 0; m_type == EventListener::Type::Release && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeHold()
-	{
-		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeDown()
-	{
-		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-};
-
 
 #endif
 

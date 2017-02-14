@@ -5,6 +5,8 @@
 #include "TransformComponent.h"
 #include "GunComponent.h"
 
+#include "SceneManager.h"
+
 #include <iostream>
 
 ControlSystem::ControlSystem(Camera2D::Camera* camera, float updateRate)
@@ -87,4 +89,9 @@ void ControlSystem::RemoveTurret(Entity* entity)
 			break;
 		}
 	}
+}
+
+int ControlSystem::ChangeToScene(int scene)
+{
+	return scene;
 }

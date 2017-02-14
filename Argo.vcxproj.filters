@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Factory">
       <UniqueIdentifier>{009abd5c-7c85-4726-a96d-b5151b79e69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{4b72acfb-6827-43c8-8cd5-32b68f09cbea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{c2f0286d-2c25-44d7-accd-d4cc5e8ce013}</UniqueIdentifier>
+	</Filter>
     <Filter Include="Header Files\AStar">
       <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
     </Filter>
@@ -76,9 +82,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Entity.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Game.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\LTimer.h">
@@ -123,6 +126,21 @@
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManager.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MainMenu.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scenes</Filter>
+	</ClInclude>  
     <ClInclude Include="include\TransformComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -181,13 +199,7 @@
     <ClCompile Include="src\Entity.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.cpp">
-      <Filter>Source Files\Other</Filter>
-    </ClCompile>
     <ClCompile Include="src\LTimer.cpp">
-      <Filter>Source Files\Other</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\FLInputManager.cpp">
@@ -217,6 +229,9 @@
     <ClCompile Include="src\BodyFactory.cpp">
       <Filter>Source Files\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="src\WeaponSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -230,7 +245,16 @@
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainMenu.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

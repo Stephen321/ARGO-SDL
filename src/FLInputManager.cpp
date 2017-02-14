@@ -40,6 +40,10 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	if (listeners.find(evt) == listeners.end())
 	{
 		listeners[evt] = new std::vector<EventListener*>();
+	}
+
+	if (listeners.find(evt) != listeners.end())
+	{
 		listeners[evt]->push_back(listener);
 	}
 }

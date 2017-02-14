@@ -25,10 +25,15 @@ public:
 	void					RemoveTurret(Entity* entity);
 
 
+	int						ChangeToScene(int scene);
 
 private:
 	Camera2D::Camera*		_camera;
 	std::vector<Entity*>	_turrets;
 
+	//cant have these here due to the way moveplayer is being called by inputmanager (nullptr)
+//private:
+//	int _prevX;
+//	int _prevY;
 };
 

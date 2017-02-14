@@ -60,6 +60,8 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 			player = *it;
 			break;
 		}
+
+		_swapScene = CurrentScene::game;
 		it++;
 	}
 
@@ -67,18 +69,10 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 	//Add a function for this
 	Entity* weapon = _entityFactory->CreateEntity(EntityType::Weapon);
-
-	assert(weapon != nullptr);
-		
+	assert(weapon != nullptr);		
 	_weaponSystem.AddEntity(player, weapon);
 
-	//shooting
-	Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
-	_inputManager->AddKey(Event::SPACE, spaceIn, this);
-
-
-
-	BindInput(player);
+	BindInput(player, weapon);
 }
 
 void Game::LoadContent()
@@ -96,7 +90,7 @@ void Game::LoadContent()
 
 }
 
-void Game::Update()
+int Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
@@ -120,6 +114,8 @@ void Game::Update()
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;
+
+	return _swapScene;
 }
 
 void Game::Render()
@@ -131,13 +127,12 @@ void Game::Render()
 
 	//RENDER HERE
 	_renderSystem.Process();
+	DebugBox2D();
 
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	DebugBox2D();
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
@@ -145,6 +140,7 @@ void Game::Render()
 
 bool Game::IsRunning()
 {
+	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
 	return _running;
 }
 
@@ -165,11 +161,14 @@ void Game::CleanUp()
 
 void Game::OnEvent(EventListener::Event evt)
 {
-	switch (evt)
+	if (_running)
 	{
+		switch (evt)
+		{
 		case Event::ESCAPE:
 			_inputManager->saveFile();
 			_running = false;
+		}
 	}
 }
 
@@ -196,7 +195,7 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 	return texture;
 }
 
-void Game::BindInput(Entity* player)
+void Game::BindInput(Entity* player, Entity* weapon)
 {
 	Command* wIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -209,6 +208,13 @@ void Game::BindInput(Entity* player)
 
 	Command* dIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
+
+	Command* backIn = new InputCommand([&]() { _swapScene = static_cast<CurrentScene>(_controlSystem->ChangeToScene(0)); }, Type::Press);
+	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+
+	//shooting
+	Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
