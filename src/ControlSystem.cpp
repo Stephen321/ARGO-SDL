@@ -3,6 +3,7 @@
 #include "ControlComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
+#include "ColliderComponent.h"
 #include "GunComponent.h"
 
 #include "SceneManager.h"
@@ -45,18 +46,27 @@ void ControlSystem::Process(float dt)
 	}
 }
 
+void ControlSystem::OnEvent(Event evt)
+{
+
+}
+
 void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
 
 	physics->xDir = dir;
+
+	RotateEntity(entity);
 }
 void ControlSystem::MoveVertical(int dir, Entity*& entity)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	physics->yDir = dir;
-}
 
+	physics->yDir = dir;
+
+	RotateEntity(entity);
+}
 
 void ControlSystem::FireBullet(Entity*& entity)
 {
@@ -69,16 +79,11 @@ void ControlSystem::FireBullet(Entity*& entity)
 	}
 }
 
-void ControlSystem::OnEvent(Event evt)
-{
-
-}
-
-
 void ControlSystem::AddTurret(Entity* entity)
 {
 	_turrets.push_back(entity);
 }
+
 void ControlSystem::RemoveTurret(Entity* entity)
 {
 	for (int i = 0; i < _turrets.size(); i++)
@@ -89,6 +94,21 @@ void ControlSystem::RemoveTurret(Entity* entity)
 			break;
 		}
 	}
+}
+
+void ControlSystem::RotateEntity(Entity* entity)
+{
+	TransformComponent* transform = static_cast<TransformComponent*>(entity->GetComponent(Component::Type::Transform));
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	ColliderComponent* collider = static_cast<ColliderComponent*>(entity->GetComponent(Component::Type::Collider));
+
+	//transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
+	transform->angle = atan2(physics->yDir, physics->xDir) * 180.f / M_PI;
+
+	float dToR = M_PI / 180;
+	float angle = transform->angle * dToR;
+
+	collider->body->SetTransform(collider->body->GetPosition(), angle);
 }
 
 int ControlSystem::ChangeToScene(int scene)

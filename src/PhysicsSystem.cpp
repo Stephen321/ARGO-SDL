@@ -60,27 +60,3 @@ void PhysicsSystem::Process(float dt)
 		}
 	}
 }
-
-////bounds->x += physics->xVelocity;
-////bounds->y += physics->yVelocity;
-//
-//bounds->rect.x = (int)collision->body->GetPosition().x;
-//bounds->rect.y = (int)collision->body->GetPosition().y;
-//
-//collision->body->SetLinearVelocity(
-//	b2Vec2(
-//		physics->xVelocity,
-//		physics->yVelocity
-//	)
-//);
-//
-//collision->body->ApplyForceToCenter(collision->body->GetPosition(), true);
-//
-////	physics->xVelocity *= DRAG;
-////	physics->yVelocity *= DRAG;
-//
-//std::cout << "Velcoity1: " << physics->xVelocity << std::endl;
-//std::cout << "Velcoity2: " << collision->body->GetLinearVelocity().x << std::endl;
-//
-//if (std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0; }
-//if (std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0; }
