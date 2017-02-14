@@ -19,11 +19,8 @@ public:
 	void					AddTurret(Entity* entity);
 	void					RemoveTurret(Entity* entity);
 
-
-
 private:
 	Camera2D::Camera*		_camera;
 	std::vector<Entity*>	_turrets;
-
 };
 

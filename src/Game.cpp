@@ -8,9 +8,6 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
-#include "PhysicsComponent.h"
-#include "GunComponent.h"
-
 #include <assert.h>
 
 
@@ -51,12 +48,14 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 			player = *it;
 			break;
 		}
+
+		_swapScene = CurrentScene::GAME;
 		it++;
 	}
 
 
 
-	//Add a function for this
+
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
 	assert(weapon != nullptr);
@@ -64,9 +63,8 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 	//shooting
-	Command* spaceIn = new InputCommand(std::bind(&Game::FireBullet, this, weapon), Type::Press);
-	_inputManager->AddKey(Event::SPACE, spaceIn, this);
-
+	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, this, weapon), Type::Press);
+	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 
 	BindInput(player);
@@ -87,7 +85,7 @@ void Game::LoadContent()
 
 }
 
-void Game::Update()
+int Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
@@ -104,6 +102,8 @@ void Game::Update()
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
 	_lastTime = currentTime;
+
+	return (int)_swapScene;
 }
 
 void Game::Render()
@@ -116,12 +116,12 @@ void Game::Render()
 	//RENDER HERE
 	_systemManager.Render();
 
+	DebugBox2D();
+
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_systemManager.GetCamera().worldToScreen(r));
-
-	DebugBox2D();
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
@@ -129,6 +129,7 @@ void Game::Render()
 
 bool Game::IsRunning()
 {
+	if (_swapScene != CurrentScene::GAME) { _swapScene = CurrentScene::GAME; }
 	return _running;
 }
 
@@ -152,11 +153,14 @@ void Game::CleanUp()
 
 void Game::OnEvent(EventListener::Event evt)
 {
-	switch (evt)
+	if (_running)
 	{
+		switch (evt)
+		{
 		case Event::ESCAPE:
 			_inputManager->saveFile();
 			_running = false;
+		}
 	}
 }
 
@@ -185,42 +189,22 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 
 void Game::BindInput(Entity* player)
 {
-	Command* wIn = new InputCommand(std::bind(&Game::MoveVertical, this, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&Game::MoveHorizontal, this, -1, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&Game::MoveVertical, this, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&Game::MoveHorizontal, this, 1, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
+	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+
 	_inputManager->AddListener(Event::ESCAPE, this);
-}
-
-void Game::MoveHorizontal(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-
-	physics->xDir = dir;
-}
-void Game::MoveVertical(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	physics->yDir = dir;
-}
-
-
-void Game::FireBullet(Entity*& entity)
-{
-	GunComponent* gun = static_cast<GunComponent*>(entity->GetComponent(Component::Type::Gun));
-
-	if (gun->ammo > 0)
-	{
-		gun->triggered = true;
-	}
 }
 
 void Game::DebugBox2D()

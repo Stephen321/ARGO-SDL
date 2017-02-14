@@ -1,9 +1,9 @@
 #include "ControlSystem.h"
 
 #include "ControlComponent.h"
-#include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "GunComponent.h"
+
+#include "SceneManager.h"
 
 #include <iostream>
 
@@ -50,6 +50,7 @@ void ControlSystem::AddTurret(Entity* entity)
 {
 	_turrets.push_back(entity);
 }
+
 void ControlSystem::RemoveTurret(Entity* entity)
 {
 	for (int i = 0; i < _turrets.size(); i++)
@@ -61,3 +62,4 @@ void ControlSystem::RemoveTurret(Entity* entity)
 		}
 	}
 }
+

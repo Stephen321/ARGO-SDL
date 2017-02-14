@@ -4,6 +4,8 @@
 
 #include "Camera2D.h"
 
+#include "Scene.h"
+#include "MainMenu.h"
 #include "Game.h"
 
 #include "CameraSystem.h"
@@ -31,6 +33,10 @@ private:
 	CameraSystem					_cameraSystem;
 
 private:
-	Game* game;
+	std::vector<Scene*>				_currentScene;
+
+	MainMenu*						_menu;
+	Game*							_game;
+	int								_runningScene;
 };
 
