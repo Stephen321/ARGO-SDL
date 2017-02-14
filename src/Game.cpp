@@ -8,6 +8,9 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
+#include "PhysicsComponent.h"
+#include "GunComponent.h"
+
 #include <assert.h>
 
 
@@ -15,26 +18,9 @@
 Game::Game() 
 	: _running(true)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
-	, _firingSystem(new FiringSystem(0))
-	, _gunSystem(0)
-	, _renderSystem(_renderer, &_cameraSystem.getCamera())
-	, _physicsSystem()
-	, _controlSystem(new ControlSystem(&_cameraSystem.getCamera(), 0.0f))
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
-	, _entityFactory(nullptr)
-	, _bodyFactory(nullptr)
-	, _entities(new std::vector<Entity*>())
 {
-	_world.SetContactListener(&_collisionSystem);
-	_world.SetAllowSleeping(false);
-	
-	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_gunSystem, _firingSystem, &_textureHolder);
-	_bodyFactory = new BodyFactory(&_world);
-
-	_firingSystem->Initialize(_entities, _entityFactory, _bodyFactory);
 }
 
 Game::~Game()
@@ -47,13 +33,18 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_window = window;
 	_renderer = renderer;
 
-	_cameraSystem.Init(width, height);
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
+
+	_world.SetAllowSleeping(false);
+
+	_entityFactory.Initialize(&_systemManager, &_textureHolder);
+	_bodyFactory.Initialize(&_world);
 
 	LoadContent();
 
 	Entity* player = nullptr;
-	std::vector<Entity*>::iterator it = _entities->begin();
-	while (it != _entities->end())
+	std::vector<Entity*>::iterator it = _entities.begin();
+	while (it != _entities.end())
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
@@ -66,14 +57,14 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 
 	//Add a function for this
-	Entity* weapon = _entityFactory->CreateEntity(EntityType::Weapon);
+	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
 	assert(weapon != nullptr);
 		
-	_weaponSystem.AddEntity(player, weapon);
+	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 	//shooting
-	Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
+	Command* spaceIn = new InputCommand(std::bind(&Game::FireBullet, this, weapon), Type::Press);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 
@@ -91,7 +82,7 @@ void Game::LoadContent()
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities,_entityFactory, _bodyFactory);
+	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
 	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -108,14 +99,7 @@ void Game::Update()
 	// Use to Update constantly at frame rate
 	_inputManager->ConstantInput();
 
-	_cameraSystem.Process(dt);
-	_physicsSystem.Process(dt);
-	_collisionSystem.Process(dt);
-	_weaponSystem.Process(dt);
-	_gunSystem.Process(dt);
-	_firingSystem->Process(dt);
-
-	_controlSystem->Process(dt);
+	_systemManager.Process(dt);
 
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
@@ -130,12 +114,12 @@ void Game::Render()
 	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
-	_renderSystem.Process();
+	_systemManager.Render();
 
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
+	SDL_RenderDrawRect(_renderer, &_systemManager.GetCamera().worldToScreen(r));
 
 	DebugBox2D();
 
@@ -154,9 +138,12 @@ void Game::CleanUp()
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 
-	for (int i = 0; i < _entities->size(); i++)
-		delete _entities->at(i);
-	_entities->clear();
+	for (int i = 0; i < _entities.size(); i++)
+	{
+		delete _entities.at(i);
+	}
+
+	_entities.clear();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
@@ -198,19 +185,42 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 
 void Game::BindInput(Entity* player)
 {
-	Command* wIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&Game::MoveVertical, this, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, -1, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&Game::MoveHorizontal, this, -1, player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&Game::MoveVertical, this, 1, player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, 1, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&Game::MoveHorizontal, this, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
+}
+
+void Game::MoveHorizontal(int dir, Entity*& entity)
+{
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+
+	physics->xDir = dir;
+}
+void Game::MoveVertical(int dir, Entity*& entity)
+{
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	physics->yDir = dir;
+}
+
+
+void Game::FireBullet(Entity*& entity)
+{
+	GunComponent* gun = static_cast<GunComponent*>(entity->GetComponent(Component::Type::Gun));
+
+	if (gun->ammo > 0)
+	{
+		gun->triggered = true;
+	}
 }
 
 void Game::DebugBox2D()
@@ -297,7 +307,7 @@ void Game::DebugBox2D()
 
 						worldPoint.x = metersToPixels(verticesPosX + b2Fixture->GetBody()->GetPosition().x);
 						worldPoint.y = metersToPixels(verticesPosY + b2Fixture->GetBody()->GetPosition().y);
-						worldPoint = _cameraSystem.getCamera().worldToScreen(worldPoint);
+						worldPoint = _systemManager.GetCamera().worldToScreen(worldPoint);
 						points[i].x = worldPoint.x;
 						points[i].y = worldPoint.y;
 					}

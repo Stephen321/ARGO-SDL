@@ -16,11 +16,11 @@ public:
 
 	Component*					GetComponent(Component::Type componentType);
 	std::vector<Component*>&	GetComponents();
-	EntityType						GetType() const;
+	EntityType					GetType() const;
 	std::string					GetTypeAsString() const;
 
 private:
 	std::vector<Component*>		_components;
-	EntityType						_type;
+	EntityType					_type;
 };
 

@@ -19,7 +19,7 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	if (_running)
 	{
-		_cameraSystem.Init(width, height);
+		_cameraSystem.Initialize(width, height);
 
 		game = new Game();
 		game->Initialize(_window, _renderer, width, height);

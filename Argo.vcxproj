@@ -229,6 +229,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\WeaponSystem.h" />
+    <ClInclude Include="SystemManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -262,6 +263,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\WeaponSystem.cpp" />
+    <ClCompile Include="SystemManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,15 +2,20 @@
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 
-RenderSystem::RenderSystem(SDL_Renderer *& renderer, Camera2D::Camera* camera, float updateRate)
+RenderSystem::RenderSystem(float updateRate)
 	: System(updateRate)
-	, _renderer(renderer)
-	, _camera(camera)
 {
 }
 
 RenderSystem::~RenderSystem()
 {
+}
+
+
+void RenderSystem::Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera)
+{
+	_renderer = renderer;
+	_camera = camera;
 }
 
 void RenderSystem::Process(float dt)

@@ -132,9 +132,6 @@
     <ClInclude Include="include\WeaponSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\InteractionSystem.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\FiringSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -158,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="include\GunComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InteractionSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +234,9 @@
     </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
       <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

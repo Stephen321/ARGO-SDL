@@ -11,16 +11,7 @@
 #include "BodyFactory.h"
 
 #include "Entity.h"
-
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "ControlSystem.h"
-#include "CameraSystem.h"
-#include "CollisionSystem.h"
-#include "GunSystem.h"
-#include "FiringSystem.h"
-
-#include "WeaponSystem.h"
+#include "SystemManager.h"
 
 #include <SDL.h>
 #include <vector>
@@ -57,14 +48,19 @@ public:
 private:
 	void							BindInput(Entity* player);
 
+	void							MoveHorizontal(int dir, Entity*& entity);
+	void							MoveVertical(int dir, Entity*& entity);
+
+	void							FireBullet(Entity*& entity);
+
 	void							DebugBox2D();
 
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
-	EntityFactory*					_entityFactory;
-	BodyFactory*					_bodyFactory;
+	EntityFactory					_entityFactory;
+	BodyFactory						_bodyFactory;
 
 	LevelLoader						_levelLoader;
 
@@ -80,18 +76,9 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 
-	std::vector<Entity*>*			_entities;
+	std::vector<Entity*>			_entities;
 
-	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicsSystem;
-	ControlSystem*					_controlSystem;
-	CameraSystem					_cameraSystem;
-	CollisionSystem					_collisionSystem;
-
-	GunSystem						_gunSystem;
-	FiringSystem*					_firingSystem;
-	WeaponSystem					_weaponSystem;
-	
+	SystemManager					_systemManager;
 };
 
 

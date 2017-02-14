@@ -14,7 +14,7 @@ public:
 
 	void				Process(float dt = 0.f) override;
 	Camera2D::Camera&	getCamera() { return _camera; }
-	void				Init(int w, int h);
+	void				Initialize(int w, int h);
 
 private:
 	Camera2D::Camera	_camera;

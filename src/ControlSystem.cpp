@@ -7,13 +7,15 @@
 
 #include <iostream>
 
-ControlSystem::ControlSystem(Camera2D::Camera* camera, float updateRate)
+ControlSystem::ControlSystem(float updateRate)
 	: System(updateRate)
-	, _camera(camera)
 {
-	
 }
 
+void ControlSystem::Initialize(Camera2D::Camera* camera)
+{
+	_camera = camera;
+}
 
 ControlSystem::~ControlSystem()
 {
@@ -41,35 +43,6 @@ void ControlSystem::Process(float dt)
 			transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 		}
 	}
-}
-
-void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-
-	physics->xDir = dir;
-}
-void ControlSystem::MoveVertical(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	physics->yDir = dir;
-}
-
-
-void ControlSystem::FireBullet(Entity*& entity)
-{
-	GunComponent* gun = static_cast<GunComponent*>(entity->GetComponent(Component::Type::Gun));
-	TransformComponent* transform = static_cast<TransformComponent*>(entity->GetComponent(Component::Type::Transform));
-	
-	if (gun->ammo > 0)
-	{
-		gun->triggered = true;
-	}
-}
-
-void ControlSystem::OnEvent(Event evt)
-{
-
 }
 
 

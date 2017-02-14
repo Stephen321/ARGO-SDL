@@ -15,7 +15,7 @@ FiringSystem::~FiringSystem()
 {
 }
 
-void FiringSystem::Initialize(std::vector<Entity*>*& entities, EntityFactory*& entityFactory, BodyFactory*& bodyFactory)
+void FiringSystem::Initialize(std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
 	_gameEntities = entities;
 	_entityFactory = entityFactory;
