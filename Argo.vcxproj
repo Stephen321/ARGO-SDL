@@ -206,9 +206,9 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
-    <ClInclude Include="include\ControlComponent.h" />
-    <ClInclude Include="include\ControlSystem.h" />
     <ClInclude Include="include\Debug.h" />
+    <ClInclude Include="include\DestructionComponent.h" />
+    <ClInclude Include="include\DestructionSystem.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
     <ClInclude Include="include\EntityType.h" />
@@ -255,7 +255,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CameraSystem.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
-    <ClCompile Include="src\ControlSystem.cpp" />
+    <ClCompile Include="src\DestructionSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
     <ClCompile Include="src\FLInputManager.cpp" />

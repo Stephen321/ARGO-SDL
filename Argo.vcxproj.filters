@@ -60,9 +60,6 @@
     <ClInclude Include="include\HealthComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\ControlComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\Component.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -73,9 +70,6 @@
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\PhysicsSystem.h">
-      <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ControlSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\Debug.h">
@@ -180,6 +174,12 @@
     <ClInclude Include="include\Scene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="include\DestructionComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DestructionSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -187,9 +187,6 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ControlSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="src\PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -260,6 +257,9 @@
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\CameraSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DestructionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>

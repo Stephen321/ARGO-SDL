@@ -11,6 +11,9 @@
 #include <assert.h>
 
 
+//temp
+#include "GunComponent.h"
+
 
 Game::Game() 
 	: _running(true)
@@ -57,14 +60,16 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
+	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
+	gun->isPlayers = true;
 
 	assert(weapon != nullptr);
 		
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 	//shooting
-	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, this, weapon), Type::Press);
-	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
+	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 
 	BindInput(player);
@@ -82,7 +87,6 @@ void Game::LoadContent()
 
 	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
 	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
-
 }
 
 int Game::Update()

@@ -2,10 +2,10 @@
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
-#include "ControlSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
 #include "GunSystem.h"
+#include "DestructionSystem.h"
 
 #include "WeaponSystem.h"
 
@@ -17,8 +17,8 @@ public:
 	enum class SystemType
 	{
 		Render,
+		Destruction,
 		Physics,
-		Control,
 		Camera,
 		Collision,
 		Gun,
@@ -41,6 +41,7 @@ public:
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);
+	void								DestroyBasedOnType(Entity*& entity);
 	void								Render(float dt = 0.f);
 
 	void								AddEntity(SystemType type, Entity* entity);

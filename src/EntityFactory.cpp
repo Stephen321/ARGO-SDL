@@ -1,7 +1,6 @@
 #include "EntityFactory.h"
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
-#include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
@@ -79,7 +78,6 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
-	player->AddComponent(new ControlComponent());
 	player->AddComponent(new ColliderComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
@@ -140,7 +138,6 @@ Entity* EntityFactory::CreateWeaponEntity()
 	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, weapon);
-	_systemManager->GetControlSystem()->AddTurret(weapon);
 	_systemManager->AddEntity(SystemManager::SystemType::Gun, weapon);
 
 	return weapon;
