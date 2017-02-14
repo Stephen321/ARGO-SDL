@@ -9,30 +9,40 @@
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
+#include "GunSystem.h"
+#include "FiringSystem.h"
+
+
+class FiringSystem;
 
 class EntityFactory
 {
 public: 
-	EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, std::map<TextureID, SDL_Texture*>* th);
-	~EntityFactory();
-	
-	Entity* CreateEntity(EntityType t);
+										EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, GunSystem* gs, FiringSystem* fs, std::map<TextureID, SDL_Texture*>* th);
+										~EntityFactory();
+
+	Entity*								CreateEntity(EntityType t);
+
+private:
+	Entity*								CreateWeaponEntity();
+	Entity*								CreatePlayerEntity();
+	Entity*								CreateAIEntity();
+	Entity*								CreateObstacleEntity();
+	Entity*								CreatePowerUpEntity();
+	Entity*								CreateBulletEntity();
+	Entity*								CreateCheckpointEntity();
+	Entity*								CreateFlagEntity();
+	Entity*								CreateTileEntity();
+	Entity*								CreatePointEntity();
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;
+
 	RenderSystem*						_renderSystem;
 	CameraSystem*						_cameraSystem;
 	PhysicsSystem*						_physicSystem;
 	ControlSystem*						_controlSystem;
-
-	Entity*			CreatePlayerEntity();
-	Entity*			CreateAIEntity();
-	Entity*			CreateObstacleEntity();
-	Entity*			CreatePowerUpEntity();
-	Entity*			CreateBulletEntity();
-	Entity*			CreateCheckpointEntity();
-	Entity*			CreateFlagEntity();
-	Entity*			CreateTileEntity();
-	Entity*			CreatePointEntity();
+	GunSystem*							_gunSystem;
+	FiringSystem*						_firingSystem;
 };
 #endif

@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Debug.h"
-
 #include "SDL_image.h"
 #include "Box2D\Box2D.h"
 
@@ -14,16 +12,16 @@
 #include "BodyFactory.h"
 
 #include "Entity.h"
-#include "SpriteComponent.h"
-#include "BoundsComponent.h"
-#include "PhysicsComponent.h"
-#include "CollisionComponent.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "ControlSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
+#include "GunSystem.h"
+#include "FiringSystem.h"
+
+#include "WeaponSystem.h"
 
 #include <SDL.h>
 #include <vector>
@@ -32,8 +30,11 @@
 
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
+#include "GraphNode.h"
+#include "GraphArc.h"
+#include "Graph.h"
 
-// Debug
+
 using namespace Camera2D;
 
 class Game : public EventListener, public Scene
@@ -42,7 +43,7 @@ public:
 									Game();
 									~Game();
 
-	bool							Initialize(SDL_Window* window, SDL_Renderer* renderer, int width, int height);
+	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 	
 	void							Render() override;
 	int								Update() override;
@@ -50,15 +51,13 @@ public:
 	void							LoadContent();
 	void							CleanUp();
 
-	void							OnEvent(Event evt);
+	void							OnEvent(Event evt) override;
 
 	bool							IsRunning() override;
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	bool							SetupSDL(SDL_Window* window, SDL_Renderer* renderer);
-
-	void							BindInput(Entity* player);
+	void							BindInput(Entity* player, Entity* weapon);
 
 	void							DebugBox2D();
 
@@ -83,20 +82,21 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 
-	std::vector<Entity*>			_entities;
+	std::vector<Entity*>*			_entities;
+
 	RenderSystem					_renderSystem;
 	PhysicsSystem					_physicsSystem;
 	ControlSystem*					_controlSystem;
 	CameraSystem					_cameraSystem;
 	CollisionSystem					_collisionSystem;
 
+	GunSystem						_gunSystem;
+	FiringSystem*					_firingSystem;
+	WeaponSystem					_weaponSystem;
+
 
 	CurrentScene					_swapScene;
-
-
-	
 };
-
 
 #endif
 

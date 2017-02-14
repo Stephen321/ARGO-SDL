@@ -2,8 +2,6 @@
 #include "Camera2D.h"
 #include "SDL_render.h"
 #include "System.h"
-#include "BoundsComponent.h"
-#include "SpriteComponent.h"
 
 
 class RenderSystem : public System

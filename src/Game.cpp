@@ -8,25 +8,33 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
+#include <assert.h>
+
 
 
 Game::Game() 
-	: _running(false)
+	: _running(true)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _collisionSystem(COLLISION_SYSTEM_UPDATE)
+	, _firingSystem(new FiringSystem(0))
+	, _gunSystem(0)
 	, _renderSystem(_renderer, &_cameraSystem.getCamera())
 	, _physicsSystem()
-	, _controlSystem()
+	, _controlSystem(new ControlSystem(&_cameraSystem.getCamera(), 0.0f))
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
 	, _entityFactory(nullptr)
 	, _bodyFactory(nullptr)
+	, _entities(new std::vector<Entity*>())
 {
 	_world.SetContactListener(&_collisionSystem);
 	_world.SetAllowSleeping(false);
-	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
+	
+	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_gunSystem, _firingSystem, &_textureHolder);
 	_bodyFactory = new BodyFactory(&_world);
+
+	_firingSystem->Initialize(_entities, _entityFactory, _bodyFactory);
 }
 
 Game::~Game()
@@ -34,81 +42,51 @@ Game::~Game()
 	_world.~b2World();
 }
 
-bool Game::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width, int height)
+void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
 {
-	_running = SetupSDL(window, renderer);
-	
+	_window = window;
+	_renderer = renderer;
+
 	_cameraSystem.Init(width, height);
-	if (_running)
-	{//SETUP WHATEVER NEEDS TO BE 
 
-		LoadContent();
+	LoadContent();
 
-		Entity* player = nullptr;
-		std::vector<Entity*>::iterator it = _entities.begin();
-		while (it != _entities.end())
+	Entity* player = nullptr;
+	std::vector<Entity*>::iterator it = _entities->begin();
+	while (it != _entities->end())
+	{
+		if ((*it)->GetType() == EntityType::Player)
 		{
-			if ((*it)->GetType() == EntityType::Player)
-			{
-				player = *it;
-				break;
-			}
-			it++;
+			player = *it;
+			break;
 		}
 
 		_swapScene = CurrentScene::game;
-
-		BindInput(player);
+		it++;
 	}
 
-	return _running;
-}
 
-bool Game::SetupSDL(SDL_Window*	window, SDL_Renderer* renderer)
-{
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
-	{
-		DEBUG_MSG("SDL Init success");
-		_window = window;
 
-		if (_window != 0)
-		{
-			DEBUG_MSG("Window creation success");
-			_renderer = renderer;
-			if (_renderer != 0)
-			{
-				DEBUG_MSG("Renderer creation success");
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			}
-			else
-			{
-				DEBUG_MSG("Renderer init fail");
-				return false;
-			}
-		}
-		else
-		{
-			DEBUG_MSG("Window init fail");
-			return false;
-		}
-	}
-	else
-	{
-		DEBUG_MSG("SDL init fail");
-		return false;
-	}
+	//Add a function for this
+	Entity* weapon = _entityFactory->CreateEntity(EntityType::Weapon);
+	assert(weapon != nullptr);		
+	_weaponSystem.AddEntity(player, weapon);
 
-	return true;
+	BindInput(player, weapon);
 }
 
 void Game::LoadContent()
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory);
-	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
+	_levelLoader.LoadJson("Media/Json/Map.json", _entities,_entityFactory, _bodyFactory);
+	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
 
@@ -127,6 +105,11 @@ int Game::Update()
 	_cameraSystem.Process(dt);
 	_physicsSystem.Process(dt);
 	_collisionSystem.Process(dt);
+	_weaponSystem.Process(dt);
+	_gunSystem.Process(dt);
+	_firingSystem->Process(dt);
+
+	_controlSystem->Process(dt);
 
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
@@ -164,14 +147,12 @@ bool Game::IsRunning()
 
 void Game::CleanUp()
 {
-	DEBUG_MSG("Cleaning Up");
-
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 
-	for (int i = 0; i < _entities.size(); i++)
-		delete _entities[i];
-	_entities.clear();
+	for (int i = 0; i < _entities->size(); i++)
+		delete _entities->at(i);
+	_entities->clear();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
@@ -214,22 +195,26 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 	return texture;
 }
 
-void Game::BindInput(Entity* player)
+void Game::BindInput(Entity* player, Entity* weapon)
 {
-	Command* wIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, -1, 0, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, -1, player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 0, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&ControlSystem::MoveVertical, _controlSystem, 1, player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&ControlSystem::MovePlayer, _controlSystem, 1, 0, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&ControlSystem::MoveHorizontal, _controlSystem, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
 	Command* backIn = new InputCommand([&]() { _swapScene = static_cast<CurrentScene>(_controlSystem->ChangeToScene(0)); }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+
+	//shooting
+	Command* spaceIn = new InputCommand(std::bind(&ControlSystem::FireBullet, _controlSystem, weapon), Type::Press);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
@@ -334,4 +319,7 @@ void Game::DebugBox2D()
 			}
 		}
 	}
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_RenderPresent(_renderer);
 }
