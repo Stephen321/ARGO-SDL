@@ -3,6 +3,11 @@
 
 #include <list>
 #include "BasicTypes.h"
+
+#include "Camera2D.h" //debugging
+using namespace Camera2D;
+
+
 using namespace std;
 
 // Forward references
@@ -49,7 +54,7 @@ private:
 	//sf::Text m_hCostTxt;
 
 	const int RADIUS = 25;
-
+	SDL_Color _color;
 public:
     // Accessor functions
     list<Arc> const & arcList() const {
@@ -99,7 +104,10 @@ public:
 		m_prevNode = previous;
 	}
 
-	
+	void setColour(const SDL_Color& color) {
+		_color = color;
+	}
+
 	void setPosition(helper::Vector2 newPosition){
 		/*
 		m_nameTxt.setPosition(newPosition);
@@ -124,8 +132,8 @@ public:
     Arc* getArc( Node* pNode );    
     void addArc( Node* pNode, ArcType pWeight );
 	void removeArc(Node* pNode);
-	void drawArcs(SDL_Renderer* renderer) const;
-	//void drawText(sf::RenderTarget& target) const;
+	void drawArcs(SDL_Renderer* renderer, Camera* camera) const;
+	void drawNodes(SDL_Renderer* renderer, Camera* camera) const;
 	GraphNode();
 };
 
@@ -135,6 +143,8 @@ GraphNode<DataType, NodeType, ArcType>::GraphNode() :
 m_prevNode(0),
 m_hCost(-1),
 m_gCost(-1){
+
+	_color = { 255,255,255,255 };
 	/*
 	m_shape = sf::CircleShape(RADIUS);
 	m_shape.setOrigin(RADIUS, RADIUS);
@@ -148,14 +158,6 @@ m_gCost(-1){
 	m_gCostTxt.setOrigin(7, 7);*/
 }
 
-// ----------------------------------------------------------------
-//  Name:           getArc
-//  Description:    This finds the arc in the current node that
-//                  points to the node in the parameter.
-//  Arguments:      The node that the arc connects to.
-//  Return Value:   A pointer to the arc, or 0 if an arc doesn't
-//                  exist from this to the specified input node.
-// ----------------------------------------------------------------
 
 template<typename DataType, typename NodeType, typename ArcType>
 GraphArc<DataType, NodeType, ArcType>* GraphNode<DataType, NodeType, ArcType>::getArc(Node* pNode) {
@@ -186,15 +188,7 @@ void  GraphNode<DataType, NodeType, ArcType>::reset() {
 	//m_hCostTxt.setString("H(n)= ?");
 	//m_gCostTxt.setString("G(n)= ?");
 }
-// ----------------------------------------------------------------
-//  Name:           addArc
-//  Description:    This adds an arc from the current node pointing
-//                  to the first parameter, with the second parameter 
-//                  as the weight.
-//  Arguments:      First argument is the node to connect the arc to.
-//                  Second argument is the weight of the arc.
-//  Return Value:   None.
-// ----------------------------------------------------------------
+
 template<typename DataType, typename NodeType, typename ArcType>
 void GraphNode<DataType, NodeType, ArcType>::addArc(Node* pNode, ArcType weight) {
    // Create a new arc.
@@ -231,18 +225,21 @@ void GraphNode<DataType, NodeType, ArcType>::removeArc(Node* pNode) {
 
 
 template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer) const{
+void GraphNode<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
 	int arcs = m_arcList.size();
 	for (auto a : m_arcList)
-		a.draw(renderer);
+		a.draw(renderer, camera);
 }
-/*
+
 template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::drawText(sf::RenderTarget& target) const{
-	target.draw(m_nameTxt);
-	target.draw(m_hCostTxt);
-	target.draw(m_gCostTxt);
-}*/
+void GraphNode<DataType, NodeType, ArcType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
+	SDL_SetRenderDrawColor(renderer, _color.r, _color.g, _color.b, _color.a);
+	Point point = { (float)(m_position.x -10), (float)(m_position.y - 10) };
+	point = camera->worldToScreen(point);
+	
+	SDL_Rect rect = { point.x,point.y, 20, 20 };
+	SDL_RenderFillRect(renderer, &rect);
+}
 
 #include "GraphArc.h"
 

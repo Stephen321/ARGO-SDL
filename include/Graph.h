@@ -4,40 +4,53 @@
 #include <list>
 #include <queue>
 #include "BasicTypes.h"
+
 using namespace helper;
 using namespace std;
+
+#include "Camera2D.h" //debugging
+using namespace Camera2D;
 
 template <class DataType, class NodeType, class ArcType> class GraphArc;
 template <class DataType, class NodeType, class ArcType> class GraphNode;
 
-// ----------------------------------------------------------------
-//  Name:           Graph
-//  Description:    This is the graph class, it contains all the
-//                  nodes.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 class Graph {
 private:
-
-    // typedef the classes to make our lives easier.
     typedef GraphArc<DataType, NodeType, ArcType> Arc;
 	typedef GraphNode<DataType, NodeType, ArcType> Node;
 	
-// ----------------------------------------------------------------
-//  Description:    An array of all the nodes in the graph.
-// ----------------------------------------------------------------
-    Node** m_pNodes;
+public:           
+    // Constructor and destructor functions
+						Graph() {};
+						Graph( int size );
+						~Graph();
 
-// ----------------------------------------------------------------
-//  Description:    The maximum number of nodes in the graph.
-// ----------------------------------------------------------------
-    int m_maxNodes;
+    // Accessors
+    Node** nodeArray() const {
+       return m_pNodes;
+    }
+	
+    // Public member functions.
+	void				init(int size);
+	bool				addNode(DataType data, int index, helper::Vector2 position);
+    void				removeNode( int index );
+    bool				addArc( int from, int to, ArcType weight, bool directed = true );
+    void				removeArc( int from, int to );
+	Arc*				getArc(int from, int to);
+	void				reset();
+	int					getMaxNodes();
+	
+	//Pathfinding Assignment
+	void				aStar(Node* pStart, Node* pDest, std::vector<Node *>& path);
+	void				setHeuristics(Node* pDest);
+	void				drawNodes(SDL_Renderer* renderer, Camera* camera) const;
+	void				drawArcs(SDL_Renderer* renderer, Camera* camera) const;
 
-
-// ----------------------------------------------------------------
-//  Description:    The actual number of nodes in the graph.
-// ----------------------------------------------------------------
-    int m_count;
+private:
+	Node**				m_pNodes;
+	int					m_maxNodes; //max number of node
+	int					m_count; //actual number of node
 
 	class NodeSearchCostComparer {
 	public:
@@ -48,42 +61,8 @@ private:
 			return f1 > f2;
 		}
 	};
-
-public:           
-    // Constructor and destructor functions
-	Graph() {};
-    Graph( int size );
-    ~Graph();
-
-    // Accessors
-    Node** nodeArray() const {
-       return m_pNodes;
-    }
-	
-    // Public member functions.
-	void init(int size);
-	bool addNode(DataType data, int index, helper::Vector2 position);
-    void removeNode( int index );
-    bool addArc( int from, int to, ArcType weight, bool directed = true );
-    void removeArc( int from, int to );
-	Arc* getArc(int from, int to);
-	void reset();
-	int getMaxNodes();
-	
-	//Pathfinding Assignment
-	void aStar(Node* pStart, Node* pDest, std::vector<Node *>& path);
-	void setHeuristics(Node* pDest);
-	//void drawNodes() const;
-	void drawArcs(SDL_Renderer* renderer) const;
-
 };
 
-// ----------------------------------------------------------------
-//  Name:           Graph
-//  Description:    Constructor, this constructs an empty graph
-//  Arguments:      The maximum number of nodes.
-//  Return Value:   None.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 Graph<DataType, NodeType, ArcType>::Graph(int size) : m_maxNodes(size) {
    int i;
@@ -97,7 +76,6 @@ Graph<DataType, NodeType, ArcType>::Graph(int size) : m_maxNodes(size) {
    m_count = 0;
 }
 
-//init
 template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::init(int size)
 {
@@ -112,12 +90,8 @@ void Graph<DataType, NodeType, ArcType>::init(int size)
 	// set the node count to 0.
 	m_count = 0;
 }
-// ----------------------------------------------------------------
-//  Name:           ~Graph
-//  Description:    destructor, This deletes every node
-//  Arguments:      None.
-//  Return Value:   None.
-// ----------------------------------------------------------------
+
+
 template<class DataType, class NodeType, class ArcType>
 Graph<DataType, NodeType, ArcType>::~Graph() {
    int index;
@@ -130,16 +104,9 @@ Graph<DataType, NodeType, ArcType>::~Graph() {
    delete m_pNodes;
 }
 
-// ----------------------------------------------------------------
-//  Name:           addNode
-//  Description:    This adds a node at a given index in the graph.
-//  Arguments:      The first parameter is the data to store in the node.
-//                  The second parameter is the index to store the node.
-//  Return Value:   true if successful
-// ----------------------------------------------------------------
 
 template<class DataType, class NodeType, class ArcType>
-bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index, Vector2 position) {
+bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index, helper::Vector2 position) {
    bool nodeNotPresent = false;
    // find out if a node does not exist at that index.
    if ( m_pNodes[index] == 0) {
@@ -149,7 +116,6 @@ bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index, Vecto
 	  m_pNodes[index]->setData(data);
       m_pNodes[index]->setMarked(false);
 	  m_pNodes[index]->setPosition(position);
-	 // m_pNodes[index]->setColour(sf::Color::Blue);
 
       // increase the count and return success.
       m_count++;
@@ -158,12 +124,6 @@ bool Graph<DataType, NodeType, ArcType>::addNode(DataType data, int index, Vecto
     return nodeNotPresent;
 }
 
-// ----------------------------------------------------------------
-//  Name:           removeNode
-//  Description:    This removes a node from the graph
-//  Arguments:      The index of the node to return.
-//  Return Value:   None.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::removeNode(int index) {
      // Only proceed if node does exist.
@@ -196,15 +156,6 @@ void Graph<DataType, NodeType, ArcType>::removeNode(int index) {
     }
 }
 
-// ----------------------------------------------------------------
-//  Name:           addArd
-//  Description:    Adds an arc from the first index to the 
-//                  second index with the specified weight.
-//  Arguments:      The first argument is the originating node index
-//                  The second argument is the ending node index
-//                  The third argument is the weight of the arc
-//  Return Value:   true on success.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 bool Graph<DataType, NodeType, ArcType>::addArc(int from, int to, ArcType weight, bool directed) {
      bool proceed = true; 
@@ -228,13 +179,6 @@ bool Graph<DataType, NodeType, ArcType>::addArc(int from, int to, ArcType weight
      return proceed;
 }
 
-// ----------------------------------------------------------------
-//  Name:           removeArc
-//  Description:    This removes the arc from the first index to the second index
-//  Arguments:      The first parameter is the originating node index.
-//                  The second parameter is the ending node index.
-//  Return Value:   None.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::removeArc(int from, int to) {
      // Make sure that the node exists before trying to remove
@@ -251,14 +195,6 @@ void Graph<DataType, NodeType, ArcType>::removeArc(int from, int to) {
 }
 
 
-// ----------------------------------------------------------------
-//  Name:           getArc
-//  Description:    Gets a pointer to an arc from the first index
-//                  to the second index.
-//  Arguments:      The first parameter is the originating node index.
-//                  The second parameter is the ending node index.
-//  Return Value:   pointer to the arc, or 0 if it doesn't exist.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 // Dev-CPP doesn't like Arc* as the (typedef'd) return type?
 GraphArc<DataType, NodeType, ArcType>* Graph<DataType, NodeType, ArcType>::getArc(int from, int to) {
@@ -271,26 +207,12 @@ GraphArc<DataType, NodeType, ArcType>* Graph<DataType, NodeType, ArcType>::getAr
      return pArc;
 }
 
-// ----------------------------------------------------------------
-//  Name:           getMaxNodes
-//  Description:    Gets the number of elements in the list of nodes.
-//  Arguments:      None
-//  Return Value:   m_maxNodes
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 int Graph<DataType, NodeType, ArcType>::getMaxNodes() {
 
 	return m_maxNodes;
 }
 
-
-
-// ----------------------------------------------------------------
-//  Name:           clearMarks
-//  Description:    This clears every mark on every node.
-//  Arguments:      None.
-//  Return Value:   None.
-// ----------------------------------------------------------------
 template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::reset() {
 	int index;
@@ -331,7 +253,7 @@ void Graph<DataType, NodeType, ArcType>::aStar(Node* pStart, Node* pDest, std::v
 					if (child->marked() == false) {
 						pq.push(child);
 						child->setMarked(true);
-						child->setColour(sf::Color(0, 128, 128, 255));
+						//child->setColour(SDL_Color{ 0, 128, 128, 255 });
 					}
 				}
 			}
@@ -340,7 +262,8 @@ void Graph<DataType, NodeType, ArcType>::aStar(Node* pStart, Node* pDest, std::v
 
 		if (pq.size() != 0 && pq.top() == pDest){
 			for (Node* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()){
-				path.push_back(previous);
+				previous->setColour(SDL_Color{0,0,255,255});
+				path.push_back(previous);			
 			}
 			path.push_back(pStart);
 			std::reverse(path.begin(), path.end());
@@ -356,7 +279,7 @@ template<class DataType, class NodeType, class ArcType>
 void Graph<DataType, NodeType, ArcType>::setHeuristics(Node* pDest){
 	if (pDest != 0) {
 		for (int i = 0; i < m_count; i++){
-			Vector2 vectorTo = pDest->getPosition() - m_pNodes[i]->getPosition();
+			helper::Vector2 vectorTo = pDest->getPosition() - m_pNodes[i]->getPosition();
 			int Hc = (int)(sqrt((vectorTo.x * vectorTo.x) + (vectorTo.y * vectorTo.y)));
 			m_pNodes[i]->setHCost(Hc);
 		}
@@ -364,21 +287,22 @@ void Graph<DataType, NodeType, ArcType>::setHeuristics(Node* pDest){
 }
 
 
-/*
+
 //draw the nodes
 template<class DataType, class NodeType, class ArcType>
-void Graph<DataType, NodeType, ArcType>::drawNodes(sf::RenderTarget& target) const{
+void Graph<DataType, NodeType, ArcType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
 	for (int i = 0; i < m_count; i++){
-		target.draw(m_pNodes[i]->getShape());
-		m_pNodes[i]->drawText(target);
+		m_pNodes[i]->drawNodes(renderer, camera);
 	}
 }
-*/
+
 //draw arcs
 template<class DataType, class NodeType, class ArcType>
-void Graph<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer) const{
+void Graph<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
 	for (int i = 0; i < m_count; i++)
-		m_pNodes[i]->drawArcs(renderer);
+	{
+		m_pNodes[i]->drawArcs(renderer, camera);
+	}
 }
 
 

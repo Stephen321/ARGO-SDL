@@ -145,12 +145,12 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		float w = entity["width"].GetFloat();
 		float h = entity["height"].GetFloat();
 		
-		Vector2 position = Vector2(x, y);
+		helper::Vector2 position = helper::Vector2(x + w*.5f, y+ h*.5f);
 
 		const Value& properties = entity["properties"];
 		int currentNode = properties["node"].GetInt();
 
-		_map->addNode("", currentNode, position);
+		_map->addNode(to_string(currentNode) , currentNode, position);
 
 		Entity* point = entityFactory->CreateEntity(EntityType::Point);
 		b2Body* body = bodyFactory->CreateBoxBody(b2BodyType::b2_staticBody, b2Vec2(x + w*.5f, y + h*.5f), b2Vec2(w*.5f, h*.5f), (uint16)point->GetType(), 0, true);
@@ -167,7 +167,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 		const Value& entity = wayPointArray[i];
 		const Value& properties = entity["properties"];
 		const Value& neighbour = properties["neighbour"];
-
+		
 		int fromNode = properties["node"].GetInt();
 		for (int j = 0; j< neighbour.Size(); j++)
 		{

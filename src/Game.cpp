@@ -28,6 +28,7 @@ Game::Game()
 	_world.SetAllowSleeping(false);
 	_entityFactory = new EntityFactory(&_renderSystem, &_physicsSystem, _controlSystem, &_cameraSystem, &_textureHolder);
 	_bodyFactory = new BodyFactory(&_world);
+	
 }
 
 Game::~Game()
@@ -108,6 +109,18 @@ void Game::LoadContent()
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
 	_levelLoader.LoadJson("Media/Json/Map.json",&_entities,_entityFactory, _bodyFactory, &_map);
+
+	int originNode = 1;
+	_map.nodeArray()[originNode]->setColour(SDL_Color{0,255,0,255});
+
+	int destNode = 60;
+	_map.nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+	_map.setHeuristics(_map.nodeArray()[destNode]);
+	vector<Node*> path;
+	_map.aStar(_map.nodeArray()[originNode], _map.nodeArray()[destNode], path);
+	_map.nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
+	_map.nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+
 	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
 
 }
@@ -235,13 +248,12 @@ void Game::DebugBox2D()
 {
 	//DEBUG ASTAR
 	
-	SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-	SDL_Point* points = new SDL_Point[2];
-	points[0] = { 0,0 };
-	points[1] = { 500,500 };
-	SDL_RenderDrawLines(_renderer, points, 2);
+	//SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 
-	_map.drawArcs(_renderer);
+	_map.drawNodes(_renderer, &_cameraSystem.getCamera());
+
+
+	_map.drawArcs(_renderer, &_cameraSystem.getCamera());
 	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
@@ -257,11 +269,11 @@ void Game::DebugBox2D()
 			}
 			else if (t == EntityType::Checkpoint)
 			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
 			}
 			else if (t == EntityType::Point)
 			{
-				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
 			}
 			else if (t == EntityType::Flag)
 			{

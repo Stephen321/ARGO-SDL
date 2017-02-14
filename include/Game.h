@@ -36,6 +36,8 @@
 // Debug
 using namespace Camera2D;
 
+typedef GraphNode<string, int, int> Node;
+
 class Game : public EventListener
 {
 public:

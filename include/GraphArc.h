@@ -17,12 +17,24 @@ private:
     ArcType m_weight;
 
 	SDL_Point points[2];
-
+	SDL_Color _color;
 public:
 
-	
-	virtual void draw(SDL_Renderer* renderer) const{
-		SDL_RenderDrawLines(renderer, points, 2);
+	GraphArc() {
+		_color = SDL_Color{ 255,255,255,255 };
+	}
+
+	virtual void draw(SDL_Renderer* renderer, Camera* camera) const {
+		SDL_SetRenderDrawColor(renderer, _color.r,_color.g,_color.b,_color.a);
+		SDL_Point drawPoint[2];
+		for (int i = 0; i < 2; i++)
+		{
+			Point point = { (float)points[i].x, (float)points[i].y };
+			point = camera->worldToScreen(point);
+			drawPoint[i].x = point.x;
+			drawPoint[i].y= point.y;
+		}
+		SDL_RenderDrawLines(renderer, drawPoint, 2);
 	}
 
 	void setLine(helper::Vector2 start, helper::Vector2 end){
