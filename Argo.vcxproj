@@ -211,9 +211,9 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
-    <ClInclude Include="include\FiringSystem.h" />
     <ClInclude Include="include\EntityType.h" />
     <ClInclude Include="include\FLInputManager.h" />
+    <ClInclude Include="include\FunctionMaster.h" />
     <ClInclude Include="include\Game.h" />
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\GraphArc.h" />
@@ -236,6 +236,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Shake.h" />
     <ClInclude Include="include\SpriteComponent.h" />
     <ClInclude Include="include\System.h" />
+    <ClInclude Include="include\SystemManager.h" />
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\WeaponSystem.h" />
@@ -250,15 +251,15 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\CameraSystem.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
+    <ClCompile Include="src\CameraSystem.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ControlSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
-    <ClCompile Include="src\FiringSystem.cpp" />
     <ClCompile Include="src\FLInputManager.cpp" />
+    <ClCompile Include="src\FunctionMaster.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GunSystem.cpp" />
     <ClCompile Include="src\InteractionSystem.cpp" />
@@ -273,6 +274,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
+    <ClCompile Include="src\SystemManager.cpp" />
     <ClCompile Include="src\WeaponSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,5 +1,6 @@
 #include "CameraSystem.h"
 
+
 CameraSystem::CameraSystem(float updateRate)
 	: System(updateRate)
 {
@@ -7,6 +8,11 @@ CameraSystem::CameraSystem(float updateRate)
 
 CameraSystem::~CameraSystem()
 {
+}
+
+void CameraSystem::Initialize(int w, int h)
+{
+	_camera.init(w, h);
 }
 
 void CameraSystem::Process(float dt)
@@ -43,10 +49,4 @@ void CameraSystem::Process(float dt)
 			_camera.setCentre(centre);
 		}
 	}
-}
-
-void CameraSystem::Init(int w, int h)
-{
-
-	_camera.init(w, h);
 }

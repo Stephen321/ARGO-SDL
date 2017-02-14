@@ -1,22 +1,21 @@
 #include "ControlSystem.h"
 
 #include "ControlComponent.h"
-#include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "ColliderComponent.h"
-#include "GunComponent.h"
 
 #include "SceneManager.h"
 
 #include <iostream>
 
-ControlSystem::ControlSystem(Camera2D::Camera* camera, float updateRate)
+ControlSystem::ControlSystem(float updateRate)
 	: System(updateRate)
-	, _camera(camera)
 {
-	
 }
 
+void ControlSystem::Initialize(Camera2D::Camera* camera)
+{
+	_camera = camera;
+}
 
 ControlSystem::~ControlSystem()
 {
@@ -46,38 +45,6 @@ void ControlSystem::Process(float dt)
 	}
 }
 
-void ControlSystem::OnEvent(Event evt)
-{
-
-}
-
-void ControlSystem::MoveHorizontal(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-
-	physics->xDir = dir;
-
-	RotateEntity(entity);
-}
-void ControlSystem::MoveVertical(int dir, Entity*& entity)
-{
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-
-	physics->yDir = dir;
-
-	RotateEntity(entity);
-}
-
-void ControlSystem::FireBullet(Entity*& entity)
-{
-	GunComponent* gun = static_cast<GunComponent*>(entity->GetComponent(Component::Type::Gun));
-	TransformComponent* transform = static_cast<TransformComponent*>(entity->GetComponent(Component::Type::Transform));
-	
-	if (gun->ammo > 0)
-	{
-		gun->triggered = true;
-	}
-}
 
 void ControlSystem::AddTurret(Entity* entity)
 {
@@ -96,22 +63,3 @@ void ControlSystem::RemoveTurret(Entity* entity)
 	}
 }
 
-void ControlSystem::RotateEntity(Entity* entity)
-{
-	TransformComponent* transform = static_cast<TransformComponent*>(entity->GetComponent(Component::Type::Transform));
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
-	ColliderComponent* collider = static_cast<ColliderComponent*>(entity->GetComponent(Component::Type::Collider));
-
-	//transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
-	transform->angle = atan2(physics->yDir, physics->xDir) * 180.f / M_PI;
-
-	float dToR = M_PI / 180;
-	float angle = transform->angle * dToR;
-
-	collider->body->SetTransform(collider->body->GetPosition(), angle);
-}
-
-int ControlSystem::ChangeToScene(int scene)
-{
-	return scene;
-}
