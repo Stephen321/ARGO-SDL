@@ -14,15 +14,15 @@ SystemManager::~SystemManager()
 
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
+void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string, int, int>* map, int width, int height)
 {
-	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, width, height);
+ 	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, map, width, height);
 	InitializeInteractionSystems();
 }
 
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string, int, int>* map, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);
@@ -52,6 +52,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	GunSystem* gunSystem = new GunSystem(0);
 	gunSystem->Initialize(entities, entityFactory, bodyFactory);
 	_systems[SystemType::Gun] = gunSystem;
+
+	//SETUP AI SYSTEM
+	AISystem* aiSystem = new AISystem(0);
+	aiSystem->Initialize(map);
+	_systems[SystemType::AI] = aiSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -126,6 +131,11 @@ GunSystem* SystemManager::GetGunSystem()
 {
 	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
 	return gunSystem;
+}
+AISystem* SystemManager::GetAISystem()
+{
+	AISystem* aiSystem = static_cast<AISystem*>(_systems[SystemType::AI]);
+	return aiSystem;
 }
 
 #pragma endregion

@@ -10,9 +10,10 @@
 class AISystem : public System
 {
 public:
-	AISystem(Graph<string, int, int>* map);
+	AISystem(float updateRate = 0.f);
 	~AISystem();
 
+	void Initialize(Graph<string, int, int>* map);
 	void Process(float dt = 0.f) override;
 
 private:

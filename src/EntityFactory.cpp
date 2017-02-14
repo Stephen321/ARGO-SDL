@@ -6,7 +6,7 @@
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
-
+#include "AIComponent.h"
 
 
 EntityFactory::EntityFactory()	
@@ -98,10 +98,11 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
 	ai->AddComponent(new ColliderComponent());
+	ai->AddComponent(new AIComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, ai);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, ai);
-
+	_systemManager->AddEntity(SystemManager::SystemType::AI, ai);
 	return ai;
 }
 Entity* EntityFactory::CreateObstacleEntity()

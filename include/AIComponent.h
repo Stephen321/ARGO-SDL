@@ -9,7 +9,10 @@ class AIComponent : public Component
 public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
-		path(vector<Node*>())
+		path(vector<Node*>()),
+		updateRate(5.f),
+		updateTimer(0),
+		callAstar(false)
 	{
 	}
 
@@ -21,4 +24,5 @@ public:
 	vector<Node*> path;
 	float updateRate;
 	float updateTimer;
+	bool callAstar;
 };

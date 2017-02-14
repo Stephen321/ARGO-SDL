@@ -1,14 +1,19 @@
 #include "AISystem.h"
 #include "AIComponent.h"
 
-AISystem::AISystem(Graph<string, int, int>* map)
+AISystem::AISystem(float updateRate)
+	: System(updateRate)
 {
-	_map = map;
 }
 
 AISystem::~AISystem()
 {
 
+}
+
+void AISystem::Initialize(Graph<string, int, int>* map)
+{
+	_map = map;
 }
 
 void AISystem::Process(float dt)
@@ -29,16 +34,24 @@ void AISystem::Process(float dt)
 				{
 					updateTimer -= updateRate;
 
-					int originNode = 1;
-					_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-					int destNode = 60;
-					_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
-					_map->setHeuristics(_map->nodeArray()[destNode]);
-					vector<Node*> path;
-					_map->aStar(_map->nodeArray()[originNode], _map->nodeArray()[destNode], path);
-					_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
-					_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+					if (!ai->callAstar)
+					{
+						int originNode = 1;
+						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
+
+						int destNode = 60;
+						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+						_map->setHeuristics(_map->nodeArray()[destNode]);
+						vector<Node*> path;
+						_map->aStar(_map->nodeArray()[originNode], _map->nodeArray()[destNode], path);
+						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
+						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+
+						ai->path = path;
+						ai->callAstar = true;
+					}
+
 
 					/*
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));

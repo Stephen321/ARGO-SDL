@@ -31,7 +31,7 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_map,width, height);
 
 	_world.SetAllowSleeping(false);
 
