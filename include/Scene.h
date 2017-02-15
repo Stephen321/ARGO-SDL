@@ -10,7 +10,10 @@ public:
 	virtual void Render();
 	virtual bool IsRunning();
 	enum CurrentScene {
-		mainMenu,
+		MAIN_MENU,
 		game,
+		lobby,
+		options,
+		about
   };
 };

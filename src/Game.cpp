@@ -13,7 +13,7 @@
 
 
 Game::Game() 
-	: _running(true)
+	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
@@ -29,6 +29,7 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 {
 	_window = window;
 	_renderer = renderer;
+	_running = true;
 
 	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
 
@@ -65,20 +66,7 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	BindInput(player, weapon);
 }
 
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
 
-	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
-	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
-
-}
 
 int Game::Update()
 {
@@ -113,6 +101,7 @@ void Game::Render()
 
 	DebugBox2D();
 
+
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
@@ -122,10 +111,38 @@ void Game::Render()
 	SDL_RenderPresent(_renderer);
 }
 
+void Game::OnEvent(EventListener::Event evt)
+{
+	if (_running)
+	{
+		switch (evt)
+		{
+		case Event::ESCAPE:
+			//_inputManager->saveFile();
+			_running = false;
+		}
+	}
+}
+
 bool Game::IsRunning()
 {
 	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
 	return _running;
+}
+
+void Game::LoadContent()
+{
+	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+
+	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
+
+	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
+	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
+
 }
 
 
@@ -146,18 +163,7 @@ void Game::CleanUp()
 	SDL_Quit();
 }
 
-void Game::OnEvent(EventListener::Event evt)
-{
-	if (_running)
-	{
-		switch (evt)
-		{
-		case Event::ESCAPE:
-			//_inputManager->saveFile();
-			_running = false;
-		}
-	}
-}
+
 
 SDL_Texture * Game::loadTexture(const std::string & path)
 {
@@ -196,7 +202,7 @@ void Game::BindInput(Entity* player, Entity* weapon)
 	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
-	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::mainMenu; }, Type::Press);
+	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);

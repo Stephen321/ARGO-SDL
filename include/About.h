@@ -20,16 +20,16 @@
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
 
-class MainMenu : public EventListener, public Scene
+class About : public EventListener, public Scene
 {
 public:
-	MainMenu();
-	~MainMenu();
+	About();
+	~About();
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 
-	int								Update() override;
 	void							Render() override;
+	int								Update() override;
 
 	void							OnEvent(Event evt) override;
 
@@ -67,12 +67,5 @@ private:
 
 	CurrentScene					_swapScene;
 	int								_fontSize;
-
-private:
-	void							MoveUp();
-	void							MoveDown();
-
-	int								GetPressedItem();
-	int								_selectedItemIndex;
 };
 
