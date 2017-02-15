@@ -2,7 +2,7 @@
 
 #include "Component.h"
 #include "GraphNode.h"
-typedef GraphNode<string, int, int> Node;
+typedef GraphNode<string> Node;
 
 class AIComponent : public Component
 {

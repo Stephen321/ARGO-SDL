@@ -11,7 +11,7 @@ using namespace Camera2D;
 using namespace std;
 
 // Forward references
-template <typename DataType, typename NodeType, typename ArcType> class GraphArc;
+template <typename DataType> class GraphArc;
 
 // -------------------------------------------------------
 // Name:        GraphNode
@@ -19,12 +19,12 @@ template <typename DataType, typename NodeType, typename ArcType> class GraphArc
 //              contains data, and has a linked list of 
 //              arcs.
 // -------------------------------------------------------
-template<class DataType, class NodeType, class ArcType>
+template<class DataType>
 class GraphNode {
 private:    
 // typedef the classes to make our lives easier.
-	typedef GraphArc<DataType, NodeType, ArcType> Arc;
-	typedef GraphNode<DataType, NodeType, ArcType> Node;
+	typedef GraphArc<DataType> Arc;
+	typedef GraphNode<DataType> Node;
 // -------------------------------------------------------
 // Description: data inside the node
 // -------------------------------------------------------
@@ -32,8 +32,9 @@ private:
 // -------------------------------------------------------
 // Description: cost inside node
 // -------------------------------------------------------
-	NodeType m_hCost;
-	NodeType m_gCost;
+	int m_hCost;
+	int m_gCost;
+	
 // -------------------------------------------------------
 // Description: list of arcs that the node has.
 // -------------------------------------------------------
@@ -56,6 +57,7 @@ private:
 	const int RADIUS = 25;
 	SDL_Color _color;
 public:
+	int m_fCost;
     // Accessor functions
     list<Arc> const & arcList() const {
         return m_arcList;              
@@ -74,25 +76,25 @@ public:
 		//m_nameTxt.setString(m_data);
     }
 
-	void setHCost(NodeType hCost) {
+	void setHCost(int hCost) {
 		m_hCost = hCost;
 		//m_hCostTxt.setString("H(n)= " + to_string(m_hCost));
 	}
 
-	void setGCost(NodeType gCost) {
+	void setGCost(int gCost) {
 		m_gCost = gCost;
 		//m_gCostTxt.setString("G(n)= " + to_string(m_gCost));
 	}
 
-	NodeType const & hCost() const {
+	int const & hCost() const {
 		return m_hCost;
 	}
 
-	NodeType const & gCost() const {
+	int const & gCost() const {
 		return m_gCost;
 	}
 
-	NodeType const & fCost() const {
+	int const & fCost() const {
 		return m_hCost + m_gCost;
 	}
 
@@ -130,7 +132,7 @@ public:
 	}
            
     Arc* getArc( Node* pNode );    
-    void addArc( Node* pNode, ArcType pWeight );
+    void addArc( Node* pNode, float pWeight );
 	void removeArc(Node* pNode);
 	void drawArcs(SDL_Renderer* renderer, Camera* camera) const;
 	void drawNodes(SDL_Renderer* renderer, Camera* camera) const;
@@ -138,8 +140,8 @@ public:
 };
 
 
-template<typename DataType, typename NodeType, typename ArcType>
-GraphNode<DataType, NodeType, ArcType>::GraphNode() :
+template<typename DataType>
+GraphNode<DataType>::GraphNode() :
 m_prevNode(0),
 m_hCost(-1),
 m_gCost(-1){
@@ -159,8 +161,8 @@ m_gCost(-1){
 }
 
 
-template<typename DataType, typename NodeType, typename ArcType>
-GraphArc<DataType, NodeType, ArcType>* GraphNode<DataType, NodeType, ArcType>::getArc(Node* pNode) {
+template<typename DataType>
+GraphArc<DataType>* GraphNode<DataType>::getArc(Node* pNode) {
 
      list<Arc>::iterator iter = m_arcList.begin();
      list<Arc>::iterator endIter = m_arcList.end();
@@ -177,8 +179,8 @@ GraphArc<DataType, NodeType, ArcType>* GraphNode<DataType, NodeType, ArcType>::g
      return pArc;
 }
 
-template<typename DataType, typename NodeType, typename ArcType>
-void  GraphNode<DataType, NodeType, ArcType>::reset() {
+template<typename DataType>
+void  GraphNode<DataType>::reset() {
 	m_marked = false;
 	m_prevNode = 0;
 	//m_shape.setFillColor(sf::Color::Blue);
@@ -189,8 +191,8 @@ void  GraphNode<DataType, NodeType, ArcType>::reset() {
 	//m_gCostTxt.setString("G(n)= ?");
 }
 
-template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::addArc(Node* pNode, ArcType weight) {
+template<typename DataType>
+void GraphNode<DataType>::addArc(Node* pNode, float weight) {
    // Create a new arc.
    Arc a;
    a.setNode(pNode);
@@ -208,8 +210,8 @@ void GraphNode<DataType, NodeType, ArcType>::addArc(Node* pNode, ArcType weight)
 //  Arguments:      None.
 //  Return Value:   None.
 // ----------------------------------------------------------------
-template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::removeArc(Node* pNode) {
+template<typename DataType>
+void GraphNode<DataType>::removeArc(Node* pNode) {
      list<Arc>::iterator iter = m_arcList.begin();
      list<Arc>::iterator endIter = m_arcList.end();
 
@@ -224,15 +226,15 @@ void GraphNode<DataType, NodeType, ArcType>::removeArc(Node* pNode) {
 }
 
 
-template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
+template<typename DataType>
+void GraphNode<DataType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
 	int arcs = m_arcList.size();
 	for (auto a : m_arcList)
 		a.draw(renderer, camera);
 }
 
-template<typename DataType, typename NodeType, typename ArcType>
-void GraphNode<DataType, NodeType, ArcType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
+template<typename DataType>
+void GraphNode<DataType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
 	SDL_SetRenderDrawColor(renderer, _color.r, _color.g, _color.b, _color.a);
 	Point point = { (float)(m_position.x -10), (float)(m_position.y - 10) };
 	point = camera->worldToScreen(point);

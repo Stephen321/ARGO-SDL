@@ -37,8 +37,8 @@ public:
 										SystemManager();
 										~SystemManager();
 
-	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string, int, int>* map, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string, int, int>* map, int width, int height);
+	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string>* map, int width, int height);
+	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string>* map, int width, int height);
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);

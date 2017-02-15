@@ -8,13 +8,13 @@
 
 using namespace helper;
 
-template<class DataType, class NodeType, class ArcType>
+template<class DataType>
 class GraphArc {
 private:
 
-	GraphNode<DataType, NodeType, ArcType>* m_pNode;
+	GraphNode<DataType>* m_pNode;
 
-    ArcType m_weight;
+    float m_weight;
 
 	SDL_Point points[2];
 	SDL_Color _color;
@@ -43,20 +43,20 @@ public:
 	}
 	
     // Accessor functions
-    GraphNode<DataType, NodeType, ArcType>* node() const {
+    GraphNode<DataType>* node() const {
         return m_pNode;
     }
                               
-    ArcType weight() const {
+    float weight() const {
         return m_weight;
     }
     
     // Manipulator functions
-    void setNode(GraphNode<DataType, NodeType, ArcType>* pNode) {
+    void setNode(GraphNode<DataType>* pNode) {
 		m_pNode = pNode;
     }
     
-    void setWeight(ArcType weight) {
+    void setWeight(float weight) {
        m_weight = weight;
     }
     

@@ -5,7 +5,7 @@
 #include "ColliderComponent.h"
 #include "BasicTypes.h"
 
-void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string, int, int>* _map)
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string>* _map)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -210,7 +210,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 				, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
 				, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 				, (uint16)ai->GetType()
-				, OBSTACLE_MASK
+				, AI_MASK
 				, false);
 
 			collider->body->SetUserData(ai);
@@ -227,10 +227,12 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		const Value& neighbour = properties["neighbour"];
 		
 		int fromNode = properties["node"].GetInt();
+		
 		for (int j = 0; j< neighbour.Size(); j++)
 		{
 			int toNode = neighbour[j].GetInt();
-			_map->addArc(fromNode, toNode, (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length() , false);
+			int lenght = (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
+			_map->addArc(fromNode, toNode, lenght, false);
 		}
 	}
 		

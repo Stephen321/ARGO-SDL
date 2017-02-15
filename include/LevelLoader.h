@@ -17,7 +17,7 @@ public:
 	LevelLoader() {};
 	~LevelLoader() {};
 
-	void LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string, int, int>* _map);
+	void LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string>* _map);
 
 private:
 	

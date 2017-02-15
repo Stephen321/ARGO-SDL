@@ -11,7 +11,7 @@ AISystem::~AISystem()
 
 }
 
-void AISystem::Initialize(Graph<string, int, int>* map)
+void AISystem::Initialize(Graph<string>* map)
 {
 	_map = map;
 }
@@ -41,7 +41,7 @@ void AISystem::Process(float dt)
 						int originNode = 1;
 						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-						int destNode = 60;
+						int destNode = 61;
 						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 						_map->setHeuristics(_map->nodeArray()[destNode]);
 						vector<Node*> path;
@@ -67,11 +67,16 @@ void AISystem::Process(float dt)
 		
 						helper::Vector2 dir = velocity.normalize();
 
-						physics->xAcceleration = 4.0f * dir.x;
-						physics->yAcceleration = 4.0f * dir.y;
+						physics->xAcceleration = 0.06f * dir.x;
+						physics->yAcceleration = 0.06f * dir.y;
 
-						physics->xVelocity += physics->xAcceleration * dt;
-						physics->yVelocity += physics->yAcceleration * dt;
+
+						physics->xVelocity += physics->xAcceleration ;
+						physics->yVelocity += physics->yAcceleration ;
+
+						//std::cout << "xAccerleration : " << 
+						std::cout << "xVelocity : " << physics->xVelocity << endl;
+						//std::cout << "yVel : " << physics->yVelocity;
 					}
 
 					/*

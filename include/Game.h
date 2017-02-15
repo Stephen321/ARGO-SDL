@@ -25,7 +25,7 @@
 #include "FunctionMaster.h"
 
 
-typedef GraphNode<string, int, int> Node;
+typedef GraphNode<string> Node;
 
 // Debug
 using namespace Camera2D;
@@ -77,7 +77,7 @@ private:
 
 	std::vector<Entity*>			_entities;
 
-	Graph<string, int, int>			_map;
+	Graph<string>			_map;
 
 	SystemManager					_systemManager;
 	FunctionMaster					_functionMaster;
