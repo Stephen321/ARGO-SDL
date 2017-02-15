@@ -1,6 +1,6 @@
 #include "AISystem.h"
 #include "AIComponent.h"
-
+#include "TransformComponent.h" 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
 {
@@ -28,11 +28,12 @@ void AISystem::Process(float dt)
 			{
 				AIComponent* ai = static_cast<AIComponent*>(e->GetComponent(Component::Type::AI));
 				float updateRate = ai->updateRate;
-				float updateTimer = ai->updateTimer;
-				updateTimer += dt;
-				if (updateTimer> updateRate)
+				ai->updateTimer += dt;
+				if (ai->updateTimer > updateRate)
 				{
-					updateTimer -= updateRate;
+					
+
+					ai->updateTimer -= updateRate;
 
 
 					if (!ai->callAstar)
@@ -52,6 +53,26 @@ void AISystem::Process(float dt)
 						ai->callAstar = true;
 					}
 
+
+					if (!ai->path.empty())
+					{
+						TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+						PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+						helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
+						float distance = (helper::Vector2(transform->rect.x, transform->rect.y) - ai->path.front()->getPosition()).length();
+						if (distance < 90.f)
+						{
+							ai->path.erase(ai->path.begin());
+						}
+		
+						helper::Vector2 dir = velocity.normalize();
+
+						physics->xAcceleration = 4.0f * dir.x;
+						physics->yAcceleration = 4.0f * dir.y;
+
+						physics->xVelocity += physics->xAcceleration * dt;
+						physics->yVelocity += physics->yAcceleration * dt;
+					}
 
 					/*
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));

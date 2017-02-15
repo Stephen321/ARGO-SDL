@@ -84,6 +84,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	bool createPlayer = false;
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
+		
 		const Value& entity = entityDataArray[i];
 		string entityName = entity["name"].GetString();
 
@@ -93,6 +94,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		float h = entity["height"].GetFloat();
 		if (entityName == "PlayerSolo")
 		{
+			
 			if (!createPlayer)
 			{ //it would be really nice if we could move all of this body creation stuff into the entity factory some how
 				createPlayer = true;
@@ -208,7 +210,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 				, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
 				, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 				, (uint16)ai->GetType()
-				, AI_MASK
+				, OBSTACLE_MASK
 				, false);
 
 			collider->body->SetUserData(ai);
@@ -235,6 +237,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 
 	
 	//Colliders
+	/*
 	const Value& colliderLayer = layerArray[3];
 	const Value& colliderDataArray = colliderLayer["objects"];
 
@@ -289,7 +292,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			body->SetUserData(obstacle);
 			entities.push_back(obstacle);
 		}
-	}
+	}*/
 	
 	
 }

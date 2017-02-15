@@ -7,6 +7,7 @@
 #include "Helpers.h"
 #include "Graph.h"
 
+using namespace helper;
 class AISystem : public System
 {
 public:

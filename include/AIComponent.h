@@ -10,7 +10,7 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<Node*>()),
-		updateRate(5.f),
+		updateRate(0.f),
 		updateTimer(0),
 		callAstar(false)
 	{
