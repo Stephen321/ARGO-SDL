@@ -124,7 +124,7 @@ void Game::Render()
 
 bool Game::IsRunning()
 {
-	if (_swapScene != CurrentScene::GAME) { _swapScene = CurrentScene::GAME; }
+	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
 	return _running;
 }
 
@@ -182,7 +182,7 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 	return texture;
 }
 
-void Game::BindInput(Entity* player)
+void Game::BindInput(Entity* player, Entity* weapon)
 {
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -196,7 +196,7 @@ void Game::BindInput(Entity* player)
 	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
-	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::mainMenu; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);

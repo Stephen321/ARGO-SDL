@@ -48,7 +48,7 @@ bool MainMenu::Initialize(SDL_Window* window, SDL_Renderer*	renderer, int width,
 
 		TTF_CloseFont(_font); // Free Font Memory
 
-		_swapScene = CurrentScene::MAIN_MENU;
+		_swapScene = CurrentScene::mainMenu;
 	}
 
 	return _running;
@@ -144,7 +144,7 @@ void MainMenu::Render()
 
 bool MainMenu::IsRunning()
 {
-	if (_swapScene != CurrentScene::MAIN_MENU) { _swapScene = CurrentScene::MAIN_MENU; }
+	if (_swapScene != CurrentScene::mainMenu) { _swapScene = CurrentScene::mainMenu; }
 	return _running;
 }
 

@@ -50,7 +50,7 @@ public:
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	void							BindInput(Entity* player);
+	void							BindInput(Entity* player, Entity* weapon);
 
 	void							DebugBox2D();
 
