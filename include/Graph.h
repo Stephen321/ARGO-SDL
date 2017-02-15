@@ -53,18 +53,26 @@ private:
 	int					m_count; //actual number of node
 
 	void				plan(Node* pStart, Node* pDest, std::vector<Node *>& path);
-
+	/*
 	struct
 	{
 		bool operator()(Node * n1, Node * n2) {
-			int f1 = n1->hCost() + n1->gCost();
-			int f2 = n2->hCost() + n2->gCost();
+			int f1 =  n1->gCost();
+			int f2 =  n2->gCost();
 			// adds H(n) and G(n) to get F(n)
-			return n1->gCost() > n2->gCost();
+			return f1 > f2;
 		}
-	} NodeSearchCostComparer;
+	} NodeSearchCostComparer;*/
 
-	
+	class NodeSearchCostComparer {
+	public:
+		bool operator()(Node * n1, Node * n2) {
+			int f1 = n1->gCost();
+			int f2 = n2->gCost();
+			// adds H(n) and G(n) to get F(n)
+			return f1 > f2;
+		}
+	};
 };
 
 
@@ -230,51 +238,48 @@ void Graph<DataType>::reset() {
 }
 
 template<class DataType>
-void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path){
+void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path) {
+
 	if (pStart != 0 && pDest != 0) {
-		std::vector<Node*> pq;
-		
-		//priority_queue<Node*, vector<Node*>, NodeSearchCostComparer> pq = std::priority_queue<Node*, vector<Node*>, NodeSearchCostComparer>();
-		pq.push_back(pStart);
+		priority_queue<Node*, vector<Node*>, NodeSearchCostComparer> pq;
+		pq.push(pStart);
 		pStart->setMarked(true);
 		pStart->setHCost(0);
 		pStart->setGCost(0);
-		
-		while (pq.size() != 0 && pq.back() != pDest) {
-			list<Arc>::const_iterator iter = pq.back()->arcList().begin();
-			list<Arc>::const_iterator endIter = pq.back()->arcList().end();
+
+		while (pq.size() != 0 && pq.top() != pDest) {
+			list<Arc>::const_iterator iter = pq.top()->arcList().begin();
+			list<Arc>::const_iterator endIter = pq.top()->arcList().end();
 
 			for (; iter != endIter; iter++) {
 				Node* child = (*iter).node();
-				if (child != pq.back()->getPrevious()){
+				if (child != pq.top()->getPrevious()) {
 					Arc arc = (*iter);
 					//Sleep(1000);
 					int Hc = child->hCost();
-					int Gc = pq.back()->gCost() + arc.weight();
+					int Gc = pq.top()->gCost() + arc.weight();
 					int Fc = Hc + Gc;
-					if (Fc < child->fCost() || child->gCost() == -1){  //is G(n) not set, H(n) should be always set with setHeuristics()
+					if (Fc < child->fCost() || child->gCost() == -1) {  //is G(n) not set, H(n) should be always set with setHeuristics()
 						child->setHCost(Hc);
 						child->setGCost(Gc);
-						child->m_fCost = child->gCost() + child->hCost();
-						child->setPrevious(pq.back());
+						child->setPrevious(pq.top());
 					}
 
 					if (child->marked() == false) {
-						pq.push_back(child);
+						pq.push(child);
 						child->setMarked(true);
-						child->setColour(SDL_Color{ 0, 128, 128, 255 });
-						std::sort(pq.begin(), pq.end(), NodeSearchCostComparer);
+						child->setColour(SDL_Colour{ 0,0,30,255 });
+						//child->setColour(sf::Color(0, 128, 128, 255));
 					}
 				}
 			}
-			pq.pop_back();
-			std::sort(pq.begin(), pq.end(), NodeSearchCostComparer);
+			pq.pop();
 		}
 
-		if (pq.size() != 0 && pq.back() == pDest){
-			for (Node* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()){
-				previous->setColour(SDL_Color{0,0,255,255});
-				path.push_back(previous);			
+		if (pq.size() != 0 && pq.top() == pDest) {
+			for (Node* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()) {
+				path.push_back(previous);
+				previous->setColour(SDL_Colour{ 0,0,180,255 });
 			}
 			path.push_back(pStart);
 			std::reverse(path.begin(), path.end());

@@ -210,7 +210,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 				, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
 				, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 				, (uint16)ai->GetType()
-				, AI_MASK
+				, PLAYER_MASK
 				, false);
 
 			collider->body->SetUserData(ai);
@@ -231,7 +231,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		for (int j = 0; j< neighbour.Size(); j++)
 		{
 			int toNode = neighbour[j].GetInt();
-			int lenght = (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
+			int lenght = 2;// (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
 			_map->addArc(fromNode, toNode, lenght, false);
 		}
 	}
