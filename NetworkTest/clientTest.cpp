@@ -10,9 +10,9 @@ int main(int argc, char** argv)
 	SDLNet_Init();
 
 	IPaddress serverIp;
-	SDLNet_ResolveHost(&serverIp, "127.0.0.1", 4023);
+	SDLNet_ResolveHost(&serverIp, "ec2-35-165-81-75.us-west-2.compute.amazonaws.com", 4023);
 
-	UDPsocket socket = SDLNet_UDP_Open(4000);
+	UDPsocket socket = SDLNet_UDP_Open(4023);
 
 	UDPpacket* packet = SDLNet_AllocPacket(256);
 	packet->address.host = serverIp.host;
