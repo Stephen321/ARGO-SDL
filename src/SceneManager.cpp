@@ -1,4 +1,9 @@
 #include "SceneManager.h"
+
+#include "ConstHolder.h"
+#include "Helpers.h"
+#include "LTimer.h"
+
 #include "Debug.h"
 
 
@@ -10,7 +15,7 @@ SceneManager::SceneManager()
 SceneManager::~SceneManager()
 {
 	DEBUG_MSG("Calling Cleanup");
-	game->CleanUp();
+	_game->CleanUp();
 }
 
 bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
@@ -19,10 +24,30 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	if (_running)
 	{
-		_cameraSystem.Init(width, height);
+		_cameraSystem.Initialize(width, height);
 
-		game = new Game();
-		game->Initialize(_window, _renderer, width, height);
+		_menu = new MainMenu();
+		_menu->Initialize(_window, _renderer, width, height);
+
+		_game = new Game();
+		_game->Initialize(_window, _renderer, width, height);
+
+		_lobby = new Lobby();
+		_lobby->Initialize(_window, _renderer, width, height);
+
+		_options = new Options();
+		_options->Initialize(_window, _renderer, width, height);
+
+		_about = new About();
+		_about->Initialize(_window, _renderer, width, height);
+
+		_currentScene.push_back(_menu);
+		_currentScene.push_back(_game);
+		_currentScene.push_back(_lobby);
+		_currentScene.push_back(_options);
+		_currentScene.push_back(_about);
+
+		_runningScene = 0;
 	}
 
 	return _running;
@@ -56,6 +81,7 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 			return false;
 		}
 	}
+
 	else
 	{
 		DEBUG_MSG("SDL init fail");
@@ -67,14 +93,13 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 
 void SceneManager::Update()
 {
-	if (game->IsRunning())
+	if (_currentScene[_runningScene]->IsRunning())
 	{
-		game->Update();
-		game->Render();
+		_runningScene = _currentScene[_runningScene]->Update();
+		_currentScene[_runningScene]->Render();
 	}
 
-
-	if(!game->IsRunning())
+	else
 	{
 		_running = false;
 	}

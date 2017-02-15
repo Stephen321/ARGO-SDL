@@ -6,29 +6,21 @@
 #include "FLInputManager.h"
 
 
-class ControlSystem : public System, public EventListener
+class ControlSystem : public System
 {
 public:
-							ControlSystem(Camera2D::Camera* camera, float updateRate = 0.f);
+							ControlSystem(float updateRate = 0.f);
 							~ControlSystem();
 
+	void					Initialize(Camera2D::Camera* camera);
+
 	void					Process(float dt = 0.f) override;
-
-	void					MoveHorizontal(int dir, Entity*& entity);
-	void					MoveVertical(int dir, Entity*& entity);
-
-	void					FireBullet(Entity*& entity);
-
-	void					OnEvent(Event evt) override;
 
 	void					AddTurret(Entity* entity);
 	void					RemoveTurret(Entity* entity);
 
-
-
 private:
 	Camera2D::Camera*		_camera;
 	std::vector<Entity*>	_turrets;
-
 };
 

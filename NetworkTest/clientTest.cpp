@@ -10,13 +10,14 @@ int main(int argc, char** argv)
 	SDLNet_Init();
 
 	IPaddress serverIp;
-	SDLNet_ResolveHost(&serverIp, "ec2-35-165-81-75.us-west-2.compute.amazonaws.com", 4023);
+	SDLNet_ResolveHost(&serverIp, "ec2-52-11-233-128.us-west-2.compute.amazonaws.com", 4023);
 
-	UDPsocket socket = SDLNet_UDP_Open(4023);
+	UDPsocket socket = SDLNet_UDP_Open(4000);
 
 	UDPpacket* packet = SDLNet_AllocPacket(256);
 	packet->address.host = serverIp.host;
 	packet->address.port = serverIp.port;
+	std::cout << "sending to port: " << packet->address.port << std::endl;
 
 	std::string msg;
 

@@ -5,6 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "ConstHolder.h"
+#include <iostream>
 
 
 CollisionSystem::CollisionSystem(float updateRate)
@@ -15,6 +16,7 @@ CollisionSystem::CollisionSystem(float updateRate)
 CollisionSystem::~CollisionSystem()
 {
 }
+
 
 void CollisionSystem::Process(float dt)
 {
@@ -70,19 +72,27 @@ void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifo
 	float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 	float normalAngle = atan2f(-normal.y, normal.x) * (180.f / M_PI);
 	float enterAngle = atan2f(-physics->yVelocity, physics->xVelocity) * (180.f / M_PI);
+
 	if (normalAngle < 0.f)
 		normalAngle += 360.f;
 	if (enterAngle < 0.f)
 		enterAngle += 360.f;
+
 	float exitAngle = 2 * normalAngle - 180.f - enterAngle;
+
 	if (exitAngle < 0.f)
 		exitAngle += 360.f;
 	exitAngle *= (M_PI / 180.f);
+
 	float normalScaler;
-	if (speed == 0.f)
-		normalScaler = 2.f;
+	if (speed <= 1.f)
+		normalScaler = 1.1f;
+	else if (speed > 1.f)
+		normalScaler = 1.1f * (1 / speed);
 	else
-		normalScaler = 2 * (1 / speed);
+		normalScaler = 1.1f;
+
+	std::cout << "Normal Scaler: " << normalScaler << std::endl;
 
 	//problem with 270/180/0/360 ???
 	//apply torque as well

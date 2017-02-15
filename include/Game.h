@@ -6,21 +6,13 @@
 
 #include "Camera2D.h"
 #include "FLInputManager.h"
+#include "Scene.h"
 
 #include "EntityFactory.h"
 #include "BodyFactory.h"
 
 #include "Entity.h"
-
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "ControlSystem.h"
-#include "CameraSystem.h"
-#include "CollisionSystem.h"
-#include "GunSystem.h"
-#include "FiringSystem.h"
-
-#include "WeaponSystem.h"
+#include "SystemManager.h"
 
 #include <SDL.h>
 #include <vector>
@@ -33,29 +25,33 @@
 #include "GraphArc.h"
 #include "Graph.h"
 
+#include "FunctionMaster.h"
+
 
 using namespace Camera2D;
 
-class Game : public EventListener
+class Game : public EventListener, public Scene
 {
 public:
 									Game();
 									~Game();
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
-	
-	void							Render();
-	void							Update();
-	void							LoadContent();
-	void							CleanUp();
+
+	int								Update() override;
+	void							Render() override;
 
 	void							OnEvent(Event evt) override;
 
-	bool							IsRunning(); 
+	bool							IsRunning() override;
+
+	void							LoadContent();
+	void							CleanUp();
+
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	void							BindInput(Entity* player);
+	void							BindInput(Entity* player, Entity* weapon);
 
 	void							DebugBox2D();
 
@@ -63,8 +59,8 @@ private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
-	EntityFactory*					_entityFactory;
-	BodyFactory*					_bodyFactory;
+	EntityFactory					_entityFactory;
+	BodyFactory						_bodyFactory;
 
 	LevelLoader						_levelLoader;
 
@@ -80,53 +76,13 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 
-	std::vector<Entity*>*			_entities;
+	std::vector<Entity*>			_entities;
 
-	RenderSystem					_renderSystem;
-	PhysicsSystem					_physicsSystem;
-	ControlSystem*					_controlSystem;
-	CameraSystem					_cameraSystem;
-	CollisionSystem					_collisionSystem;
+	SystemManager					_systemManager;
+	FunctionMaster					_functionMaster;
 
-	GunSystem						_gunSystem;
-	FiringSystem*					_firingSystem;
-	WeaponSystem					_weaponSystem;
-	
+	CurrentScene					_swapScene;
 };
-
-
-
-
-class InputCommand : public Command
-{
-public:
-	InputCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
-
-	virtual void executePress()
-	{
-		for (int i = 0; m_type == EventListener::Type::Press && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeRelease()
-	{
-		for (int i = 0; m_type == EventListener::Type::Release && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeHold()
-	{
-		for (int i = 0; m_type == EventListener::Type::Hold && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-
-	virtual void executeDown()
-	{
-		for (int i = 0; m_type == EventListener::Type::Down && i < m_functions.size(); i++)
-			m_functions[i]();
-	}
-};
-
 
 #endif
 

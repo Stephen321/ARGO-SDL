@@ -4,7 +4,7 @@
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
 
-void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -72,7 +72,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 			}
 			index++;
 
-			entities->push_back(tile); 
+			entities.push_back(tile); 
 		}
 	}
 
@@ -113,7 +113,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 
 				collider->body->SetUserData(player);
 				collider->body->SetFixedRotation(true);
-				entities->push_back(player);
+				entities.push_back(player);
 				
 			}
 		}
@@ -131,7 +131,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				, true);
 
 			body->SetUserData(checkpoint);
-			entities->push_back(checkpoint);
+			entities.push_back(checkpoint);
 		}
 		else if (entityName == "Flag")
 		{
@@ -147,7 +147,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				, true);
 
 			body->SetUserData(flag);
-			entities->push_back(flag);
+			entities.push_back(flag);
 		}
 
 	}
@@ -214,7 +214,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				, false);//create body
 
 			body->SetUserData(obstacle);
-			entities->push_back(obstacle);
+			entities.push_back(obstacle);
 		}
 		else if (entityName == "Poly")
 		{
@@ -239,7 +239,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>* entities, Ent
 				, false);	//create body
 
 			body->SetUserData(obstacle);
-			entities->push_back(obstacle);
+			entities.push_back(obstacle);
 		}
 	}
 }

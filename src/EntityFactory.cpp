@@ -9,14 +9,7 @@
 
 
 
-EntityFactory::EntityFactory(RenderSystem* rs, PhysicsSystem* ps, ControlSystem* ctls, CameraSystem* cs, GunSystem* gs, FiringSystem* fs, std::map<TextureID, SDL_Texture*>* th) :
-	_renderSystem(rs),
-	_cameraSystem(cs),
-	_physicSystem(ps),
-	_controlSystem(ctls),
-	_gunSystem(gs),
-	_firingSystem(fs),
-	_textureHolder(th)
+EntityFactory::EntityFactory()	
 {
 }
 
@@ -25,6 +18,13 @@ EntityFactory::~EntityFactory()
 
 }
 
+
+void EntityFactory::Initialize(SystemManager* sm, std::map<TextureID, SDL_Texture*>* th)
+{
+	_systemManager = sm;
+
+	_textureHolder = th;
+}
 
 Entity* EntityFactory::CreateEntity(EntityType t)
 {
@@ -82,9 +82,9 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new ControlComponent());
 	player->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(player);
-	_physicSystem->AddEntity(player);
-	_cameraSystem->AddEntity(player);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
+	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);
+	_systemManager->AddEntity(SystemManager::SystemType::Camera, player);
 
 	return player;
 }
@@ -99,8 +99,8 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
 	ai->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(ai);
-	_physicSystem->AddEntity(ai);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, ai);
+	_systemManager->AddEntity(SystemManager::SystemType::Physics, ai);
 
 	return ai;
 }
@@ -112,7 +112,7 @@ Entity* EntityFactory::CreateObstacleEntity()
 	obstacle->AddComponent(new TransformComponent());
 	obstacle->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(obstacle);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, obstacle);
 
 	return obstacle;
 }
@@ -124,7 +124,7 @@ Entity* EntityFactory::CreatePowerUpEntity()
 	powerUp->AddComponent(new TransformComponent());
 	powerUp->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(powerUp);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, powerUp);
 
 	return powerUp;
 }
@@ -139,10 +139,9 @@ Entity* EntityFactory::CreateWeaponEntity()
 	weapon->AddComponent(spriteComponent);
 	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
 
-	_renderSystem->AddEntity(weapon);
-	_controlSystem->AddTurret(weapon);
-	_gunSystem->AddEntity(weapon);
-	_firingSystem->AddEntity(weapon);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, weapon);
+	_systemManager->GetControlSystem()->AddTurret(weapon);
+	_systemManager->AddEntity(SystemManager::SystemType::Gun, weapon);
 
 	return weapon;
 }
@@ -157,8 +156,8 @@ Entity* EntityFactory::CreateBulletEntity()
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
 	bullet->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(bullet);
-	_physicSystem->AddEntity(bullet);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, bullet);
+	_systemManager->AddEntity(SystemManager::SystemType::Physics, bullet);
 
 	return bullet;
 }
@@ -171,7 +170,7 @@ Entity* EntityFactory::CreateCheckpointEntity()
 	checkpoint->AddComponent(new TransformComponent());
 	checkpoint->AddComponent(new ColliderComponent());
 
-	_renderSystem->AddEntity(checkpoint);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, checkpoint);
 
 	return checkpoint;
 }
@@ -184,7 +183,7 @@ Entity* EntityFactory::CreateFlagEntity()
 	flag->AddComponent(new ColliderComponent());
 
 
-	_renderSystem->AddEntity(flag);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, flag);
 
 	return flag;
 }
@@ -195,7 +194,7 @@ Entity* EntityFactory::CreateTileEntity()
 	tile->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet]));
 	tile->AddComponent(new TransformComponent());
 
-	_renderSystem->AddEntity(tile);
+	_systemManager->AddEntity(SystemManager::SystemType::Render, tile);
 
 	return tile;
 }
