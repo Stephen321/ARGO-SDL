@@ -15,6 +15,7 @@ public:
 		Control,
 		AI,
 		Gun,
+		Map,
 	};
 
 public:

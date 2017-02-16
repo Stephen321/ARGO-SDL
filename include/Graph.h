@@ -1,260 +1,186 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <vector>
 #include <list>
 #include <queue>
 #include "BasicTypes.h"
-
+#include "GraphNode.h"
+#include "GraphArc.h"
 using namespace helper;
 using namespace std;
 
-#include "Camera2D.h" //debugging
-using namespace Camera2D;
-
-template <class DataType> class GraphArc;
-template <class DataType> class GraphNode;
-
-template<class DataType>
 class Graph {
 private:
-    typedef GraphArc<DataType> Arc;
-	typedef GraphNode<DataType> Node;
 	
 public:           
     // Constructor and destructor functions
-						Graph() {};
-						Graph( int size );
+						Graph() ;
 						~Graph();
 
     // Accessors
-    Node** nodeArray() const {
-       return m_pNodes;
+    vector<GraphNode*> nodeArray() const {
+       return _nodes;
     }
 	
-    // Public member functions.
-	void				init(int size);
-	bool				addNode(DataType data, int index, helper::Vector2 position);
+
+	void				addNode(string data, helper::Vector2 position);
     void				removeNode( int index );
     bool				addArc( int from, int to, float weight, bool directed = true );
     void				removeArc( int from, int to );
-	Arc*				getArc(int from, int to);
+	GraphArc*			getArc(int from, int to);
 	void				reset();
-	int					getMaxNodes();
+	int					geNodesSize();
 	
 	//Pathfinding Assignment
-	void				aStar(Node* pStart, Node* pDest, std::vector<Node *>& path);
-	void				setHeuristics(Node* pDest);
+	void				aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path);
+	void				setHeuristics(GraphNode* pDest);
 	void				drawNodes(SDL_Renderer* renderer, Camera* camera) const;
 	void				drawArcs(SDL_Renderer* renderer, Camera* camera) const;
 
 private:
-	Node**				m_pNodes;
-	int					m_maxNodes; //max number of node
-	int					m_count; //actual number of node
-
-	void				plan(Node* pStart, Node* pDest, std::vector<Node *>& path);
-	/*
-	struct
-	{
-		bool operator()(Node * n1, Node * n2) {
-			int f1 =  n1->gCost();
-			int f2 =  n2->gCost();
-			// adds H(n) and G(n) to get F(n)
-			return f1 > f2;
-		}
-	} NodeSearchCostComparer;*/
+	vector<GraphNode*>		_nodes;
 
 	class NodeSearchCostComparer {
 	public:
-		bool operator()(Node * n1, Node * n2) {
+		bool operator()(GraphNode * n1, GraphNode * n2) {
 			int f1 = n1->hCost() + n1->gCost();
 			int f2 = n2->hCost() + n2->gCost();
-			// adds H(n) and G(n) to get F(n)
 			return f1 > f2;
 		}
 	};
+
 };
 
 
-
-template<class DataType>
-Graph<DataType>::Graph(int size) : m_maxNodes(size) {
-   int i;
-   m_pNodes = new Node * [m_maxNodes];
-   // go through every index and clear it to null (0)
-   for( i = 0; i < m_maxNodes; i++ ) {
-        m_pNodes[i] = 0;
-   }
-
-   // set the node count to 0.
-   m_count = 0;
-}
-
-template<class DataType>
-void Graph<DataType>::init(int size)
+Graph::Graph()
 {
-	m_maxNodes = size;
-	int i;
-	m_pNodes = new Node *[m_maxNodes];
-	// go through every index and clear it to null (0)
-	for (i = 0; i < m_maxNodes; i++) {
-		m_pNodes[i] = 0;
-	}
-
-	// set the node count to 0.
-	m_count = 0;
+	_nodes = vector<GraphNode*>();
 }
 
 
-template<class DataType>
-Graph<DataType>::~Graph() {
-   int index;
-   for( index = 0; index < m_maxNodes; index++ ) {
-        if( m_pNodes[index] != 0 ) {
-            delete m_pNodes[index];
+Graph::~Graph() {
+   for(int index = 0; index < _nodes.size(); index++ ) 
+   {
+        if(_nodes[index] != nullptr ) 
+		{
+            delete _nodes[index];
+			_nodes[index] = nullptr;
         }
    }
-   // Delete the actual array
-   delete m_pNodes;
+   _nodes.clear();
 }
 
 
-template<class DataType>
-bool Graph<DataType>::addNode(DataType data, int index, helper::Vector2 position) {
-   bool nodeNotPresent = false;
-   // find out if a node does not exist at that index.
-   if ( m_pNodes[index] == 0) {
-      nodeNotPresent = true;
-      // create a new node, put the data in it, and unmark it.
-	  m_pNodes[index] = new Node();
-	  m_pNodes[index]->setData(data);
-      m_pNodes[index]->setMarked(false);
-	  m_pNodes[index]->setPosition(position);
-
-      // increase the count and return success.
-      m_count++;
-    }
-        
-    return nodeNotPresent;
+void Graph::addNode(string data, helper::Vector2 position) 
+{
+	GraphNode* node = new GraphNode();
+	node->setData(data);
+	node->setMarked(false);
+	node->setPosition(position);
+	_nodes.push_back(node);
 }
 
-template<class DataType>
-void Graph<DataType>::removeNode(int index) {
-     // Only proceed if node does exist.
-     if( m_pNodes[index] != 0 ) {
-         // now find every arc that points to the node that
-         // is being removed and remove it.
-         int node;
-         Arc* arc;
+void Graph::removeNode(int index) {
+	
+	if (_nodes[index] != nullptr) {
 
-         // loop through every node
-         for( node = 0; node < m_maxNodes; node++ ) {
-              // if the node is valid...
-              if( m_pNodes[node] != 0 ) {
-                  // see if the node has an arc pointing to the current node.
-                  arc = m_pNodes[node]->getArc( m_pNodes[index] );
+         GraphArc* arc = nullptr;
+         for(int node = 0; node < _nodes.size(); node++ ) {
+              if(_nodes[node] != nullptr) {
+
+                  arc = _nodes[node]->getArc(_nodes[index] );
+				  
               }
-              // if it has an arc pointing to the current node, then
-              // remove the arc.
-              if( arc != 0 ) {
-                  removeArc( node, index );
+			 
+              if( arc != nullptr) {
+				  removeArc(node, index);
               }
          }
-        
-
-        // now that every arc pointing to the current node has been removed,
-        // the node can be deleted.
-        delete m_pNodes[index];
-        m_pNodes[index] = 0;
-        m_count--;
+       // delete _nodes[index];
+		//_nodes[index] = nullptr;
     }
 }
 
-template<class DataType>
-bool Graph<DataType>::addArc(int from, int to, float weight, bool directed) {
+bool Graph::addArc(int from, int to, float weight, bool directed) {
      bool proceed = true; 
      // make sure both nodes exist.
-     if( m_pNodes[from] == 0 || m_pNodes[to] == 0 ) {
+     if(_nodes[from] == 0 || _nodes[to] == 0 ) {
          proceed = false;
      }
         
      // if an arc already exists we should not proceed
-     if( m_pNodes[from]->getArc( m_pNodes[to] ) != 0 ) {
+     if(_nodes[from]->getArc(_nodes[to] ) != 0 ) {
          proceed = false;
      }
 
      if (proceed == true) {
         // add the arc to the "from" node.
-		 m_pNodes[from]->addArc(m_pNodes[to], weight);
+		 _nodes[from]->addArc(_nodes[to], weight);
 		 if (directed == false) //add node back the other way if undirected
-			 m_pNodes[to]->addArc(m_pNodes[from], weight);
+			 _nodes[to]->addArc(_nodes[from], weight);
      }
         
      return proceed;
 }
 
-template<class DataType>
-void Graph<DataType>::removeArc(int from, int to) {
+void Graph::removeArc(int from, int to) {
      // Make sure that the node exists before trying to remove
      // an arc from it.
      bool nodeExists = true;
-     if( m_pNodes[from] == 0 || m_pNodes[to] == 0 ) {
+     if(_nodes[from] == NULL || _nodes[to] == NULL ) {
          nodeExists = false;
      }
 
      if (nodeExists == true) {
         // remove the arc.
-        m_pNodes[from]->removeArc( m_pNodes[to] );
+		 
+		 _nodes[from]->removeArc(_nodes[to] );
      }
 }
 
 
-template<class DataType>
-// Dev-CPP doesn't like Arc* as the (typedef'd) return type?
-GraphArc<DataType>* Graph<DataType>::getArc(int from, int to) {
-     Arc* pArc = 0;
+GraphArc* Graph::getArc(int from, int to) {
+     GraphArc* pArc = 0;
      // make sure the to and from nodes exist
-     if( m_pNodes[from] != 0 && m_pNodes[to] != 0 ) {
-         pArc = m_pNodes[from]->getArc( m_pNodes[to] );
+     if(_nodes[from] != NULL && _nodes[to] != NULL ) {
+         pArc = _nodes[from]->getArc(_nodes[to] );
      }
                 
      return pArc;
 }
 
-template<class DataType>
-int Graph<DataType>::getMaxNodes() {
+int Graph::geNodesSize() {
 
-	return m_maxNodes;
+	return _nodes.size();
 }
 
-template<class DataType>
-void Graph<DataType>::reset() {
+void Graph::reset() {
 	int index;
-	for (index = 0; index < m_maxNodes; index++) {
-		if (m_pNodes[index] != 0) {
-			m_pNodes[index]->reset();
+	for (index = 0; index < _nodes.size(); index++) {
+		if (_nodes[index] != NULL) {
+			_nodes[index]->reset();
 		}
 	}
 }
 
-template<class DataType>
-void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path) {
+void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path) {
 
 	if (pStart != 0 && pDest != 0) {
-		priority_queue<Node*, vector<Node*>, NodeSearchCostComparer> pq;
+		priority_queue<GraphNode*, vector<GraphNode*>, NodeSearchCostComparer> pq;
 		pq.push(pStart);
 		pStart->setMarked(true);
 		pStart->setHCost(0);
 		pStart->setGCost(0);
 
 		while (pq.size() != 0 && pq.top() != pDest) {
-			list<Arc>::const_iterator iter = pq.top()->arcList().begin();
-			list<Arc>::const_iterator endIter = pq.top()->arcList().end();
+			list<GraphArc>::const_iterator iter = pq.top()->arcList().begin();
+			list<GraphArc>::const_iterator endIter = pq.top()->arcList().end();
 
 			for (; iter != endIter; iter++) {
-				Node* child = (*iter).node();
+				GraphNode * child = (*iter).node();
 				if (child != pq.top()->getPrevious()) {
-					Arc arc = (*iter);
+					GraphArc arc = (*iter);
 					//Sleep(1000);
 					int Hc = child->hCost();
 					int Gc = pq.top()->gCost() + arc.weight();
@@ -277,7 +203,7 @@ void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path
 		}
 
 		if (pq.size() != 0 && pq.top() == pDest) {
-			for (Node* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()) {
+			for (GraphNode* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()) {
 				path.push_back(previous);
 				previous->setColour(SDL_Colour{ 0,80,255,255 });
 			}
@@ -289,13 +215,12 @@ void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path
 	}
 }
 
-template<class DataType>
-void Graph<DataType>::setHeuristics(Node* pDest){
+void Graph::setHeuristics(GraphNode* pDest){
 	if (pDest != 0) {
-		for (int i = 0; i < m_count; i++){
-			helper::Vector2 vectorTo = pDest->getPosition() - m_pNodes[i]->getPosition();
+		for (int i = 0; i < _nodes.size(); i++){
+			helper::Vector2 vectorTo = pDest->getPosition() - _nodes[i]->getPosition();
 			int Hc = (int)(sqrt((vectorTo.x * vectorTo.x) + (vectorTo.y * vectorTo.y)));
-			m_pNodes[i]->setHCost(Hc);
+			_nodes[i]->setHCost(Hc);
 		}
 	}
 }
@@ -303,26 +228,23 @@ void Graph<DataType>::setHeuristics(Node* pDest){
 
 
 //draw the nodes
-template<class DataType>
-void Graph<DataType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
-	for (int i = 0; i < m_count; i++){
-		m_pNodes[i]->drawNodes(renderer, camera);
+void Graph::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
+	for (int i = 0; i < _nodes.size(); i++){
+		_nodes[i]->drawNodes(renderer, camera);
 	}
 }
 
 //draw arcs
-template<class DataType>
-void Graph<DataType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
-	for (int i = 0; i < m_count; i++)
+void Graph::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
+	for (int i = 0; i < _nodes.size(); i++)
 	{
-		m_pNodes[i]->drawArcs(renderer, camera);
+		_nodes[i]->drawArcs(renderer, camera);
 	}
 }
 
 
 
-#include "GraphNode.h"
-#include "GraphArc.h"
+
 
 
 #endif

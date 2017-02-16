@@ -5,7 +5,7 @@
 #include "ColliderComponent.h"
 #include "BasicTypes.h"
 
-void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph<string>* _map)
+void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph* _map)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -161,8 +161,6 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	//adding node
 	int wayPointSize = wayPointArray.Size();
 
-	_map->init(wayPointSize);
-
 	for (int i = 0; i < wayPointSize; i++)
 	{
 		const Value& entity = wayPointArray[i];
@@ -177,7 +175,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		const Value& properties = entity["properties"];
 		int currentNode = properties["node"].GetInt();
 
-		_map->addNode(to_string(currentNode) , currentNode, position);
+		_map->addNode(to_string(currentNode) , position);
 
 		Entity* point = entityFactory->CreateEntity(EntityType::Point);
 
@@ -210,13 +208,14 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 				, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
 				, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 				, (uint16)ai->GetType()
-				, PLAYER_MASK
+				, AI_MASK
 				, false);
 
 			collider->body->SetUserData(ai);
 			collider->body->SetFixedRotation(true);
 			entities.push_back(ai);
 		
+
 		}
 	}
 	//adding arch
@@ -234,12 +233,12 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			int lenght = (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
 			_map->addArc(fromNode, toNode, lenght, false);
 		}
+		_map->removeNode(3);
 	}
 		
 
 	
 	//Colliders
-	/*
 	const Value& colliderLayer = layerArray[3];
 	const Value& colliderDataArray = colliderLayer["objects"];
 
@@ -294,7 +293,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			body->SetUserData(obstacle);
 			entities.push_back(obstacle);
 		}
-	}*/
+	}
 	
 	
 }

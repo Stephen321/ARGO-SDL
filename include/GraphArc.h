@@ -6,13 +6,18 @@
 
 #include "SDL.h" //for debuging
 
+#include "Camera2D.h"
+using namespace Camera2D;
+
+
+
+
 using namespace helper;
 
-template<class DataType>
 class GraphArc {
 private:
 
-	GraphNode<DataType>* m_pNode;
+	GraphNode* m_pNode;
 
     float m_weight;
 
@@ -20,7 +25,7 @@ private:
 	SDL_Color _color;
 public:
 
-	GraphArc() {
+	GraphArc() : m_pNode(nullptr){
 		_color = SDL_Color{ 255,255,255,255 };
 	}
 
@@ -43,7 +48,8 @@ public:
 	}
 	
     // Accessor functions
-    GraphNode<DataType>* node() const {
+	
+    GraphNode* node() const {
         return m_pNode;
     }
                               
@@ -52,7 +58,8 @@ public:
     }
     
     // Manipulator functions
-    void setNode(GraphNode<DataType>* pNode) {
+	
+    void setNode(GraphNode* pNode) {
 		m_pNode = pNode;
     }
     

@@ -14,7 +14,7 @@ SystemManager::~SystemManager()
 
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string>* map, int width, int height)
+void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height)
 {
  	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, map, width, height);
 	InitializeInteractionSystems();
@@ -22,7 +22,7 @@ void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* en
 
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph<string>* map, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);

@@ -3,6 +3,8 @@
 
 #include <list>
 #include "BasicTypes.h"
+#include <string>
+
 
 #include "Camera2D.h" //debugging
 using namespace Camera2D;
@@ -11,24 +13,16 @@ using namespace Camera2D;
 using namespace std;
 
 // Forward references
-template <typename DataType> class GraphArc;
+//class GraphArc;
 
-// -------------------------------------------------------
-// Name:        GraphNode
-// Description: This is the node class. The node class 
-//              contains data, and has a linked list of 
-//              arcs.
-// -------------------------------------------------------
-template<class DataType>
+class GraphArc;
 class GraphNode {
 private:    
-// typedef the classes to make our lives easier.
-	typedef GraphArc<DataType> Arc;
-	typedef GraphNode<DataType> Node;
+
 // -------------------------------------------------------
 // Description: data inside the node
 // -------------------------------------------------------
-	DataType m_data;
+	string m_data;
 // -------------------------------------------------------
 // Description: cost inside node
 // -------------------------------------------------------
@@ -38,14 +32,14 @@ private:
 // -------------------------------------------------------
 // Description: list of arcs that the node has.
 // -------------------------------------------------------
-    list<Arc> m_arcList;
+    list<GraphArc> m_arcList;
 	
 // -------------------------------------------------------
 // Description: This remembers if the node is marked.
 // -------------------------------------------------------
     bool m_marked;
 	
-	Node* m_prevNode; 
+	GraphNode* m_prevNode;
 
 	helper::Vector2 m_position;
 	//sf::CircleShape m_shape;
@@ -59,7 +53,7 @@ private:
 public:
 	int m_fCost;
     // Accessor functions
-    list<Arc> const & arcList() const {
+    list<GraphArc> const & arcList() const {
         return m_arcList;              
     }
 
@@ -67,11 +61,11 @@ public:
         return m_marked;
     }
 
-    DataType const & data() const {
+    string const & data() const {
         return m_data;
     }
     // Manipulator functions
-	void setData(DataType data) {
+	void setData(string data) {
 		m_data = data;
 		//m_nameTxt.setString(m_data);
     }
@@ -102,7 +96,7 @@ public:
 		m_marked = mark;
 	}
 
-	void setPrevious(Node* previous) {
+	void setPrevious(GraphNode* previous) {
 		m_prevNode = previous;
 	}
 
@@ -123,126 +117,38 @@ public:
 		return m_position;
 	}
 	
-
-
-	void reset();
-
-	Node* getPrevious() {
+	GraphNode* getPrevious() {
 		return m_prevNode;
 	}
-           
-    Arc* getArc( Node* pNode );    
-    void addArc( Node* pNode, float pWeight );
-	void removeArc(Node* pNode);
-	void drawArcs(SDL_Renderer* renderer, Camera* camera) const;
-	void drawNodes(SDL_Renderer* renderer, Camera* camera) const;
+
+
 	GraphNode();
+
+
+
+	GraphArc* getArc(GraphNode* pNode);
+
+
+	void  reset();
+
+
+	void addArc(GraphNode* pNode, float weight);
+
+	// ----------------------------------------------------------------
+	//  Name:           removeArc
+	//  Description:    This finds an arc from this node to input node 
+	//                  and removes it.
+	//  Arguments:      None.
+	//  Return Value:   None.
+	// ----------------------------------------------------------------
+
+	void removeArc(GraphNode* pNode);
+
+
+
+	void drawArcs(SDL_Renderer* renderer, Camera* camera) const;
+
+
+	void drawNodes(SDL_Renderer* renderer, Camera* camera) const;
 };
-
-
-template<typename DataType>
-GraphNode<DataType>::GraphNode() :
-m_prevNode(0),
-m_hCost(-1),
-m_gCost(-1){
-
-	_color = { 255,255,255,255 };
-	/*
-	m_shape = sf::CircleShape(RADIUS);
-	m_shape.setOrigin(RADIUS, RADIUS);
-
-	
-	m_nameTxt = sf::Text("", font, 15);
-	m_nameTxt.setOrigin(4, 8);
-	m_hCostTxt = sf::Text("H(n)= ?", font, 11);
-	m_hCostTxt.setOrigin(7, 7);
-	m_gCostTxt = sf::Text("G(n)= ?", font, 11);
-	m_gCostTxt.setOrigin(7, 7);*/
-}
-
-
-template<typename DataType>
-GraphArc<DataType>* GraphNode<DataType>::getArc(Node* pNode) {
-
-     list<Arc>::iterator iter = m_arcList.begin();
-     list<Arc>::iterator endIter = m_arcList.end();
-     Arc* pArc = 0;
-     
-     // find the arc that matches the node
-     for( ; iter != endIter && pArc == 0; ++iter ) {         
-          if ( (*iter).node() == pNode) {
-               pArc = &( (*iter) );
-          }
-     }
-
-     // returns null if not found
-     return pArc;
-}
-
-template<typename DataType>
-void  GraphNode<DataType>::reset() {
-	m_marked = false;
-	m_prevNode = 0;
-	//m_shape.setFillColor(sf::Color::Blue);
-	m_hCost = -1;
-	m_gCost = -1;
-
-	//m_hCostTxt.setString("H(n)= ?");
-	//m_gCostTxt.setString("G(n)= ?");
-}
-
-template<typename DataType>
-void GraphNode<DataType>::addArc(Node* pNode, float weight) {
-   // Create a new arc.
-   Arc a;
-   a.setNode(pNode);
-   a.setWeight(weight);
-   a.setLine(m_position, pNode->getPosition());
-   // Add it to the arc list.
-   m_arcList.push_back( a );
-}
-
-
-// ----------------------------------------------------------------
-//  Name:           removeArc
-//  Description:    This finds an arc from this node to input node 
-//                  and removes it.
-//  Arguments:      None.
-//  Return Value:   None.
-// ----------------------------------------------------------------
-template<typename DataType>
-void GraphNode<DataType>::removeArc(Node* pNode) {
-     list<Arc>::iterator iter = m_arcList.begin();
-     list<Arc>::iterator endIter = m_arcList.end();
-
-     int size = m_arcList.size();
-     // find the arc that matches the node
-     for( ; iter != endIter && m_arcList.size() == size;  
-                                                    ++iter ) {
-          if ( (*iter).node() == pNode) {
-             m_arcList.remove( (*iter) );
-          }                           
-     }
-}
-
-
-template<typename DataType>
-void GraphNode<DataType>::drawArcs(SDL_Renderer* renderer, Camera* camera) const{
-	int arcs = m_arcList.size();
-	for (auto a : m_arcList)
-		a.draw(renderer, camera);
-}
-
-template<typename DataType>
-void GraphNode<DataType>::drawNodes(SDL_Renderer* renderer, Camera* camera) const{
-	SDL_SetRenderDrawColor(renderer, _color.r, _color.g, _color.b, _color.a);
-	Point point = { (float)(m_position.x -10), (float)(m_position.y - 10) };
-	point = camera->worldToScreen(point);
-	
-	SDL_Rect rect = { point.x,point.y, 20, 20 };
-	SDL_RenderFillRect(renderer, &rect);
-}
-
-#include "GraphArc.h"
-
 #endif

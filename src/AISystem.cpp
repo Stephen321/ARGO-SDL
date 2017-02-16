@@ -11,7 +11,7 @@ AISystem::~AISystem()
 
 }
 
-void AISystem::Initialize(Graph<string>* map)
+void AISystem::Initialize(Graph* map)
 {
 	_map = map;
 }
@@ -31,20 +31,20 @@ void AISystem::Process(float dt)
 				ai->updateTimer += dt;
 				if (ai->updateTimer > updateRate)
 				{
-					
-
+				
+				
 					ai->updateTimer -= updateRate;
 
 
-					if (!ai->callAstar)
+					if (!ai->callAstar)//testing
 					{
-						int originNode = 39;
+						int originNode = 0;
 						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-						int destNode = 15;
+						int destNode = 25;
 						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 						
-						vector<Node*> path;
+						vector<GraphNode*> path;
 						_map->aStar(_map->nodeArray()[originNode], _map->nodeArray()[destNode], path);
 						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
@@ -73,47 +73,9 @@ void AISystem::Process(float dt)
 
 						physics->xVelocity += physics->xAcceleration ;
 						physics->yVelocity += physics->yAcceleration ;
-
-						//std::cout << "xAccerleration : " << 
-						std::cout << "xVelocity : " << physics->xVelocity << endl;
-						//std::cout << "yVel : " << physics->yVelocity;
 					}
-
-					/*
-					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-					BoundsComponent* bounds = static_cast<BoundsComponent*>(e->GetComponent(Component::Type::Bounds));
-					CollisionComponent* collision = static_cast<CollisionComponent*>(e->GetComponent(Component::Type::Collider));
-					
-					float maxVelocity = physics->maxVelocity;
-
-					float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
-					float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
-
-					physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?
-					physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
-
-					float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-					if (currentVelocity > maxVelocity)
-					{
-						physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
-						physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
-					}
-
-					if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.1f) { physics->xVelocity = 0.f; }
-					if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.1f) { physics->yVelocity = 0.f; }
-
-					collision->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-
-					bounds->rect.x = (int)metersToPixels(collision->body->GetPosition().x) - bounds->rect.w * 0.5f;
-					bounds->rect.y = (int)metersToPixels(collision->body->GetPosition().y) - bounds->rect.h * 0.5f;
-
-					physics->xDir = 0;
-					physics->yDir = 0;
-					*/
 				}
 
-			
-				//std::cout << "Velcoity.x: " << collision->body->GetLinearVelocity().x << " y: " << collision->body->GetLinearVelocity().y << std::endl;
 			}
 		}
 	}

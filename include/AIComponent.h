@@ -2,14 +2,14 @@
 
 #include "Component.h"
 #include "GraphNode.h"
-typedef GraphNode<string> Node;
+
 
 class AIComponent : public Component
 {
 public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
-		path(vector<Node*>()),
+		path(vector<GraphNode*>()),
 		updateRate(0.f),
 		updateTimer(0),
 		callAstar(false)
@@ -21,7 +21,7 @@ public:
 	}
 
 public:
-	vector<Node*> path;
+	vector<GraphNode*> path;
 	float updateRate;
 	float updateTimer;
 	bool callAstar;

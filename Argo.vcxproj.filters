@@ -49,6 +49,9 @@
     <Filter Include="Header Files\AStar">
       <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AStar">
+      <UniqueIdentifier>{d40d044d-eac5-4ce9-89f0-17611edc615a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -168,9 +171,6 @@
     <ClInclude Include="CollisionComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\AIComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\GunSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -191,6 +191,15 @@
     </ClInclude>
     <ClInclude Include="include\AISystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WorldSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AIComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,6 +285,12 @@
     </ClCompile>
     <ClCompile Include="src\AISystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphNode.cpp">
+      <Filter>Source Files\AStar</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
