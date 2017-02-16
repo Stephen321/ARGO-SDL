@@ -231,7 +231,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		for (int j = 0; j< neighbour.Size(); j++)
 		{
 			int toNode = neighbour[j].GetInt();
-			int lenght = 2;// (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
+			int lenght = (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
 			_map->addArc(fromNode, toNode, lenght, false);
 		}
 	}

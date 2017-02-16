@@ -38,12 +38,12 @@ void AISystem::Process(float dt)
 
 					if (!ai->callAstar)
 					{
-						int originNode = 1;
+						int originNode = 39;
 						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-						int destNode = 61;
+						int destNode = 15;
 						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
-						_map->setHeuristics(_map->nodeArray()[destNode]);
+						
 						vector<Node*> path;
 						_map->aStar(_map->nodeArray()[originNode], _map->nodeArray()[destNode], path);
 						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });

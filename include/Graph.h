@@ -67,8 +67,8 @@ private:
 	class NodeSearchCostComparer {
 	public:
 		bool operator()(Node * n1, Node * n2) {
-			int f1 = n1->gCost();
-			int f2 = n2->gCost();
+			int f1 = n1->hCost() + n1->gCost();
+			int f2 = n2->hCost() + n2->gCost();
 			// adds H(n) and G(n) to get F(n)
 			return f1 > f2;
 		}
@@ -260,7 +260,7 @@ void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path
 					int Gc = pq.top()->gCost() + arc.weight();
 					int Fc = Hc + Gc;
 					if (Fc < child->fCost() || child->gCost() == -1) {  //is G(n) not set, H(n) should be always set with setHeuristics()
-						child->setHCost(Hc);
+						//child->setHCost(Hc);
 						child->setGCost(Gc);
 						child->setPrevious(pq.top());
 					}
@@ -268,7 +268,7 @@ void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path
 					if (child->marked() == false) {
 						pq.push(child);
 						child->setMarked(true);
-						child->setColour(SDL_Colour{ 0,0,30,255 });
+						child->setColour(SDL_Colour{ 0,255,255,255 });
 						//child->setColour(sf::Color(0, 128, 128, 255));
 					}
 				}
@@ -279,7 +279,7 @@ void Graph<DataType>::aStar(Node* pStart, Node* pDest, std::vector<Node *>& path
 		if (pq.size() != 0 && pq.top() == pDest) {
 			for (Node* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()) {
 				path.push_back(previous);
-				previous->setColour(SDL_Colour{ 0,0,180,255 });
+				previous->setColour(SDL_Colour{ 0,80,255,255 });
 			}
 			path.push_back(pStart);
 			std::reverse(path.begin(), path.end());
