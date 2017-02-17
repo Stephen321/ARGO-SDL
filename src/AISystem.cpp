@@ -35,45 +35,47 @@ void AISystem::Process(float dt)
 				
 					ai->updateTimer -= updateRate;
 
-
+					/*
 					if (!ai->callAstar)//testing
-					{
+					{*/
 						int originNode = 0;
-						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
+						_map->getNodes()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-						int destNode = 25;
-						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+						int destNode = _map->getNodesSize() - 1;
+						_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 						
 						vector<GraphNode*> path;
-						_map->aStar(_map->nodeArray()[originNode], _map->nodeArray()[destNode], path);
-						_map->nodeArray()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
-						_map->nodeArray()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+						_map->aStar(_map->getNodes()[originNode], _map->getNodes()[destNode], path);
+						_map->getNodes()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
+						_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 
 						ai->path = path;
 						ai->callAstar = true;
-					}
+						_map->reset();
+					//}
 
 
-					if (!ai->path.empty())
+					
+				}
+				if (!ai->path.empty())
+				{
+					TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+					helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
+					float distance = (helper::Vector2(transform->rect.x, transform->rect.y) - ai->path.front()->getPosition()).length();
+					if (distance < 90.f)
 					{
-						TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-						PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-						helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
-						float distance = (helper::Vector2(transform->rect.x, transform->rect.y) - ai->path.front()->getPosition()).length();
-						if (distance < 90.f)
-						{
-							ai->path.erase(ai->path.begin());
-						}
-		
-						helper::Vector2 dir = velocity.normalize();
-
-						physics->xAcceleration = 0.06f * dir.x;
-						physics->yAcceleration = 0.06f * dir.y;
-
-
-						physics->xVelocity += physics->xAcceleration ;
-						physics->yVelocity += physics->yAcceleration ;
+						ai->path.erase(ai->path.begin());
 					}
+
+					helper::Vector2 dir = velocity.normalize();
+
+					physics->xAcceleration = 0.06f * dir.x;
+					physics->yAcceleration = 0.06f * dir.y;
+
+
+					physics->xVelocity += physics->xAcceleration;
+					physics->yVelocity += physics->yAcceleration;
 				}
 
 			}

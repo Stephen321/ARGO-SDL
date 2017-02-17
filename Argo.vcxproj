@@ -268,6 +268,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\FLInputManager.cpp" />
     <ClCompile Include="src\FunctionMaster.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\GraphNode.cpp" />
     <ClCompile Include="src\GunSystem.cpp" />
     <ClCompile Include="src\InteractionSystem.cpp" />

@@ -57,6 +57,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	AISystem* aiSystem = new AISystem(0);
 	aiSystem->Initialize(map);
 	_systems[SystemType::AI] = aiSystem;
+
+	//SETUP WORLD SYSTEM
+	WorldSystem* worldSystem = new WorldSystem(0);
+	worldSystem->Initialize(map);
+	_systems[SystemType::World] = worldSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {

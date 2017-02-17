@@ -2,31 +2,22 @@
 #include "GraphArc.h"
 
 GraphNode::GraphNode() :
-	m_prevNode(0),
-	m_hCost(-1),
-	m_gCost(-1) {
-
-	_color = { 255,255,255,255 };
-	/*
-	m_shape = sf::CircleShape(RADIUS);
-	m_shape.setOrigin(RADIUS, RADIUS);
-
-
-	m_nameTxt = sf::Text("", font, 15);
-	m_nameTxt.setOrigin(4, 8);
-	m_hCostTxt = sf::Text("H(n)= ?", font, 11);
-	m_hCostTxt.setOrigin(7, 7);
-	m_gCostTxt = sf::Text("G(n)= ?", font, 11);
-	m_gCostTxt.setOrigin(7, 7);*/
+	_prevNode(nullptr),
+	_hCost(-1),
+	_gCost(-1),
+	_color(SDL_Color{ 255,255,255,255 }) 
+{
 }
 
-
+GraphNode::~GraphNode()
+{
+}
 
 GraphArc* GraphNode::getArc(GraphNode* pNode) {
 
-	list<GraphArc>::iterator iter = m_arcList.begin();
-	list<GraphArc>::iterator endIter = m_arcList.end();
-	GraphArc* pArc = 0;
+	list<GraphArc>::iterator iter = _arcList.begin();
+	list<GraphArc>::iterator endIter = _arcList.end();
+	GraphArc* pArc = nullptr;
 
 	// find the arc that matches the node
 	for (; iter != endIter && pArc == 0; ++iter) {
@@ -40,15 +31,11 @@ GraphArc* GraphNode::getArc(GraphNode* pNode) {
 }
 
 
-void  GraphNode::reset() {
-	m_marked = false;
-	m_prevNode = 0;
-	//m_shape.setFillColor(sf::Color::Blue);
-	m_hCost = -1;
-	m_gCost = -1;
-
-	//m_hCostTxt.setString("H(n)= ?");
-	//m_gCostTxt.setString("G(n)= ?");
+void GraphNode::reset() {
+	_marked = false;
+	_prevNode = nullptr;
+	_hCost = -1;
+	_gCost = -1;
 }
 
 
@@ -57,51 +44,106 @@ void GraphNode::addArc(GraphNode* pNode, float weight) {
 	GraphArc a;
 	a.setNode(pNode);
 	a.setWeight(weight);
-	a.setLine(m_position, pNode->getPosition());
+	a.setLine(_position, pNode->getPosition());
 	// Add it to the arc list.
-	m_arcList.push_back(a);
+	_arcList.push_back(a);
 }
 
-
-// ----------------------------------------------------------------
-//  Name:           removeArc
-//  Description:    This finds an arc from this node to input node 
-//                  and removes it.
-//  Arguments:      None.
-//  Return Value:   None.
-// ----------------------------------------------------------------
-
 void GraphNode::removeArc(GraphNode* pNode) {
-	list<GraphArc>::iterator iter = m_arcList.begin();
-	list<GraphArc>::iterator endIter = m_arcList.end();
+	list<GraphArc>::iterator iter = _arcList.begin();
 
-	int size = m_arcList.size();
+
+	int size = _arcList.size();
 	// find the arc that matches the node
-	for (; iter != endIter && m_arcList.size() == size;
-		++iter) {
+	while (iter != _arcList.end())
+	{
 		GraphNode* node = (*iter).node();
-		/*
+		
 		if (node == pNode) {
-		m_arcList.remove( (*iter) );
-		}          */
+			iter = _arcList.erase(iter);
+			//_arcList.remove( *iter );
+		}
+		else
+		{
+			++iter;
+		}
 
 	}
+	int i = 0;
 }
 
 
 
 void GraphNode::drawArcs(SDL_Renderer* renderer, Camera* camera) const {
-	int arcs = m_arcList.size();
-	for (auto a : m_arcList)
+	int arcs = _arcList.size();
+	for (auto a : _arcList)
 		a.draw(renderer, camera);
 }
 
 
 void GraphNode::drawNodes(SDL_Renderer* renderer, Camera* camera) const {
 	SDL_SetRenderDrawColor(renderer, _color.r, _color.g, _color.b, _color.a);
-	Point point = { (float)(m_position.x - 10), (float)(m_position.y - 10) };
+	Point point = { (float)(_position.x - 10), (float)(_position.y - 10) };
 	point = camera->worldToScreen(point);
 
 	SDL_Rect rect = { point.x,point.y, 20, 20 };
 	SDL_RenderFillRect(renderer, &rect);
+}
+
+
+// Accessor functions
+list<GraphArc> & GraphNode::arcList()  {
+	return _arcList;
+}
+
+bool GraphNode::marked() const {
+	return _marked;
+}
+
+string const & GraphNode::data() const {
+	return _data;
+}
+void GraphNode::setData(string data) {
+	_data = data;
+}
+
+void GraphNode::setHCost(int hCost) {
+	_hCost = hCost;
+}
+
+void GraphNode::setGCost(int gCost) {
+	_gCost = gCost;
+}
+
+int const & GraphNode::hCost() const {
+	return _hCost;
+}
+
+int const & GraphNode::gCost() const {
+	return _gCost;
+}
+
+int const & GraphNode::fCost() const {
+	return _hCost + _gCost;
+}
+
+void GraphNode::setMarked(bool mark) {
+	_marked = mark;
+}
+void GraphNode::setPrevious(GraphNode* previous) {
+	_prevNode = previous;
+}
+void GraphNode::setColour(const SDL_Color& color) {
+	_color = color;
+}
+void GraphNode::setPosition(helper::Vector2 newPosition) {
+	_position = newPosition;
+}
+
+helper::Vector2 GraphNode::getPosition() {
+	return _position;
+}
+
+GraphNode* GraphNode::getPrevious() {
+	return _prevNode;
 }

@@ -8,8 +8,7 @@
 #include "GunSystem.h"
 #include "AISystem.h"
 #include "WeaponSystem.h"
-
-
+#include "WorldSystem.h"
 
 class SystemManager
 {
@@ -23,6 +22,7 @@ public:
 		Collision,
 		Gun,
 		AI,
+		World,
 	};
 
 	enum class InteractionSystemType

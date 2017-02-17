@@ -3,15 +3,11 @@
 
 #include "GraphNode.h"
 #include <iostream>
-
+#include <list>
 #include "SDL.h" //for debuging
 
 #include "Camera2D.h"
 using namespace Camera2D;
-
-
-
-
 using namespace helper;
 
 class GraphArc {
@@ -49,7 +45,7 @@ public:
 	
     // Accessor functions
 	
-    GraphNode* node() const {
+    GraphNode* node() const{
         return m_pNode;
     }
                               

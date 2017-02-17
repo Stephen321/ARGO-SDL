@@ -6,8 +6,9 @@
 class MapComponent : public Component
 {
 public:
-	MapComponent()
-		: Component::Component(Component::Type::Map)	
+	MapComponent(float r) :
+		Component::Component(Component::Type::Map),
+		radius(r)
 	{
 	}
 

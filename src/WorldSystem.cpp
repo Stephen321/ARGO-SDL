@@ -20,6 +20,7 @@ void WorldSystem::Initialize(Graph* map)
 
 void WorldSystem::Process(float dt)
 {
+
 	System::Process(dt);
 	if (_canUpdate)
 	{
@@ -31,15 +32,50 @@ void WorldSystem::Process(float dt)
 				 MapComponent* mapComponent = static_cast<MapComponent*>(e->GetComponent(Component::Type::Map));
 				 TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				 helper::Vector2 position = helper::Vector2(transform->rect.x, transform->rect.y);
-				 int maxNode = _map->geNodesSize();
 
-				 for (int i = 0; i < maxNode; i++)
+				 int maxNode = _map->getNodesSize();
+				 int flagNode = maxNode - 1;
+				 GraphNode* node = _map->getNodes()[flagNode];
+				 node->setPosition(helper::Vector2(transform->rect.x, transform->rect.y));
+				 
+				 int size = maxNode - 1; //-1 because the flag is the last node
+				 for (int i = 0; i < size; i++)
 				 {
-					 float distance = (position - _map->nodeArray()[i]->getPosition()).length();
+					 float distance = (position - _map->getNodes()[i]->getPosition()).length();
+
 					 if (distance < mapComponent->radius)
 					 {
-						 //_map->addNode("", n);
-						 //_map->addNode("Player", maxNode,  )
+						GraphArc* arcFromFlag = _map->getArc(flagNode, i);
+						if (arcFromFlag == nullptr)
+						{
+							float distanceBetweenNode = (_map->getNodes()[i]->getPosition() - _map->getNodes()[flagNode]->getPosition()).length();
+							_map->addArc(flagNode, i, distanceBetweenNode, false);
+						}
+						else
+						{
+
+							helper::Vector2 flagPos = _map->getNodes()[flagNode]->getPosition();
+							helper::Vector2 otherPos = _map->getNodes()[i]->getPosition();
+							float distanceBetweenNode = (otherPos - flagPos).length();
+							arcFromFlag->setWeight(distanceBetweenNode);
+							arcFromFlag->setLine(flagPos, otherPos);
+
+							GraphArc* arcToFlag = _map->getArc(i, flagNode);
+							arcToFlag->setWeight(distanceBetweenNode);
+							arcToFlag->setLine(flagPos, otherPos);
+						}
+					 }
+					 else
+					 {
+						 if (node->arcList().size() > 1)
+						 {
+							 GraphArc* arcFromFlag = _map->getArc(flagNode, i);
+							 if (arcFromFlag != nullptr)
+							 {
+								 node->removeArc(_map->getNodes()[i]);
+								 _map->getNodes()[i]->removeArc(node);
+							 }	
+						 }
 					 }
 				 }
 

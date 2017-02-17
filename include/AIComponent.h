@@ -10,7 +10,7 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		updateRate(0.f),
+		updateRate(5.f),
 		updateTimer(0),
 		callAstar(false)
 	{

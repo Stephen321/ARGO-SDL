@@ -214,10 +214,9 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			collider->body->SetUserData(ai);
 			collider->body->SetFixedRotation(true);
 			entities.push_back(ai);
-		
-
 		}
 	}
+	
 	//adding arch
 	for (int i = 0; i < wayPointSize; i++)
 	{
@@ -230,12 +229,13 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		for (int j = 0; j< neighbour.Size(); j++)
 		{
 			int toNode = neighbour[j].GetInt();
-			int lenght = (_map->nodeArray()[fromNode]->getPosition() - _map->nodeArray()[toNode]->getPosition()).length();
+			int lenght = (_map->getNodes()[fromNode]->getPosition() - _map->getNodes()[toNode]->getPosition()).length();
 			_map->addArc(fromNode, toNode, lenght, false);
 		}
-		_map->removeNode(3);
-	}
 		
+	}
+	_map->addNode("flag", helper::Vector2(0, 0));
+	//_map->removeNode(3);
 
 	
 	//Colliders

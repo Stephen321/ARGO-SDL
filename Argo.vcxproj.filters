@@ -292,5 +292,8 @@
     <ClCompile Include="src\GraphNode.cpp">
       <Filter>Source Files\AStar</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graph.cpp">
+      <Filter>Source Files\AStar</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
