@@ -6,6 +6,7 @@
 #include "BasicTypes.h"
 #include "GraphNode.h"
 #include "GraphArc.h"
+
 using namespace helper;
 using namespace std;
 
@@ -36,7 +37,7 @@ private:
 
 	class NodeSearchCostComparer {
 	public:
-		bool operator()(GraphNode * n1, GraphNode * n2) {
+		bool operator()(const GraphNode * n1, const GraphNode * n2) {
 			int f1 = n1->hCost() + n1->gCost();
 			int f2 = n2->hCost() + n2->gCost();
 			return f1 > f2;

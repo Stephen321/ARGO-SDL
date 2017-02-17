@@ -115,7 +115,7 @@ void Graph::reset() {
 void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path) {
 
 	if (pStart != 0 && pDest != 0) {
-		priority_queue<GraphNode*, vector<GraphNode*>, NodeSearchCostComparer> pq;
+		priority_queue<const GraphNode*, vector<GraphNode*>, NodeSearchCostComparer> pq;
 		pq.push(pStart);
 		pStart->setMarked(true);
 		pStart->setHCost(0);
@@ -129,14 +129,14 @@ void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>&
 				GraphNode * child = (*iter).node();
 				if (child != pq.top()->getPrevious()) {
 					GraphArc arc = (*iter);
-					//Sleep(1000);
 					int Hc = child->hCost();
 					int Gc = pq.top()->gCost() + arc.weight();
 					int Fc = Hc + Gc;
-					if (Fc < child->fCost() || child->gCost() == -1) {  //is G(n) not set, H(n) should be always set with setHeuristics()
-																		//child->setHCost(Hc);
+					if (Fc < child->fCost() || child->gCost() == -1) {  //is G(n) not set, H(n) should be always set with setHeuristics()		
+						child->setHCost(Hc);
 						child->setGCost(Gc);
 						child->setPrevious(pq.top());
+						make_heap(const_cast<GraphNode**>(&pq.top()), const_cast<GraphNode**>(&pq.top()) + pq.size(), NodeSearchCostComparer());
 					}
 
 					if (child->marked() == false) {

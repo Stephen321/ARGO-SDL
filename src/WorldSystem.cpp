@@ -38,13 +38,21 @@ void WorldSystem::Process(float dt)
 				 GraphNode* node = _map->getNodes()[flagNode];
 				 node->setPosition(helper::Vector2(transform->rect.x, transform->rect.y));
 				 
+				 bool hasNeighbourNode = false;
+				 int closestNode = 0;
+				 float closestDistance = 99999999.f;
 				 int size = maxNode - 1; //-1 because the flag is the last node
 				 for (int i = 0; i < size; i++)
 				 {
 					 float distance = (position - _map->getNodes()[i]->getPosition()).length();
-
+					 if (distance < closestDistance)
+					 {
+						 closestDistance = distance;
+						 closestNode = i;
+					 }
 					 if (distance < mapComponent->radius)
 					 {
+						hasNeighbourNode = true;
 						GraphArc* arcFromFlag = _map->getArc(flagNode, i);
 						if (arcFromFlag == nullptr)
 						{
@@ -64,19 +72,24 @@ void WorldSystem::Process(float dt)
 							arcToFlag->setWeight(distanceBetweenNode);
 							arcToFlag->setLine(flagPos, otherPos);
 						}
+						
 					 }
 					 else
 					 {
-						 if (node->arcList().size() > 1)
-						 {
+						 //if (node->arcList().size() > 1)
+						// {
 							 GraphArc* arcFromFlag = _map->getArc(flagNode, i);
 							 if (arcFromFlag != nullptr)
 							 {
 								 node->removeArc(_map->getNodes()[i]);
 								 _map->getNodes()[i]->removeArc(node);
 							 }	
-						 }
+						// }
 					 }
+				 }
+				 if (!hasNeighbourNode)
+				 {
+
 				 }
 
 			}

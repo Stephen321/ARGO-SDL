@@ -10,7 +10,7 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		updateRate(5.f),
+		updateRate(2.f),
 		updateTimer(0),
 		callAstar(false)
 	{
@@ -25,4 +25,5 @@ public:
 	float updateRate;
 	float updateTimer;
 	bool callAstar;
+	GraphNode* startingNode;
 };

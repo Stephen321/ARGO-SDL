@@ -81,7 +81,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ControlComponent());
 	player->AddComponent(new ColliderComponent());
-	player->AddComponent(new MapComponent(150.0f));
+	player->AddComponent(new MapComponent(300.0f));
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);

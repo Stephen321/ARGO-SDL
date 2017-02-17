@@ -82,6 +82,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	const Value& entitylayer = layerArray[1];
 	const Value& entityDataArray = entitylayer["objects"];
 	bool createPlayer = false;
+	bool createAi = false;
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		
@@ -119,6 +120,32 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 				entities.push_back(player);
 				
 			}
+			else
+			{
+				//if (!createAi)
+				//{
+					Entity* ai = entityFactory->CreateEntity(EntityType::AI);
+					ColliderComponent* collider = static_cast<ColliderComponent*>(ai->GetComponent(Component::Type::Collider));
+					TransformComponent* transform = static_cast<TransformComponent*>(ai->GetComponent(Component::Type::Transform));
+
+					transform->rect.x = x;
+					transform->rect.y = y;
+
+					collider->body = bodyFactory->CreateBoxBody(
+						b2BodyType::b2_dynamicBody
+						, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+						, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+						, (uint16)ai->GetType()
+						, AI_MASK
+						, false);
+
+					collider->body->SetUserData(ai);
+					collider->body->SetFixedRotation(true);
+					entities.push_back(ai);
+				}
+				createAi = true;
+			//}
+			
 		}
 		else if (entityName == "Checkpoint")
 		{
@@ -194,27 +221,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		transform->rect.y = y;
 		//entities->push_back(point); instead push back to pathfinder?
 
-		if (currentNode == 0)
-		{
-			Entity* ai = entityFactory->CreateEntity(EntityType::AI);
-			ColliderComponent* collider = static_cast<ColliderComponent*>(ai->GetComponent(Component::Type::Collider));
-			TransformComponent* transform = static_cast<TransformComponent*>(ai->GetComponent(Component::Type::Transform));
-
-			transform->rect.x = x;
-			transform->rect.y = y;
-
-			collider->body = bodyFactory->CreateBoxBody(
-				b2BodyType::b2_dynamicBody
-				, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-				, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
-				, (uint16)ai->GetType()
-				, AI_MASK
-				, false);
-
-			collider->body->SetUserData(ai);
-			collider->body->SetFixedRotation(true);
-			entities.push_back(ai);
-		}
+		
 	}
 	
 	//adding arch

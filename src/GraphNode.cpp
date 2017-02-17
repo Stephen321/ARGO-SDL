@@ -36,6 +36,7 @@ void GraphNode::reset() {
 	_prevNode = nullptr;
 	_hCost = -1;
 	_gCost = -1;
+	//_color = SDL_Color{ 255,255,255,255 };
 }
 
 

@@ -27,6 +27,7 @@ void AISystem::Process(float dt)
 			for (Entity* e : (*it).second)
 			{
 				AIComponent* ai = static_cast<AIComponent*>(e->GetComponent(Component::Type::AI));
+				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				float updateRate = ai->updateRate;
 				ai->updateTimer += dt;
 				if (ai->updateTimer > updateRate)
@@ -38,20 +39,41 @@ void AISystem::Process(float dt)
 					/*
 					if (!ai->callAstar)//testing
 					{*/
-						int originNode = 0;
-						_map->getNodes()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
 
-						int destNode = _map->getNodesSize() - 1;
-						_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+					_map->reset();
+					int destNode = _map->getNodesSize() - 1;
+					//_map->setHeuristics(-1);
+					vector<GraphNode*> path;
+					//if (ai->node == nullptr)
+					//{
+						int index = 0;
+						float closestDistance = 99999999.f;				
+						for (int i = 0; i < _map->getNodesSize() - 1; i++)
+						{
+							float distance = (_map->getNodes()[i]->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y)).length();
+							if (distance < closestDistance)
+							{
+								closestDistance = distance;
+								index = i;
+							}
+						}
+						ai->startingNode = _map->getNodes()[index];
+					//}
+					_map->setHeuristics(ai->startingNode);
+					_map->aStar(ai->startingNode, _map->getNodes()[destNode], path);
+
+					ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
+					_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+
+					string nodePath = "AI :";
+					for (int i = 0; i < path.size(); i++)
+					{
+						nodePath += path[i]->data() + " ,";
+					}
+					std::cout << nodePath << std::endl;
+					ai->path = path;
+					ai->callAstar = true;
 						
-						vector<GraphNode*> path;
-						_map->aStar(_map->getNodes()[originNode], _map->getNodes()[destNode], path);
-						_map->getNodes()[originNode]->setColour(SDL_Color{ 0,255,0,255 });
-						_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
-
-						ai->path = path;
-						ai->callAstar = true;
-						_map->reset();
 					//}
 
 
@@ -63,9 +85,14 @@ void AISystem::Process(float dt)
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
 					float distance = (helper::Vector2(transform->rect.x, transform->rect.y) - ai->path.front()->getPosition()).length();
-					if (distance < 90.f)
+					if (distance < 200.f)
 					{
-						ai->path.erase(ai->path.begin());
+						if (ai->path[0] != _map->getNodes()[_map->getNodesSize() - 1])
+						{
+							//ai->startingNode = ai->path[0];
+							//ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
+							ai->path.erase(ai->path.begin());
+						}
 					}
 
 					helper::Vector2 dir = velocity.normalize();
