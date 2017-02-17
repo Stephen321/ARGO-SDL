@@ -182,6 +182,7 @@ copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Net.h" />

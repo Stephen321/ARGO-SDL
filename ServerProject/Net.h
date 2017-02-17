@@ -1,5 +1,8 @@
 #pragma once
 
+#include <SDL2/SDL_net.h>
+#include <iostream>
+
 class Net
 {
 public:
@@ -11,84 +14,183 @@ public:
 
 	struct MessageData {
 		float ts;
-		MessageType type;
 		int length;
+		MessageType GetType() const {
+			return type;
+		}
+	protected:
+		MessageType type;
 	};
 
 	struct StateData : MessageData {
-		StateData() 
-		{
-			type = MessageType::State;
-		}
+		StateData() { type = MessageType::State; }
 		float xPos;
 		float yPos;
 		float xVel;
 		float yVel;
 	};
 
-	Net(int packetSize, const std::string& serverHost, int serverPort = 4023, int clientPort = 4000) 
-	{
-		SDLNet_ResolveHost(&_serverIP, serverHost.c_str(), serverPort);
-		SetupPacket(packetSize);
-		_socket = SDLNet_UDP_Open(clientPort);
-	}
+	//test data
+	struct ConnectData : MessageData {
+		ConnectData() { type = MessageType::Connect; }
+		std::string s;
+	};
+	//test data
+	struct DisconnectData : MessageData {
+		DisconnectData() { type = MessageType::Disconnect; }
+		std::string s;
+	};
 
-	//template<typename T>
-	void Send(MessageType type, void* data = nullptr)
-	{//set _packet.data + len
-		_packet->len = 0;
-
-		//set type into first byte as int
-		WriteInt((Uint8)type, _packet->len);
-		if (data != nullptr)
+	class ReceivedData {
+	public:
+		ReceivedData()
+			: _data(nullptr)
 		{
-			//add in data
 		}
-		if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
-			std::cout << "Failed to send packet." << std::endl;
+		ReceivedData(const ReceivedData& rhs)
+		{
+			if (!rhs._data)
+			{
+				return;
+			}
+			switch (rhs._data->GetType())
+			{ //template specialization to use enum type in order to determine Type
+				case MessageType::Connect:
+				{
+					_data = new ConnectData(*rhs.GetData<ConnectData>());
+					break;
+				}
+				case MessageType::Disconnect:
+				{
+					_data = new DisconnectData(*rhs.GetData<DisconnectData>());
+					break;
+				}
+				case MessageType::State:
+				{
+					_data = new StateData(*rhs.GetData<StateData>());
+					break;
+				}
+			}
+		}
+
+		template <typename T>
+		void SetData(T data)
+		{
+			_data = new T(data);
+		}
+
+		~ReceivedData()
+		{
+			if (_data != nullptr)
+			{
+				delete _data;
+				_data = nullptr;
+			}
+		}
+
+		bool Empty() const
+		{
+			return _data == nullptr;
+		}
+
+		MessageType GetType() const
+		{
+			return _data->GetType();
+		}
+
+		template <typename T>
+		T* GetData() const
+		{
+			return static_cast<T*>(_data);
+		}
+
+	private:
+		MessageData* _data;
+	};
+
+	Net(const std::string& targetHost, int packetSize = 256, int serverPort = 4023, int clientPort = 4000);
+
+	void Send(MessageData* data, UDPsocket* socket = nullptr)
+	{
+		if (!data)
+		{
+			std::cout << "Send tried to send nullptr" << std::endl;
+			return;
+		}
+
+		MessageType type = data->GetType();
+		_packet->len = 0;
+		WriteInt((Uint8)type); 
+
+		switch (type)
+		{
+			case MessageType::Connect:
+			{
+				ConnectData* cd = (ConnectData*)data;
+				WriteString(cd->s);
+				break;
+			}
+			case MessageType::Disconnect:
+			{
+				DisconnectData* dd = (DisconnectData*)data;
+				WriteString(dd->s);
+				break;
+			}
+		}
+
+		//SetPacketAddress();
+		if (!socket)
+		{
+			if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
+				std::cout << "Failed to send packet." << std::endl;
+		}
+		else
+		{
+			if (SDLNet_UDP_Send(*socket, -1, _packet) == 0)
+				std::cout << "Failed to send packet." << std::endl;
+		}
 	}
 	
-	bool Receive()
+	ReceivedData Receive()
 	{
+		ReceivedData receiveData;
 		if (SDLNet_UDP_Recv(_socket, _packet) > 0)
 		{
-			//pull out type
-			//reconstruct struct
+			int byteOffset = 0;
+			MessageType type = (MessageType)ReadInt(byteOffset);
 
-			char* data = (char*)_packet->data;
-			std::cout << "mesaged received from server: " << data << std::endl;
-			return true;
+			switch (type)
+			{
+				case MessageType::Connect:
+				{
+					ConnectData cd;
+					cd.s = ReadString(byteOffset);
+					receiveData.SetData(cd);
+					break;
+				}
+				case MessageType::Disconnect:
+				{
+					DisconnectData dd;
+					dd.s = ReadString(byteOffset);
+					receiveData.SetData(dd);
+					break;
+
+				}
+			}
 		}
-		return false;
+		return receiveData;
 	}
 
-private:
-	void SetupPacket(int packetSize)
-	{
-		_packet = SDLNet_AllocPacket(packetSize);
-		SetPacketAddress();
-	}
+private: 
+	//void SetPacketAddress();
 
-	void SetPacketAddress()
-	{
-		_packet->address.host = _serverIP.host;
-		_packet->address.port = _serverIP.port;
-	}
+	void WriteInt(int value);
+	int ReadInt(int& byteOffset);
 
-	void WriteInt(int value, int byteOffset) //write to only 1 byte?
-	{
-		value = 2155905152;
-		Uint8 t1 = (value);
-		Uint8 t2 = (value >> 0x08);
-		Uint8 t3 = (value >> 0x10);
-		Uint8 t4 = (value >> 0x18);
-		_packet->data[byteOffset] = value;
-		_packet->data[byteOffset + 1] = value;
-		_packet->data[byteOffset + 2] = value;
-		_packet->data[byteOffset + 3] = value;
-	}
+	void WriteString(std::string& s);
+	std::string ReadString(int& byteOffset);
 
-	IPaddress _serverIP;
+	//IPaddress _ipAddress;
 	UDPpacket* _packet;
 	UDPsocket _socket;
 };
