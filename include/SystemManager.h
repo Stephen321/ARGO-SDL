@@ -49,7 +49,6 @@ public:
 
 	RenderSystem*						GetRenderSystem();
 	PhysicsSystem*						GetPhysicsSystem();
-	ControlSystem*						GetControlSystem();
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();

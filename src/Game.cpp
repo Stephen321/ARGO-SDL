@@ -13,6 +13,7 @@
 
 //temp
 #include "GunComponent.h"
+#include "DestructionComponent.h"
 
 
 Game::Game() 
@@ -61,7 +62,8 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
-	gun->isPlayers = true;
+	gun->owner = player->GetType();
+	static_cast<DestructionComponent*>(weapon->GetComponent(Component::Type::Destroy))->destroy = true;
 
 	assert(weapon != nullptr);
 		

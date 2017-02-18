@@ -73,19 +73,12 @@ void SystemManager::Process(float dt)
 	destructionSystem->Process(dt);
 
 	int index = destructionSystem->GetEntitiesToBeDestroyed().size()-1;
-	while (true)
+	while (index >= 0)
 	{
-		if (index >= 0)
-		{
-			DestroyBasedOnType(destructionSystem->GetEntitiesToBeDestroyed().at(index));
-			destructionSystem->DestroyEntity();
+		DestroyBasedOnType(destructionSystem->GetEntitiesToBeDestroyed().at(index));
+		destructionSystem->DestroyEntity();
 
-			index--;
-		}
-		else
-		{
-			break;
-		}
+		index--;
 	}
 
 	for (; it != _systems.end(); ++it)
@@ -146,9 +139,7 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Gun]->RemoveEntity(entity->GetType(), entity);
 		//fix weapon deletion
-		//_interactionSystems[InteractionSystemType::Weapon]->RemoveEntity(entity);
-		//static_cast<ControlSystem*>(_systems[SystemType::Control])->RemoveTurret(entity);
-		//Implement Later
+		static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon])->RemoveEntity(entity, false);
 		break;
 	default:
 		break;

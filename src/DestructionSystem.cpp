@@ -21,13 +21,16 @@ void DestructionSystem::Process(float dt)
 
 		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
-			for (Entity* e : (*it).second)
+			for (int i = 0; i < (*it).second.size(); i++)
 			{
+				Entity*& e = (*it).second.at(i);
 				DestructionComponent* destroy = static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy));
 
 				if (destroy->destroy)
 				{
 					_toBeDestroyed.push_back(e);
+					(*it).second.erase((*it).second.begin() + i);
+					i--;
 				}
 			}
 		}

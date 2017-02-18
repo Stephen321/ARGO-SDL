@@ -8,21 +8,20 @@
 class InteractionSystem
 {
 public:
-	typedef std::map<EntityType, std::vector<std::pair<Entity*, Entity*>>>::iterator EntityMapIterator;
+	typedef std::vector<std::pair<Entity*, Entity*>>::iterator EntityMapIterator;
 
 									InteractionSystem(float updateRate = 0.f);
 									~InteractionSystem();
 
 	void							AddEntity(Entity* gameObject, Entity* otherObject);
-	void							RemoveEntity(EntityType tag, Entity* gameObject);
+	void							RemoveEntity(Entity* gameObject, bool firstObject);
 
 	virtual void					Process(float dt = 0.f);
 
 protected:
-	std::map<EntityType,
-		std::vector<
+	std::vector<
 			std::pair<Entity*, 
-					Entity*>>>		_entities;
+					Entity*>>		_entities;
 	float							_updateRate;
 	float							_timer;
 	bool							_canUpdate;

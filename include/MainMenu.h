@@ -12,6 +12,7 @@
 #include "Scene.h"
 
 #include "CameraSystem.h"
+#include "FunctionMaster.h"
 
 #include <vector>
 #include <queue>
@@ -62,7 +63,7 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 	RenderSystem					_renderSystem;
-	ControlSystem*					_controlSystem;
+	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
 
 
