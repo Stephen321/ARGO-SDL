@@ -181,6 +181,7 @@ copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clientTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Net.cpp" />
   </ItemGroup>

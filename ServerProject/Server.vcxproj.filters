@@ -21,6 +21,9 @@
     <ClCompile Include="Net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="clientTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Net.h">

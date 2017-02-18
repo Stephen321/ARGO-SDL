@@ -1,3 +1,3 @@
 @echo off
-pscp -P 2222 -pw argo main.cpp argo@127.0.0.1:/home/argo/socketServer && plink -P 2222 argo@127.0.0.1 -pw argo "cd socketServer/; ./build.sh"
+pscp -pw argo main.cpp argo@192.168.15.38:/home/argo/socketServer && plink argo@192.168.15.38 -pw argo "cd socketServer/; ./build.sh"
 

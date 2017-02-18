@@ -15,6 +15,7 @@ public:
 	struct MessageData {
 		float ts;
 		int length;
+		IPaddress srcAddress;
 		MessageType GetType() const {
 			return type;
 		}
@@ -108,9 +109,16 @@ public:
 		MessageData* _data;
 	};
 
-	Net(const std::string& targetHost, int packetSize = 256, int serverPort = 4023, int clientPort = 4000);
+	Net(int port, int packetSize = 256);
 
-	void Send(MessageData* data, UDPsocket* socket = nullptr)
+	void Send(MessageData* data, const char * destHost, int destPort)
+	{
+		IPaddress destAddr;
+		SDLNet_ResolveHost(&destAddr, destHost, destPort);
+		Send(data, destAddr);
+	}
+
+	void Send(MessageData* data, IPaddress destAddr)
 	{
 		if (!data)
 		{
@@ -128,6 +136,7 @@ public:
 			{
 				ConnectData* cd = (ConnectData*)data;
 				WriteString(cd->s);
+				WriteFloat(cd->ts);
 				break;
 			}
 			case MessageType::Disconnect:
@@ -138,17 +147,12 @@ public:
 			}
 		}
 
-		//SetPacketAddress();
-		if (!socket)
-		{
-			if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
-				std::cout << "Failed to send packet." << std::endl;
-		}
-		else
-		{
-			if (SDLNet_UDP_Send(*socket, -1, _packet) == 0)
-				std::cout << "Failed to send packet." << std::endl;
-		}
+		_packet->address.host = destAddr.host;
+		_packet->address.port = destAddr.port;
+		std::cout << "Sending to: " << destAddr.host << ":" << destAddr.port << std::endl;
+		_packet->len--;
+		if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
+			std::cout << "Failed to send packet." << std::endl;
 	}
 	
 	ReceivedData Receive()
@@ -163,16 +167,19 @@ public:
 			{
 				case MessageType::Connect:
 				{
-					ConnectData cd;
-					cd.s = ReadString(byteOffset);
-					receiveData.SetData(cd);
+					ConnectData data;
+					data.s = ReadString(byteOffset);
+					data.ts = ReadFloat(byteOffset);
+					data.srcAddress = _packet->address;
+					receiveData.SetData(data);
 					break;
 				}
 				case MessageType::Disconnect:
 				{
-					DisconnectData dd;
-					dd.s = ReadString(byteOffset);
-					receiveData.SetData(dd);
+					DisconnectData data;
+					data.s = ReadString(byteOffset);
+					data.srcAddress = _packet->address;
+					receiveData.SetData(data);
 					break;
 
 				}
@@ -181,16 +188,15 @@ public:
 		return receiveData;
 	}
 
-private: 
-	//void SetPacketAddress();
-
+private:
 	void WriteInt(int value);
 	int ReadInt(int& byteOffset);
+	void WriteFloat(float valueF);
+	float ReadFloat(int & byteOffset);
 
 	void WriteString(std::string& s);
 	std::string ReadString(int& byteOffset);
 
-	//IPaddress _ipAddress;
 	UDPpacket* _packet;
 	UDPsocket _socket;
 };

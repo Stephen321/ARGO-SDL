@@ -1,14 +1,14 @@
 #include "Net.h"
+#include <sstream>
 
-Net::Net(const std::string & targetHost, int packetSize, int serverPort, int clientPort)
+Net::Net(int port, int packetSize)
 {
-	IPaddress ipAddress;
-	SDLNet_ResolveHost(&ipAddress, targetHost.c_str(), serverPort);
-	_socket = SDLNet_UDP_Open(clientPort);
-
+	_socket = SDLNet_UDP_Open(port);
+	if (!_socket)
+	{
+		std::cout << "Failed to open socket on port " << port << std::endl;
+	}
 	_packet = SDLNet_AllocPacket(packetSize);
-	_packet->address.host = ipAddress.host;
-	_packet->address.port = ipAddress.port;
 }
 
 //void Net::SetPacketAddress()
@@ -34,15 +34,41 @@ int Net::ReadInt(int & byteOffset)
 	return value;
 }
 
+void Net::WriteFloat(float valueF)
+{
+	//endianess issues? IEEE 754?
+	Uint8* value = reinterpret_cast<Uint8*>(&valueF);
+	for (int i = 0; i < sizeof(float); i++)
+	{
+		_packet->data[_packet->len++] = value[i];
+	}
+}
+
+float Net::ReadFloat(int & byteOffset)
+{
+	float value;
+	memcpy(&value, _packet->data + byteOffset, sizeof(float));
+	byteOffset += sizeof(float);
+	return value;
+}
+
 void Net::WriteString(std::string & s)
 {
-	int l = s.length() + 1;
-	memcpy(_packet->data + _packet->len, s.c_str(), l);
-	_packet->len += l;
+	int length = s.length() + 1;
+	WriteInt(length); //this adds 4 more bytes? instead, try reading until nul is reached but depends on encoding
+	memcpy(_packet->data + _packet->len, s.c_str(), length);
+	_packet->len += length;
 	_packet->len++;
 }
 
 std::string Net::ReadString(int & byteOffset)
-{
-	return std::string((char*)_packet->data + byteOffset);
+{ 
+	int length = ReadInt(byteOffset);
+	std::stringstream ss;
+	for (int i = 0; i < length; i++)
+	{
+		ss << _packet->data[byteOffset + i];
+	}
+	byteOffset += length + 1;
+	return ss.str();
 }
