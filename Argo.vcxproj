@@ -252,6 +252,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\WeaponSystem.h" />
+    <ClInclude Include="ServerProject\Net.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -263,10 +264,12 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </Xml>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ServerProject\Net.cpp" />
     <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CameraSystem.cpp" />
+    <ClCompile Include="src\clientTest.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ControlSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
