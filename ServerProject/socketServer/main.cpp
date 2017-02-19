@@ -1,31 +1,80 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
-#include <string>
-#include <iostream>
+#include "Net.h"
+#include <unordered_map>
+#include <time.h>
+
+typedef std::unordered_map<int, IPaddress>::const_iterator ConnectionIterator;
+bool exists(const std::unordered_map<int, IPaddress>& connections, const IPaddress& ip)
+{
+	for (ConnectionIterator it = connections.begin(); it != connections.end(); ++it)
+	{
+		if (it->second.host == ip.host &&
+			it->second.port == ip.port)
+			return true;
+	}
+	return false;
+}
+
+bool exists(const std::unordered_map<int, IPaddress>& connections, int id)
+{
+	if (connections.find(id) != connections.end())
+	{
+		return true;
+	}
+	return false;
+}
 
 int main(int argc, char** argv)
 {
-	SDL_Init(0);
 	SDLNet_Init();
 
-	UDPsocket socket = SDLNet_UDP_Open(4023);
+	std::unordered_map<int, IPaddress> connections;
+	const int MaxPlayers = 8;
 
-	UDPpacket* packet = SDLNet_AllocPacket(256);
+	Net net(4023);
 
-	std::string msg;
-
-	while (true)
+	//thread pool for messages
+	bool listening = true;
+	while (listening)
 	{
-		if (SDLNet_UDP_Recv(socket, packet) > 0)
+		Net::ReceivedData receiveData = net.Receive();
+		if (receiveData.Empty() == false)
 		{
-			char* data = (char*)packet->data;
-			std::cout << "message received: " << data << " Port: " << packet->address.port << std::endl;
-			if (!SDLNet_UDP_Send(socket, -1, packet))
-				return -1;
+			switch (receiveData.GetType())
+			{
+			case Net::MessageType::Connect:
+			{
+				IPaddress srcAddr = receiveData.GetData<Net::ConnectData>()->srcAddress;
+				if (exists(connections, srcAddr) == false && connections.size() < MaxPlayers)
+				{
+					int id = connections.size();
+					std::cout << "Player " << id << " connected. (" << (id + 1) << "/" << MaxPlayers << "players)" << std::endl;
+					connections.insert(std::pair<int, IPaddress>(id, srcAddr));
+					Net::ConnectData data;
+					data.id = id;
+					net.Send(&data, srcAddr);
+				}
+			}
+			case Net::MessageType::State:
+			{
+				Net::StateData* data = receiveData.GetData<Net::StateData>();
+				if (exists(connections, data->id))
+				{
+					std::cout << "Player " << data->id << " state changed." << std::endl;
+					for (ConnectionIterator it = connections.begin(); it != connections.end(); ++it)
+					{
+						if (it->first != data->id)
+						{
+							std::cout << "Sending state to " << it->first << "." << std::endl;
+							net.Send(data, it->second);
+						}
+					}
+				}
+			}
+			}
 		}
-	}
+	};
 
+	system("PAUSE");
 	SDLNet_Quit();
-	SDL_Quit();
 	return 0;
 }

@@ -104,7 +104,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"
+call $(ProjectDir)updateServer.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -181,7 +182,6 @@ copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Comma
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="clientTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Net.cpp" />
   </ItemGroup>
