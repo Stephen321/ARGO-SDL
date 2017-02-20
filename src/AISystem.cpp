@@ -60,7 +60,7 @@ void AISystem::Process(float dt)
 						ai->startingNode = _map->getNodes()[index];
 					//}
 					_map->setHeuristics(ai->startingNode);
-					_map->aStar(ai->startingNode, _map->getNodes()[destNode], path);
+					_map->aStarVector(ai->startingNode, _map->getNodes()[destNode], path);
 
 					ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
 					_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });

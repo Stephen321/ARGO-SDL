@@ -163,6 +163,58 @@ void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>&
 	}
 }
 
+void Graph::aStarVector(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path) {
+
+	if (pStart != 0 && pDest != 0) {
+		vector<GraphNode*> pq;
+		pq.push_back(pStart);
+		pStart->setMarked(true);
+		pStart->setHCost(0);
+		pStart->setGCost(0);
+
+		while (pq.size() != 0 && pq.back() != pDest) {
+			list<GraphArc>::const_iterator iter = pq.back()->arcList().begin();
+			list<GraphArc>::const_iterator endIter = pq.back()->arcList().end();
+
+			for (; iter != endIter; iter++) {
+				GraphNode * child = (*iter).node(); 
+				if (child != pq.back()->getPrevious()) {
+					GraphArc arc = (*iter);
+					int Hc = child->hCost();
+					int Gc = pq.back()->gCost() + arc.weight();
+					int Fc = Hc + Gc;
+					if (Fc < child->fCost() || child->gCost() == -1) {  //is G(n) not set, H(n) should be always set with setHeuristics()		
+						child->setHCost(Hc);
+						child->setGCost(Gc);
+						child->setPrevious(pq.back());
+						//make_heap(const_cast<GraphNode**>(&pq.top()), const_cast<GraphNode**>(&pq.top()) + pq.size(), NodeSearchCostComparer());
+					}
+
+					if (child->marked() == false) {
+						pq.push_back(child);
+						child->setMarked(true);
+						child->setColour(SDL_Colour{ 0,255,255,255 });
+						std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
+						//child->setColour(sf::Color(0, 128, 128, 255));
+					}
+				}
+			}
+			pq.pop_back();
+			std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
+		}
+
+		if (pq.size() != 0 && pq.back() == pDest) {
+			for (GraphNode* previous = pDest; previous->getPrevious() != 0; previous = previous->getPrevious()) {
+				path.push_back(previous);
+				previous->setColour(SDL_Colour{ 0,80,255,255 });
+			}
+			path.push_back(pStart);
+			std::reverse(path.begin(), path.end());
+		}
+		else if (pq.size() == 0)
+			cout << "Couldn't find path." << endl;
+	}
+}
 
 void Graph::setHeuristics(GraphNode* pDest){
 if (pDest != 0) {
