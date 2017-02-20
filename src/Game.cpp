@@ -62,7 +62,6 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
 	gun->owner = player->GetType();
-	static_cast<DestructionComponent*>(weapon->GetComponent(Component::Type::Destroy))->destroy = true;
 
 	assert(weapon != nullptr);
 	

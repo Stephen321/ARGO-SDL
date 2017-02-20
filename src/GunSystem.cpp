@@ -3,6 +3,7 @@
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
+#include "DestructionComponent.h"
 #include "ConstHolder.h"
 
 
@@ -70,6 +71,11 @@ void GunSystem::Process(float dt)
 					physics->yVelocity = sin(gunTransform->angle * M_PI / 180.0f) * (physics->maxVelocity);
 
 					transform->angle = gunTransform->angle;
+
+					if (gun->ammo == 0)
+					{
+						static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
+					}
 				}
 				else if (!gun->canFire)
 				{
