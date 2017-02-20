@@ -230,7 +230,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
-    <ClInclude Include="include\MapComponent.h" />
+    <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
     <ClInclude Include="include\PhysicsSystem.h" />
@@ -244,7 +244,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\SystemManager.h" />
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\Vector2.h" />
-    <ClInclude Include="include\WorldSystem.h" />
+    <ClInclude Include="include\WaypointSystem.h" />
     <ClInclude Include="include\WeaponSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -284,8 +284,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
+    <ClCompile Include="src\WaypointSystem.cpp" />
     <ClCompile Include="src\WeaponSystem.cpp" />
-    <ClCompile Include="src\WorldSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -11,9 +11,9 @@ AISystem::~AISystem()
 
 }
 
-void AISystem::Initialize(Graph* map)
+void AISystem::Initialize(Graph* waypoints)
 {
-	_map = map;
+	_waypoints = waypoints;
 }
 
 void AISystem::Process(float dt)
@@ -36,34 +36,28 @@ void AISystem::Process(float dt)
 				
 					ai->updateTimer -= updateRate;
 
-					/*
-					if (!ai->callAstar)//testing
-					{*/
-
-					_map->reset();
-					int destNode = _map->getNodesSize() - 1;
-					//_map->setHeuristics(-1);
+					_waypoints->reset();
+					int destNode = _waypoints->getNodesSize() - 1;
 					vector<GraphNode*> path;
-					//if (ai->node == nullptr)
-					//{
-						int index = 0;
-						float closestDistance = 99999999.f;				
-						for (int i = 0; i < _map->getNodesSize() - 1; i++)
+	
+					int index = 0;
+					float closestDistance = 99999999.f;				
+					for (int i = 0; i < _waypoints->getNodesSize() - 1; i++)
+					{
+						float distance = (_waypoints->getNodes()[i]->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y)).length();
+						if (distance < closestDistance)
 						{
-							float distance = (_map->getNodes()[i]->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y)).length();
-							if (distance < closestDistance)
-							{
-								closestDistance = distance;
-								index = i;
-							}
+							closestDistance = distance;
+							index = i;
 						}
-						ai->startingNode = _map->getNodes()[index];
-					//}
-					_map->setHeuristics(ai->startingNode);
-					_map->aStarVector(ai->startingNode, _map->getNodes()[destNode], path);
+					}
+					ai->startingNode = _waypoints->getNodes()[index];
+					
+					_waypoints->setHeuristics(ai->startingNode);
+					_waypoints->aStar(ai->startingNode, _waypoints->getNodes()[destNode], path);
 
 					ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
-					_map->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
+					_waypoints->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 
 					string nodePath = "AI :";
 					for (int i = 0; i < path.size(); i++)
@@ -72,25 +66,17 @@ void AISystem::Process(float dt)
 					}
 					std::cout << nodePath << std::endl;
 					ai->path = path;
-					ai->callAstar = true;
-						
-					//}
-
-
-					
+	
 				}
 				if (!ai->path.empty())
 				{
-					TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
-					float distance = (helper::Vector2(transform->rect.x, transform->rect.y) - ai->path.front()->getPosition()).length();
+					float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->path.front()->getPosition());
 					if (distance < 200.f)
 					{
-						if (ai->path[0] != _map->getNodes()[_map->getNodesSize() - 1])
+						if (ai->path[0] != _waypoints->getNodes()[_waypoints->getNodesSize() - 1])
 						{
-							//ai->startingNode = ai->path[0];
-							//ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
 							ai->path.erase(ai->path.begin());
 						}
 					}

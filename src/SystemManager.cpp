@@ -14,15 +14,15 @@ SystemManager::~SystemManager()
 
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height)
+void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
- 	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, map, width, height);
+ 	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, waypoints, width, height);
 	InitializeInteractionSystems();
 }
 
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);
@@ -55,13 +55,13 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 
 	//SETUP AI SYSTEM
 	AISystem* aiSystem = new AISystem(0);
-	aiSystem->Initialize(map);
+	aiSystem->Initialize(waypoints);
 	_systems[SystemType::AI] = aiSystem;
 
 	//SETUP WORLD SYSTEM
-	WorldSystem* worldSystem = new WorldSystem(0);
-	worldSystem->Initialize(map);
-	_systems[SystemType::World] = worldSystem;
+	WaypointSystem* waypointSystem = new WaypointSystem(0);
+	waypointSystem->Initialize(waypoints);
+	_systems[SystemType::World] = waypointSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {

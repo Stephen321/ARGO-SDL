@@ -7,16 +7,15 @@
 #include "Graph.h"
 
 using namespace helper;
-class WorldSystem : public System
+class WaypointSystem : public System
 {
 public:
-	WorldSystem(float updateRate = 0.f);
-	~WorldSystem();
+	WaypointSystem(float updateRate = 0.f);
+	~WaypointSystem();
 
-	void Initialize(Graph* map);
+	void Initialize(Graph* waypoint);
 	void Process(float dt = 0.f) override;
 
 private:
-	Graph* _map;
+	Graph* _waypoints;
 };
-

@@ -77,7 +77,7 @@ private:
 
 	std::vector<Entity*>			_entities;
 
-	Graph							_map;
+	Graph							_waypoints;
 
 	SystemManager					_systemManager;
 	FunctionMaster					_functionMaster;

@@ -8,7 +8,7 @@
 #include "GunSystem.h"
 #include "AISystem.h"
 #include "WeaponSystem.h"
-#include "WorldSystem.h"
+#include "WaypointSystem.h"
 
 class SystemManager
 {
@@ -37,8 +37,8 @@ public:
 										SystemManager();
 										~SystemManager();
 
-	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* map, int width, int height);
+	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
+	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);

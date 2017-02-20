@@ -14,10 +14,10 @@ public:
 	AISystem(float updateRate = 0.f);
 	~AISystem();
 
-	void Initialize(Graph* map);
+	void Initialize(Graph* waypoints);
 	void Process(float dt = 0.f) override;
 
 private:
-	Graph* _map;
+	Graph* _waypoints;
 };
 

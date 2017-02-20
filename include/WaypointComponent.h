@@ -3,16 +3,16 @@
 #include "Component.h"
 #include "GraphNode.h"
 
-class MapComponent : public Component
+class WaypointComponent : public Component
 {
 public:
-	MapComponent(float r) :
+	WaypointComponent(float r) :
 		Component::Component(Component::Type::Map),
 		radius(r)
 	{
 	}
 
-	~MapComponent()
+	~WaypointComponent()
 	{
 	}
 

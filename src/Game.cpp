@@ -15,7 +15,7 @@ Game::Game()
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
-	, _map()
+	, _waypoints()
 {
 
 }
@@ -31,7 +31,7 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_map,width, height);
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
 
 	_world.SetAllowSleeping(false);
 
@@ -82,7 +82,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 
 
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_map);
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
 
 	
 
@@ -217,10 +217,10 @@ void Game::DebugBox2D()
 	
 	//SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 
-	_map.drawNodes(_renderer, &_systemManager.GetCamera());
+	_waypoints.drawNodes(_renderer, &_systemManager.GetCamera());
 
 
-	_map.drawArcs(_renderer, &_systemManager.GetCamera());
+	_waypoints.drawArcs(_renderer, &_systemManager.GetCamera());
 	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////

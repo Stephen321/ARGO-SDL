@@ -67,6 +67,13 @@ struct Vector2 {
 			*this = normalize() * max;
 		}
 	};
+	float distance(Vector2 pos)
+	{
+		pos.x -= x;
+		pos.y -= y;
+		return pos.length();
+	}
+
 	float x;
 	float y;
 };

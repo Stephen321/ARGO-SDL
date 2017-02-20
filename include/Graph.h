@@ -22,7 +22,6 @@ public:
 	void						reset();
 	
 	//Pathfinding
-	void						aStarVector(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path);
 	void						aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>& path);
 	void						setHeuristics(GraphNode* pDest);
 	void						drawNodes(SDL_Renderer* renderer, Camera* camera) const;
