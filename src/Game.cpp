@@ -11,6 +11,10 @@
 #include <assert.h>
 
 
+//temp
+#include "GunComponent.h"
+#include "DestructionComponent.h"
+
 
 Game::Game() 
 	: _running(false)
@@ -55,18 +59,36 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	}
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
-	assert(weapon != nullptr);		
+
+	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
+	gun->owner = player->GetType();
+	static_cast<DestructionComponent*>(weapon->GetComponent(Component::Type::Destroy))->destroy = true;
+
+	assert(weapon != nullptr);
+	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 	//shooting
-	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, this, weapon), Type::Press);
-	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
+	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 	_swapScene = CurrentScene::game;
 	BindInput(player, weapon);
 }
 
+void Game::LoadContent()
+{
+	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
 
+	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+
+	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
+
+	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
+	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
+}
 
 int Game::Update()
 {
@@ -130,22 +152,6 @@ bool Game::IsRunning()
 	return _running;
 }
 
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
-
-	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
-	//_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
-
-}
-
-
 void Game::CleanUp()
 {
 	//DESTROY HERE
@@ -162,7 +168,6 @@ void Game::CleanUp()
 	SDL_DestroyRenderer(_renderer);
 	SDL_Quit();
 }
-
 
 
 SDL_Texture * Game::loadTexture(const std::string & path)

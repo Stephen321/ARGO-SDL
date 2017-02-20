@@ -9,7 +9,7 @@ Options::Options()
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
-	, _controlSystem()
+	, _functionMaster()
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 }

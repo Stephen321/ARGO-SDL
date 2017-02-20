@@ -1,11 +1,11 @@
 #include "EntityFactory.h"
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
-#include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
+#include "DestructionComponent.h"
 
 
 
@@ -79,7 +79,6 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
-	player->AddComponent(new ControlComponent());
 	player->AddComponent(new ColliderComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
@@ -123,8 +122,10 @@ Entity* EntityFactory::CreatePowerUpEntity()
 	powerUp->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 	powerUp->AddComponent(new TransformComponent());
 	powerUp->AddComponent(new ColliderComponent());
+	powerUp->AddComponent(new DestructionComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, powerUp);
+	_systemManager->AddEntity(SystemManager::SystemType::Destruction, powerUp);
 
 	return powerUp;
 }
@@ -138,10 +139,11 @@ Entity* EntityFactory::CreateWeaponEntity()
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
 	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
+	weapon->AddComponent(new DestructionComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, weapon);
-	_systemManager->GetControlSystem()->AddTurret(weapon);
 	_systemManager->AddEntity(SystemManager::SystemType::Gun, weapon);
+	_systemManager->AddEntity(SystemManager::SystemType::Destruction, weapon);
 
 	return weapon;
 }
@@ -155,9 +157,11 @@ Entity* EntityFactory::CreateBulletEntity()
 	bullet->AddComponent(spriteComponent);
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
 	bullet->AddComponent(new ColliderComponent());
+	bullet->AddComponent(new DestructionComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, bullet);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, bullet);
+	_systemManager->AddEntity(SystemManager::SystemType::Destruction, bullet);
 
 	return bullet;
 }

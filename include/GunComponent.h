@@ -12,6 +12,7 @@ public:
 		, fireTimer(0)
 		, canFire(true)
 		, triggered(false)
+		, owner(EntityType::AI)
 		, Component::Component(Component::Type::Gun)
 	{
 	}
@@ -22,6 +23,7 @@ public:
 		, fireTimer(0)
 		, canFire(true)
 		, triggered(false)
+		, owner(EntityType::AI)
 		, Component::Component(Component::Type::Gun)
 	{
 	}
@@ -38,4 +40,5 @@ public:
 
 	bool canFire;
 	bool triggered;
+	EntityType owner;
 };

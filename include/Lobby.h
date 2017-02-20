@@ -18,7 +18,8 @@
 #include <map>
 
 #include "ResourceIdentifier.h"
-#include "LevelLoader.h"
+#include "FunctionMaster.h"
+#include "RenderSystem.h"
 
 class Lobby : public EventListener, public Scene
 {
@@ -46,8 +47,6 @@ private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
-	LevelLoader						_levelLoader;
-
 	InputManager*					_inputManager = InputManager::GetInstance();
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
@@ -57,7 +56,7 @@ private:
 	unsigned int					_lastTime;//time of last update;
 
 	RenderSystem					_renderSystem;
-	ControlSystem*					_controlSystem;
+	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
 
 
