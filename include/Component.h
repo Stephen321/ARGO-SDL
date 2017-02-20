@@ -14,6 +14,7 @@ public:
 		Sprite,
 		Control,
 		Gun,
+		Net
 	};
 
 public:

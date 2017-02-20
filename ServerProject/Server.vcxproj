@@ -126,8 +126,8 @@ call $(ProjectDir)updateServer.bat</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x64\SDL2_net.dll" "$(TargetDir)"
-
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"
+call $(ProjectDir)updateServer.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,7 +152,8 @@ copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Comma
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"
+call $(ProjectDir)updateServer.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -177,8 +178,8 @@ copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"</Comma
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x64\SDL2_net.dll" "$(TargetDir)"
-
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"
+call $(ProjectDir)updateServer.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

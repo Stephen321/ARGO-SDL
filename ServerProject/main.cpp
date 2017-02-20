@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include <time.h>
 
+using namespace Network;
+
 typedef std::unordered_map<int, IPaddress>::const_iterator ConnectionIterator;
 bool exists(const std::unordered_map<int, IPaddress>& connections, const IPaddress& ip)
 {
@@ -30,33 +32,36 @@ int main(int argc, char** argv)
 	std::unordered_map<int, IPaddress> connections;
 	const int MaxPlayers = 8;
 
-	Net net(4023);
+	Net net(5228);
 
 	//thread pool for messages
 	bool listening = true;
 	while (listening)
 	{
-		Net::ReceivedData receiveData = net.Receive();
+		ReceivedData receiveData = net.Receive();
+
 		if (receiveData.Empty() == false)
 		{
 			switch (receiveData.GetType())
 			{
-			case Net::MessageType::Connect:
+			case MessageType::Connect:
 			{
-				IPaddress srcAddr = receiveData.GetData<Net::ConnectData>()->srcAddress;
+				IPaddress srcAddr = receiveData.GetData<ConnectData>()->srcAddress;
 				if (exists(connections, srcAddr) == false && connections.size() < MaxPlayers)
 				{
 					int id = connections.size();
 					std::cout << "Player " << id << " connected. (" << (id + 1) << "/" << MaxPlayers << "players)" << std::endl;
 					connections.insert(std::pair<int, IPaddress>(id, srcAddr));
-					Net::ConnectData data;
+					ConnectData data;
 					data.id = id;
+					std::cout << "ID to send is " << data.id << std::endl;
 					net.Send(&data, srcAddr);
 				}
+				break;
 			}
-			case Net::MessageType::State:
+			case MessageType::State:
 			{
-				Net::StateData* data = receiveData.GetData<Net::StateData>();
+				StateData* data = receiveData.GetData<StateData>();
 				if (exists(connections, data->id))
 				{
 					std::cout << "Player " << data->id << " state changed." << std::endl;
@@ -69,6 +74,7 @@ int main(int argc, char** argv)
 						}
 					}
 				}
+				break;
 			}
 			}
 		}

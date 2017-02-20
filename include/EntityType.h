@@ -15,4 +15,5 @@ enum class EntityType : uint16
 	Player = 0x0100,
 	Point = 0x0200,
 	Weapon = 0x0400,
-};
+	RemotePlayer = 0x0800
+}; //16 max

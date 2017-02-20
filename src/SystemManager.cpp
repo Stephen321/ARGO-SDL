@@ -52,6 +52,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	GunSystem* gunSystem = new GunSystem(0);
 	gunSystem->Initialize(entities, entityFactory, bodyFactory);
 	_systems[SystemType::Gun] = gunSystem;
+
+	//SETUP NET SYSTEM
+	NetSystem* netSystem = new NetSystem(NET_SYSTEM_UPDATE);
+	netSystem->Initialize();
+	_systems[SystemType::Net] = netSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -126,6 +131,12 @@ GunSystem* SystemManager::GetGunSystem()
 {
 	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
 	return gunSystem;
+}
+
+NetSystem * SystemManager::GetNetSystem()
+{
+	NetSystem* netSystem = static_cast<NetSystem*>(_systems[SystemType::Net]);
+	return netSystem;
 }
 
 #pragma endregion

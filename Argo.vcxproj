@@ -87,7 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ServerProject;$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ServerProject;$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ServerProject;$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -181,7 +181,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ServerProject;$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_net-2.0.1\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -237,6 +237,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
+    <ClInclude Include="include\NetComponent.h" />
+    <ClInclude Include="include\NetSystem.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
@@ -284,6 +286,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
+    <ClCompile Include="src\NetSystem.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />

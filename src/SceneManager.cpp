@@ -68,6 +68,10 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 			{
 				DEBUG_MSG("Renderer creation success");
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				if (SDLNet_Init() != 0)
+				{
+					DEBUG_MSG("SDLNet init success");
+				}
 			}
 			else
 			{

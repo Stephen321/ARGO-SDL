@@ -1,3 +1,3 @@
 @echo off
-plink argo@192.168.15.38 -pw argo "cd socketServer/; ./stop.sh"
+plink -P 2222 argo@127.0.0.1 -pw argo "cd socketServer/; ./stop.sh"
 

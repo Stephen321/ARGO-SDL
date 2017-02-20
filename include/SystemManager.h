@@ -6,6 +6,7 @@
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
 #include "GunSystem.h"
+#include "NetSystem.h"
 
 #include "WeaponSystem.h"
 
@@ -22,6 +23,7 @@ public:
 		Camera,
 		Collision,
 		Gun,
+		Net
 	};
 
 	enum class InteractionSystemType
@@ -52,7 +54,7 @@ public:
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
-
+	NetSystem*							GetNetSystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
 
 	Camera2D::Camera&					GetCamera();
