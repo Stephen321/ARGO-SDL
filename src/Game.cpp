@@ -48,7 +48,6 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 
 	std::vector<Entity*>::iterator it = _entities.begin();
 	while (it != _entities.end())
-
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
@@ -67,6 +66,9 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	assert(weapon != nullptr);
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
+
+	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
+
 
 	//shooting
 	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
@@ -217,6 +219,7 @@ void Game::DebugBox2D()
 {
 	//DEBUG
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{

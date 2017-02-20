@@ -45,6 +45,9 @@ void MainMenu::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int widt
 
 	CreateTextColoured(">", _textRectangle[0].x + _textRectangle[0].w + 50, _textRectangle[0].y, 255, 0, 0, 255);
 
+
+	UpdateText("Quiter", 4);
+
 	TTF_CloseFont(_font); // Free Font Memory
 	
 	//Input
@@ -170,6 +173,28 @@ void MainMenu::CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b
 
 	SDL_FreeSurface(_surface.back());
 	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+}
+
+void MainMenu::UpdateText(std::string message, int index)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+	_surface[index] = surface;
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface[index]);
+	_textTexture[index] = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_textTexture[index], NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = _textRectangle[index].x;
+	textRectangle.y = _textRectangle[index].y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_textRectangle[index] = textRectangle;
+
+	SDL_FreeSurface(_surface[index]);
+	SDL_RenderCopy(_renderer, _textTexture[index], NULL, &_textRectangle[index]);
 }
 
 void MainMenu::MoveUp()

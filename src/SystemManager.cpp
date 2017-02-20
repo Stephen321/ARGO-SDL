@@ -43,6 +43,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	world->SetContactListener(collisionSystem);
 	_systems[SystemType::Collision] = collisionSystem;
 
+	//SETUP UI SYSTEM
+	UISystem* uiSystem = new UISystem(0);
+	uiSystem->Initialize(renderer, &cameraSystem->getCamera());
+	_systems[SystemType::UI] = uiSystem;
+
 	//SETUP GUN SYSTEM
 	GunSystem* gunSystem = new GunSystem(0);
 	gunSystem->Initialize(entities, entityFactory, bodyFactory);
@@ -80,6 +85,8 @@ void SystemManager::Process(float dt)
 
 		index--;
 	}
+
+	it++;
 
 	for (; it != _systems.end(); ++it)
 	{
@@ -148,7 +155,8 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 
 void SystemManager::Render(float dt)
 {
-	_systems[SystemType::Render]->Process();
+	_systems[SystemType::Render]->Process(dt);
+	_systems[SystemType::UI]->Process(dt);
 }
 
 
@@ -187,6 +195,12 @@ GunSystem* SystemManager::GetGunSystem()
 {
 	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
 	return gunSystem;
+}
+
+UISystem * SystemManager::GetUISystem()
+{
+	UISystem* uiSystem = static_cast<UISystem*>(_systems[SystemType::UI]);
+	return uiSystem;
 }
 
 #pragma endregion

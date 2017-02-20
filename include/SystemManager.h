@@ -6,7 +6,7 @@
 #include "CollisionSystem.h"
 #include "GunSystem.h"
 #include "DestructionSystem.h"
-
+#include "UISystem.h"
 #include "WeaponSystem.h"
 
 
@@ -18,6 +18,7 @@ public:
 	{
 		Render,
 		Destruction,
+		UI,
 		Physics,
 		Camera,
 		Collision,
@@ -52,7 +53,7 @@ public:
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
-
+	UISystem*							GetUISystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
 
 	Camera2D::Camera&					GetCamera();

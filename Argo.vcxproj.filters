@@ -179,6 +179,7 @@
     </ClInclude>
     <ClInclude Include="include\DestructionSystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
     <ClInclude Include="include\About.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
@@ -187,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="include\Options.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UISystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +273,7 @@
     </ClCompile>
     <ClCompile Include="src\DestructionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="src\About.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
@@ -277,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="src\Options.cpp">
       <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UISystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
