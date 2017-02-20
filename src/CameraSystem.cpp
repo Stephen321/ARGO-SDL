@@ -1,5 +1,6 @@
 #include "CameraSystem.h"
-
+#include "TransformComponent.h"
+#include "ConstHolder.h"
 
 CameraSystem::CameraSystem(float updateRate)
 	: System(updateRate)
