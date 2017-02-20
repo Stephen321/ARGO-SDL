@@ -37,20 +37,21 @@ public:
 									~Game();
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
-	
-	void							Render() override;
-	int								Update() override;
 
-	void							LoadContent();
-	void							CleanUp();
+	int								Update() override;
+	void							Render() override;
 
 	void							OnEvent(Event evt) override;
 
 	bool							IsRunning() override;
+
+	void							LoadContent();
+	void							CleanUp();
+
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	void							BindInput(Entity* player);
+	void							BindInput(Entity* player, Entity* weapon);
 
 	void							DebugBox2D();
 

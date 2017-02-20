@@ -32,8 +32,20 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 		_game = new Game();
 		_game->Initialize(_window, _renderer, width, height);
 
+		_lobby = new Lobby();
+		_lobby->Initialize(_window, _renderer, width, height);
+
+		_options = new Options();
+		_options->Initialize(_window, _renderer, width, height);
+
+		_about = new About();
+		_about->Initialize(_window, _renderer, width, height);
+
 		_currentScene.push_back(_menu);
 		_currentScene.push_back(_game);
+		_currentScene.push_back(_lobby);
+		_currentScene.push_back(_options);
+		_currentScene.push_back(_about);
 
 		_runningScene = 0;
 	}

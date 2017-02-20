@@ -17,7 +17,7 @@
 
 
 Game::Game() 
-	: _running(true)
+	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
@@ -33,6 +33,7 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 {
 	_window = window;
 	_renderer = renderer;
+	_running = true;
 
 	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
 
@@ -44,37 +45,35 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	LoadContent();
 
 	Entity* player = nullptr;
+
 	std::vector<Entity*>::iterator it = _entities.begin();
 	while (it != _entities.end())
+
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
 			player = *it;
 			break;
 		}
-
-		_swapScene = CurrentScene::GAME;
 		it++;
 	}
 
-
-
-
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
+
 	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
 	gun->owner = player->GetType();
 	static_cast<DestructionComponent*>(weapon->GetComponent(Component::Type::Destroy))->destroy = true;
 
 	assert(weapon != nullptr);
-		
+	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 	//shooting
 	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
-
-	BindInput(player);
+	_swapScene = CurrentScene::game;
+	BindInput(player, weapon);
 }
 
 void Game::LoadContent()
@@ -124,6 +123,7 @@ void Game::Render()
 
 	DebugBox2D();
 
+
 	//test draw world bounds
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
@@ -133,12 +133,24 @@ void Game::Render()
 	SDL_RenderPresent(_renderer);
 }
 
-bool Game::IsRunning()
+void Game::OnEvent(EventListener::Event evt)
 {
-	if (_swapScene != CurrentScene::GAME) { _swapScene = CurrentScene::GAME; }
-	return _running;
+	if (_running)
+	{
+		switch (evt)
+		{
+		case Event::ESCAPE:
+			//_inputManager->saveFile();
+			_running = false;
+		}
+	}
 }
 
+bool Game::IsRunning()
+{
+	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
+	return _running;
+}
 
 void Game::CleanUp()
 {
@@ -157,18 +169,6 @@ void Game::CleanUp()
 	SDL_Quit();
 }
 
-void Game::OnEvent(EventListener::Event evt)
-{
-	if (_running)
-	{
-		switch (evt)
-		{
-		case Event::ESCAPE:
-			_inputManager->saveFile();
-			_running = false;
-		}
-	}
-}
 
 SDL_Texture * Game::loadTexture(const std::string & path)
 {
@@ -193,7 +193,7 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 	return texture;
 }
 
-void Game::BindInput(Entity* player)
+void Game::BindInput(Entity* player, Entity* weapon)
 {
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -226,7 +226,7 @@ void Game::DebugBox2D()
 			EntityType t = e->GetType();
 			if (t == EntityType::Player)
 			{
-				SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 			}
 			else if (t == EntityType::Checkpoint)
 			{
@@ -251,7 +251,6 @@ void Game::DebugBox2D()
 
 			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())
 			{
-
 				b2Shape::Type shapeType = b2Fixture->GetType();
 				if (shapeType == b2Shape::e_circle)
 				{
