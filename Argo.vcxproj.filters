@@ -179,6 +179,7 @@
     </ClInclude>
     <ClInclude Include="include\DestructionSystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
     <ClInclude Include="include\About.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
@@ -269,6 +270,7 @@
     </ClCompile>
     <ClCompile Include="src\DestructionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="src\About.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
