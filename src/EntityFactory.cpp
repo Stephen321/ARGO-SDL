@@ -65,6 +65,9 @@ Entity* EntityFactory::CreateEntity(EntityType t)
 	case EntityType::Flag:
 		entity = CreateFlagEntity();
 		break;
+	case EntityType::UI:
+		entity = CreateUIEntity();
+		break;
 
 	default:
 		break;
@@ -214,4 +217,15 @@ Entity* EntityFactory::CreatePointEntity()
 	point->AddComponent(new TransformComponent());
 
 	return point;
+}
+
+Entity* EntityFactory::CreateUIEntity()
+{
+	Entity* ui = new Entity(EntityType::UI);
+	ui->AddComponent(new TransformComponent());
+	ui->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
+
+	_systemManager->AddEntity(SystemManager::SystemType::UI, ui);
+
+	return ui;
 }

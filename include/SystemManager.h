@@ -7,6 +7,7 @@
 #include "GunSystem.h"
 #include "AISystem.h"
 #include "DestructionSystem.h"
+#include "UISystem.h"
 #include "WeaponSystem.h"
 #include "WaypointSystem.h"
 
@@ -15,6 +16,7 @@ class SystemManager
 public:
 	enum class SystemType
 	{
+		UI,
 		Render,
 		Destruction,
 		Physics,
@@ -56,6 +58,7 @@ public:
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
+	UISystem*							GetUISystem();
 	AISystem*							GetAISystem();
 
 	WeaponSystem*						GetWeaponInteractionSystem();

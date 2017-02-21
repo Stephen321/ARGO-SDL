@@ -43,6 +43,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	world->SetContactListener(collisionSystem);
 	_systems[SystemType::Collision] = collisionSystem;
 
+	//SETUP UI SYSTEM
+	UISystem* uiSystem = new UISystem(0);
+	uiSystem->Initialize(renderer, &cameraSystem->getCamera());
+	_systems[SystemType::UI] = uiSystem;
+
 	//SETUP GUN SYSTEM
 	GunSystem* gunSystem = new GunSystem(0);
 	gunSystem->Initialize(entities, entityFactory, bodyFactory);
@@ -76,9 +81,9 @@ void SystemManager::InitializeInteractionSystems()
 
 void SystemManager::Process(float dt)
 {
-	//Skip RenderSystem
+	//Skip RenderSystem and UI
 	SystemMapIterator it = _systems.begin();
-	it++;
+	it++++; // LOL
 
 	TryToDestroy(it, dt);
 
@@ -173,7 +178,8 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 
 void SystemManager::Render(float dt)
 {
-	_systems[SystemType::Render]->Process();
+	_systems[SystemType::Render]->Process(dt);
+	_systems[SystemType::UI]->Process(dt);
 }
 
 
@@ -217,6 +223,12 @@ AISystem* SystemManager::GetAISystem()
 {
 	AISystem* aiSystem = static_cast<AISystem*>(_systems[SystemType::AI]);
 	return aiSystem;
+}
+
+UISystem * SystemManager::GetUISystem()
+{
+	UISystem* uiSystem = static_cast<UISystem*>(_systems[SystemType::UI]);
+	return uiSystem;
 }
 
 #pragma endregion

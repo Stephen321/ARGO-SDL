@@ -246,6 +246,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\System.h" />
     <ClInclude Include="include\SystemManager.h" />
     <ClInclude Include="include\TransformComponent.h" />
+    <ClInclude Include="include\UISystem.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\WaypointSystem.h" />
     <ClInclude Include="include\WeaponSystem.h" />
@@ -290,6 +291,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Shake.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
+    <ClCompile Include="src\UISystem.cpp" />
     <ClCompile Include="src\WaypointSystem.cpp" />
     <ClCompile Include="src\WeaponSystem.cpp" />
   </ItemGroup>
