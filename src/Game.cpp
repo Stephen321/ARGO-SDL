@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "GunComponent.h"
 #include "DestructionComponent.h"
+#include "FlagComponent.h"
 
 Game::Game() 
 	: _running(false)
@@ -33,7 +34,6 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 	_running = true;
 
-
 	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
 
 	_world.SetAllowSleeping(false);
@@ -44,17 +44,31 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	LoadContent();
 
 	Entity* player = nullptr;
+	Entity* flag = nullptr;
 
+	std::vector<Entity*> checkpoints = std::vector<Entity*>();
 	std::vector<Entity*>::iterator it = _entities.begin();
+
 	while (it != _entities.end())
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
 			player = *it;
-			break;
+		}
+		else if ((*it)->GetType() == EntityType::Flag)
+		{
+			flag = *it;
+		}
+		else if ((*it)->GetType() == EntityType::Checkpoint)
+		{
+			checkpoints.push_back(*it);
 		}
 		it++;
 	}
+
+	_systemManager.PostInitialize(checkpoints);
+
+
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
@@ -64,6 +78,16 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	assert(weapon != nullptr);
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
+
+
+	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	flagComponent->hasFlag = true;
+
+	assert(flag != nullptr);
+
+	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
+
+
 
 	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
 
@@ -82,7 +106,9 @@ void Game::LoadContent()
 
 	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Flag] = loadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = loadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);

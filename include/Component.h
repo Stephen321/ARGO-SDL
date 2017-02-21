@@ -16,6 +16,8 @@ public:
 		AI,
 		Gun,
 		Destroy,
+		Checkpoint,
+		Flag,
 	};
 
 public:
