@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A4800396-6E60-40DB-9339-C8AFD6CF039D}</ProjectGuid>
+    <ProjectGuid>{6568DBCE-A8AF-4F32-BDB4-B5D052A7CB5F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>NetworkTest</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>Server</ProjectName>
+    <ProjectName>Client</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -94,7 +94,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerProject\include;$(SolutionDir)ServerProject\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,8 +104,7 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"
-call $(ProjectDir)updateServer.bat</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -116,7 +115,7 @@ call $(ProjectDir)updateServer.bat</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerProject\include;$(SolutionDir)ServerProject\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,8 +125,7 @@ call $(ProjectDir)updateServer.bat</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x64\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"
-call $(ProjectDir)updateServer.bat</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,7 +138,7 @@ call $(ProjectDir)updateServer.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerProject\include;$(SolutionDir)ServerProject\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,8 +150,7 @@ call $(ProjectDir)updateServer.bat</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"
-call $(ProjectDir)updateServer.bat</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,7 +163,7 @@ call $(ProjectDir)updateServer.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ServerProject\include;$(SolutionDir)ServerProject\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,18 +175,15 @@ call $(ProjectDir)updateServer.bat</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x64\SDL2_net.dll" "$(TargetDir)"
-copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"
-call $(ProjectDir)updateServer.bat</Command>
+copy "$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x64\*.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ServerProject\Net.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Net.cpp" />
-    <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Net.h" />
-    <ClInclude Include="Session.h" />
+    <ClInclude Include="..\ServerProject\Net.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

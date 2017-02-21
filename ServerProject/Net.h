@@ -1,14 +1,16 @@
 #pragma once
 
-#include <SDL2/SDL_net.h>
 #include <iostream>
+#include <vector>
+#include <SDL2/SDL_net.h>
 
 namespace Network
 {
 	enum class MessageType : Uint8 {
 		Connect,
 		Disconnect,
-		State
+		State,
+		SessionList
 	};
 
 	struct MessageData {
@@ -31,13 +33,21 @@ namespace Network
 		float yVel;
 	};
 	struct ConnectData : MessageData {
-		ConnectData() : id(-1) { type = MessageType::Connect; }
+		ConnectData() : id(-1), level(0) { type = MessageType::Connect; }
 		int id;
-		int testString;
+		int level;
 	};
 
 	struct DisconnectData : MessageData {
 		DisconnectData() { type = MessageType::Disconnect; }
+	};
+
+	struct SessionListData : MessageData {
+		SessionListData() { type = MessageType::SessionList; }
+		int count;
+		int maxPlayers;
+		std::vector<int> sessionIDs;
+		std::vector<int> currentPlayers;
 	};
 
 	class ReceivedData {

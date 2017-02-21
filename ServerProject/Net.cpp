@@ -11,13 +11,6 @@ Network::Net::Net(int port, int packetSize)
 	_packet = SDLNet_AllocPacket(packetSize);
 }
 
-
-//void SetPacketAddress()
-//{
-//	_packet->address.host = _ipAddress.host;
-//	_packet->address.port = _ipAddress.port;
-//}
-
 void Network::Net::WriteInt(int value) 
 {
 	_packet->data[_packet->len++] = (value);		
@@ -26,7 +19,7 @@ void Network::Net::WriteInt(int value)
 	_packet->data[_packet->len++] = (value >> 0x18);
 }
 
-int Network::Net::ReadInt(int & byteOffset)
+int Network::Net::ReadInt(int & byteOffset) 
 {
 	int value = _packet->data[byteOffset++];
 	value |= _packet->data[byteOffset++] << 0x08;

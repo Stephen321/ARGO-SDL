@@ -1,13 +1,14 @@
 #include "Net.h"
 #include <unordered_map>
 #include <time.h>
+#include "Session.h"
 
 using namespace Network;
 
-typedef std::unordered_map<int, IPaddress>::const_iterator ConnectionIterator;
-bool exists(const std::unordered_map<int, IPaddress>& connections, const IPaddress& ip)
+typedef std::vector<int, IPaddress>::const_iterator SpectatorIterator;
+bool exists(const std::vector<int, IPaddress>& spectators, const IPaddress& ip)
 {
-	for (ConnectionIterator it = connections.begin(); it != connections.end(); ++it)
+	for (SpectatorIterator it = spectators.begin(); it != spectators.end(); ++it)
 	{
 		if (it->second.host == ip.host &&
 			it->second.port == ip.port)
@@ -16,27 +17,30 @@ bool exists(const std::unordered_map<int, IPaddress>& connections, const IPaddre
 	return false;
 }
 
-bool exists(const std::unordered_map<int, IPaddress>& connections, int id)
+bool exists(const std::vector<int, IPaddress>& spectators, int id)
 {
-	if (connections.find(id) != connections.end())
+	for (SpectatorIterator it = spectators.begin(); it != spectators.end(); ++it)
 	{
-		return true;
+		if (it->first == id)
+			return true;
 	}
 	return false;
 }
 
 int main(int argc, char** argv)
 {
+	typedef std::unordered_map<int, Session>::const_iterator SessionIterator;
+
 	SDLNet_Init();
 
-	std::unordered_map<int, IPaddress> connections;
-	const int MaxPlayers = 8;
+	const int MAX_PLAYERS = 4;
+	std::vector<int, IPaddress> spectators;
+	std::unordered_map<int, Session> sessions;
 
 	Net net(5228);
 
-	//thread pool for messages
-	bool listening = true;
-	while (listening)
+	int playerCount = 0;
+	while (true)
 	{
 		ReceivedData receiveData = net.Receive();
 
@@ -46,35 +50,32 @@ int main(int argc, char** argv)
 			{
 			case MessageType::Connect:
 			{
-				IPaddress srcAddr = receiveData.GetData<ConnectData>()->srcAddress;
-				if (exists(connections, srcAddr) == false && connections.size() < MaxPlayers)
+				ConnectData* data = receiveData.GetData<ConnectData>();
+				IPaddress srcAddr = data->srcAddress;
+
+				std::cout << "Player connected to server. ID: " << data->id << std::endl;
+				if (exists(spectators, srcAddr) == false)
 				{
-					int id = connections.size();
-					std::cout << "Player " << id << " connected. (" << (id + 1) << "/" << MaxPlayers << "players)" << std::endl;
-					connections.insert(std::pair<int, IPaddress>(id, srcAddr));
-					ConnectData data;
-					data.id = id;
-					std::cout << "ID to send is " << data.id << std::endl;
-					net.Send(&data, srcAddr);
+					if (data->id < 0)
+					{
+						data->id = playerCount++;
+						std::cout << "Spectator added. ID assigned: " << data->id << std::endl;
+					}
+					spectators.push_back(std::pair<int, IPaddress>(data->id, srcAddr));
+					SessionListData sessionData;
+					sessionData.count = sessions.size();
+					sessionData.maxPlayers = MAX_PLAYERS;
+					for (SessionIterator it = sessions.begin(); it != sessions.end(); ++it)
+					{
+						sessionData.sessionIDs.push_back(it->first);
+						sessionData.currentPlayers.push_back(it->second.GetPlayerCount());
+					}
+					net.Send(&sessionData, srcAddr);
 				}
 				break;
 			}
 			case MessageType::State:
 			{
-				StateData* data = receiveData.GetData<StateData>();
-				if (exists(connections, data->id))
-				{
-					std::cout << "Player " << data->id << " state changed." << std::endl;
-					for (ConnectionIterator it = connections.begin(); it != connections.end(); ++it)
-					{
-						if (it->first != data->id)
-						{
-							std::cout << "Sending state to " << it->first << "." << std::endl;
-							net.Send(data, it->second);
-						}
-					}
-				}
-				break;
 			}
 			}
 		}
