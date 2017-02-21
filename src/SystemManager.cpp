@@ -70,14 +70,23 @@ void SystemManager::InitializeInteractionSystems()
 
 void SystemManager::Process(float dt)
 {
-	//Skip RenderSystem
+	//Skip RenderSystem and UI
 	SystemMapIterator it = _systems.begin();
-	it++;
+	it++++; // LOL
 
+	TryToDestroy(it, dt);
+
+	ProcessAllSystems(it, dt);
+
+	ProcessAllInteractionSystems(it, dt);
+}
+
+void SystemManager::TryToDestroy(SystemMapIterator& it, float dt)
+{
 	DestructionSystem* destructionSystem = static_cast<DestructionSystem*>(it->second);
 	destructionSystem->Process(dt);
 
-	int index = destructionSystem->GetEntitiesToBeDestroyed().size()-1;
+	int index = destructionSystem->GetEntitiesToBeDestroyed().size() - 1;
 	while (index >= 0)
 	{
 		DestroyBasedOnType(destructionSystem->GetEntitiesToBeDestroyed().at(index));
@@ -85,14 +94,17 @@ void SystemManager::Process(float dt)
 
 		index--;
 	}
+}
 
-	it++;
-
+void SystemManager::ProcessAllSystems(SystemMapIterator& it, float dt)
+{
 	for (; it != _systems.end(); ++it)
 	{
 		it->second->Process(dt);
 	}
-
+}
+void SystemManager::ProcessAllInteractionSystems(SystemMapIterator& it, float dt)
+{
 	for (InteractionSystemMapIterator it = _interactionSystems.begin(); it != _interactionSystems.end(); ++it)
 	{
 		it->second->Process(dt);

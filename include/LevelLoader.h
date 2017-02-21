@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include "RenderSystem.h"
 #include "ResourceIdentifier.h"
 #include "rapidjson\document.h"
 #include "rapidjson\filereadstream.h"

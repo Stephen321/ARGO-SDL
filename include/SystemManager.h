@@ -16,9 +16,9 @@ class SystemManager
 public:
 	enum class SystemType
 	{
+		UI,
 		Render,
 		Destruction,
-		UI,
 		Physics,
 		Camera,
 		Collision,
@@ -42,6 +42,9 @@ public:
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);
+	void								TryToDestroy(SystemMapIterator& it, float dt);
+	void								ProcessAllSystems(SystemMapIterator& it, float dt);
+	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
 	void								DestroyBasedOnType(Entity*& entity);
 	void								Render(float dt = 0.f);
 

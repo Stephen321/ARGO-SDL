@@ -1,8 +1,8 @@
 #include "LevelLoader.h"
 #include "SpriteComponent.h"
-#include "Helpers.h"
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
+#include "Helpers.h"
 
 void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
 {
