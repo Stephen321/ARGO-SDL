@@ -46,8 +46,8 @@ void PhysicsSystem::Process(float dt)
 					physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
 				}
 
-				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.1f) { physics->xVelocity = 0.f; }
-				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.1f) { physics->yVelocity = 0.f; }
+				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
+				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
 
 				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
 				

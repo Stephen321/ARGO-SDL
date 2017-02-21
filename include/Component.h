@@ -13,6 +13,7 @@ public:
 		Collider,
 		Sprite,
 		Control,
+		AI,
 		Gun,
 		Destroy,
 	};
