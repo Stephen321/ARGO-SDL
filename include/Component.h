@@ -15,7 +15,7 @@ public:
 		Control,
 		AI,
 		Gun,
-		Map,
+		Destroy,
 	};
 
 public:

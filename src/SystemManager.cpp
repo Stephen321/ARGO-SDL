@@ -38,11 +38,6 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	PhysicsSystem* physicsSystem = new PhysicsSystem(0);
 	_systems[SystemType::Physics] = physicsSystem;
 
-	//SETUP CONTROL SYSTEM
-	ControlSystem* controlSystem = new ControlSystem(0);
-	controlSystem->Initialize(&cameraSystem->getCamera());
-	_systems[SystemType::Control] = controlSystem;
-
 	//SETUP COLLISION SYSTEM
 	CollisionSystem* collisionSystem = new CollisionSystem(COLLISION_SYSTEM_UPDATE);
 	world->SetContactListener(collisionSystem);
@@ -62,11 +57,17 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	WaypointSystem* waypointSystem = new WaypointSystem(0);
 	waypointSystem->Initialize(waypoints);
 	_systems[SystemType::World] = waypointSystem;
+
+	//SETUP Destroy SYSTEM
+	DestructionSystem* destructionSystem = new DestructionSystem(0);
+	_systems[SystemType::Destruction] = destructionSystem;
+
 }
 void SystemManager::InitializeInteractionSystems()
 {
 	//SETUP WEAPON INTERACTION SYSTEM
 	WeaponSystem* weaponSystem = new WeaponSystem(0);
+	weaponSystem->Initialize(&GetCamera());
 	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
 }
 
@@ -79,14 +80,94 @@ void SystemManager::Process(float dt)
 	SystemMapIterator it = _systems.begin();
 	it++;
 
+	TryToDestroy(it, dt);
+
+	ProcessAllSystems(it, dt);
+
+	ProcessAllInteractionSystems(it, dt);
+}
+
+void SystemManager::TryToDestroy(SystemMapIterator& it, float dt)
+{
+	DestructionSystem* destructionSystem = static_cast<DestructionSystem*>(it->second);
+	destructionSystem->Process(dt);
+
+	int index = destructionSystem->GetEntitiesToBeDestroyed().size() - 1;
+	while (index >= 0)
+	{
+		DestroyBasedOnType(destructionSystem->GetEntitiesToBeDestroyed().at(index));
+		destructionSystem->DestroyEntity();
+
+		index--;
+	}
+}
+
+void SystemManager::ProcessAllSystems(SystemMapIterator& it, float dt)
+{
 	for (; it != _systems.end(); ++it)
 	{
 		it->second->Process(dt);
 	}
-
+}
+void SystemManager::ProcessAllInteractionSystems(SystemMapIterator& it, float dt)
+{
 	for (InteractionSystemMapIterator it = _interactionSystems.begin(); it != _interactionSystems.end(); ++it)
 	{
 		it->second->Process(dt);
+	}
+}
+
+void SystemManager::DestroyBasedOnType(Entity*& entity)
+{
+	switch (entity->GetType())
+	{
+	case EntityType::Flag:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		//Implement Later
+		break;
+	case EntityType::Checkpoint:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		//Implement Later
+		break;
+	case EntityType::Wall:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		//Implement Later
+		break;
+	case EntityType::Tile:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		//Implement Later
+		break;
+	case EntityType::Obstacle:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		break;
+	case EntityType::Bullet:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
+		break;
+	case EntityType::PowerUp:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		//Implement Later
+		break;
+	case EntityType::AI:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
+		break;
+	case EntityType::Player:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Camera]->RemoveEntity(entity->GetType(), entity);
+		break;
+	case EntityType::Point:
+		//Implement Later??
+		break;
+	case EntityType::Weapon:
+		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Gun]->RemoveEntity(entity->GetType(), entity);
+		//fix weapon deletion
+		static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon])->RemoveEntity(entity, false);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -116,11 +197,6 @@ PhysicsSystem* SystemManager::GetPhysicsSystem()
 {
 	PhysicsSystem* physicsSystem = static_cast<PhysicsSystem*>(_systems[SystemType::Physics]);
 	return physicsSystem;
-}
-ControlSystem* SystemManager::GetControlSystem()
-{
-	ControlSystem* controlSystem = static_cast<ControlSystem*>(_systems[SystemType::Control]);
-	return controlSystem;
 }
 CameraSystem* SystemManager::GetCameraSystem()
 {

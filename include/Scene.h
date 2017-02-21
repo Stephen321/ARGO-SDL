@@ -9,10 +9,11 @@ public:
 	virtual int Update();
 	virtual void Render();
 	virtual bool IsRunning();
-
-	enum CurrentScene 
-	{
+	enum CurrentScene {
 		MAIN_MENU,
-		GAME,
-	};
+		game,
+		lobby,
+		options,
+		about
+  };
 };

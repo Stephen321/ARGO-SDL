@@ -17,7 +17,6 @@ int Scene::Update()
 
 void Scene::Render()
 {
-
 }
 
 bool Scene::IsRunning()

@@ -2,8 +2,6 @@
 #include "Camera2D.h"
 #include "SDL_Rect.h"
 #include "System.h"
-#include "TransformComponent.h"
-#include "ConstHolder.h"
 
 
 class CameraSystem : public System

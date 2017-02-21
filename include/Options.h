@@ -12,25 +12,25 @@
 #include "Scene.h"
 
 #include "CameraSystem.h"
-#include "FunctionMaster.h"
 
 #include <vector>
 #include <queue>
 #include <map>
 
 #include "ResourceIdentifier.h"
-#include "LevelLoader.h"
+#include "FunctionMaster.h"
+#include "RenderSystem.h"
 
-class MainMenu : public EventListener, public Scene
+class Options : public EventListener, public Scene
 {
 public:
-	MainMenu();
-	~MainMenu();
+	Options();
+	~Options();
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 
-	int								Update() override;
 	void							Render() override;
+	int								Update() override;
 
 	void							OnEvent(Event evt) override;
 
@@ -45,8 +45,6 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
-
-	LevelLoader						_levelLoader;
 
 	InputManager*					_inputManager = InputManager::GetInstance();
 
@@ -68,12 +66,5 @@ private:
 
 	CurrentScene					_swapScene;
 	int								_fontSize;
-
-private:
-	void							MoveUp();
-	void							MoveDown();
-
-	int								GetPressedItem();
-	int								_selectedItemIndex;
 };
 

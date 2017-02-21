@@ -1,11 +1,12 @@
 #include "CollisionSystem.h"
-#include <iostream>
 #include "PhysicsComponent.h"
 #include "ColliderComponent.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include "ConstHolder.h"
+
+#define _USE_MATH_DEFINES
 #include <iostream>
+#include <math.h>
+
 
 
 CollisionSystem::CollisionSystem(float updateRate)

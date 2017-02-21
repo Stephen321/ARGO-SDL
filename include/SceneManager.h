@@ -7,6 +7,9 @@
 #include "Scene.h"
 #include "MainMenu.h"
 #include "Game.h"
+#include "Lobby.h"
+#include "Options.h"
+#include "About.h"
 
 #include "CameraSystem.h"
 
@@ -37,6 +40,9 @@ private:
 
 	MainMenu*						_menu;
 	Game*							_game;
+	Lobby*							_lobby;
+	Options*						_options;
+	About*							_about;
 	int								_runningScene;
 };
 

@@ -12,31 +12,32 @@
 #include "Scene.h"
 
 #include "CameraSystem.h"
-#include "FunctionMaster.h"
 
 #include <vector>
 #include <queue>
 #include <map>
 
 #include "ResourceIdentifier.h"
-#include "LevelLoader.h"
+#include "FunctionMaster.h"
+#include "RenderSystem.h"
 
-class MainMenu : public EventListener, public Scene
+class Lobby : public EventListener, public Scene
 {
 public:
-	MainMenu();
-	~MainMenu();
+	Lobby();
+	~Lobby();
 
 	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
 
-	int								Update() override;
 	void							Render() override;
+	int								Update() override;
 
 	void							OnEvent(Event evt) override;
 
 	bool							IsRunning() override;
 
 private:
+
 	void							BindInput();
 
 	void							CreateText(string message, int x, int y);
@@ -45,8 +46,6 @@ private:
 private:
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
-
-	LevelLoader						_levelLoader;
 
 	InputManager*					_inputManager = InputManager::GetInstance();
 
@@ -68,12 +67,5 @@ private:
 
 	CurrentScene					_swapScene;
 	int								_fontSize;
-
-private:
-	void							MoveUp();
-	void							MoveDown();
-
-	int								GetPressedItem();
-	int								_selectedItemIndex;
 };
 

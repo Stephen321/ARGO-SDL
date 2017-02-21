@@ -16,17 +16,31 @@ InteractionSystem::~InteractionSystem()
 
 void InteractionSystem::AddEntity(Entity* gameObject, Entity* otherObject)
 {
-	_entities[gameObject->GetType()].push_back(std::pair<Entity*, Entity*>(gameObject, otherObject));
+	_entities.push_back(std::pair<Entity*, Entity*>(gameObject, otherObject));
 }
 
-void InteractionSystem::RemoveEntity(EntityType tag, Entity* gameObject)
+void InteractionSystem::RemoveEntity(Entity* gameObject, bool firstObject)
 {
-	for (int i = 0; i < _entities[tag].size(); i++)
+	if (firstObject)
 	{
-		if (_entities[tag].at(i).first == gameObject)
+		for (int i = 0; i < _entities.size(); i++)
 		{
-			_entities[tag].erase(_entities[tag].begin() + i);
-			break;
+			if (_entities.at(i).first == gameObject)
+			{
+				_entities.erase(_entities.begin() + i);
+				break;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < _entities.size(); i++)
+		{
+			if (_entities.at(i).second == gameObject)
+			{
+				_entities.erase(_entities.begin() + i);
+				break;
+			}
 		}
 	}
 }

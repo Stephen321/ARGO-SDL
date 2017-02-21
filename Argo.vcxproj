@@ -203,6 +203,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\AIComponent.h" />
     <ClInclude Include="include\AISystem.h" />
     <ClInclude Include="include\BasicTypes.h" />
+    <ClInclude Include="include\About.h" />
     <ClInclude Include="include\BodyFactory.h" />
     <ClInclude Include="include\Camera2D.h" />
     <ClInclude Include="include\CameraSystem.h" />
@@ -210,9 +211,9 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
-    <ClInclude Include="include\ControlComponent.h" />
-    <ClInclude Include="include\ControlSystem.h" />
     <ClInclude Include="include\Debug.h" />
+    <ClInclude Include="include\DestructionComponent.h" />
+    <ClInclude Include="include\DestructionSystem.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\EntityFactory.h" />
     <ClInclude Include="include\EntityType.h" />
@@ -228,9 +229,11 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\InteractionSystem.h" />
     <ClInclude Include="include\LevelLoader.h" />
+    <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
     <ClInclude Include="include\WaypointComponent.h" />
+    <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
     <ClInclude Include="include\PhysicsSystem.h" />
@@ -258,11 +261,12 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AISystem.cpp" />
+    <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CameraSystem.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
-    <ClCompile Include="src\ControlSystem.cpp" />
+    <ClCompile Include="src\DestructionSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
     <ClCompile Include="src\FLInputManager.cpp" />
@@ -273,9 +277,11 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\GunSystem.cpp" />
     <ClCompile Include="src\InteractionSystem.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
+    <ClCompile Include="src\Lobby.cpp" />
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
+    <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />

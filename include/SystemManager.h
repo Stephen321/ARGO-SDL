@@ -2,11 +2,11 @@
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
-#include "ControlSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
 #include "GunSystem.h"
 #include "AISystem.h"
+#include "DestructionSystem.h"
 #include "WeaponSystem.h"
 #include "WaypointSystem.h"
 
@@ -16,8 +16,8 @@ public:
 	enum class SystemType
 	{
 		Render,
+		Destruction,
 		Physics,
-		Control,
 		Camera,
 		Collision,
 		Gun,
@@ -42,6 +42,10 @@ public:
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);
+	void								TryToDestroy(SystemMapIterator& it, float dt);
+	void								ProcessAllSystems(SystemMapIterator& it, float dt);
+	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
+	void								DestroyBasedOnType(Entity*& entity);
 	void								Render(float dt = 0.f);
 
 	void								AddEntity(SystemType type, Entity* entity);
@@ -49,7 +53,6 @@ public:
 
 	RenderSystem*						GetRenderSystem();
 	PhysicsSystem*						GetPhysicsSystem();
-	ControlSystem*						GetControlSystem();
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
