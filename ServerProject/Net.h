@@ -79,6 +79,11 @@ namespace Network
 				_data = new StateData(*rhs.GetData<StateData>());
 				break;
 			}
+			case MessageType::SessionList:
+			{
+				_data = new SessionListData(*rhs.GetData<SessionListData>());
+				break;
+			}
 			}
 		}
 
@@ -165,6 +170,18 @@ namespace Network
 				WriteFloat(sdata->yVel);
 				break;
 			}
+			case MessageType::SessionList:
+			{
+				SessionListData* sldata = (SessionListData*)data;
+				WriteInt(sldata->count);
+				WriteInt(sldata->maxPlayers);
+				for (int i = 0; i < sldata->count; i++)
+				{
+					WriteInt(sldata->sessionIDs[i]);
+					WriteInt(sldata->currentPlayers[i]);
+				}
+				break;
+			}
 			}
 
 			_packet->address.host = destAddr.host;
@@ -211,6 +228,18 @@ namespace Network
 					data.yVel = ReadFloat(byteOffset);
 					data.srcAddress = _packet->address;
 					receiveData.SetData(data);
+					break;
+				}
+				case MessageType::SessionList:
+				{
+					SessionListData data;
+					data.count = ReadInt(byteOffset);
+					data.maxPlayers = ReadInt(byteOffset);
+					for (int i = 0; i < data.count; i++)
+					{ //is order the same?
+						data.sessionIDs.push_back(ReadInt(byteOffset));
+						data.currentPlayers.push_back(ReadInt(byteOffset));
+					}
 					break;
 				}
 				}
