@@ -176,10 +176,10 @@ Entity* EntityFactory::CreateCheckpointEntity()
 {
 	Entity* checkpoint = new Entity(EntityType::Checkpoint);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint]);
 
 	checkpoint->AddComponent(spriteComponent);
-	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	checkpoint->AddComponent(new ColliderComponent());
 	checkpoint->AddComponent(new CheckpointComponent());
 

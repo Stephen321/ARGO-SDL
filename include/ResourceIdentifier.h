@@ -5,6 +5,7 @@ enum class TextureID
 	Weapon,
 	Bullet,
 	Flag,
+	Checkpoint,
 	EntitySpriteSheet,
 	TilemapSpriteSheet,
 };

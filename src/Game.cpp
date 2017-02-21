@@ -109,6 +109,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Flag] = loadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = loadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 

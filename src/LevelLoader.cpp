@@ -126,8 +126,13 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			checkpointID++;
 			Entity* checkpoint = entityFactory->CreateEntity(EntityType::Checkpoint);
 			ColliderComponent* collider = static_cast<ColliderComponent*>(checkpoint->GetComponent(Component::Type::Collider));
+			TransformComponent* transform = static_cast<TransformComponent*>(checkpoint->GetComponent(Component::Type::Transform));
+
 			CheckpointComponent* checkpointComponent = static_cast<CheckpointComponent*>(checkpoint->GetComponent(Component::Type::Checkpoint));
 			checkpointComponent->id = checkpointID;
+
+			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
+			transform->origin = { (int)(w*0.5f), (int)(h*0.5f) };
 
 			b2Body* body = bodyFactory->CreateBoxBody(
 				b2BodyType::b2_staticBody
@@ -144,6 +149,9 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		{
 			Entity* flag = entityFactory->CreateEntity(EntityType::Flag);
 			ColliderComponent* collider = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
+			TransformComponent* transform = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
+
+			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
 
 			b2Body* body = bodyFactory->CreateBoxBody(
 				b2BodyType::b2_dynamicBody
