@@ -73,7 +73,7 @@ void AISystem::Process(float dt)
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					helper::Vector2 velocity = ai->path.front()->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
 					float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->path.front()->getPosition());
-					if (distance < 200.f)
+					if (distance < AI_DETECTION_RADIUS)
 					{
 						if (ai->path[0] != _waypoints->getNodes()[_waypoints->getNodesSize() - 1])
 						{
