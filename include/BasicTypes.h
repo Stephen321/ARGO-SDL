@@ -1,6 +1,8 @@
 #pragma once
 #include <cmath>
 
+namespace helper {
+
 struct Vector2 {
 	Vector2(float _x, float _y)
 		: x(_x), y(_y) {};
@@ -65,6 +67,15 @@ struct Vector2 {
 			*this = normalize() * max;
 		}
 	};
+	float distance(Vector2 pos)
+	{
+		pos.x -= x;
+		pos.y -= y;
+		return pos.length();
+	}
+
 	float x;
 	float y;
 };
+
+}

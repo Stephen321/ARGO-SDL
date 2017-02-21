@@ -5,10 +5,12 @@
 #include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
+#include "AIComponent.h"
 #include "DestructionComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
 #include "ConstHolder.h"
+
 
 
 
@@ -65,6 +67,9 @@ Entity* EntityFactory::CreateEntity(EntityType t)
 	case EntityType::Flag:
 		entity = CreateFlagEntity();
 		break;
+	case EntityType::UI:
+		entity = CreateUIEntity();
+		break;
 
 	default:
 		break;
@@ -88,6 +93,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Camera, player);
+	_systemManager->AddEntity(SystemManager::SystemType::World, player);
 
 	return player;
 }
@@ -102,10 +108,12 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
+	ai->AddComponent(new AIComponent());
+
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, ai);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, ai);
-
+	_systemManager->AddEntity(SystemManager::SystemType::AI, ai);
 	return ai;
 }
 Entity* EntityFactory::CreateObstacleEntity()
@@ -218,7 +226,17 @@ Entity* EntityFactory::CreatePointEntity()
 {
 	Entity* point = new Entity(EntityType::Point);
 	point->AddComponent(new TransformComponent());
-	//_controlSystem->AddEntity(player);
 
 	return point;
+}
+
+Entity* EntityFactory::CreateUIEntity()
+{
+	Entity* ui = new Entity(EntityType::UI);
+	ui->AddComponent(new TransformComponent());
+	ui->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
+
+	_systemManager->AddEntity(SystemManager::SystemType::UI, ui);
+
+	return ui;
 }

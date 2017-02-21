@@ -14,15 +14,15 @@ SystemManager::~SystemManager()
 
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
+void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
-	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, width, height);
+ 	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, waypoints, width, height);
 	InitializeInteractionSystems();
 }
 
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);
@@ -43,14 +43,30 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	world->SetContactListener(collisionSystem);
 	_systems[SystemType::Collision] = collisionSystem;
 
+	//SETUP UI SYSTEM
+	UISystem* uiSystem = new UISystem(0);
+	uiSystem->Initialize(renderer, &cameraSystem->getCamera());
+	_systems[SystemType::UI] = uiSystem;
+
 	//SETUP GUN SYSTEM
 	GunSystem* gunSystem = new GunSystem(0);
 	gunSystem->Initialize(entities, entityFactory, bodyFactory);
 	_systems[SystemType::Gun] = gunSystem;
 
+	//SETUP AI SYSTEM
+	AISystem* aiSystem = new AISystem(0);
+	aiSystem->Initialize(waypoints);
+	_systems[SystemType::AI] = aiSystem;
+
+	//SETUP WORLD SYSTEM
+	WaypointSystem* waypointSystem = new WaypointSystem(0);
+	waypointSystem->Initialize(waypoints);
+	_systems[SystemType::World] = waypointSystem;
+
 	//SETUP Destroy SYSTEM
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
 	_systems[SystemType::Destruction] = destructionSystem;
+
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -73,8 +89,9 @@ void SystemManager::PostInitialize(std::vector<Entity*>& checkpoints)
 
 void SystemManager::Process(float dt)
 {
-	//Skip RenderSystem
+	//Skip RenderSystem and UI
 	SystemMapIterator it = _systems.begin();
+	it++;
 	it++;
 
 	TryToDestroy(it, dt);
@@ -166,7 +183,8 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 
 void SystemManager::Render(float dt)
 {
-	_systems[SystemType::Render]->Process();
+	_systems[SystemType::Render]->Process(dt);
+	_systems[SystemType::UI]->Process(dt);
 }
 
 
@@ -218,6 +236,17 @@ GunSystem* SystemManager::GetGunSystem()
 {
 	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
 	return gunSystem;
+}
+AISystem* SystemManager::GetAISystem()
+{
+	AISystem* aiSystem = static_cast<AISystem*>(_systems[SystemType::AI]);
+	return aiSystem;
+}
+
+UISystem * SystemManager::GetUISystem()
+{
+	UISystem* uiSystem = static_cast<UISystem*>(_systems[SystemType::UI]);
+	return uiSystem;
 }
 
 #pragma endregion

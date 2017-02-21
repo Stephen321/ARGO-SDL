@@ -21,13 +21,13 @@
 
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
-#include "GraphNode.h"
-#include "GraphArc.h"
 #include "Graph.h"
-
 #include "FunctionMaster.h"
 
 
+
+
+// Debug
 using namespace Camera2D;
 
 class Game : public EventListener, public Scene
@@ -78,10 +78,13 @@ private:
 
 	std::vector<Entity*>			_entities;
 
+	Graph							_waypoints;
+
 	SystemManager					_systemManager;
 	FunctionMaster					_functionMaster;
 
 	CurrentScene					_swapScene;
+
 };
 
 #endif

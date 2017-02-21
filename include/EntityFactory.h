@@ -31,6 +31,7 @@ private:
 	Entity*								CreateFlagEntity();
 	Entity*								CreateTileEntity();
 	Entity*								CreatePointEntity();
+	Entity*								CreateUIEntity();
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;

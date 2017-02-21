@@ -9,20 +9,18 @@
 #include "LTimer.h"
 
 #include <assert.h>
-
-
-//temp
 #include "GunComponent.h"
 #include "DestructionComponent.h"
 #include "FlagComponent.h"
-
 
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
+	, _waypoints()
 {
+
 }
 
 Game::~Game()
@@ -36,9 +34,9 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 	_running = true;
 
-	_world.SetAllowSleeping(false);
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
+	_world.SetAllowSleeping(false);
 
 	_entityFactory.Initialize(&_systemManager, &_textureHolder);
 	_bodyFactory.Initialize(&_world);
@@ -82,7 +80,6 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
 
-
 	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 	flagComponent->hasFlag = true;
 
@@ -91,6 +88,8 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
 
 
+
+	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
 
 
 	//shooting
@@ -112,9 +111,8 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Checkpoint] = loadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
-	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
+	
 }
 
 int Game::Update()
@@ -242,8 +240,17 @@ void Game::BindInput(Entity* player, Entity* weapon)
 
 void Game::DebugBox2D()
 {
-	//DEBUG
+	//DEBUG ASTAR
+	
+	//SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+
+	_waypoints.drawNodes(_renderer, &_systemManager.GetCamera());
+
+
+	_waypoints.drawArcs(_renderer, &_systemManager.GetCamera());
+	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{
@@ -257,11 +264,11 @@ void Game::DebugBox2D()
 			}
 			else if (t == EntityType::Checkpoint)
 			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
 			}
 			else if (t == EntityType::Point)
 			{
-				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
 			}
 			else if (t == EntityType::Flag)
 			{

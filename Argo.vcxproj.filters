@@ -49,6 +49,9 @@
     <Filter Include="Header Files\AStar">
       <UniqueIdentifier>{e3723ed2-31a1-44cd-abf8-2410b0fa5676}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AStar">
+      <UniqueIdentifier>{d40d044d-eac5-4ce9-89f0-17611edc615a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="include\EntityType.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\BasicTypes.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
     <ClInclude Include="include\GunSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -173,6 +179,18 @@
     </ClInclude>
     <ClInclude Include="include\Scene.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AISystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AIComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WaypointComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WaypointSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\DestructionComponent.h">
       <Filter>Header Files\Components</Filter>
@@ -196,6 +214,9 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\FlagCheckpointSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
@@ -277,6 +298,18 @@
     <ClCompile Include="src\CameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\AISystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphNode.cpp">
+      <Filter>Source Files\AStar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph.cpp">
+      <Filter>Source Files\AStar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WaypointSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="src\DestructionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
@@ -290,6 +323,9 @@
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="src\FlagCheckpointSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UISystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>

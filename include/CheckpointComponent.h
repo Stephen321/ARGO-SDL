@@ -8,6 +8,7 @@ class CheckpointComponent : public Component
 public:
 	CheckpointComponent(int i = -1)
 		: id(i)
+		, highlighted(false)
 		, Component::Component(Component::Type::Checkpoint)
 	{
 	}
