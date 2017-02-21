@@ -176,7 +176,9 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>&
 			ColliderComponent* collider = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
 			TransformComponent* transform = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
 
-			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
+			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), transform->rect.w, transform->rect.h };
+			//transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
+			//transform->origin = { (int)(w*0.5f), (int)(h*0.5f) };
 
 			b2Body* body = bf->CreateBoxBody(
 				b2BodyType::b2_dynamicBody
