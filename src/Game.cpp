@@ -9,19 +9,17 @@
 #include "LTimer.h"
 
 #include <assert.h>
-
-
-//temp
 #include "GunComponent.h"
 #include "DestructionComponent.h"
-
 
 Game::Game() 
 	: _running(false)
 	, _textureHolder(std::map<TextureID, SDL_Texture*>())
 	, _gravity(0.f, 0.f)
 	, _world(_gravity)
+	, _waypoints()
 {
+
 }
 
 Game::~Game()
@@ -35,7 +33,8 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 	_running = true;
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
+
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
 
 	_world.SetAllowSleeping(false);
 
@@ -86,9 +85,8 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory);
-	 //_levelLoader.LoadJson("Media/Json/Map2.json", _entities, _renderSystem, _textureHolder);
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
+	
 }
 
 int Game::Update()
@@ -216,7 +214,15 @@ void Game::BindInput(Entity* player, Entity* weapon)
 
 void Game::DebugBox2D()
 {
-	//DEBUG
+	//DEBUG ASTAR
+	
+	//SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+
+	_waypoints.drawNodes(_renderer, &_systemManager.GetCamera());
+
+
+	_waypoints.drawArcs(_renderer, &_systemManager.GetCamera());
+	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
@@ -232,11 +238,11 @@ void Game::DebugBox2D()
 			}
 			else if (t == EntityType::Checkpoint)
 			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
 			}
 			else if (t == EntityType::Point)
 			{
-				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+				SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
 			}
 			else if (t == EntityType::Flag)
 			{

@@ -3,57 +3,63 @@
 
 #include "GraphNode.h"
 #include <iostream>
-// -------------------------------------------------------
-// Name:        GraphArc
-// Description: This is the arc class. The arc class
-//              points to a graph node, and contains a 
-//              weight.
-// -------------------------------------------------------
+#include <list>
+#include "SDL.h" //for debuging
 
-template<class DataType, class NodeType, class ArcType>
+#include "Camera2D.h"
+using namespace Camera2D;
+using namespace helper;
+
 class GraphArc {
 private:
 
-// -------------------------------------------------------
-// Description: pointer to the node that the arc points to
-// -------------------------------------------------------
-	GraphNode<DataType, NodeType, ArcType>* m_pNode;
+	GraphNode* m_pNode;
 
-// -------------------------------------------------------
-// Description: Weight of the arc
-// -------------------------------------------------------
-    ArcType m_weight;
+    float m_weight;
 
-
-	//sf::Vertex m_line[2];
-
+	SDL_Point points[2];
+	SDL_Color _color;
 public:
 
-	/*
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const{
-		target.draw(m_line, 2, sf::Lines);
+	GraphArc() : m_pNode(nullptr){
+		_color = SDL_Color{ 255,255,255,255 };
 	}
 
-	void setLine(sf::Vector2f start, sf::Vector2f end){
-		m_line[0] = start;
-		m_line[1] = end;
+	virtual void draw(SDL_Renderer* renderer, Camera* camera) const {
+		SDL_SetRenderDrawColor(renderer, _color.r,_color.g,_color.b,_color.a);
+		SDL_Point drawPoint[2];
+		for (int i = 0; i < 2; i++)
+		{
+			Point point = { (float)points[i].x, (float)points[i].y };
+			point = camera->worldToScreen(point);
+			drawPoint[i].x = point.x;
+			drawPoint[i].y= point.y;
+		}
+		SDL_RenderDrawLines(renderer, drawPoint, 2);
 	}
-	*/
+
+	void setLine(helper::Vector2 start, helper::Vector2 end){
+		points[0] = { (int)start.x, (int)start.y };
+		points[1] = { (int)end.x, (int)end.y };
+	}
+	
     // Accessor functions
-    GraphNode<DataType, NodeType, ArcType>* node() const {
+	
+    GraphNode* node() const{
         return m_pNode;
     }
                               
-    ArcType weight() const {
+    float weight() const {
         return m_weight;
     }
     
     // Manipulator functions
-    void setNode(GraphNode<DataType, NodeType, ArcType>* pNode) {
+	
+    void setNode(GraphNode* pNode) {
 		m_pNode = pNode;
     }
     
-    void setWeight(ArcType weight) {
+    void setWeight(float weight) {
        m_weight = weight;
     }
     

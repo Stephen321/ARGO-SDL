@@ -5,11 +5,11 @@
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
 #include "GunSystem.h"
+#include "AISystem.h"
 #include "DestructionSystem.h"
 #include "UISystem.h"
 #include "WeaponSystem.h"
-
-
+#include "WaypointSystem.h"
 
 class SystemManager
 {
@@ -23,6 +23,8 @@ public:
 		Camera,
 		Collision,
 		Gun,
+		AI,
+		World,
 	};
 
 	enum class InteractionSystemType
@@ -37,8 +39,8 @@ public:
 										SystemManager();
 										~SystemManager();
 
-	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
+	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
+	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);
@@ -57,6 +59,8 @@ public:
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
 	UISystem*							GetUISystem();
+	AISystem*							GetAISystem();
+
 	WeaponSystem*						GetWeaponInteractionSystem();
 
 	Camera2D::Camera&					GetCamera();

@@ -199,6 +199,10 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="include\AIComponent.h" />
+    <ClInclude Include="include\AISystem.h" />
+    <ClInclude Include="include\BasicTypes.h" />
     <ClInclude Include="include\About.h" />
     <ClInclude Include="include\BodyFactory.h" />
     <ClInclude Include="include\Camera2D.h" />
@@ -228,6 +232,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
+    <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\PhysicsComponent.h" />
@@ -243,6 +248,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\UISystem.h" />
     <ClInclude Include="include\Vector2.h" />
+    <ClInclude Include="include\WaypointSystem.h" />
     <ClInclude Include="include\WeaponSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +261,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </Xml>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AISystem.cpp" />
     <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
@@ -266,6 +273,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\FLInputManager.cpp" />
     <ClCompile Include="src\FunctionMaster.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
+    <ClCompile Include="src\GraphNode.cpp" />
     <ClCompile Include="src\GunSystem.cpp" />
     <ClCompile Include="src\InteractionSystem.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
@@ -283,6 +292,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
     <ClCompile Include="src\UISystem.cpp" />
+    <ClCompile Include="src\WaypointSystem.cpp" />
     <ClCompile Include="src\WeaponSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
