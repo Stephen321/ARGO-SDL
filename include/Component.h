@@ -15,6 +15,8 @@ public:
 		Control,
 		Gun,
 		Destroy,
+		Checkpoint,
+		Flag,
 	};
 
 public:

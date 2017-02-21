@@ -2,6 +2,7 @@
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
+#include "CheckpointComponent.h"
 #include "Helpers.h"
 
 void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory)
@@ -72,7 +73,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 			}
 			index++;
 
-			entities.push_back(tile); 
+		//	entities.push_back(tile); 
 		}
 	}
 
@@ -81,6 +82,9 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	const Value& entitylayer = layerArray[1];
 	const Value& entityDataArray = entitylayer["objects"];
 	bool createPlayer = false;
+
+	int checkpointID = 0;
+
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
@@ -119,8 +123,11 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 		}
 		else if (entityName == "Checkpoint")
 		{
+			checkpointID++;
 			Entity* checkpoint = entityFactory->CreateEntity(EntityType::Checkpoint);
 			ColliderComponent* collider = static_cast<ColliderComponent*>(checkpoint->GetComponent(Component::Type::Collider));
+			CheckpointComponent* checkpointComponent = static_cast<CheckpointComponent*>(checkpoint->GetComponent(Component::Type::Checkpoint));
+			checkpointComponent->id = checkpointID;
 
 			b2Body* body = bodyFactory->CreateBoxBody(
 				b2BodyType::b2_staticBody

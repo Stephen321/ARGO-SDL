@@ -58,6 +58,14 @@ void SystemManager::InitializeInteractionSystems()
 	WeaponSystem* weaponSystem = new WeaponSystem(0);
 	weaponSystem->Initialize(&GetCamera());
 	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
+
+	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(0);
+	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
+}
+void SystemManager::PostInitialize(std::vector<Entity*>& checkpoints)
+{
+	//SETUP FLAG INTERACTION SYSTEM
+	GetFlagCheckpointSystem()->Initialize(checkpoints);
 }
 
 #pragma endregion
@@ -118,10 +126,6 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		//Implement Later
 		break;
-	case EntityType::Wall:
-		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
-		//Implement Later
-		break;
 	case EntityType::Tile:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		//Implement Later
@@ -175,6 +179,19 @@ void SystemManager::AddEntity(InteractionSystemType type, Entity* actor, Entity*
 	_interactionSystems[type]->AddEntity(actor, item);
 }
 
+void SystemManager::RemoveEntity(SystemType type, Entity* entity)
+{
+	_systems[type]->RemoveEntity(entity->GetType(), entity);
+}
+void SystemManager::RemoveEntity(InteractionSystemType type, Entity* actor, Entity* item)
+{
+	_interactionSystems[type]->RemoveEntity(actor, item);
+}
+void SystemManager::RemoveEntity(InteractionSystemType type, Entity* entity, bool firstItem)
+{
+	_interactionSystems[type]->RemoveEntity(entity, firstItem);
+}
+
 #pragma region Get Systems
 
 RenderSystem* SystemManager::GetRenderSystem()
@@ -211,6 +228,12 @@ WeaponSystem* SystemManager::GetWeaponInteractionSystem()
 {
 	WeaponSystem* weaponInteractionSystemType = static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon]);
 	return weaponInteractionSystemType;
+}
+
+FlagCheckpointSystem* SystemManager::GetFlagCheckpointSystem()
+{
+	FlagCheckpointSystem* flagInteractionSystemType = static_cast<FlagCheckpointSystem*>(_interactionSystems[InteractionSystemType::Flag]);
+	return flagInteractionSystemType;
 }
 
 #pragma endregion
