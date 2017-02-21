@@ -1,27 +1,29 @@
 #include "Net.h"
-#include <unordered_map>
-#include <time.h>
 #include "Session.h"
 
 using namespace Network;
 
-typedef std::vector<int, IPaddress>::const_iterator SpectatorIterator;
-bool exists(const std::vector<int, IPaddress>& spectators, const IPaddress& ip)
+struct Spectator {
+	int playerID;
+	IPaddress address;
+};
+
+bool exists(const std::vector<Spectator>& spectators, const IPaddress& ip)
 {
-	for (SpectatorIterator it = spectators.begin(); it != spectators.end(); ++it)
+	for (std::vector<Spectator>::const_iterator it = spectators.begin(); it != spectators.end(); ++it)
 	{
-		if (it->second.host == ip.host &&
-			it->second.port == ip.port)
+		if (it->address.host == ip.host &&
+			it->address.port == ip.port)
 			return true;
 	}
 	return false;
 }
 
-bool exists(const std::vector<int, IPaddress>& spectators, int id)
+bool exists(const std::vector<Spectator>& spectators, int id)
 {
-	for (SpectatorIterator it = spectators.begin(); it != spectators.end(); ++it)
+	for (std::vector<Spectator>::const_iterator it = spectators.begin(); it != spectators.end(); ++it)
 	{
-		if (it->first == id)
+		if (it->playerID == id)
 			return true;
 	}
 	return false;
@@ -29,13 +31,13 @@ bool exists(const std::vector<int, IPaddress>& spectators, int id)
 
 int main(int argc, char** argv)
 {
-	typedef std::unordered_map<int, Session>::const_iterator SessionIterator;
+	typedef std::unordered_map<int, Session> SessionMap;
 
 	SDLNet_Init();
 
 	const int MAX_PLAYERS = 4;
-	std::vector<int, IPaddress> spectators;
-	std::unordered_map<int, Session> sessions;
+	std::vector<Spectator> spectators;
+	SessionMap sessions;
 
 	Net net(5228);
 
@@ -61,11 +63,15 @@ int main(int argc, char** argv)
 						data->id = playerCount++;
 						std::cout << "Spectator added. ID assigned: " << data->id << std::endl;
 					}
-					spectators.push_back(std::pair<int, IPaddress>(data->id, srcAddr));
+					Spectator s;
+					s.playerID = data->id;
+					s.address = srcAddr;
+					spectators.push_back(s);
+
 					SessionListData sessionData;
 					sessionData.count = sessions.size();
 					sessionData.maxPlayers = MAX_PLAYERS;
-					for (SessionIterator it = sessions.begin(); it != sessions.end(); ++it)
+					for (SessionMap::iterator it = sessions.begin(); it != sessions.end(); ++it)
 					{
 						sessionData.sessionIDs.push_back(it->first);
 						sessionData.currentPlayers.push_back(it->second.GetPlayerCount());
@@ -81,7 +87,6 @@ int main(int argc, char** argv)
 		}
 	};
 
-	system("PAUSE");
 	SDLNet_Quit();
 	return 0;
 }
