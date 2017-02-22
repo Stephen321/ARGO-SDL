@@ -64,3 +64,31 @@ std::string Network::Net::ReadString(int & byteOffset)
 	}
 	return ss.str();
 }
+
+std::string Network::Net::GetTypeAsString(MessageType type)
+{
+	std::string s;
+
+	switch (type)
+	{
+	case MessageType::Connect:
+		s = "Connect";
+		break;
+	case MessageType::Disconnect:
+		s = "Disconnect";
+		break;
+	case MessageType::SessionList:
+		s = "SessionList";
+		break;
+	case MessageType::State:
+		s = "State";
+		break;
+	case MessageType::JoinSession:
+		s = "JoinSession";
+		break;
+	case MessageType::SetHost:
+		s = "SetHost";
+		break;
+	}
+	return s;
+}

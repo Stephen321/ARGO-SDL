@@ -10,13 +10,14 @@ namespace Network
 		Connect,
 		Disconnect,
 		State,
-		SessionList
+		SessionList,
+		JoinSession,
+		SetHost
 	};
 
 	struct MessageData {
 		float ts;
 		int length;
-		IPaddress srcAddress;
 		MessageType GetType() const {
 			return type;
 		}
@@ -39,7 +40,9 @@ namespace Network
 	};
 
 	struct DisconnectData : MessageData {
-		DisconnectData() { type = MessageType::Disconnect; }
+		DisconnectData() : id(-1), sessionID(-1) { type = MessageType::Disconnect; }
+		int id;
+		int sessionID;
 	};
 
 	struct SessionListData : MessageData {
@@ -49,6 +52,19 @@ namespace Network
 		std::vector<int> sessionIDs;
 		std::vector<int> currentPlayers;
 	};
+
+	struct JoinSessionData : MessageData {
+		JoinSessionData() : id(-1), sessionID(-1) { type = MessageType::JoinSession; }
+		int id;
+		int sessionID;
+	};
+
+	struct SetHostData : MessageData {
+		SetHostData() { type == MessageType::SetHost; }
+	};
+
+	//id in MessageData?
+	//sessionId in MessageData?
 
 	class ReceivedData {
 	public:
@@ -66,22 +82,32 @@ namespace Network
 			{ //template specialization to use enum type in order to determine Type
 			case MessageType::Connect:
 			{
-				_data = new ConnectData(*rhs.GetData<ConnectData>());
+				_data = new ConnectData(rhs.GetData<ConnectData>());
 				break;
 			}
 			case MessageType::Disconnect:
 			{
-				_data = new DisconnectData(*rhs.GetData<DisconnectData>());
+				_data = new DisconnectData(rhs.GetData<DisconnectData>());
 				break;
 			}
 			case MessageType::State:
 			{
-				_data = new StateData(*rhs.GetData<StateData>());
+				_data = new StateData(rhs.GetData<StateData>());
 				break;
 			}
 			case MessageType::SessionList:
 			{
-				_data = new SessionListData(*rhs.GetData<SessionListData>());
+				_data = new SessionListData(rhs.GetData<SessionListData>());
+				break;
+			}
+			case MessageType::JoinSession:
+			{
+				_data = new JoinSessionData(rhs.GetData<JoinSessionData>());
+				break;
+			}
+			case MessageType::SetHost:
+			{
+				_data = new SetHostData(rhs.GetData<SetHostData>());
 				break;
 			}
 			}
@@ -112,13 +138,24 @@ namespace Network
 			return _data->GetType();
 		}
 
-		template <typename T>
-		T* GetData() const
+		IPaddress GetSrcAddress() const
 		{
-			return static_cast<T*>(_data);
+			return _srcAddress;
+		}
+
+		void SetSrcAddress(const IPaddress& srcAddress)
+		{
+			_srcAddress = srcAddress;
+		}
+
+		template <typename T>
+		T GetData() const
+		{
+			return *static_cast<T*>(_data);
 		}
 
 	private:
+		IPaddress	_srcAddress;
 		MessageData* _data;
 	};
 
@@ -158,6 +195,8 @@ namespace Network
 			case MessageType::Disconnect:
 			{
 				DisconnectData* ddata = (DisconnectData*)data;
+				WriteInt(ddata->id);
+				WriteInt(ddata->sessionID);
 				break;
 			}
 			case MessageType::State:
@@ -182,11 +221,18 @@ namespace Network
 				}
 				break;
 			}
+			case MessageType::JoinSession:
+			{
+				JoinSessionData* jsdata = (JoinSessionData*)data;
+				WriteInt(jsdata->id);
+				WriteInt(jsdata->sessionID);
+				break;
 			}
+		}
 
 			_packet->address.host = destAddr.host;
 			_packet->address.port = destAddr.port;
-			std::cout << "Sending to: " << destAddr.host << ":" << destAddr.port << std::endl;
+			std::cout << "Sending a " << GetTypeAsString(type).c_str() << " packet to: " << destAddr.host << ":" << destAddr.port << std::endl;
 			//_packet->len--;
 			if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
 				std::cout << "Failed to send packet." << std::endl;
@@ -197,6 +243,7 @@ namespace Network
 			ReceivedData receiveData;
 			if (SDLNet_UDP_Recv(_socket, _packet) > 0)
 			{
+				receiveData.SetSrcAddress(_packet->address);
 				int byteOffset = 0;
 				MessageType type = (MessageType)ReadInt(byteOffset);
 
@@ -206,14 +253,14 @@ namespace Network
 				{
 					ConnectData data;
 					data.id = ReadInt(byteOffset);
-					data.srcAddress = _packet->address;
 					receiveData.SetData(data);
 					break;
 				}
 				case MessageType::Disconnect:
 				{
 					DisconnectData data;
-					data.srcAddress = _packet->address;
+					data.id = ReadInt(byteOffset);
+					data.sessionID = ReadInt(byteOffset);
 					receiveData.SetData(data);
 					break;
 
@@ -226,7 +273,6 @@ namespace Network
 					data.yPos = ReadFloat(byteOffset);
 					data.xVel = ReadFloat(byteOffset);
 					data.yVel = ReadFloat(byteOffset);
-					data.srcAddress = _packet->address;
 					receiveData.SetData(data);
 					break;
 				}
@@ -240,6 +286,21 @@ namespace Network
 						data.sessionIDs.push_back(ReadInt(byteOffset));
 						data.currentPlayers.push_back(ReadInt(byteOffset));
 					}
+					receiveData.SetData(data);
+					break;
+				}
+				case MessageType::JoinSession:
+				{
+					JoinSessionData data;
+					data.id = ReadInt(byteOffset);
+					data.sessionID = ReadInt(byteOffset);
+					receiveData.SetData(data);
+					break;
+				}
+				case MessageType::SetHost:
+				{
+					SetHostData data;
+					receiveData.SetData(data);
 					break;
 				}
 				}
@@ -252,9 +313,9 @@ namespace Network
 		int ReadInt(int& byteOffset);
 		void WriteFloat(float valueF);
 		float ReadFloat(int & byteOffset);
-
 		void WriteString(std::string& s);
 		std::string ReadString(int& byteOffset);
+		std::string GetTypeAsString(MessageType type);
 
 		UDPpacket* _packet;
 		UDPsocket _socket;

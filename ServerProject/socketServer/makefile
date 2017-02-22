@@ -1,4 +1,4 @@
-OBJS = Net.cpp main.cpp
+OBJS = Net.cpp Session.cpp main.cpp
 CC = g++
 COMPILER_FLAGS = -w -std=c++11
 INCLUDE_FLAGS =#-I./Dependencies/SDL2-2.0.4/include -I./Dependencies/SDL2_net-2.0.1/include

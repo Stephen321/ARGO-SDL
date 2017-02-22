@@ -1,15 +1,16 @@
 #pragma once
 
-#include <SDL2/SDL_net.h>
 #include <iostream>
+#include <vector>
+#include <SDL2/SDL_net.h>
 
-class Net
+namespace Network
 {
-public:
 	enum class MessageType : Uint8 {
 		Connect,
 		Disconnect,
-		State
+		State,
+		SessionList
 	};
 
 	struct MessageData {
@@ -32,12 +33,21 @@ public:
 		float yVel;
 	};
 	struct ConnectData : MessageData {
-		ConnectData() : id(-1) { type = MessageType::Connect; }
+		ConnectData() : id(-1), level(0) { type = MessageType::Connect; }
 		int id;
+		int level;
 	};
 
 	struct DisconnectData : MessageData {
 		DisconnectData() { type = MessageType::Disconnect; }
+	};
+
+	struct SessionListData : MessageData {
+		SessionListData() { type = MessageType::SessionList; }
+		int count;
+		int maxPlayers;
+		std::vector<int> sessionIDs;
+		std::vector<int> currentPlayers;
 	};
 
 	class ReceivedData {
@@ -54,21 +64,26 @@ public:
 			}
 			switch (rhs._data->GetType())
 			{ //template specialization to use enum type in order to determine Type
-				case MessageType::Connect:
-				{
-					_data = new ConnectData(*rhs.GetData<ConnectData>());
-					break;
-				}
-				case MessageType::Disconnect:
-				{
-					_data = new DisconnectData(*rhs.GetData<DisconnectData>());
-					break;
-				}
-				case MessageType::State:
-				{
-					_data = new StateData(*rhs.GetData<StateData>());
-					break;
-				}
+			case MessageType::Connect:
+			{
+				_data = new ConnectData(*rhs.GetData<ConnectData>());
+				break;
+			}
+			case MessageType::Disconnect:
+			{
+				_data = new DisconnectData(*rhs.GetData<DisconnectData>());
+				break;
+			}
+			case MessageType::State:
+			{
+				_data = new StateData(*rhs.GetData<StateData>());
+				break;
+			}
+			case MessageType::SessionList:
+			{
+				_data = new SessionListData(*rhs.GetData<SessionListData>());
+				break;
+			}
 			}
 		}
 
@@ -107,29 +122,33 @@ public:
 		MessageData* _data;
 	};
 
-	Net(int port, int packetSize = 256);
-
-	void Send(MessageData* data, const char * destHost, int destPort)
+	class Net
 	{
-		IPaddress destAddr;
-		SDLNet_ResolveHost(&destAddr, destHost, destPort);
-		Send(data, destAddr);
-	}
+	public:
+		Net(int port, int packetSize = 256);
 
-	void Send(MessageData* data, IPaddress destAddr)
-	{
-		if (!data)
+		void Send(MessageData* data, const char * destHost, int destPort)
 		{
-			std::cout << "Send tried to send nullptr" << std::endl;
-			return;
+			IPaddress destAddr;
+			SDLNet_ResolveHost(&destAddr, destHost, destPort);
+			Send(data, destAddr);
 		}
 
-		MessageType type = data->GetType();
-		_packet->len = 0;
-		WriteInt((Uint8)type); 
-
-		switch (type)
+		void Send(MessageData* data, IPaddress destAddr)
 		{
+			if (!data)
+			{
+				std::cout << "Send tried to send nullptr" << std::endl;
+				return;
+			}
+
+			MessageType type = data->GetType();
+			_packet->len = 0;
+			WriteInt((Uint8)type);
+
+			int v = 0;
+			switch (type)
+			{
 			case MessageType::Connect:
 			{
 				ConnectData* cdata = (ConnectData*)data;
@@ -151,26 +170,38 @@ public:
 				WriteFloat(sdata->yVel);
 				break;
 			}
+			case MessageType::SessionList:
+			{
+				SessionListData* sldata = (SessionListData*)data;
+				WriteInt(sldata->count);
+				WriteInt(sldata->maxPlayers);
+				for (int i = 0; i < sldata->count; i++)
+				{
+					WriteInt(sldata->sessionIDs[i]);
+					WriteInt(sldata->currentPlayers[i]);
+				}
+				break;
+			}
+			}
+
+			_packet->address.host = destAddr.host;
+			_packet->address.port = destAddr.port;
+			std::cout << "Sending to: " << destAddr.host << ":" << destAddr.port << std::endl;
+			//_packet->len--;
+			if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
+				std::cout << "Failed to send packet." << std::endl;
 		}
 
-		_packet->address.host = destAddr.host;
-		_packet->address.port = destAddr.port;
-		std::cout << "Sending to: " << destAddr.host << ":" << destAddr.port << std::endl;
-		_packet->len--;
-		if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
-			std::cout << "Failed to send packet." << std::endl;
-	}
-	
-	ReceivedData Receive()
-	{
-		ReceivedData receiveData;
-		if (SDLNet_UDP_Recv(_socket, _packet) > 0)
+		ReceivedData Receive()
 		{
-			int byteOffset = 0;
-			MessageType type = (MessageType)ReadInt(byteOffset);
-
-			switch (type)
+			ReceivedData receiveData;
+			if (SDLNet_UDP_Recv(_socket, _packet) > 0)
 			{
+				int byteOffset = 0;
+				MessageType type = (MessageType)ReadInt(byteOffset);
+
+				switch (type)
+				{
 				case MessageType::Connect:
 				{
 					ConnectData data;
@@ -199,20 +230,33 @@ public:
 					receiveData.SetData(data);
 					break;
 				}
+				case MessageType::SessionList:
+				{
+					SessionListData data;
+					data.count = ReadInt(byteOffset);
+					data.maxPlayers = ReadInt(byteOffset);
+					for (int i = 0; i < data.count; i++)
+					{ //is order the same?
+						data.sessionIDs.push_back(ReadInt(byteOffset));
+						data.currentPlayers.push_back(ReadInt(byteOffset));
+					}
+					break;
+				}
+				}
 			}
+			return receiveData;
 		}
-		return receiveData;
-	}
 
-private:
-	void WriteInt(int value);
-	int ReadInt(int& byteOffset);
-	void WriteFloat(float valueF);
-	float ReadFloat(int & byteOffset);
+	private:
+		void WriteInt(int value);
+		int ReadInt(int& byteOffset);
+		void WriteFloat(float valueF);
+		float ReadFloat(int & byteOffset);
 
-	void WriteString(std::string& s);
-	std::string ReadString(int& byteOffset);
+		void WriteString(std::string& s);
+		std::string ReadString(int& byteOffset);
 
-	UDPpacket* _packet;
-	UDPsocket _socket;
-};
+		UDPpacket* _packet;
+		UDPsocket _socket;
+	};
+}
