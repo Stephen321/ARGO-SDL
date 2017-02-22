@@ -44,9 +44,9 @@ void NetSystem::Process(float dt)
 			switch (receiveData.GetType())
 			{
 			case MessageType::Connect:
-				ConnectData* data = receiveData.GetData<ConnectData>();
+				ConnectData data = receiveData.GetData<ConnectData>();
 				NetComponent* remote = static_cast<NetComponent*>(_entities[EntityType::Player].at(0)->GetComponent(Component::Type::Net));
-				remote->id = data->id;
+				remote->id = data.id;
 				std::cout << "ID is: " << remote->id << std::endl;
 			}
 		}

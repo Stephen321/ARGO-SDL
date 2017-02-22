@@ -5,41 +5,40 @@
 #include "LTimer.h"
 
 Options::Options()
-	: _running(false)
-	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
+	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_running = false;
+	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
 
 Options::~Options()
 {
 }
 
-void Options::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
+void Options::Initialize(SDL_Renderer* renderer)
 {
-	_window = window;
 	_renderer = renderer;
 	_running = true;
-	_swapScene = CurrentScene::options;
+	_swapScene = CurrentScene::OPTIONS;
 
-	_cameraSystem.Initialize(width, height);
+	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Text
-	TTF_Init();
-	_fontSize = 32;
-	_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	_surface = std::vector<SDL_Surface*>();
-	_textTexture = std::vector<SDL_Texture*>();
-	_textRectangle = std::vector<SDL_Rect>();
+	//TTF_Init();
+	//_fontSize = 32;
+	//_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
+	//_surface = std::vector<SDL_Surface*>();
+	//_textTexture = std::vector<SDL_Texture*>();
+	//_textRectangle = std::vector<SDL_Rect>();
 
-	CreateText("Options", 25, 450);
+	//CreateText("Options", 25, 450);
 
-	TTF_CloseFont(_font); // Free Font Memory
+	//TTF_CloseFont(_font); // Free Font Memory
 
-						  //Input
+	//Input
 	BindInput();
 }
 
@@ -55,7 +54,7 @@ int Options::Update()
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
-	return _swapScene;
+	return (int)_swapScene;
 }
 
 void Options::Render()
@@ -73,14 +72,30 @@ void Options::Render()
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
 
-	// Text
-	for (int i = 0; i < _textTexture.size(); i++)
-	{
-		SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
-	}
+	//// Text
+	//for (int i = 0; i < _textTexture.size(); i++)
+	//{
+	//	SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
+	//}
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+bool Options::IsRunning()
+{
+	if (_swapScene != CurrentScene::OPTIONS) { _swapScene = CurrentScene::OPTIONS; }
+	return _running;
+}
+
+void Options::Start()
+{
+
+}
+
+void Options::Stop()
+{
+
 }
 
 void Options::OnEvent(EventListener::Event evt)
@@ -95,11 +110,21 @@ void Options::OnEvent(EventListener::Event evt)
 	}
 }
 
-bool Options::IsRunning()
+void Options::LoadContent()
 {
-	if (_swapScene != CurrentScene::options) { _swapScene = CurrentScene::options; }
-	return _running;
+
 }
+
+void Options::CleanUp()
+{
+	//DESTROY HERE
+
+	//SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
+}
+
+
 
 void Options::BindInput()
 {
@@ -107,48 +132,4 @@ void Options::BindInput()
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
-}
-
-void Options::CreateText(string message, int x, int y)
-{
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
-	_surface.push_back(surface);
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
-
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
-
-	SDL_Rect textRectangle;
-	textRectangle.x = x;
-	textRectangle.y = y;
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
-
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
-}
-
-void Options::CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
-{
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
-	_surface.push_back(surface);
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
-
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
-
-	SDL_Rect textRectangle;
-	textRectangle.x = x;
-	textRectangle.y = y;
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
-
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
 }

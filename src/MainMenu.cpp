@@ -4,14 +4,18 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
+#include "TransformComponent.h"
+#include "SpriteComponent.h"
+
 MainMenu::MainMenu()
-	: _running(false)
-	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
+	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
+	, _uiSystem(0)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_running = false;
+	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
 
 
@@ -19,33 +23,41 @@ MainMenu::~MainMenu()
 {
 }
 
-void MainMenu::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
+void MainMenu::Initialize(SDL_Renderer* renderer)
 {
-	_window = window;
 	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::MAIN_MENU;
 
-	_cameraSystem.Initialize(width, height);
-
-	// Text
-	TTF_Init();
-	_fontSize = 32;
-	_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	_surface = std::vector<SDL_Surface*>();
-	_textTexture = std::vector<SDL_Texture*>();
-	_textRectangle = std::vector<SDL_Rect>();
 	_selectedItemIndex = 0;
 
-	CreateText("Arcade Mode", 25, 450);
-	CreateText("Multiplayer",	_textRectangle[0].x + _textRectangle[0].w / 2, _textRectangle[0].y + 100);
-	CreateText("Options",		_textRectangle[1].x + _textRectangle[1].w / 2, _textRectangle[1].y + 100);
-	CreateText("About",			_textRectangle[2].x + _textRectangle[2].w / 2, _textRectangle[2].y + 100);
-	CreateText("Quit",			_textRectangle[3].x + _textRectangle[3].w / 2, _textRectangle[3].y + 100);
+	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_uiSystem.Initialize(_renderer);
 
-	CreateTextColoured(">", _textRectangle[0].x + _textRectangle[0].w + 50, _textRectangle[0].y, 255, 0, 0, 255);
 
-	TTF_CloseFont(_font); // Free Font Memory
+	SDL_Rect rect = SDL_Rect();
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 1;
+	rect.h = 1;
+
+
+	Entity* ui = new Entity(EntityType::UI);
+	//ui->AddComponent(new TransformComponent(rect, 1, 1));
+	//ui->AddComponent(new SpriteComponent(_textureHolder[TextureID::UI]));
+	_uiSystem.AddEntity(ui);
+
+
+	// Text
+	_uiSystem.CreateText("Arcade Mode",	25, 450);
+	_uiSystem.CreateText("Multiplayer",		_uiSystem._textRectangle[0].x + _uiSystem._textRectangle[0].w / 2, _uiSystem._textRectangle[0].y + 100);
+	_uiSystem.CreateText("Options",			_uiSystem._textRectangle[1].x + _uiSystem._textRectangle[1].w / 2, _uiSystem._textRectangle[1].y + 100);
+	_uiSystem.CreateText("About",			_uiSystem._textRectangle[2].x + _uiSystem._textRectangle[2].w / 2, _uiSystem._textRectangle[2].y + 100);
+	_uiSystem.CreateText("Quit",			_uiSystem._textRectangle[3].x + _uiSystem._textRectangle[3].w / 2, _uiSystem._textRectangle[3].y + 100);
+
+	_uiSystem.CreateTextColoured(">",		_uiSystem._textRectangle[0].x + _uiSystem._textRectangle[0].w + 50, _uiSystem._textRectangle[0].y, 255, 0, 0, 255);
+
+	//TTF_CloseFont(_font); // Free Font Memory
 	
 	//Input
 	BindInput();
@@ -63,7 +75,7 @@ int MainMenu::Update()
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
-	return _swapScene;
+	return (int)_swapScene;
 }
 
 void MainMenu::Render()
@@ -81,14 +93,26 @@ void MainMenu::Render()
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
 
-	// Text
-	for (int i = 0; i < _textTexture.size(); i++)
-	{
-		SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
-	}
+	_uiSystem.Process(0);
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+bool MainMenu::IsRunning()
+{
+	if (_swapScene != CurrentScene::MAIN_MENU) { _swapScene = CurrentScene::MAIN_MENU; }
+	return _running;
+}
+
+void MainMenu::Start()
+{
+
+}
+
+void MainMenu::Stop()
+{
+
 }
 
 void MainMenu::OnEvent(EventListener::Event evt)
@@ -103,17 +127,27 @@ void MainMenu::OnEvent(EventListener::Event evt)
 	}
 }
 
-bool MainMenu::IsRunning()
+void MainMenu::LoadContent()
 {
-	if (_swapScene != CurrentScene::MAIN_MENU) { _swapScene = CurrentScene::MAIN_MENU; }
-	return _running;
+
 }
+
+void MainMenu::CleanUp()
+{
+	//DESTROY HERE
+
+	//SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
+}
+
+
 
 void MainMenu::BindInput()
 {
 	Command* enterIn = new InputCommand([&]() 
 	{ 
-		if (_selectedItemIndex + 1 == _textRectangle.size() - 1) { _running = false; }
+		if (_selectedItemIndex + 1 == _uiSystem._textRectangle.size() - 1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 	}, Type::Press);
 
@@ -128,50 +162,6 @@ void MainMenu::BindInput()
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
-void MainMenu::CreateText(string message, int x, int y)
-{
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
-	_surface.push_back(surface);
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
-
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
-
-	SDL_Rect textRectangle;
-	textRectangle.x = x; 
-	textRectangle.y = y; 
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
-
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
-}
-
-void MainMenu::CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
-{
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
-	_surface.push_back(surface);
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
-
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
-
-	SDL_Rect textRectangle;
-	textRectangle.x = x;
-	textRectangle.y = y;
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
-
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
-}
-
 void MainMenu::MoveUp()
 {
 	if (_selectedItemIndex - 1 >= 0)
@@ -182,15 +172,15 @@ void MainMenu::MoveUp()
 	else
 	{
 		// _textRectangle.size() - 2 = 1 before icon
-		_selectedItemIndex = _textRectangle.size() - 2;
+		_selectedItemIndex = _uiSystem._textRectangle.size() - 2;
 	}
-	_textRectangle.back().x = _textRectangle[_selectedItemIndex].x + _textRectangle[_selectedItemIndex].w + 50;
-	_textRectangle.back().y = _textRectangle[_selectedItemIndex].y;
+	_uiSystem._textRectangle.back().x = _uiSystem._textRectangle[_selectedItemIndex].x + _uiSystem._textRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._textRectangle.back().y = _uiSystem._textRectangle[_selectedItemIndex].y;
 }
 
 void MainMenu::MoveDown()
 {
-	if (_selectedItemIndex + 1 < _textRectangle.size() - 1)
+	if (_selectedItemIndex + 1 < _uiSystem._textRectangle.size() - 1)
 	{
 		_selectedItemIndex++;
 	}
@@ -199,8 +189,8 @@ void MainMenu::MoveDown()
 	{
 		_selectedItemIndex = 0;
 	}
-	_textRectangle.back().x = _textRectangle[_selectedItemIndex].x + _textRectangle[_selectedItemIndex].w + 50;
-	_textRectangle.back().y = _textRectangle[_selectedItemIndex].y;
+	_uiSystem._textRectangle.back().x = _uiSystem._textRectangle[_selectedItemIndex].x + _uiSystem._textRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._textRectangle.back().y = _uiSystem._textRectangle[_selectedItemIndex].y;
 }
 
 int MainMenu::GetPressedItem()

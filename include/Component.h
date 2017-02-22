@@ -13,8 +13,12 @@ public:
 		Collider,
 		Sprite,
 		Control,
+		AI,
 		Gun,
 		Destroy,
+		UI,
+		Checkpoint,
+		Flag,
 		Net
 	};
 

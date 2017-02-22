@@ -67,9 +67,6 @@ std::string Entity::GetTypeAsString() const
 	case EntityType::Checkpoint:
 		s = "Checkpoint";
 		break;
-	case EntityType::Wall:
-		s = "Wall";
-		break;
 	case EntityType::Tile:
 		s = "Tile";
 		break;
