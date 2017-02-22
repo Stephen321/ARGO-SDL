@@ -39,7 +39,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	_systems[SystemType::Physics] = physicsSystem;
 
 	//SETUP COLLISION SYSTEM
-	CollisionSystem* collisionSystem = new CollisionSystem(COLLISION_SYSTEM_UPDATE);
+	CollisionSystem* collisionSystem = new CollisionSystem(_interactionSystemEvents, COLLISION_SYSTEM_UPDATE);
 	world->SetContactListener(collisionSystem);
 	_systems[SystemType::Collision] = collisionSystem;
 
@@ -71,21 +71,21 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 void SystemManager::InitializeInteractionSystems()
 {
 	//SETUP WEAPON INTERACTION SYSTEM
-	WeaponSystem* weaponSystem = new WeaponSystem(0);
+	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
 	weaponSystem->Initialize(&GetCamera());
 	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
 
-	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(0);
+	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
 	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
 }
+
+#pragma endregion
+
 void SystemManager::PostInitialize(std::vector<Entity*>& checkpoints)
 {
 	//SETUP FLAG INTERACTION SYSTEM
 	GetFlagCheckpointSystem()->Initialize(checkpoints);
 }
-
-#pragma endregion
-
 
 void SystemManager::Process(float dt)
 {

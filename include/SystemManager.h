@@ -11,6 +11,7 @@
 #include "WeaponSystem.h"
 #include "FlagCheckpointSystem.h"
 #include "WaypointSystem.h"
+#include "InteractionSystemEvents.h"
 
 
 class SystemManager
@@ -78,5 +79,8 @@ private:
 	std::map<InteractionSystemType, 
 		InteractionSystem*>				_interactionSystems;
 	std::map<SystemType, System*>		_systems;
+	std::map<InteractionSystemEvent, 
+		std::vector<
+		std::pair<Entity*, Entity*>>>	_interactionSystemEvents;
 };
 

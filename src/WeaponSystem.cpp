@@ -4,8 +4,10 @@
 
 
 
-WeaponSystem::WeaponSystem(float updateRate)
+WeaponSystem::WeaponSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate)
 	: InteractionSystem(updateRate)
+	, _interactionSystemEvents(events)
+	, WEAPON_CREATED(InteractionSystemEvent::WeaponCreated)
 {
 }
 
@@ -26,6 +28,8 @@ void WeaponSystem::Process(float dt)
 	if (_canUpdate)
 	{
 		_canUpdate = false;
+
+		ListenForEvents();
 
 		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
@@ -50,5 +54,22 @@ void WeaponSystem::Process(float dt)
 				transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 			}
 		}
+	}
+}
+
+void WeaponSystem::ListenForEvents()
+{
+	WeaponCreationEvent();
+}
+void WeaponSystem::WeaponCreationEvent()
+{
+	if (!_interactionSystemEvents[WEAPON_CREATED].empty())
+	{
+		for (int i = 0; i < _interactionSystemEvents[WEAPON_CREATED].size(); i++)
+		{
+			AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
+		}
+
+		_interactionSystemEvents[WEAPON_CREATED].clear();
 	}
 }

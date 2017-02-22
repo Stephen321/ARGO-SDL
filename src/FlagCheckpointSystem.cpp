@@ -5,9 +5,12 @@
 #include "CheckpointComponent.h"
 
 
-FlagCheckpointSystem::FlagCheckpointSystem(float updateRate)
+FlagCheckpointSystem::FlagCheckpointSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate)
 	: InteractionSystem(updateRate)
-{
+	, _interactionSystemEvents(events)
+	, FLAG_PICKED(InteractionSystemEvent::FlagPicked)
+	, FLAG_DROPPED(InteractionSystemEvent::FlagDropped)
+{	  
 }
 
 
@@ -29,6 +32,8 @@ void FlagCheckpointSystem::Process(float dt)
 	{
 		_canUpdate = false;
 
+		ListenForEvents();
+
 		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
 			FlagComponent* flag = static_cast<FlagComponent*>(it->first->GetComponent(Component::Type::Flag));
@@ -46,5 +51,35 @@ void FlagCheckpointSystem::Process(float dt)
 				checkpoint->highlighted = (flag->currentCheckpointID + 1 == i);
 			}
 		}
+	}
+}
+
+void FlagCheckpointSystem::ListenForEvents()
+{
+	FlagPickedEvent();
+	FlagDroppedEvent();
+}
+void FlagCheckpointSystem::FlagPickedEvent()
+{
+	if (!_interactionSystemEvents[FLAG_PICKED].empty())
+	{
+		for (int i = 0; i < _interactionSystemEvents[FLAG_PICKED].size(); i++)
+		{
+			AddEntity(_interactionSystemEvents[FLAG_PICKED].at(i).first, _interactionSystemEvents[FLAG_PICKED].at(i).second);
+		}
+
+		_interactionSystemEvents[FLAG_PICKED].clear();
+	}
+}
+void FlagCheckpointSystem::FlagDroppedEvent()
+{
+	if (!_interactionSystemEvents[FLAG_DROPPED].empty())
+	{
+		for (int i = 0; i < _interactionSystemEvents[FLAG_DROPPED].size(); i++)
+		{
+			AddEntity(_interactionSystemEvents[FLAG_DROPPED].at(i).first, _interactionSystemEvents[FLAG_DROPPED].at(i).second);
+		}
+
+		_interactionSystemEvents[FLAG_DROPPED].clear();
 	}
 }

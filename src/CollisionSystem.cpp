@@ -9,8 +9,9 @@
 
 
 
-CollisionSystem::CollisionSystem(float updateRate)
+CollisionSystem::CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate)
 	: System(updateRate)
+	, _interactionSystemEvents(events)
 {
 }
 
@@ -46,7 +47,9 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 	//b2Vec2 vel2 = static_cast<CollisionComponent*>(other->GetComponent(Component::Type::Collider))->body->GetLinearVelocityFromWorldPoint(worldManifold.points[0]); cant as static
 	//b2Vec2 impactVelocity = vel1 - vel2;
 	if (player != nullptr && other != nullptr)
+	{
 		std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+	}
 }
 void CollisionSystem::EndContact(b2Contact* contact)
 {
@@ -55,7 +58,9 @@ void CollisionSystem::EndContact(b2Contact* contact)
 
 	FindPlayer(contact, player, other);
 	if (player != nullptr && other != nullptr)
+	{
 		std::cout << player->GetTypeAsString().c_str() << " stopped colliding with " << other->GetTypeAsString().c_str() << std::endl;
+	}
 }
 
 void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifold)

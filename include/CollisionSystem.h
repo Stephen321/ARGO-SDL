@@ -1,12 +1,14 @@
 #pragma once
+
 #include "System.h"
 #include "Box2D\Box2D.h"
+#include "InteractionSystemEvents.h"
 
 
 class CollisionSystem : public System, public b2ContactListener
 {
 public:
-				CollisionSystem(float updateRate = 0.f);
+				CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate = 0.f);
 				~CollisionSystem();
 
 	void		Process(float dt = 0.f) override;
@@ -19,5 +21,8 @@ public:
 
 private:
 	void		FindPlayer(b2Contact* contact, Entity*& player, Entity*& other);
+
+private:
+	std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;
 };
 
