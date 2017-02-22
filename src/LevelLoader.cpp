@@ -25,7 +25,7 @@ void LevelLoader::LoadJson(const char* path, std::vector<Entity*>& entities, Ent
 	fclose(fp);
 
 	const Value& layerArray = doc["layers"];
-	LoadTiles(layerArray[0u], entities, entityFactory,  doc["tilewidth"].GetInt(), doc["tileheight"].GetInt());
+	//LoadTiles(layerArray[0u], entities, entityFactory,  doc["tilewidth"].GetInt(), doc["tileheight"].GetInt());
 	LoadEntities(layerArray[1], entities, entityFactory, bodyFactory);
 	LoadWaypoints(layerArray[2], entities, entityFactory, waypoints);
 	LoadColliders(layerArray[3], entities, entityFactory, bodyFactory);
@@ -190,6 +190,8 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>
 		float y = entity["y"].GetFloat();
 		float w = entity["width"].GetFloat();
 		float h = entity["height"].GetFloat();
+
+		std::string data = entity["type"].GetString();
 
 		helper::Vector2 position = helper::Vector2(x + w*.5f, y + h*.5f);
 

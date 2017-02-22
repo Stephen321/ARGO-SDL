@@ -83,7 +83,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
+	_levelLoader.LoadJson("Media/Json/Map2.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
 	
 }
 

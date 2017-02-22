@@ -149,7 +149,7 @@ void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>&
 				}
 			}
 			pq.pop_back();
-			std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
+			//std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
 		}
 
 		if (pq.size() != 0 && pq.back() == pDest) {
