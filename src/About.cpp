@@ -18,8 +18,9 @@ About::~About()
 {
 }
 
-void About::Initialize()
+void About::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::ABOUT;
 

@@ -27,9 +27,11 @@ Game::~Game()
 	_world.~b2World();
 }
 
-void Game::Initialize()
+void Game::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 	_running = true;
+	_swapScene = CurrentScene::GAME;
 
 	_systemManager.Initialize(_renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -65,8 +67,6 @@ void Game::Initialize()
 
 	_systemManager.PostInitialize(checkpoints);
 
-
-
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
 	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
@@ -83,31 +83,13 @@ void Game::Initialize()
 
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
 
-
-
 	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
 
 	//shooting
 	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
-	_swapScene = CurrentScene::GAME;
 	BindInput(player, weapon);
-}
-
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
-
-	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
-	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
-	
 }
 
 int Game::Update()
@@ -115,8 +97,7 @@ int Game::Update()
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
-	//UPDATE HERE //
-
+	// UPDATE HERE //
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
 	// Use to Update constantly at frame rate
@@ -207,10 +188,11 @@ void Game::LoadContent()
 
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-
 	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory, &_waypoints);
 }
 

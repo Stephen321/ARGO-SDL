@@ -36,7 +36,7 @@ public:
 									Game();
 									~Game();
 
-	void							Initialize() override;
+	void							Initialize(SDL_Renderer* renderer) override;
 
 	int								Update() override;
 	void							Render() override;
@@ -59,14 +59,13 @@ private:
 	void							DebugBox2D();
 
 private:
-
 	EntityFactory					_entityFactory;
 	BodyFactory						_bodyFactory;
 
 	LevelLoader						_levelLoader;
 
-	b2Vec2							 _gravity;
-	b2World							 _world;
+	b2Vec2							_gravity;
+	b2World							_world;
 
 	std::vector<Entity*>			_entities;
 

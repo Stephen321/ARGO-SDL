@@ -18,24 +18,14 @@ Lobby::~Lobby()
 {
 }
 
-void Lobby::Initialize()
+void Lobby::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::LOBBY;
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	//// Text
-	//TTF_Init();
-	//_fontSize = 32;
-	//_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	//_surface = std::vector<SDL_Surface*>();
-	//_textTexture = std::vector<SDL_Texture*>();
-	//_textRectangle = std::vector<SDL_Rect>();
-
-	//CreateText("Lobby", 25, 450);
-
-	//TTF_CloseFont(_font); // Free Font Memory
 
 	//Input
 	BindInput();
@@ -70,12 +60,6 @@ void Lobby::Render()
 	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	//// Text
-	//for (int i = 0; i < _textTexture.size(); i++)
-	//{
-	//	SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
-	//}
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);

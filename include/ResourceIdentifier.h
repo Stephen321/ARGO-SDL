@@ -8,4 +8,5 @@ enum class TextureID
 	Checkpoint,
 	EntitySpriteSheet,
 	TilemapSpriteSheet,
+	UI,
 };

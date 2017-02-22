@@ -10,7 +10,7 @@ public:
 	Scene();
 	~Scene();
 
-	virtual void		Initialize();
+	virtual void		Initialize(SDL_Renderer* renderer);
 
 	virtual int			Update();
 	virtual void		Render();

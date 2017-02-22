@@ -13,7 +13,7 @@ Scene::~Scene()
 
 }
 
-void Scene::Initialize()
+void Scene::Initialize(SDL_Renderer* renderer)
 {
 }
 

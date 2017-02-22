@@ -18,8 +18,9 @@ Options::~Options()
 {
 }
 
-void Options::Initialize()
+void Options::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::OPTIONS;
 

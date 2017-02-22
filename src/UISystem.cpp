@@ -24,10 +24,7 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 	_textTexture = std::vector<SDL_Texture*>();
 	_textRectangle = std::vector<SDL_Rect>();
 
-	CreateText("FUCK", 25, 450);
-	UpdateText("TEST ", 0);
-
-	TTF_CloseFont(_font); // Free Font Memory
+	//TTF_CloseFont(_font); // Free Font Memory
 }
 
 void UISystem::Process(float dt)
@@ -40,21 +37,25 @@ void UISystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
-
 				// Transform to screen
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-				SDL_Rect scaledRect = transform->rect;
-				scaledRect.w *= transform->scaleX;
-				scaledRect.h *= transform->scaleY;
-				scaledRect.x -= transform->origin.x * transform->scaleX;
-				scaledRect.y -= transform->origin.y * transform->scaleY;
+				SDL_Rect scaledRect;
+				if (transform != nullptr)
+				{
+					scaledRect = transform->rect;
+					scaledRect.w *= transform->scaleX;
+					scaledRect.h *= transform->scaleY;
+					scaledRect.x -= transform->origin.x * transform->scaleX;
+					scaledRect.y -= transform->origin.y * transform->scaleY;
+				}
 
 				if (transform != nullptr && sprite != nullptr)
 				{
 					//Render to screen
-					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &scaledRect, transform->angle, &transform->origin, SDL_FLIP_NONE);
+					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &scaledRect, 
+						transform->angle, &transform->origin, SDL_FLIP_NONE);
 				}
 
 				// Draw Text
@@ -67,7 +68,7 @@ void UISystem::Process(float dt)
 	}
 }
 
-void UISystem::CreateText(std::string message, int x, int y)
+SDL_Texture* UISystem::CreateText(std::string message, int x, int y)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
 
@@ -86,6 +87,8 @@ void UISystem::CreateText(std::string message, int x, int y)
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+
+	return _textTexture.back();
 }
 
 void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
@@ -111,6 +114,9 @@ void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Ui
 
 void UISystem::UpdateText(std::string message, int index)
 {
+	// Destroy Previous Image
+	SDL_DestroyTexture(_textTexture[index]);
+
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
@@ -128,5 +134,4 @@ void UISystem::UpdateText(std::string message, int index)
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _textTexture[index], NULL, &_textRectangle[index]);
-	SDL_DestroyTexture(_textTexture[index]);
 }

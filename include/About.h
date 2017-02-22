@@ -27,7 +27,7 @@ public:
 	About();
 	~About();
 
-	void							Initialize() override;
+	void							Initialize(SDL_Renderer* renderer) override;
 
 	int								Update() override;
 	void							Render() override;

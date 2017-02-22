@@ -4,6 +4,9 @@
 #include "Helpers.h"
 #include "LTimer.h"
 
+#include "TransformComponent.h"
+#include "SpriteComponent.h"
+
 MainMenu::MainMenu()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
@@ -20,27 +23,39 @@ MainMenu::~MainMenu()
 {
 }
 
-void MainMenu::Initialize()
+void MainMenu::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::MAIN_MENU;
 
-	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	_uiSystem.Initialize(_renderer);
-
-	// Text
 	_selectedItemIndex = 0;
 
-	_uiSystem.CreateText("Arcade Mode", 25, 450);
-	//_uiSystem.CreateText("Multiplayer",	_textRectangle[0].x + _textRectangle[0].w / 2, _textRectangle[0].y + 100);
-	//_uiSystem.CreateText("Options",		_textRectangle[1].x + _textRectangle[1].w / 2, _textRectangle[1].y + 100);
-	//_uiSystem.CreateText("About",			_textRectangle[2].x + _textRectangle[2].w / 2, _textRectangle[2].y + 100);
-	//_uiSystem.CreateText("Quit",			_textRectangle[3].x + _textRectangle[3].w / 2, _textRectangle[3].y + 100);
+	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_uiSystem.Initialize(_renderer);
 
-	//_uiSystem.CreateTextColoured(">", _textRectangle[0].x + _textRectangle[0].w + 50, _textRectangle[0].y, 255, 0, 0, 255);
 
-	_uiSystem.UpdateText("Test", 0);
+	SDL_Rect rect = SDL_Rect();
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 1;
+	rect.h = 1;
+
+
+	Entity* ui = new Entity(EntityType::UI);
+	//ui->AddComponent(new TransformComponent(rect, 1, 1));
+	//ui->AddComponent(new SpriteComponent(_textureHolder[TextureID::UI]));
+	_uiSystem.AddEntity(ui);
+
+
+	// Text
+	_uiSystem.CreateText("Arcade Mode",	25, 450);
+	_uiSystem.CreateText("Multiplayer",		_uiSystem._textRectangle[0].x + _uiSystem._textRectangle[0].w / 2, _uiSystem._textRectangle[0].y + 100);
+	_uiSystem.CreateText("Options",			_uiSystem._textRectangle[1].x + _uiSystem._textRectangle[1].w / 2, _uiSystem._textRectangle[1].y + 100);
+	_uiSystem.CreateText("About",			_uiSystem._textRectangle[2].x + _uiSystem._textRectangle[2].w / 2, _uiSystem._textRectangle[2].y + 100);
+	_uiSystem.CreateText("Quit",			_uiSystem._textRectangle[3].x + _uiSystem._textRectangle[3].w / 2, _uiSystem._textRectangle[3].y + 100);
+
+	_uiSystem.CreateTextColoured(">",		_uiSystem._textRectangle[0].x + _uiSystem._textRectangle[0].w + 50, _uiSystem._textRectangle[0].y, 255, 0, 0, 255);
 
 	//TTF_CloseFont(_font); // Free Font Memory
 	
@@ -56,8 +71,6 @@ int MainMenu::Update()
 	//UPDATE HERE
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
-
-	_uiSystem.Process(dt);
 
 	//save the curent time for next frame
 	_lastTime = currentTime;
@@ -80,11 +93,7 @@ void MainMenu::Render()
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
 
-	//// Text
-	//for (int i = 0; i < _textTexture.size(); i++)
-	//{
-	//	SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
-	//}
+	_uiSystem.Process(0);
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
@@ -136,13 +145,13 @@ void MainMenu::CleanUp()
 
 void MainMenu::BindInput()
 {
-	//Command* enterIn = new InputCommand([&]() 
-	//{ 
-	//	if (_selectedItemIndex + 1 == _textRectangle.size() - 1) { _running = false; }
-	//	else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
-	//}, Type::Press);
+	Command* enterIn = new InputCommand([&]() 
+	{ 
+		if (_selectedItemIndex + 1 == _uiSystem._textRectangle.size() - 1) { _running = false; }
+		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
+	}, Type::Press);
 
-	//_inputManager->AddKey(Event::RETURN, enterIn, this);
+	_inputManager->AddKey(Event::RETURN, enterIn, this);
 
 	Command* sIn = new InputCommand([&]() { MainMenu::MoveDown(); }, Type::Press);
 	_inputManager->AddKey(Event::s, sIn, this);
@@ -155,33 +164,33 @@ void MainMenu::BindInput()
 
 void MainMenu::MoveUp()
 {
-	//if (_selectedItemIndex - 1 >= 0)
-	//{
-	//	_selectedItemIndex--;
-	//}
-	//// Jump to bottom
-	//else
-	//{
-	//	// _textRectangle.size() - 2 = 1 before icon
-	//	_selectedItemIndex = _textRectangle.size() - 2;
-	//}
-	//_textRectangle.back().x = _textRectangle[_selectedItemIndex].x + _textRectangle[_selectedItemIndex].w + 50;
-	//_textRectangle.back().y = _textRectangle[_selectedItemIndex].y;
+	if (_selectedItemIndex - 1 >= 0)
+	{
+		_selectedItemIndex--;
+	}
+	// Jump to bottom
+	else
+	{
+		// _textRectangle.size() - 2 = 1 before icon
+		_selectedItemIndex = _uiSystem._textRectangle.size() - 2;
+	}
+	_uiSystem._textRectangle.back().x = _uiSystem._textRectangle[_selectedItemIndex].x + _uiSystem._textRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._textRectangle.back().y = _uiSystem._textRectangle[_selectedItemIndex].y;
 }
 
 void MainMenu::MoveDown()
 {
-	//if (_selectedItemIndex + 1 < _textRectangle.size() - 1)
-	//{
-	//	_selectedItemIndex++;
-	//}
-	//// Jump to top
-	//else
-	//{
-	//	_selectedItemIndex = 0;
-	//}
-	//_textRectangle.back().x = _textRectangle[_selectedItemIndex].x + _textRectangle[_selectedItemIndex].w + 50;
-	//_textRectangle.back().y = _textRectangle[_selectedItemIndex].y;
+	if (_selectedItemIndex + 1 < _uiSystem._textRectangle.size() - 1)
+	{
+		_selectedItemIndex++;
+	}
+	// Jump to top
+	else
+	{
+		_selectedItemIndex = 0;
+	}
+	_uiSystem._textRectangle.back().x = _uiSystem._textRectangle[_selectedItemIndex].x + _uiSystem._textRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._textRectangle.back().y = _uiSystem._textRectangle[_selectedItemIndex].y;
 }
 
 int MainMenu::GetPressedItem()

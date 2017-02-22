@@ -19,21 +19,23 @@ public:
 	UISystem(float dt);
 	~UISystem();
 
-	void		Initialize(SDL_Renderer * renderer);
+	void							Initialize(SDL_Renderer * renderer);
 
-	void		Process(float dt = 0.f) override;
+	void							Process(float dt = 0.f) override;
 
-	void		CreateText(std::string message, int x, int y);
-	void		CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	SDL_Texture*					CreateText(std::string message, int x, int y);
+	void							CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
-	void		UpdateText(std::string message, int index);
+	void							UpdateText(std::string message, int index);
+	void							UpdateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+
+	std::vector<SDL_Rect>			_textRectangle;
 
 private:
 	SDL_Renderer*					_renderer;
 
 	TTF_Font*						_font = NULL;
 	std::vector<SDL_Texture*>		_textTexture;
-	std::vector<SDL_Rect>			_textRectangle;
 
 	int								_fontSize;
 };
