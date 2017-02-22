@@ -16,6 +16,7 @@ public:
 		AI,
 		Gun,
 		Destroy,
+		UI
 	};
 
 public:

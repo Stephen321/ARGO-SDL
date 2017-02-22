@@ -27,45 +27,27 @@ public:
 	Lobby();
 	~Lobby();
 
-	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
+	void							Initialize() override;
 
-	void							Render() override;
 	int								Update() override;
-
-	void							OnEvent(Event evt) override;
+	void							Render() override;
 
 	bool							IsRunning() override;
 
-private:
+	void							Start() override;
+	void							Stop() override;
 
-	void							BindInput();
-
-	void							CreateText(string message, int x, int y);
-	void							CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	void							OnEvent(Event evt) override;
 
 private:
-	SDL_Window*						_window;
-	SDL_Renderer*					_renderer;
+	void							BindInput() override;
 
-	InputManager*					_inputManager = InputManager::GetInstance();
+	void							LoadContent() override;
+	void							CleanUp() override;
 
-	std::map<TextureID, SDL_Texture*>_textureHolder;
-
-	bool							_running;
-
-	unsigned int					_lastTime;//time of last update;
-
+private:
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
-
-
-	TTF_Font*						_font = NULL;
-	std::vector<SDL_Texture*>		_textTexture;
-	std::vector<SDL_Surface*>		_surface;
-	std::vector<SDL_Rect>			_textRectangle;
-
-	CurrentScene					_swapScene;
-	int								_fontSize;
 };
 

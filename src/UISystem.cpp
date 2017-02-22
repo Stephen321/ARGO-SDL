@@ -35,9 +35,6 @@ void UISystem::Initialize(SDL_Renderer* renderer, Camera2D::Camera* camera)
 
 void UISystem::Process(float dt)
 {
-	test++;
-
-
 	System::Process(dt);
 	if (_canUpdate)
 	{

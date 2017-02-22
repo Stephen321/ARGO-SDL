@@ -162,9 +162,6 @@
     <ClInclude Include="include\BasicTypes.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\GunSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -194,7 +191,7 @@
     </ClInclude>
     <ClInclude Include="include\WaypointSystem.h">
       <Filter>Header Files\Systems</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="include\DestructionComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -212,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -303,7 +303,7 @@
     </ClCompile>
     <ClCompile Include="src\WaypointSystem.cpp">
       <Filter>Source Files\Systems</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="src\DestructionSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
