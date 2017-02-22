@@ -34,3 +34,6 @@ const float PLAYER_WALL_RESTITUTION = 0.5f;
 const int FLAG_CONNECTION_RADIUS = 200;
 
 const int AI_DETECTION_RADIUS = 100;
+
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;

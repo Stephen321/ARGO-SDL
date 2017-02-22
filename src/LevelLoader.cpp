@@ -108,17 +108,20 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>&
 				transform->rect.x = x;
 				transform->rect.y = y;
 
-				collider->body = bf->CreateBoxBody(
-					b2BodyType::b2_dynamicBody
-					, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-					, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
-					, (uint16)player->GetType()
-					, PLAYER_MASK
-					, false);
+				if (collider != nullptr)
+				{
+					collider->body = bf->CreateBoxBody(
+						b2BodyType::b2_dynamicBody
+						, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+						, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+						, (uint16)player->GetType()
+						, PLAYER_MASK
+						, false);
 
-				collider->body->SetUserData(player);
-				collider->body->SetFixedRotation(true);
-				entities.push_back(player);
+					collider->body->SetUserData(player);
+					collider->body->SetFixedRotation(true);
+					entities.push_back(player);
+				}
 
 			}
 			else
