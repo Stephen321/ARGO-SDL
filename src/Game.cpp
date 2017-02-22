@@ -76,7 +76,6 @@ void Game::Initialize()
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
-
 	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 	flagComponent->hasFlag = true;
 
@@ -87,7 +86,6 @@ void Game::Initialize()
 
 
 	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
-
 
 	//shooting
 	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);

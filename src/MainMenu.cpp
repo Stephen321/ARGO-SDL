@@ -8,6 +8,7 @@ MainMenu::MainMenu()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
+	, _uiSystem(0)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
@@ -26,24 +27,20 @@ void MainMenu::Initialize()
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	//// Text
-	//TTF_Init();
-	//_fontSize = 32;
-	//_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	//_surface = std::vector<SDL_Surface*>();
-	//_textTexture = std::vector<SDL_Texture*>();
-	//_textRectangle = std::vector<SDL_Rect>();
-	//_selectedItemIndex = 0;
+	_uiSystem.Initialize(_renderer);
 
-	//CreateText("Arcade Mode", 25, 450);
-	//CreateText("Multiplayer",	_textRectangle[0].x + _textRectangle[0].w / 2, _textRectangle[0].y + 100);
-	//CreateText("Options",		_textRectangle[1].x + _textRectangle[1].w / 2, _textRectangle[1].y + 100);
-	//CreateText("About",			_textRectangle[2].x + _textRectangle[2].w / 2, _textRectangle[2].y + 100);
-	//CreateText("Quit",			_textRectangle[3].x + _textRectangle[3].w / 2, _textRectangle[3].y + 100);
+	// Text
+	_selectedItemIndex = 0;
 
-	//CreateTextColoured(">", _textRectangle[0].x + _textRectangle[0].w + 50, _textRectangle[0].y, 255, 0, 0, 255);
+	_uiSystem.CreateText("Arcade Mode", 25, 450);
+	//_uiSystem.CreateText("Multiplayer",	_textRectangle[0].x + _textRectangle[0].w / 2, _textRectangle[0].y + 100);
+	//_uiSystem.CreateText("Options",		_textRectangle[1].x + _textRectangle[1].w / 2, _textRectangle[1].y + 100);
+	//_uiSystem.CreateText("About",			_textRectangle[2].x + _textRectangle[2].w / 2, _textRectangle[2].y + 100);
+	//_uiSystem.CreateText("Quit",			_textRectangle[3].x + _textRectangle[3].w / 2, _textRectangle[3].y + 100);
 
-	//UpdateText("Quiter", 4);
+	//_uiSystem.CreateTextColoured(">", _textRectangle[0].x + _textRectangle[0].w + 50, _textRectangle[0].y, 255, 0, 0, 255);
+
+	_uiSystem.UpdateText("Test", 0);
 
 	//TTF_CloseFont(_font); // Free Font Memory
 	
@@ -59,6 +56,8 @@ int MainMenu::Update()
 	//UPDATE HERE
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
+
+	_uiSystem.Process(dt);
 
 	//save the curent time for next frame
 	_lastTime = currentTime;

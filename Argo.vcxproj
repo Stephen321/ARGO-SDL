@@ -252,7 +252,6 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\WaypointSystem.h" />
     <ClInclude Include="include\WeaponSystem.h" />
-    <ClInclude Include="UIComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">

@@ -51,6 +51,7 @@ private:
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;
 
