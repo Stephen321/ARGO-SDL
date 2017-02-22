@@ -15,7 +15,7 @@ public:
 								Graph() ;
 								~Graph();
 
-	void						addNode(std::string data, helper::Vector2 position);
+	void						addNode(pair<GraphNode::EntityData, int> data, helper::Vector2 position);
     void						removeNode( int index );
     bool						addArc( int from, int to, float weight, bool directed = true );
     void						removeArc( int from, int to );

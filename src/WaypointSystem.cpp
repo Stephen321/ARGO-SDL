@@ -41,7 +41,7 @@ void WaypointSystem::Process(float dt)
 				for (int i = 0; i < size; i++)
 				{
 					float distance = (position - _waypoints->getNodes()[i]->getPosition()).length();
-					if (distance < 300.0f)
+					if (distance < FLAG_CONNECTION_RADIUS)
 					{
 						GraphArc* arcFromFlag = _waypoints->getArc(flagNode, i);
 						if (arcFromFlag == nullptr)

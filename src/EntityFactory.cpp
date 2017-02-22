@@ -87,7 +87,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Camera, player);
-	_systemManager->AddEntity(SystemManager::SystemType::World, player);
+	_systemManager->AddEntity(SystemManager::SystemType::Waypoint, player);
 
 	return player;
 }

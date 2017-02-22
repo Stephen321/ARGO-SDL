@@ -178,7 +178,7 @@
                  "name":"0",
                  "properties":
                     {
-                     "neighbour":"[1]",
+                     "neighbour":[1],
                      "node":0
                     },
                  "propertytypes":
@@ -199,7 +199,7 @@
                  "name":"1",
                  "properties":
                     {
-                     "neighbour":"[2]",
+                     "neighbour":[2],
                      "node":1
                     },
                  "propertytypes":
@@ -220,7 +220,7 @@
                  "name":"2",
                  "properties":
                     {
-                     "neighbour":"[3]",
+                     "neighbour":[3],
                      "node":2
                     },
                  "propertytypes":
@@ -241,7 +241,7 @@
                  "name":"3",
                  "properties":
                     {
-                     "neighbour":"[4,47]",
+                     "neighbour":[4,47],
                      "node":3
                     },
                  "propertytypes":
@@ -262,7 +262,7 @@
                  "name":"4",
                  "properties":
                     {
-                     "neighbour":"[5,47]",
+                     "neighbour":[5,47],
                      "node":4
                     },
                  "propertytypes":
@@ -283,7 +283,7 @@
                  "name":"5",
                  "properties":
                     {
-                     "neighbour":"[6]",
+                     "neighbour":[6],
                      "node":5
                     },
                  "propertytypes":
@@ -304,7 +304,7 @@
                  "name":"6",
                  "properties":
                     {
-                     "neighbour":"[7]",
+                     "neighbour":[7],
                      "node":6
                     },
                  "propertytypes":
@@ -325,7 +325,7 @@
                  "name":"7",
                  "properties":
                     {
-                     "neighbour":"[8,37]",
+                     "neighbour":[8,37],
                      "node":7
                     },
                  "propertytypes":
@@ -346,7 +346,7 @@
                  "name":"8",
                  "properties":
                     {
-                     "neighbour":"[9,37,36]",
+                     "neighbour":[9,37,36],
                      "node":8
                     },
                  "propertytypes":
@@ -367,7 +367,7 @@
                  "name":"9",
                  "properties":
                     {
-                     "neighbour":"[10,36]",
+                     "neighbour":[10,36],
                      "node":9
                     },
                  "propertytypes":
@@ -388,7 +388,7 @@
                  "name":"10",
                  "properties":
                     {
-                     "neighbour":"[11]",
+                     "neighbour":[11],
                      "node":10
                     },
                  "propertytypes":
@@ -409,7 +409,7 @@
                  "name":"11",
                  "properties":
                     {
-                     "neighbour":"[12]",
+                     "neighbour":[12],
                      "node":11
                     },
                  "propertytypes":
@@ -430,7 +430,7 @@
                  "name":"12",
                  "properties":
                     {
-                     "neighbour":"[13, 20, 21]",
+                     "neighbour":[13, 20, 21],
                      "node":12
                     },
                  "propertytypes":
@@ -451,7 +451,7 @@
                  "name":"13",
                  "properties":
                     {
-                     "neighbour":"[14, 20]",
+                     "neighbour":[14, 20],
                      "node":13
                     },
                  "propertytypes":
@@ -472,7 +472,7 @@
                  "name":"14",
                  "properties":
                     {
-                     "neighbour":"[15]",
+                     "neighbour":[15],
                      "node":14
                     },
                  "propertytypes":
@@ -493,7 +493,7 @@
                  "name":"15",
                  "properties":
                     {
-                     "neighbour":"[16]",
+                     "neighbour":[16],
                      "node":15
                     },
                  "propertytypes":
@@ -514,7 +514,7 @@
                  "name":"16",
                  "properties":
                     {
-                     "neighbour":"[17]",
+                     "neighbour":[17],
                      "node":16
                     },
                  "propertytypes":
@@ -535,7 +535,7 @@
                  "name":"17",
                  "properties":
                     {
-                     "neighbour":"[18]",
+                     "neighbour":[18],
                      "node":17
                     },
                  "propertytypes":
@@ -556,7 +556,7 @@
                  "name":"18",
                  "properties":
                     {
-                     "neighbour":"[19]",
+                     "neighbour":[19],
                      "node":18
                     },
                  "propertytypes":
@@ -577,7 +577,7 @@
                  "name":"19",
                  "properties":
                     {
-                     "neighbour":"[0]",
+                     "neighbour":[0],
                      "node":19
                     },
                  "propertytypes":
@@ -598,7 +598,7 @@
                  "name":"20",
                  "properties":
                     {
-                     "neighbour":"[21,22]",
+                     "neighbour":[21,22],
                      "node":20
                     },
                  "propertytypes":
@@ -619,7 +619,7 @@
                  "name":"21",
                  "properties":
                     {
-                     "neighbour":"[22]",
+                     "neighbour":[22],
                      "node":21
                     },
                  "propertytypes":
@@ -640,7 +640,7 @@
                  "name":"22",
                  "properties":
                     {
-                     "neighbour":"[23]",
+                     "neighbour":[23],
                      "node":22
                     },
                  "propertytypes":
@@ -661,7 +661,7 @@
                  "name":"23",
                  "properties":
                     {
-                     "neighbour":"[24]",
+                     "neighbour":[24],
                      "node":23
                     },
                  "propertytypes":
@@ -682,7 +682,7 @@
                  "name":"24",
                  "properties":
                     {
-                     "neighbour":"[25]",
+                     "neighbour":[25],
                      "node":24
                     },
                  "propertytypes":
@@ -703,7 +703,7 @@
                  "name":"25",
                  "properties":
                     {
-                     "neighbour":"[26]",
+                     "neighbour":[26],
                      "node":25
                     },
                  "propertytypes":
@@ -724,7 +724,7 @@
                  "name":"26",
                  "properties":
                     {
-                     "neighbour":"[27]",
+                     "neighbour":[27],
                      "node":26
                     },
                  "propertytypes":
@@ -745,7 +745,7 @@
                  "name":"27",
                  "properties":
                     {
-                     "neighbour":"[28]",
+                     "neighbour":[28],
                      "node":27
                     },
                  "propertytypes":
@@ -766,7 +766,7 @@
                  "name":"28",
                  "properties":
                     {
-                     "neighbour":"[29]",
+                     "neighbour":[29],
                      "node":28
                     },
                  "propertytypes":
@@ -787,7 +787,7 @@
                  "name":"29",
                  "properties":
                     {
-                     "neighbour":"[30]",
+                     "neighbour":[30],
                      "node":29
                     },
                  "propertytypes":
@@ -808,7 +808,7 @@
                  "name":"30",
                  "properties":
                     {
-                     "neighbour":"[31]",
+                     "neighbour":[31],
                      "node":30
                     },
                  "propertytypes":
@@ -829,7 +829,7 @@
                  "name":"31",
                  "properties":
                     {
-                     "neighbour":"[32]",
+                     "neighbour":[32],
                      "node":31
                     },
                  "propertytypes":
@@ -850,7 +850,7 @@
                  "name":"32",
                  "properties":
                     {
-                     "neighbour":"[33]",
+                     "neighbour":[33],
                      "node":32
                     },
                  "propertytypes":
@@ -871,7 +871,7 @@
                  "name":"33",
                  "properties":
                     {
-                     "neighbour":"[34]",
+                     "neighbour":[34],
                      "node":33
                     },
                  "propertytypes":
@@ -892,7 +892,7 @@
                  "name":"34",
                  "properties":
                     {
-                     "neighbour":"[35]",
+                     "neighbour":[35],
                      "node":34
                     },
                  "propertytypes":
@@ -913,7 +913,7 @@
                  "name":"35",
                  "properties":
                     {
-                     "neighbour":"[24,124]",
+                     "neighbour":[24,124],
                      "node":35
                     },
                  "propertytypes":
@@ -934,7 +934,7 @@
                  "name":"36",
                  "properties":
                     {
-                     "neighbour":"[37,38]",
+                     "neighbour":[37,38],
                      "node":36
                     },
                  "propertytypes":
@@ -955,7 +955,7 @@
                  "name":"37",
                  "properties":
                     {
-                     "neighbour":"[38]",
+                     "neighbour":[38],
                      "node":37
                     },
                  "propertytypes":
@@ -976,7 +976,7 @@
                  "name":"38",
                  "properties":
                     {
-                     "neighbour":"[39]",
+                     "neighbour":[39],
                      "node":38
                     },
                  "propertytypes":
@@ -997,7 +997,7 @@
                  "name":"39",
                  "properties":
                     {
-                     "neighbour":"[40]",
+                     "neighbour":[40],
                      "node":39
                     },
                  "propertytypes":
@@ -1018,7 +1018,7 @@
                  "name":"40",
                  "properties":
                     {
-                     "neighbour":"[41]",
+                     "neighbour":[41],
                      "node":40
                     },
                  "propertytypes":
@@ -1039,7 +1039,7 @@
                  "name":"41",
                  "properties":
                     {
-                     "neighbour":"[42]",
+                     "neighbour":[42],
                      "node":41
                     },
                  "propertytypes":
@@ -1060,7 +1060,7 @@
                  "name":"42",
                  "properties":
                     {
-                     "neighbour":"[43]",
+                     "neighbour":[43],
                      "node":42
                     },
                  "propertytypes":
@@ -1081,7 +1081,7 @@
                  "name":"43",
                  "properties":
                     {
-                     "neighbour":"[44]",
+                     "neighbour":[44],
                      "node":43
                     },
                  "propertytypes":
@@ -1102,7 +1102,7 @@
                  "name":"44",
                  "properties":
                     {
-                     "neighbour":"[45]",
+                     "neighbour":[45],
                      "node":44
                     },
                  "propertytypes":
@@ -1123,7 +1123,7 @@
                  "name":"45",
                  "properties":
                     {
-                     "neighbour":"[46]",
+                     "neighbour":[46],
                      "node":45
                     },
                  "propertytypes":
@@ -1144,7 +1144,7 @@
                  "name":"46",
                  "properties":
                     {
-                     "neighbour":"[27,28]",
+                     "neighbour":[27,28],
                      "node":46
                     },
                  "propertytypes":
@@ -1165,7 +1165,7 @@
                  "name":"47",
                  "properties":
                     {
-                     "neighbour":"[48]",
+                     "neighbour":[48],
                      "node":47
                     },
                  "propertytypes":
@@ -1186,7 +1186,7 @@
                  "name":"48",
                  "properties":
                     {
-                     "neighbour":"[49]",
+                     "neighbour":[49],
                      "node":48
                     },
                  "propertytypes":
@@ -1207,7 +1207,7 @@
                  "name":"49",
                  "properties":
                     {
-                     "neighbour":"[50]",
+                     "neighbour":[50],
                      "node":49
                     },
                  "propertytypes":
@@ -1228,7 +1228,7 @@
                  "name":"50",
                  "properties":
                     {
-                     "neighbour":"[51]",
+                     "neighbour":[51],
                      "node":50
                     },
                  "propertytypes":
@@ -1249,7 +1249,7 @@
                  "name":"51",
                  "properties":
                     {
-                     "neighbour":"[52]",
+                     "neighbour":[52],
                      "node":51
                     },
                  "propertytypes":
@@ -1270,7 +1270,7 @@
                  "name":"52",
                  "properties":
                     {
-                     "neighbour":"[53,55]",
+                     "neighbour":[53,55],
                      "node":52
                     },
                  "propertytypes":
@@ -1291,7 +1291,7 @@
                  "name":"53",
                  "properties":
                     {
-                     "neighbour":"[54,55]",
+                     "neighbour":[54,55],
                      "node":53
                     },
                  "propertytypes":
@@ -1312,7 +1312,7 @@
                  "name":"54",
                  "properties":
                     {
-                     "neighbour":"[39,40,56]",
+                     "neighbour":[39,40,56],
                      "node":54
                     },
                  "propertytypes":
@@ -1333,7 +1333,7 @@
                  "name":"55",
                  "properties":
                     {
-                     "neighbour":"[56,54,57]",
+                     "neighbour":[56,54,57],
                      "node":55
                     },
                  "propertytypes":
@@ -1354,7 +1354,7 @@
                  "name":"56",
                  "properties":
                     {
-                     "neighbour":"[57,40,41]",
+                     "neighbour":[57,40,41],
                      "node":56
                     },
                  "propertytypes":
@@ -1375,7 +1375,7 @@
                  "name":"57",
                  "properties":
                     {
-                     "neighbour":"[58,41]",
+                     "neighbour":[58,41],
                      "node":57
                     },
                  "propertytypes":
@@ -1396,7 +1396,7 @@
                  "name":"58",
                  "properties":
                     {
-                     "neighbour":"[59]",
+                     "neighbour":[59],
                      "node":58
                     },
                  "propertytypes":
@@ -1417,7 +1417,7 @@
                  "name":"59",
                  "properties":
                     {
-                     "neighbour":"[60]",
+                     "neighbour":[60],
                      "node":59
                     },
                  "propertytypes":
@@ -1438,7 +1438,7 @@
                  "name":"60",
                  "properties":
                     {
-                     "neighbour":"[61]",
+                     "neighbour":[61],
                      "node":60
                     },
                  "propertytypes":
@@ -1459,7 +1459,7 @@
                  "name":"61",
                  "properties":
                     {
-                     "neighbour":"[62]",
+                     "neighbour":[62],
                      "node":61
                     },
                  "propertytypes":
@@ -1480,7 +1480,7 @@
                  "name":"62",
                  "properties":
                     {
-                     "neighbour":"[63,64]",
+                     "neighbour":[63,64],
                      "node":62
                     },
                  "propertytypes":
@@ -1501,7 +1501,7 @@
                  "name":"63",
                  "properties":
                     {
-                     "neighbour":"[64]",
+                     "neighbour":[64],
                      "node":63
                     },
                  "propertytypes":
@@ -1522,7 +1522,7 @@
                  "name":"64",
                  "properties":
                     {
-                     "neighbour":"[65]",
+                     "neighbour":[65],
                      "node":64
                     },
                  "propertytypes":
@@ -1543,7 +1543,7 @@
                  "name":"65",
                  "properties":
                     {
-                     "neighbour":"[66]",
+                     "neighbour":[66],
                      "node":65
                     },
                  "propertytypes":
@@ -1564,7 +1564,7 @@
                  "name":"66",
                  "properties":
                     {
-                     "neighbour":"[67]",
+                     "neighbour":[67],
                      "node":66
                     },
                  "propertytypes":
@@ -1585,7 +1585,7 @@
                  "name":"67",
                  "properties":
                     {
-                     "neighbour":"[68]",
+                     "neighbour":[68],
                      "node":67
                     },
                  "propertytypes":
@@ -1606,7 +1606,7 @@
                  "name":"68",
                  "properties":
                     {
-                     "neighbour":"[69,73]",
+                     "neighbour":[69,73],
                      "node":68
                     },
                  "propertytypes":
@@ -1627,7 +1627,7 @@
                  "name":"69",
                  "properties":
                     {
-                     "neighbour":"[70,71]",
+                     "neighbour":[70,71],
                      "node":69
                     },
                  "propertytypes":
@@ -1648,7 +1648,7 @@
                  "name":"70",
                  "properties":
                     {
-                     "neighbour":"[28,29]",
+                     "neighbour":[28,29],
                      "node":70
                     },
                  "propertytypes":
@@ -1669,7 +1669,7 @@
                  "name":"71",
                  "properties":
                     {
-                     "neighbour":"[70,72,29]",
+                     "neighbour":[70,72,29],
                      "node":71
                     },
                  "propertytypes":
@@ -1690,7 +1690,7 @@
                  "name":"72",
                  "properties":
                     {
-                     "neighbour":"[29,30]",
+                     "neighbour":[29,30],
                      "node":72
                     },
                  "propertytypes":
@@ -1711,7 +1711,7 @@
                  "name":"73",
                  "properties":
                     {
-                     "neighbour":"[74,75,71,69]",
+                     "neighbour":[74,75,71,69],
                      "node":73
                     },
                  "propertytypes":
@@ -1732,7 +1732,7 @@
                  "name":"74",
                  "properties":
                     {
-                     "neighbour":"[75,72,71]",
+                     "neighbour":[75,72,71],
                      "node":74
                     },
                  "propertytypes":
@@ -1753,7 +1753,7 @@
                  "name":"75",
                  "properties":
                     {
-                     "neighbour":"[76]",
+                     "neighbour":[76],
                      "node":75
                     },
                  "propertytypes":
@@ -1774,7 +1774,7 @@
                  "name":"76",
                  "properties":
                     {
-                     "neighbour":"[77]",
+                     "neighbour":[77],
                      "node":76
                     },
                  "propertytypes":
@@ -1795,7 +1795,7 @@
                  "name":"77",
                  "properties":
                     {
-                     "neighbour":"[78]",
+                     "neighbour":[78],
                      "node":77
                     },
                  "propertytypes":
@@ -1816,7 +1816,7 @@
                  "name":"78",
                  "properties":
                     {
-                     "neighbour":"[79]",
+                     "neighbour":[79],
                      "node":78
                     },
                  "propertytypes":
@@ -1837,7 +1837,7 @@
                  "name":"79",
                  "properties":
                     {
-                     "neighbour":"[80]",
+                     "neighbour":[80],
                      "node":79
                     },
                  "propertytypes":
@@ -1858,7 +1858,7 @@
                  "name":"80",
                  "properties":
                     {
-                     "neighbour":"[81]",
+                     "neighbour":[81],
                      "node":80
                     },
                  "propertytypes":
@@ -1879,7 +1879,7 @@
                  "name":"81",
                  "properties":
                     {
-                     "neighbour":"[82]",
+                     "neighbour":[82],
                      "node":81
                     },
                  "propertytypes":
@@ -1900,7 +1900,7 @@
                  "name":"82",
                  "properties":
                     {
-                     "neighbour":"[83]",
+                     "neighbour":[83],
                      "node":82
                     },
                  "propertytypes":
@@ -1921,7 +1921,7 @@
                  "name":"83",
                  "properties":
                     {
-                     "neighbour":"[84]",
+                     "neighbour":[84],
                      "node":83
                     },
                  "propertytypes":
@@ -1942,7 +1942,7 @@
                  "name":"84",
                  "properties":
                     {
-                     "neighbour":"[85]",
+                     "neighbour":[85],
                      "node":84
                     },
                  "propertytypes":
@@ -1963,7 +1963,7 @@
                  "name":"85",
                  "properties":
                     {
-                     "neighbour":"[86,87]",
+                     "neighbour":[86,87],
                      "node":85
                     },
                  "propertytypes":
@@ -1984,7 +1984,7 @@
                  "name":"86",
                  "properties":
                     {
-                     "neighbour":"[62,63,87]",
+                     "neighbour":[62,63,87],
                      "node":86
                     },
                  "propertytypes":
@@ -2005,7 +2005,7 @@
                  "name":"87",
                  "properties":
                     {
-                     "neighbour":"[88]",
+                     "neighbour":[88],
                      "node":87
                     },
                  "propertytypes":
@@ -2026,7 +2026,7 @@
                  "name":"88",
                  "properties":
                     {
-                     "neighbour":"[89]",
+                     "neighbour":[89],
                      "node":88
                     },
                  "propertytypes":
@@ -2047,7 +2047,7 @@
                  "name":"89",
                  "properties":
                     {
-                     "neighbour":"[90,112]",
+                     "neighbour":[90,112],
                      "node":89
                     },
                  "propertytypes":
@@ -2068,7 +2068,7 @@
                  "name":"90",
                  "properties":
                     {
-                     "neighbour":"[91,113]",
+                     "neighbour":[91,113],
                      "node":90
                     },
                  "propertytypes":
@@ -2089,7 +2089,7 @@
                  "name":"91",
                  "properties":
                     {
-                     "neighbour":"[92]",
+                     "neighbour":[92],
                      "node":91
                     },
                  "propertytypes":
@@ -2110,7 +2110,7 @@
                  "name":"92",
                  "properties":
                     {
-                     "neighbour":"[93]",
+                     "neighbour":[93],
                      "node":92
                     },
                  "propertytypes":
@@ -2131,7 +2131,7 @@
                  "name":"93",
                  "properties":
                     {
-                     "neighbour":"[94]",
+                     "neighbour":[94],
                      "node":93
                     },
                  "propertytypes":
@@ -2152,7 +2152,7 @@
                  "name":"94",
                  "properties":
                     {
-                     "neighbour":"[95,96]",
+                     "neighbour":[95,96],
                      "node":94
                     },
                  "propertytypes":
@@ -2173,7 +2173,7 @@
                  "name":"95",
                  "properties":
                     {
-                     "neighbour":"[96,97,98]",
+                     "neighbour":[96,97,98],
                      "node":95
                     },
                  "propertytypes":
@@ -2194,7 +2194,7 @@
                  "name":"96",
                  "properties":
                     {
-                     "neighbour":"[100]",
+                     "neighbour":[100],
                      "node":96
                     },
                  "propertytypes":
@@ -2215,7 +2215,7 @@
                  "name":"97",
                  "properties":
                     {
-                     "neighbour":"[98,99]",
+                     "neighbour":[98,99],
                      "node":97
                     },
                  "propertytypes":
@@ -2236,7 +2236,7 @@
                  "name":"98",
                  "properties":
                     {
-                     "neighbour":"[99,100]",
+                     "neighbour":[99,100],
                      "node":98
                     },
                  "propertytypes":
@@ -2257,7 +2257,7 @@
                  "name":"99",
                  "properties":
                     {
-                     "neighbour":"[100,51,50]",
+                     "neighbour":[100,51,50],
                      "node":99
                     },
                  "propertytypes":
@@ -2278,7 +2278,7 @@
                  "name":"100",
                  "properties":
                     {
-                     "neighbour":"[51,52]",
+                     "neighbour":[51,52],
                      "node":100
                     },
                  "propertytypes":
@@ -2299,7 +2299,7 @@
                  "name":"101",
                  "properties":
                     {
-                     "neighbour":"[102,82,81,103]",
+                     "neighbour":[102,82,81,103],
                      "node":101
                     },
                  "propertytypes":
@@ -2320,7 +2320,7 @@
                  "name":"102",
                  "properties":
                     {
-                     "neighbour":"[103,81,80]",
+                     "neighbour":[103,81,80],
                      "node":102
                     },
                  "propertytypes":
@@ -2341,7 +2341,7 @@
                  "name":"103",
                  "properties":
                     {
-                     "neighbour":"[104]",
+                     "neighbour":[104],
                      "node":103
                     },
                  "propertytypes":
@@ -2362,7 +2362,7 @@
                  "name":"104",
                  "properties":
                     {
-                     "neighbour":"[105]",
+                     "neighbour":[105],
                      "node":104
                     },
                  "propertytypes":
@@ -2383,7 +2383,7 @@
                  "name":"105",
                  "properties":
                     {
-                     "neighbour":"[106]",
+                     "neighbour":[106],
                      "node":105
                     },
                  "propertytypes":
@@ -2404,7 +2404,7 @@
                  "name":"106",
                  "properties":
                     {
-                     "neighbour":"[107]",
+                     "neighbour":[107],
                      "node":106
                     },
                  "propertytypes":
@@ -2425,7 +2425,7 @@
                  "name":"107",
                  "properties":
                     {
-                     "neighbour":"[108]",
+                     "neighbour":[108],
                      "node":107
                     },
                  "propertytypes":
@@ -2446,7 +2446,7 @@
                  "name":"108",
                  "properties":
                     {
-                     "neighbour":"[109]",
+                     "neighbour":[109],
                      "node":108
                     },
                  "propertytypes":
@@ -2467,7 +2467,7 @@
                  "name":"109",
                  "properties":
                     {
-                     "neighbour":"[110,111]",
+                     "neighbour":[110,111],
                      "node":109
                     },
                  "propertytypes":
@@ -2488,7 +2488,7 @@
                  "name":"110",
                  "properties":
                     {
-                     "neighbour":"[88,87,111]",
+                     "neighbour":[88,87,111],
                      "node":110
                     },
                  "propertytypes":
@@ -2509,7 +2509,7 @@
                  "name":"111",
                  "properties":
                     {
-                     "neighbour":"[89,88,112]",
+                     "neighbour":[89,88,112],
                      "node":111
                     },
                  "propertytypes":
@@ -2530,7 +2530,7 @@
                  "name":"112",
                  "properties":
                     {
-                     "neighbour":"[113,90]",
+                     "neighbour":[113,90],
                      "node":112
                     },
                  "propertytypes":
@@ -2551,7 +2551,7 @@
                  "name":"113",
                  "properties":
                     {
-                     "neighbour":"[114]",
+                     "neighbour":[114],
                      "node":113
                     },
                  "propertytypes":
@@ -2572,7 +2572,7 @@
                  "name":"114",
                  "properties":
                     {
-                     "neighbour":"[115]",
+                     "neighbour":[115],
                      "node":114
                     },
                  "propertytypes":
@@ -2593,7 +2593,7 @@
                  "name":"115",
                  "properties":
                     {
-                     "neighbour":"[116]",
+                     "neighbour":[116],
                      "node":115
                     },
                  "propertytypes":
@@ -2614,7 +2614,7 @@
                  "name":"116",
                  "properties":
                     {
-                     "neighbour":"[117]",
+                     "neighbour":[117],
                      "node":116
                     },
                  "propertytypes":
@@ -2635,7 +2635,7 @@
                  "name":"117",
                  "properties":
                     {
-                     "neighbour":"[118]",
+                     "neighbour":[118],
                      "node":117
                     },
                  "propertytypes":
@@ -2656,7 +2656,7 @@
                  "name":"118",
                  "properties":
                     {
-                     "neighbour":"[119]",
+                     "neighbour":[119],
                      "node":118
                     },
                  "propertytypes":
@@ -2677,7 +2677,7 @@
                  "name":"119",
                  "properties":
                     {
-                     "neighbour":"[120]",
+                     "neighbour":[120],
                      "node":119
                     },
                  "propertytypes":
@@ -2698,7 +2698,7 @@
                  "name":"120",
                  "properties":
                     {
-                     "neighbour":"[121]",
+                     "neighbour":[121],
                      "node":120
                     },
                  "propertytypes":
@@ -2719,7 +2719,7 @@
                  "name":"121",
                  "properties":
                     {
-                     "neighbour":"[122,123]",
+                     "neighbour":[122,123],
                      "node":121
                     },
                  "propertytypes":
@@ -2740,7 +2740,7 @@
                  "name":"122",
                  "properties":
                     {
-                     "neighbour":"[123,97,95]",
+                     "neighbour":[123,97,95],
                      "node":122
                     },
                  "propertytypes":
@@ -2761,7 +2761,7 @@
                  "name":"123",
                  "properties":
                     {
-                     "neighbour":"[95,94,93]",
+                     "neighbour":[95,94,93],
                      "node":123
                     },
                  "propertytypes":
@@ -2782,7 +2782,7 @@
                  "name":"124",
                  "properties":
                     {
-                     "neighbour":"[23,24]",
+                     "neighbour":[23,24],
                      "node":124
                     },
                  "propertytypes":

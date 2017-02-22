@@ -34,14 +34,16 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_running = true;
 
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
-
+	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
+	
 	_world.SetAllowSleeping(false);
 
 	_entityFactory.Initialize(&_systemManager, &_textureHolder);
 	_bodyFactory.Initialize(&_world);
 
 	LoadContent();
+	_systemManager.PostInitialize(&_waypoints);
+	
 
 	Entity* player = nullptr;
 
@@ -262,7 +264,6 @@ void Game::DebugBox2D()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
-					
 
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
@@ -310,7 +311,14 @@ void Game::DebugBox2D()
 					points[lenght].x = points[0].x;
 
 
-
+					if (lenght > 2)
+					{
+						int width = points[1].x - points[0].x;
+						int height = points[2].y - points[1].y;
+						SDL_Rect rect = SDL_Rect{ points[0].x,points[0].y,width,height };
+						SDL_RenderFillRect(_renderer, &rect);
+					}
+					
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
 					delete points;
 				}

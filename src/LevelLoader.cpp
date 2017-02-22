@@ -191,15 +191,24 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>
 		float w = entity["width"].GetFloat();
 		float h = entity["height"].GetFloat();
 
-		std::string data = entity["type"].GetString();
+		
 
 		helper::Vector2 position = helper::Vector2(x + w*.5f, y + h*.5f);
 
 		const Value& properties = entity["properties"];
 		int currentNode = properties["node"].GetInt();
 
-		waypoints->addNode(to_string(currentNode), position);
-
+		std::string dataString = entity["type"].GetString();
+		pair<GraphNode::EntityData, int> data;
+		if (dataString.empty())
+		{
+			data = make_pair(GraphNode::EntityData::Null, 0);
+		}
+		else
+		{
+			data = make_pair(GraphNode::EntityData::Checkpoint, 0);
+		}
+		waypoints->addNode(data, position);
 		Entity* point = ef->CreateEntity(EntityType::Point);
 		TransformComponent* transform = static_cast<TransformComponent*>(point->GetComponent(Component::Type::Transform));
 		transform->rect.x = x;
@@ -221,7 +230,8 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>
 			waypoints->addArc(fromNode, toNode, lenght, false);
 		}
 	}
-	waypoints->addNode("flag", helper::Vector2(0, 0));
+	//flag node
+	waypoints->addNode(make_pair(GraphNode::EntityData::Null, 1), helper::Vector2(0, 0));
 }
 
 void LevelLoader::LoadColliders(const Value &colliderLayer, std::vector<Entity*>& entities, EntityFactory* ef, BodyFactory* bf)

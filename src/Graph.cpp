@@ -18,7 +18,7 @@ Graph::~Graph() {
 }
 
 
-void Graph::addNode(std::string data, helper::Vector2 position)
+void Graph::addNode(pair<GraphNode::EntityData,int> data, helper::Vector2 position)
 {
 	GraphNode* node = new GraphNode();
 	node->setData(data);

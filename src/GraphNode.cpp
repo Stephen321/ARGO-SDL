@@ -101,10 +101,10 @@ bool GraphNode::marked() const {
 	return _marked;
 }
 
-string const & GraphNode::data() const {
+pair<GraphNode::EntityData, int> const & GraphNode::data() const {
 	return _data;
 }
-void GraphNode::setData(string data) {
+void GraphNode::setData(const pair<GraphNode::EntityData, int> &data) {
 	_data = data;
 }
 

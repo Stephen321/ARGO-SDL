@@ -7,6 +7,9 @@
 #include "Helpers.h"
 #include "Graph.h"
 
+#include "AIComponent.h"
+#include "TransformComponent.h" 
+
 using namespace helper;
 class AISystem : public System
 {
@@ -19,5 +22,9 @@ public:
 
 private:
 	Graph* _waypoints;
+	GraphNode* _flagNode;
+	vector<GraphNode*> _checkpointNode;
+
+	void updateAStar(AIComponent* ai, TransformComponent* t);
 };
 

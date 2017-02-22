@@ -22,7 +22,7 @@ public:
 		Collision,
 		Gun,
 		AI,
-		World,
+		Waypoint,
 	};
 
 	enum class InteractionSystemType
@@ -37,8 +37,9 @@ public:
 										SystemManager();
 										~SystemManager();
 
-	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
+	void								Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world , int width, int height);
+	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
+	void								PostInitialize(Graph* waypoints);
 	void								InitializeInteractionSystems();
 
 	void								Process(float dt = 0.f);
@@ -57,7 +58,7 @@ public:
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
 	AISystem*							GetAISystem();
-
+	WaypointSystem*						GetWaypointSystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
 
 	Camera2D::Camera&					GetCamera();
