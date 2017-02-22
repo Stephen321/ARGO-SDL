@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "GunComponent.h"
 #include "DestructionComponent.h"
+#include "FlagComponent.h"
 
 Game::Game() 
 	: _gravity(0.f, 0.f)
@@ -40,17 +41,31 @@ void Game::Initialize()
 	LoadContent();
 
 	Entity* player = nullptr;
+	Entity* flag = nullptr;
 
+	std::vector<Entity*> checkpoints = std::vector<Entity*>();
 	std::vector<Entity*>::iterator it = _entities.begin();
+
 	while (it != _entities.end())
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
 			player = *it;
-			break;
+		}
+		else if ((*it)->GetType() == EntityType::Flag)
+		{
+			flag = *it;
+		}
+		else if ((*it)->GetType() == EntityType::Checkpoint)
+		{
+			checkpoints.push_back(*it);
 		}
 		it++;
 	}
+
+	_systemManager.PostInitialize(checkpoints);
+
+
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
@@ -61,6 +76,16 @@ void Game::Initialize()
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
+
+	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	flagComponent->hasFlag = true;
+
+	assert(flag != nullptr);
+
+	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
+
+
+
 	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
 
 
@@ -70,6 +95,21 @@ void Game::Initialize()
 
 	_swapScene = CurrentScene::GAME;
 	BindInput(player, weapon);
+}
+
+void Game::LoadContent()
+{
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
+
+	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
+	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
+	
 }
 
 int Game::Update()

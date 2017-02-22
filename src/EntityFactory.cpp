@@ -7,6 +7,8 @@
 #include "GunComponent.h"
 #include "AIComponent.h"
 #include "DestructionComponent.h"
+#include "FlagComponent.h"
+#include "CheckpointComponent.h"
 #include "ConstHolder.h"
 
 
@@ -86,6 +88,7 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
+	player->AddComponent(new FlagComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);
@@ -104,7 +107,9 @@ Entity* EntityFactory::CreateAIEntity()
 	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
 	ai->AddComponent(new ColliderComponent());
+	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
+
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, ai);
 	_systemManager->AddEntity(SystemManager::SystemType::Physics, ai);
@@ -178,9 +183,13 @@ Entity* EntityFactory::CreateBulletEntity()
 Entity* EntityFactory::CreateCheckpointEntity()
 {
 	Entity* checkpoint = new Entity(EntityType::Checkpoint);
-	checkpoint->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
-	checkpoint->AddComponent(new TransformComponent());
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint]);
+
+	checkpoint->AddComponent(spriteComponent);
+	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	checkpoint->AddComponent(new ColliderComponent());
+	checkpoint->AddComponent(new CheckpointComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, checkpoint);
 
@@ -190,10 +199,12 @@ Entity* EntityFactory::CreateCheckpointEntity()
 Entity* EntityFactory::CreateFlagEntity()
 {
 	Entity* flag = new Entity(EntityType::Flag);
-	flag->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
-	flag->AddComponent(new TransformComponent());
-	flag->AddComponent(new ColliderComponent());
 
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Flag]);
+
+	flag->AddComponent(spriteComponent);
+	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	flag->AddComponent(new ColliderComponent());
 
 	_systemManager->AddEntity(SystemManager::SystemType::Render, flag);
 
