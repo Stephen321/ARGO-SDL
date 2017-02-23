@@ -106,7 +106,20 @@ int main(int argc, char** argv)
 			case MessageType::JoinSession:
 			{
 				JoinSessionData data = receiveData.GetData<JoinSessionData>();
-				if (data.sessionID <= 0)
+				if (data.sessionID >= 0) //session exists
+				{
+					if (sessions[data.sessionID].Joinable()) //has space to join
+					{
+						std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
+						sessions[data.sessionID].AddPlayer(data.id, srcAddr);
+					}
+					else 
+					{
+						//client will ensure to check session list before trying to join a session in case it is full
+						std::cout << "Can't join session as it is full..." << std::endl;
+					}
+				}
+				else //need to make a new session
 				{
 					int sessionID = sessionCount++;
 					std::cout << "Creating session " << sessionID << " with player " << data.id << " as host." << std::endl;
@@ -117,11 +130,6 @@ int main(int argc, char** argv)
 
 					//now tell the player what session they have just joined and the player list?. player list is in different scene so that scene could send a seperate message
 					data.sessionID = sessionID;
-				}
-				else
-				{
-					std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
-					sessions[data.sessionID].AddPlayer(data.id, srcAddr);
 				}
 				RemoveSpectator(spectators, srcAddr);
 

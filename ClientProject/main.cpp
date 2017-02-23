@@ -72,11 +72,8 @@ void client(Net& net, IPaddress& serverIP)
 	}
 
 	int input = 0;
-	while (input < 1 || input > 2)
-	{
-		std::cout << "Press 1 to create session or 2 to refresh session list or 3 to join session 0 (if it exists)." << std::endl;
-		std::cin >> input;
-	}
+	std::cout << "Press 1 to create session or 2 to refresh session list or 3 to join session 0 (if it exists)." << std::endl;
+	std::cin >> input;
 	if (input == 1)
 	{ //create session as host
 		JoinSessionData data;
@@ -134,13 +131,13 @@ void client(Net& net, IPaddress& serverIP)
 			}
 		}
 	}
-	else
+	else if (input == 3)
 	{ //join some other session (0)
 		JoinSessionData data;
 		data.id = id;
 		data.sessionID = 0;
 		net.Send(&data, serverIP);
-
+		std::cout << "Trying to join session 0." << std::endl;
 		waiting = true;
 		while (waiting)
 		{
@@ -161,13 +158,7 @@ void client(Net& net, IPaddress& serverIP)
 		}
 	}
 
-
-	//case MessageType::SetHost:
-	//{
-	//	//I AM NOW THE HOST
-
-	//}
-
+	while (true) {};
 	DisconnectData disconnect;
 	disconnect.id = id;
 	disconnect.sessionID = sessionID;

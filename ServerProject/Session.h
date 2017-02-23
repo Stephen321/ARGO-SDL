@@ -13,6 +13,7 @@ public:
 	bool RemovePlayer(int playerID);
 	int GetHostID();
 	IPaddress GetPlayerIP(int playerID);
+	bool Joinable() const;
 private:
 	std::map<int, IPaddress> _players;
 	bool _waiting;

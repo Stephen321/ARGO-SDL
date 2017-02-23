@@ -50,3 +50,8 @@ IPaddress Session::GetPlayerIP(int playerID)
 	}
 	return IPaddress();
 }
+
+bool Session::Joinable() const
+{
+	return GetPlayerCount() < MAX_PLAYERS;
+}
