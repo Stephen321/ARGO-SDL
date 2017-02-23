@@ -11,15 +11,15 @@
 #include <assert.h>
 #include "GunComponent.h"
 #include "DestructionComponent.h"
+#include "FlagComponent.h"
 
 Game::Game() 
-	: _running(false)
-	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _gravity(0.f, 0.f)
+	: _gravity(0.f, 0.f)
 	, _world(_gravity)
 	, _waypoints()
 {
-
+	_running = false;
+	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
 
 Game::~Game()
@@ -27,15 +27,15 @@ Game::~Game()
 	_world.~b2World();
 }
 
-void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
+void Game::Initialize(SDL_Renderer* renderer)
 {
-	_window = window;
 	_renderer = renderer;
 	_running = true;
+	_swapScene = CurrentScene::GAME;
 
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, width, height);
-	
+	_systemManager.Initialize(_renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	_world.SetAllowSleeping(false);
 
 	_entityFactory.Initialize(&_systemManager, &_textureHolder);
@@ -46,18 +46,29 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	
 
 	Entity* player = nullptr;
+	Entity* flag = nullptr;
 
+	std::vector<Entity*> checkpoints = std::vector<Entity*>();
 	std::vector<Entity*>::iterator it = _entities.begin();
-	while (it != _entities.end())
 
+	while (it != _entities.end())
 	{
 		if ((*it)->GetType() == EntityType::Player)
 		{
 			player = *it;
-			break;
+		}
+		else if ((*it)->GetType() == EntityType::Flag)
+		{
+			flag = *it;
+		}
+		else if ((*it)->GetType() == EntityType::Checkpoint)
+		{
+			checkpoints.push_back(*it);
 		}
 		it++;
 	}
+
+	_systemManager.PostInitialize(checkpoints);
 
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
@@ -68,25 +79,20 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
 
+	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	flagComponent->hasFlag = true;
+
+	assert(flag != nullptr);
+
+	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
+
+	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
+
 	//shooting
 	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
-	_swapScene = CurrentScene::game;
 	BindInput(player, weapon);
-}
-
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = loadTexture("Media/Textures/BackgroundSprite.png");
-
-	_textureHolder[TextureID::Bullet] = loadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = loadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Player] = loadTexture("Media/Player/player.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map2.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
-	
 }
 
 int Game::Update()
@@ -94,8 +100,7 @@ int Game::Update()
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
 
-	//UPDATE HERE
-
+	// UPDATE HERE //
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
 	// Use to Update constantly at frame rate
@@ -112,24 +117,29 @@ int Game::Update()
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-	SDL_RenderClear(_renderer);
-	
-	//test background in order to see the camera is following the player position
+	SDL_RenderClear(_renderer);	
 
 	//RENDER HERE
 	_systemManager.Render();
-
 	DebugBox2D();
 
-
-	//test draw world bounds
-	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_systemManager.GetCamera().worldToScreen(r));
-
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+bool Game::IsRunning()
+{
+	if (_swapScene != CurrentScene::GAME) { _swapScene = CurrentScene::GAME; }
+	return _running;
+}
+
+void Game::Start()
+{
+
+}
+
+void Game::Stop()
+{
+
 }
 
 void Game::OnEvent(EventListener::Event evt)
@@ -143,53 +153,6 @@ void Game::OnEvent(EventListener::Event evt)
 			_running = false;
 		}
 	}
-}
-
-bool Game::IsRunning()
-{
-	if (_swapScene != CurrentScene::game) { _swapScene = CurrentScene::game; }
-	return _running;
-}
-
-void Game::CleanUp()
-{
-	//DESTROY HERE
-	_world.SetAllowSleeping(true);
-
-	for (int i = 0; i < _entities.size(); i++)
-	{
-		delete _entities.at(i);
-	}
-
-	_entities.clear();
-
-	SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
-}
-
-
-SDL_Texture * Game::loadTexture(const std::string & path)
-{
-	SDL_Texture* texture = NULL;
-
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(_renderer, surface);
-		if (texture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-
-		SDL_FreeSurface(surface);
-	}
-
-	return texture;
 }
 
 void Game::BindInput(Entity* player, Entity* weapon)
@@ -212,6 +175,62 @@ void Game::BindInput(Entity* player, Entity* weapon)
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
+void Game::LoadContent()
+{
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
+
+	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
+	_levelLoader.LoadJson("Media/Json/Map2.json", _entities, &_entityFactory, &_bodyFactory, &_waypoints);
+}
+
+void Game::CleanUp()
+{
+	//DESTROY HERE
+	_world.SetAllowSleeping(true);
+
+	for (int i = 0; i < _entities.size(); i++)
+	{
+		delete _entities.at(i);
+	}
+
+	_entities.clear();
+
+	//SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
+}
+
+
+SDL_Texture* Game::LoadTexture(const std::string & path)
+{
+	SDL_Texture* texture = NULL;
+
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
+	}
+	else
+	{
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		if (texture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+
+		SDL_FreeSurface(surface);
+	}
+
+	return texture;
+}
+
+
 void Game::DebugBox2D()
 {
 	//DEBUG ASTAR
@@ -220,10 +239,10 @@ void Game::DebugBox2D()
 
 	_waypoints.drawNodes(_renderer, &_systemManager.GetCamera());
 
-
 	_waypoints.drawArcs(_renderer, &_systemManager.GetCamera());
 	//DEBUG BOX2D
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+
 	///////////////////use this code for testing purpose///////////////////////////////////////////////////////////////
 	for (b2Body* BodyIterator = _world.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext())
 	{

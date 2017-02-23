@@ -1,46 +1,42 @@
 #include "Lobby.h"
 
-#include "ConstHolder.h"
-#include "Helpers.h"
-#include "LTimer.h"
+#include <string>
+#include <sstream>
 
 Lobby::Lobby()
-	: _running(false)
-	, _textureHolder(std::map<TextureID, SDL_Texture*>())
-	, _cameraSystem(CAMERA_SYSTEM_UPDATE)
+	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
+	, _uiSystem(0)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_running = false;
+	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
 
 Lobby::~Lobby()
 {
 }
 
-void Lobby::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height)
+void Lobby::Initialize(SDL_Renderer* renderer)
 {
-	_window = window;
 	_renderer = renderer;
 	_running = true;
-	_swapScene = CurrentScene::lobby;
+	_swapScene = CurrentScene::LOBBY;
+	_selectedItemIndex = 0;
 
-	_cameraSystem.Initialize(width, height);
+	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_uiSystem.Initialize(_renderer);
 
-	// Text
-	TTF_Init();
-	_fontSize = 32;
-	_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	_surface = std::vector<SDL_Surface*>();
-	_textTexture = std::vector<SDL_Texture*>();
-	_textRectangle = std::vector<SDL_Rect>();
+	Entity* ui = new Entity(EntityType::UI);
+	_uiSystem.AddEntity(ui);
 
-	CreateText("Lobby", 25, 450);
-
-	TTF_CloseFont(_font); // Free Font Memory
+	LoadContent();
 
 	//Input
 	BindInput();
+
+	Refresh();
 }
 
 int Lobby::Update()
@@ -51,36 +47,37 @@ int Lobby::Update()
 	//UPDATE HERE	
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
-
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
-	return _swapScene;
+	return (int)_swapScene;
 }
 
 void Lobby::Render()
 {
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_renderer);
-
-	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
 	_renderSystem.Process();
+	_uiSystem.Process();
 
-	//test draw world bounds
-	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	// Text
-	for (int i = 0; i < _textTexture.size(); i++)
-	{
-		SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
-	}
-
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+bool Lobby::IsRunning()
+{
+	if (_swapScene != CurrentScene::LOBBY) { _swapScene = CurrentScene::LOBBY; }
+	return _running;
+}
+
+void Lobby::Start()
+{
+
+}
+
+void Lobby::Stop()
+{
+
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -95,60 +92,107 @@ void Lobby::OnEvent(EventListener::Event evt)
 	}
 }
 
-bool Lobby::IsRunning()
+void Lobby::LoadContent()
 {
-	if (_swapScene != CurrentScene::lobby) { _swapScene = CurrentScene::lobby; }
-	return _running;
+	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+}
+
+void Lobby::CleanUp()
+{
+	//DESTROY HERE
+
+	//SDL_DestroyWindow(_window);
+	SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
 }
 
 void Lobby::BindInput()
 {
+	Command* enterIn = new InputCommand([&]()
+	{
+		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) { _running = false; }
+		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::RETURN, enterIn, this);
+
+	Command* pIn = new InputCommand([&]()
+	{
+		_uiSystem.DeleteText();
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::p, pIn, this);
+
+	Command* oIn = new InputCommand([&]()
+	{
+		Start();
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::o, oIn, this);
+
+
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
-void Lobby::CreateText(string message, int x, int y)
+void Lobby::MoveUp()
 {
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
-	_surface.push_back(surface);
-
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
-
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
-
-	SDL_Rect textRectangle;
-	textRectangle.x = x;
-	textRectangle.y = y;
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
-
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+	if (_selectedItemIndex - 1 >= 0)
+	{
+		_selectedItemIndex--;
+	}
+	// Jump to bottom
+	else
+	{
+		// _textRectangle.size() - 2 = 1 before icon
+		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+	}
+	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
 }
 
-void Lobby::CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+void Lobby::MoveDown()
 {
-	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
-	_surface.push_back(surface);
+	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	{
+		_selectedItemIndex++;
+	}
+	// Jump to top
+	else
+	{
+		_selectedItemIndex = 0;
+	}
+	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+}
 
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, _surface.back());
-	_textTexture.push_back(textTexture);
+int Lobby::GetPressedItem()
+{
+	// Index in menu
+	return _selectedItemIndex;
+}
 
-	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
+void Lobby::Refresh()
+{
+	_uiSystem.DeleteText();
+	int amountOfLobbiesTest = 5;
+	for (int i = 0; i < amountOfLobbiesTest; i++)
+	{
+		std::ostringstream oss;
+		oss << "[" << i << "]" << " - " << i << "/" << 4;
+		std::string var = oss.str();
 
-	SDL_Rect textRectangle;
-	textRectangle.x = x;
-	textRectangle.y = y;
-	textRectangle.w = width;
-	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
+		if (i == 0)
+		{
+			_uiSystem.CreateText(var, 50, 200);
+		}
 
-	SDL_FreeSurface(_surface.back());
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+		else
+		{
+			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+		}
+	}
 }

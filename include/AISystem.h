@@ -9,6 +9,7 @@
 
 #include "AIComponent.h"
 #include "TransformComponent.h" 
+#include "FlagComponent.h"
 
 using namespace helper;
 class AISystem : public System
@@ -27,5 +28,7 @@ private:
 
 	void updateAStar(AIComponent* ai, TransformComponent* t);
 	GraphNode* findClosestNode(TransformComponent* t);
+
+	void goToCheckpoint(FlagComponent* f);
 };
 

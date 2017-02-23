@@ -7,14 +7,18 @@
 #include "GunSystem.h"
 #include "AISystem.h"
 #include "DestructionSystem.h"
+#include "UISystem.h"
 #include "WeaponSystem.h"
+#include "FlagCheckpointSystem.h"
 #include "WaypointSystem.h"
+
 
 class SystemManager
 {
 public:
 	enum class SystemType
 	{
+		UI,
 		Render,
 		Destruction,
 		Physics,
@@ -28,6 +32,7 @@ public:
 	enum class InteractionSystemType
 	{
 		Weapon,
+		Flag,
 	};
 
 public:
@@ -41,6 +46,7 @@ public:
 	void								InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
 	void								PostInitialize(Graph* waypoints);
 	void								InitializeInteractionSystems();
+	void								PostInitialize(std::vector<Entity*>& checkpoints);
 
 	void								Process(float dt = 0.f);
 	void								TryToDestroy(SystemMapIterator& it, float dt);
@@ -52,14 +58,20 @@ public:
 	void								AddEntity(SystemType type, Entity* entity);
 	void								AddEntity(InteractionSystemType type, Entity* actor, Entity* item);
 
+	void								RemoveEntity(SystemType type, Entity* entity);
+	void								RemoveEntity(InteractionSystemType type, Entity* actor, Entity* item);
+	void								RemoveEntity(InteractionSystemType type, Entity* actor, bool firstItem);
+
 	RenderSystem*						GetRenderSystem();
 	PhysicsSystem*						GetPhysicsSystem();
 	CameraSystem*						GetCameraSystem();
 	CollisionSystem*					GetCollisionSystem();
 	GunSystem*							GetGunSystem();
+	UISystem*							GetUISystem();
 	AISystem*							GetAISystem();
 	WaypointSystem*						GetWaypointSystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
+	FlagCheckpointSystem*				GetFlagCheckpointSystem();
 
 	Camera2D::Camera&					GetCamera();
 

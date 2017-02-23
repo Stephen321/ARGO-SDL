@@ -2,6 +2,7 @@
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
+#include "CheckpointComponent.h"
 #include "BasicTypes.h"
 #include "Helpers.h"
 
@@ -70,8 +71,8 @@ void LevelLoader::LoadTiles(const Value &tileLayer, std::vector<Entity*>& entiti
 			default:
 				break;
 			}
-			entities.push_back(tile);
 
+			entities.push_back(tile);
 			index++;
 		}
 	}
@@ -80,8 +81,11 @@ void LevelLoader::LoadTiles(const Value &tileLayer, std::vector<Entity*>& entiti
 void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>& entities, EntityFactory* ef, BodyFactory* bf)
 {
 	const Value& entityDataArray = entitiesLayer["objects"];
-	bool createPlayer = false;
+
+	int checkpointID = 0;
 	bool createAi = false;
+	bool createPlayer = false;
+
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
@@ -104,17 +108,20 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>&
 				transform->rect.x = x;
 				transform->rect.y = y;
 
-				collider->body = bf->CreateBoxBody(
-					b2BodyType::b2_dynamicBody
-					, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-					, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
-					, (uint16)player->GetType()
-					, PLAYER_MASK
-					, false);
+				if (collider != nullptr)
+				{
+					collider->body = bf->CreateBoxBody(
+						b2BodyType::b2_dynamicBody
+						, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+						, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+						, (uint16)player->GetType()
+						, PLAYER_MASK
+						, false);
 
-				collider->body->SetUserData(player);
-				collider->body->SetFixedRotation(true);
-				entities.push_back(player);
+					collider->body->SetUserData(player);
+					collider->body->SetFixedRotation(true);
+					entities.push_back(player);
+				}
 
 			}
 			else
@@ -143,8 +150,17 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>&
 		}
 		else if (entityName == "Checkpoint")
 		{
+			checkpointID++;
 			Entity* checkpoint = ef->CreateEntity(EntityType::Checkpoint);
+
 			ColliderComponent* collider = static_cast<ColliderComponent*>(checkpoint->GetComponent(Component::Type::Collider));
+			TransformComponent* transform = static_cast<TransformComponent*>(checkpoint->GetComponent(Component::Type::Transform));
+
+			CheckpointComponent* checkpointComponent = static_cast<CheckpointComponent*>(checkpoint->GetComponent(Component::Type::Checkpoint));
+			checkpointComponent->id = checkpointID;
+
+			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
+			transform->origin = { (int)(w*0.5f), (int)(h*0.5f) };
 
 			b2Body* body = bf->CreateBoxBody(
 				b2BodyType::b2_staticBody
@@ -161,6 +177,11 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, std::vector<Entity*>&
 		{
 			Entity* flag = ef->CreateEntity(EntityType::Flag);
 			ColliderComponent* collider = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
+			TransformComponent* transform = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
+
+			transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), transform->rect.w, transform->rect.h };
+			//transform->rect = { (int)(x + w*.5f), (int)(y + h*.5f), (int)(w), (int)(h) };
+			//transform->origin = { (int)(w*0.5f), (int)(h*0.5f) };
 
 			b2Body* body = bf->CreateBoxBody(
 				b2BodyType::b2_dynamicBody

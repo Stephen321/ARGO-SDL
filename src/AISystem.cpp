@@ -1,4 +1,6 @@
 #include "AISystem.h"
+#include "FlagComponent.h"
+
 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
@@ -124,7 +126,7 @@ void AISystem::updateAStar(AIComponent* ai, TransformComponent* t)
 		ai->nextNode->setColour(SDL_Color{ 0,255,0,255 });
 
 		if (!path.empty())
-		{
+		{//early check if node is in radius
 			int size = path.size() / 2;
 			for (int i = 0; i <size; i++)
 			{
@@ -136,7 +138,6 @@ void AISystem::updateAStar(AIComponent* ai, TransformComponent* t)
 				}
 			}
 		}
-
 		ai->path = path;
 	}
 }
@@ -157,4 +158,12 @@ GraphNode* AISystem::findClosestNode(TransformComponent* t)
 		}
 	}
 	return nodes[index];
+}
+
+void AISystem::goToCheckpoint(FlagComponent* f)
+{
+	if (f->hasFlag)
+	{
+		
+	}
 }
