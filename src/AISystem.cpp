@@ -50,24 +50,47 @@ void AISystem::Process(float dt)
 				}
 				ai->pathfinderUpdateTimer = updateTimer;
 
-				if (ai->nextNode != nullptr && !ai->path.empty())
+				float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->nextNode->getPosition());
+				if (distance < AI_DETECTION_RADIUS && ai->path.size() != 1)
 				{
-					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+					ai->path.erase(ai->path.begin());
+					ai->nextNode = ai->path[0];
+				}
 
-					float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->nextNode->getPosition());
-					if (distance < AI_DETECTION_RADIUS && ai->path.size() != 1)
-					{
-							ai->path.erase(ai->path.begin());
-							ai->nextNode = ai->path[0];
-					}
-					else if (ai->nextNode == _flagNode)
+				switch (ai->state)
+				{
+				case AIState::SeekFlag:
+					if (ai->nextNode == _flagNode) // go to flag
 					{
 						if (distance > AI_DETECTION_RADIUS + 50)
 						{
 							ai->inFlagRange = true;
+							//ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate;
 						}
 					}
+					break;
+				case AIState::SeekCheckpoint:
+					FlagComponent* flagComponent = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+					if (flagComponent->hasFlag)
+					{
+						seekCheckpoint(ai, flagComponent);
+					}
+					break;
+				case AIState::SeekPowerUp:
+					break;
+				default:
+					break;
+				}
 
+
+				if (ai->nextNode != nullptr && !ai->path.empty())
+				{
+					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+					//go to path
+					
+				
+					//go to checkpoint
+					
 
 					helper::Vector2 AB = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
 					helper::Vector2 dir = AB.normalize();
@@ -160,10 +183,27 @@ GraphNode* AISystem::findClosestNode(TransformComponent* t)
 	return nodes[index];
 }
 
-void AISystem::goToCheckpoint(FlagComponent* f)
+void AISystem::seekCheckpoint(AIComponent* ai, FlagComponent* f)
 {
 	if (f->hasFlag)
 	{
-		
+		int size = _checkpointNode.size();
+		for (int i = 0; i < size; i++)
+		{
+			if (f->currentCheckpointID == _checkpointNode[i]->data().second)
+			{
+				ai->nextNode = _checkpointNode[i];
+				break;
+			}
+		}
+		ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate;
 	}
+	else
+	{
+
+	}
+	
 }
+
+
+void seekPowerup();

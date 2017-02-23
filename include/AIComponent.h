@@ -2,7 +2,12 @@
 
 #include "Component.h"
 #include "GraphNode.h"
-
+enum class AIState
+{
+	SeekFlag,
+	SeekCheckpoint,
+	SeekPowerUp,
+};
 
 class AIComponent : public Component
 {
@@ -13,7 +18,8 @@ public:
 		pathFinderUpdateRate(1.f),
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
-		inFlagRange(false)
+		inFlagRange(false),
+		state(AIState::SeekFlag)
 	{
 	}
 
@@ -28,4 +34,6 @@ public:
 	GraphNode* nextNode;
 
 	bool inFlagRange;
+
+	AIState state;
 };

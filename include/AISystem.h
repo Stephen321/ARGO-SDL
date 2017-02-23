@@ -29,6 +29,44 @@ private:
 	void updateAStar(AIComponent* ai, TransformComponent* t);
 	GraphNode* findClosestNode(TransformComponent* t);
 
-	void goToCheckpoint(FlagComponent* f);
+	
+
+	void seekFlag(AIComponent* ai, FlagComponent* f)
+	{
+		if (!f->hasFlag)
+		{
+
+		}
+		else
+		{  
+			ai->state = AIState::SeekCheckpoint;
+			//transition
+			int size = _checkpointNode.size();
+			for (int i = 0; i < size; i++)
+			{
+				if (f->currentCheckpointID == _checkpointNode[i]->data().second)
+				{
+					ai->nextNode = _checkpointNode[i];
+					break;
+				}
+			}
+			ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate;
+		}
+	}
+
+	void seekCheckpoint(AIComponent* ai, FlagComponent* f)
+	{
+		if (f->hasFlag)
+		{
+			//keep going to node
+		}
+		else
+		{
+			
+		}
+	}
+
+	void seekPowerup();
+
 };
 
