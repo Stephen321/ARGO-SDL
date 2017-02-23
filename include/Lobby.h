@@ -1,27 +1,8 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
 
-#include "CameraSystem.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "FunctionMaster.h"
-#include "RenderSystem.h"
-
-class Lobby : public EventListener, public Scene
+class Lobby : public Scene
 {
 public:
 	Lobby();
@@ -49,5 +30,17 @@ private:
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
+
+	CurrentScene					_swapScene;
+
+private:
+	void							MoveUp();
+	void							MoveDown();
+
+	int								GetPressedItem();
+	int								_selectedItemIndex;
+
+	void							Refresh();
 };
 

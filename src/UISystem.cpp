@@ -21,8 +21,12 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 	TTF_Init();
 	_fontSize = 32;
 	_font = TTF_OpenFont("Media\\Fonts\\font.ttf", _fontSize);
-	_textTexture = std::vector<SDL_Texture*>();
-	_textRectangle = std::vector<SDL_Rect>();
+
+	_interactiveTextTexture = std::vector<SDL_Texture*>();
+	_interactiveTextRectangle = std::vector<SDL_Rect>();
+
+	_displayTextTexture = std::vector<SDL_Texture*>();
+	_displayTextRectangle = std::vector<SDL_Rect>();
 
 	//TTF_CloseFont(_font); // Free Font Memory
 }
@@ -59,36 +63,92 @@ void UISystem::Process(float dt)
 				}
 
 				// Draw Text
-				for (int i = 0; i < _textTexture.size(); i++)
+				for (int i = 0; i < _interactiveTextTexture.size(); i++)
 				{
-					SDL_RenderCopy(_renderer, _textTexture[i], NULL, &_textRectangle[i]);
+					SDL_RenderCopy(_renderer, _interactiveTextTexture[i], NULL, &_interactiveTextRectangle[i]);
+				}
+
+				for (int i = 0; i < _displayTextTexture.size(); i++)
+				{
+					SDL_RenderCopy(_renderer, _displayTextTexture[i], NULL, &_displayTextRectangle[i]);
 				}
 			}
 		}
 	}
 }
 
-SDL_Texture* UISystem::CreateText(std::string message, int x, int y)
+void UISystem::DeleteText()
+{
+	for (int i = 0; i < _interactiveTextTexture.size(); i++)
+	{
+		SDL_DestroyTexture(_interactiveTextTexture[i]);
+	}
+	_interactiveTextTexture.clear();
+
+	_interactiveTextRectangle.clear();
+}
+
+void UISystem::CreateText(std::string message, int x, int y)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
-	_textTexture.push_back(textTexture);
+	_interactiveTextTexture.push_back(textTexture);
 
 	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
+	SDL_QueryTexture(_interactiveTextTexture.back(), NULL, NULL, &width, &height);
 
 	SDL_Rect textRectangle;
 	textRectangle.x = x;
 	textRectangle.y = y;
 	textRectangle.w = width;
 	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
+	_interactiveTextRectangle.push_back(textRectangle);
 
 	SDL_FreeSurface(surface);
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
+}
 
-	return _textTexture.back();
+void UISystem::CreateTextAtOrigin(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_interactiveTextTexture.push_back(textTexture);
+
+	int width, height;
+	SDL_QueryTexture(_interactiveTextTexture.back(), NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y - height / 2;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_interactiveTextRectangle.push_back(textRectangle);
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
+}
+
+void UISystem::CreateTextAtCenter(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_interactiveTextTexture.push_back(textTexture);
+
+	int width, height;
+	SDL_QueryTexture(_interactiveTextTexture.back(), NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_interactiveTextRectangle.push_back(textRectangle);
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
 }
 
 void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
@@ -96,42 +156,105 @@ void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Ui
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
-	_textTexture.push_back(textTexture);
+	_interactiveTextTexture.push_back(textTexture);
 
 	int width, height;
-	SDL_QueryTexture(_textTexture.back(), NULL, NULL, &width, &height);
+	SDL_QueryTexture(_interactiveTextTexture.back(), NULL, NULL, &width, &height);
 
 	SDL_Rect textRectangle;
 	textRectangle.x = x;
 	textRectangle.y = y;
 	textRectangle.w = width;
 	textRectangle.h = height;
-	_textRectangle.push_back(textRectangle);
+	_interactiveTextRectangle.push_back(textRectangle);
 
 	SDL_FreeSurface(surface);
-	SDL_RenderCopy(_renderer, _textTexture.back(), NULL, &_textRectangle.back());
+	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
 }
 
 void UISystem::UpdateText(std::string message, int index)
 {
 	// Destroy Previous Image
-	SDL_DestroyTexture(_textTexture[index]);
+	SDL_DestroyTexture(_interactiveTextTexture[index]);
 
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
-	_textTexture[index] = textTexture;
+	_interactiveTextTexture[index] = textTexture;
 
 	int width, height;
-	SDL_QueryTexture(_textTexture[index], NULL, NULL, &width, &height);
+	SDL_QueryTexture(_interactiveTextTexture[index], NULL, NULL, &width, &height);
 
 	SDL_Rect textRectangle;
-	textRectangle.x = _textRectangle[index].x;
-	textRectangle.y = _textRectangle[index].y;
+	textRectangle.x = _interactiveTextRectangle[index].x;
+	textRectangle.y = _interactiveTextRectangle[index].y;
 	textRectangle.w = width;
 	textRectangle.h = height;
-	_textRectangle[index] = textRectangle;
+	_interactiveTextRectangle[index] = textRectangle;
 
 	SDL_FreeSurface(surface);
-	SDL_RenderCopy(_renderer, _textTexture[index], NULL, &_textRectangle[index]);
+	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
+}
+
+void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_interactiveTextTexture[index] = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_interactiveTextTexture[index], NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = _interactiveTextRectangle[index].x;
+	textRectangle.y = _interactiveTextRectangle[index].y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_interactiveTextRectangle[index] = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
+}
+
+void UISystem::CreateDisplayText(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_displayTextTexture.push_back(textTexture);
+
+	int width, height;
+	SDL_QueryTexture(_displayTextTexture.back(), NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_displayTextRectangle.push_back(textRectangle);
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
+}
+
+void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_displayTextTexture.push_back(textTexture);
+
+	int width, height;
+	SDL_QueryTexture(_displayTextTexture.back(), NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_displayTextRectangle.push_back(textRectangle);
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
 }

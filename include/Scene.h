@@ -1,8 +1,34 @@
 #pragma once
 
-#include "FLInputManager.h"
 
+// C++
+#include <vector>
+#include <queue>
+#include <map>
+
+// SDL
+#include <SDL.h>
+#include "SDL_image.h"
+#include "SDL_ttf.h"
+
+// Box2D
+#include "Debug.h"
+
+// Components
+#include "FLInputManager.h"
+#include "Camera2D.h"
+
+// Resources
 #include "ResourceIdentifier.h"
+#include "LevelLoader.h"
+
+// Systems
+#include "FunctionMaster.h"
+
+// Helpers
+#include "ConstHolder.h"
+#include "Helpers.h"
+#include "LTimer.h"
 
 class Scene : public EventListener
 {
