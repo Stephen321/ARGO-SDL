@@ -33,8 +33,6 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 
 	LoadContent();
 
-	//Input
-	BindInput();
 
 	Refresh();
 }
@@ -48,8 +46,56 @@ int Lobby::Update()
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
 	//save the curent time for next frame
-	_lastTime = currentTime;
 
+
+	NetworkHandler& network = NetworkHandler::Instance();
+
+	ReceivedData data = network.Receive();
+
+	if (data.Empty() == false)
+	{
+
+		switch (data.GetType())
+		{
+		case MessageType::Connect:
+		{
+			ConnectData cdata = data.GetData<ConnectData>();
+			std::cout << "Got assigned ID: " << cdata.id << std::endl;
+			network.SetPlayerID(cdata.id);
+			network.SetConnected(true);
+			break;
+		}
+		case MessageType::SessionList:
+		{
+			SessionListData sldata = data.GetData<SessionListData>();
+			std::cout << "Sessions Available: " << sldata.count << std::endl;
+			std::vector<Session> sessions;
+			for (int i = 0; i < sldata.count; i++)
+			{
+				Session s;
+				s.id = sldata.sessionIDs[i];
+				s.currentPlayers = sldata.currentPlayers[i];
+				std::cout << "Session ID: " << s.id;
+				std::cout << "  Players: " << s.currentPlayers << "/" << sldata.maxPlayers << std::endl;
+				sessions.push_back(s);
+			}
+			Refresh(sessions, sldata.maxPlayers);
+			break;
+		}
+		case MessageType::JoinSession:
+		{
+			JoinSessionData jsdata = data.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
+			std::cout << "Joined session: " << jsdata.sessionID << std::endl;
+			network.SetSessionID(jsdata.sessionID);
+			break;
+		}
+		//have to add in host change here
+		}
+	}
+
+
+
+	_lastTime = currentTime;
 	return (int)_swapScene;
 }
 
@@ -72,12 +118,18 @@ bool Lobby::IsRunning()
 
 void Lobby::Start()
 {
+	//Input
+	BindInput();
 
+	std::cout << "connect to server for the first time!" << std::endl;
+
+	ConnectData data;
+	NetworkHandler::Instance().Send(&data);
 }
 
 void Lobby::Stop()
 {
-
+	_inputManager->ResetKey(Event::BACKSPACE);
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -111,8 +163,15 @@ void Lobby::BindInput()
 {
 	Command* enterIn = new InputCommand([&]()
 	{
-		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) { _running = false; }
-		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
+		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) 
+		{
+			//there should be no quit button in here
+			//_running = false;
+		}
+		else 
+		{
+			_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
+		}
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
@@ -132,7 +191,10 @@ void Lobby::BindInput()
 	_inputManager->AddKey(Event::o, oIn, this);
 
 
-	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+	Command* backIn = new InputCommand([&]() { 
+		NetworkHandler::Instance().Disconnect();
+		_swapScene = Scene::CurrentScene::MAIN_MENU; 
+	}, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
@@ -175,14 +237,17 @@ int Lobby::GetPressedItem()
 	return _selectedItemIndex;
 }
 
-void Lobby::Refresh()
+void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
-	int amountOfLobbiesTest = 5;
-	for (int i = 0; i < amountOfLobbiesTest; i++)
+	if (sessions.empty())
+	{
+		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 200);
+	}
+	for (int i = 0; i < sessions.size(); i++)
 	{
 		std::ostringstream oss;
-		oss << "[" << i << "]" << " - " << i << "/" << 4;
+		oss << "[" << sessions[i].id << "]" << " - " << sessions[i].currentPlayers << "/" << maxPlayers;
 		std::string var = oss.str();
 
 		if (i == 0)

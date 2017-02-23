@@ -23,21 +23,21 @@ void NetSystem::Process(float dt)
 	if (_canUpdate)
 	{
 		_canUpdate = false;
-		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
-		{
-			for (Entity* e : (*it).second)
-			{
-				NetComponent* remote = static_cast<NetComponent*>(e->GetComponent(Component::Type::Net));
-				int id = remote->id;
-				if (id < 0 && remote->connecting == false) //hasnt tried to connect yet
-				{
-					ConnectData data;
-					_net.Send(&data, _serverIp);
-					remote->connecting = true;
-				}
-			}
-		}
-		
+		//for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+		//{
+			//for (Entity* e : (*it).second)
+			//{
+				//NetComponent* remote = static_cast<NetComponent*>(e->GetComponent(Component::Type::Net));
+				//int id = remote->id;
+				//if (id < 0 && remote->connecting == false) //hasnt tried to connect yet
+				//{
+					//ConnectData data;
+					//_net.Send(&data, _serverIp);
+					//remote->connecting = true;
+				//}
+			//}
+		//}
+		/*
 		ReceivedData receiveData = _net.Receive();
 		if (receiveData.Empty() == false)
 		{
@@ -49,6 +49,6 @@ void NetSystem::Process(float dt)
 				remote->id = data.id;
 				std::cout << "ID is: " << remote->id << std::endl;
 			}
-		}
+		}*/
 	}
 }

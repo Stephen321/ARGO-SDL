@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "NetworkHandler.h"
 
 class Lobby : public Scene
 {
@@ -27,6 +28,11 @@ private:
 	void							CleanUp() override;
 
 private:
+	struct Session {
+		int id;
+		int currentPlayers;
+	};
+
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
@@ -41,6 +47,6 @@ private:
 	int								GetPressedItem();
 	int								_selectedItemIndex;
 
-	void							Refresh();
+	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
 };
 

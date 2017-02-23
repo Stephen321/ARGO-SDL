@@ -244,6 +244,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\MainMenu.h" />
     <ClInclude Include="include\NetComponent.h" />
     <ClInclude Include="include\NetSystem.h" />
+    <ClInclude Include="include\NetworkHandler.h" />
     <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
@@ -299,6 +300,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
     <ClCompile Include="src\NetSystem.cpp" />
+    <ClCompile Include="src\NetworkHandler.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
