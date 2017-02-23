@@ -219,6 +219,9 @@
     <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\AudioManager.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -327,6 +330,9 @@
     </ClCompile>
     <ClCompile Include="src\UISystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioManager.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

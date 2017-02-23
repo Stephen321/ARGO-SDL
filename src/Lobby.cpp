@@ -126,7 +126,7 @@ void Lobby::BindInput()
 
 	Command* oIn = new InputCommand([&]()
 	{
-		Start();
+		Refresh();
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::o, oIn, this);
