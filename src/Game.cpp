@@ -90,7 +90,6 @@ void Game::LoadContent()
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
-	
 }
 
 int Game::Update()

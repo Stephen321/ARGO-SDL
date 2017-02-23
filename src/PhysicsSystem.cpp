@@ -39,6 +39,8 @@ void PhysicsSystem::Process(float dt)
 				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
 
+				transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
+
 				float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 				if (currentVelocity > maxVelocity)
 				{

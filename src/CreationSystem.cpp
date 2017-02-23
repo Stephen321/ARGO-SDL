@@ -254,9 +254,15 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupCheckpointEntit
 	SetupPosition(transform, information.second, index);
 	SetupSize(transform, information.second, index);
 
+	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
+	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
+					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+					  , (int)transform->rect.w
+					  , (int)transform->rect.h };
+
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_staticBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+		, b2Vec2(transform->rect.x, transform->rect.y)
 		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 		, (uint16)checkpoint->GetType()
 		, CHECKPOINT_MASK
@@ -284,9 +290,15 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	SetupPosition(transform, information.second, index);
 	SetupSize(transform, information.second, index);
 
+	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
+	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
+					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+					  , (int)transform->rect.w
+					  , (int)transform->rect.h };
+
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+		, b2Vec2(transform->rect.x, transform->rect.y)
 		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 		, (uint16)flag->GetType()
 		, FLAG_MASK

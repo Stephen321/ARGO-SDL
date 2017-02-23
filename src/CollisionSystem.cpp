@@ -38,30 +38,42 @@ void CollisionSystem::Process(float dt)
 
 void CollisionSystem::BeginContact(b2Contact* contact)
 {
-	Entity* player = nullptr;
-	Entity* other = nullptr;
+	void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
+	void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
 
-	FindPlayer(contact, player, other);
-
-	//if contact->GetFixtureA()->GetBody()->GetType() == b2BodyType::b2_staticBody //static bodys manifold points are weird and linear velocity is null
-	//b2Vec2 vel2 = static_cast<CollisionComponent*>(other->GetComponent(Component::Type::Collider))->body->GetLinearVelocityFromWorldPoint(worldManifold.points[0]); cant as static
-	//b2Vec2 impactVelocity = vel1 - vel2;
-	if (player != nullptr && other != nullptr)
+	if (bodyAUserData != "Obstacle" && bodyBUserData != "Obstacle")
 	{
-		std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+		Entity* player = nullptr;
+		Entity* other = nullptr;
+
+		FindPlayer(contact, player, other);
+
+		if (player != nullptr && other != nullptr)
+		{
+			std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+		}
 	}
 }
 void CollisionSystem::EndContact(b2Contact* contact)
 {
-	Entity* player = nullptr;
-	Entity* other = nullptr;
+	void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
+	void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
 
-	FindPlayer(contact, player, other);
-	if (player != nullptr && other != nullptr)
+	if (bodyAUserData != "Obstacle" && bodyBUserData != "Obstacle")
 	{
-		std::cout << player->GetTypeAsString().c_str() << " stopped colliding with " << other->GetTypeAsString().c_str() << std::endl;
+		Entity* player = nullptr;
+		Entity* other = nullptr;
+
+		FindPlayer(contact, player, other);
+
+		if (player != nullptr && other != nullptr)
+		{
+			std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+		}
 	}
 }
+
+
 
 void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifold)
 {
@@ -74,61 +86,111 @@ void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifo
 	contact->GetWorldManifold(&worldManifold);
 	if (player != nullptr && other != nullptr)
 	{
-		b2Vec2 normal = worldManifold.normal;
-		PhysicsComponent* physics = static_cast<PhysicsComponent*>(player->GetComponent(Component::Type::Physics));
-		float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-		float normalAngle = atan2f(-normal.y, normal.x) * (180.f / M_PI);
-		float enterAngle = atan2f(-physics->yVelocity, physics->xVelocity) * (180.f / M_PI);
+		EntityBounce(worldManifold, player, other);
+		
+	}
+	else if (player != nullptr)
+	{
+		CharacterObstacleBounce(worldManifold, player);
+	}
+}
 
-		if (normalAngle < 0.f)
-			normalAngle += 360.f;
-		if (enterAngle < 0.f)
-			enterAngle += 360.f;
+void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, Entity*& e2)
+{
+	PhysicsComponent* e1Physics = static_cast<PhysicsComponent*>(e1->GetComponent(Component::Type::Physics));
+	PhysicsComponent* e2Physics = static_cast<PhysicsComponent*>(e2->GetComponent(Component::Type::Physics));
 
-		float exitAngle = 2 * normalAngle - 180.f - enterAngle;
 
-		if (exitAngle < 0.f)
-			exitAngle += 360.f;
-		exitAngle *= (M_PI / 180.f);
+	float e1speed = sqrt(e1Physics->xVelocity * e1Physics->xVelocity + e1Physics->yVelocity * e1Physics->yVelocity);
+	float e2speed = sqrt(e2Physics->xVelocity * e2Physics->xVelocity + e2Physics->yVelocity * e2Physics->yVelocity);
 
-		float normalScaler;
-		if (speed <= 1.f)
-			normalScaler = 1.1f;
-		else if (speed > 1.f)
-			normalScaler = 1.1f * (1 / speed);
+	if (e1speed != 0 && e2speed != 0)
+	{
+		float e = 0.6f; //elasticity restitution
+
+		float xVelocityTemp = e1Physics->xVelocity * e;
+		float yVelocityTemp = e1Physics->yVelocity * e;
+
+		e1Physics->xVelocity = e2Physics->xVelocity * e;
+		e1Physics->yVelocity = e2Physics->yVelocity * e;
+
+		e2Physics->xVelocity = xVelocityTemp;
+		e2Physics->yVelocity = yVelocityTemp;
+	}
+	else
+	{
+		float e = 0.8f; //elasticity restitution
+
+		if (e1speed != 0)
+		{
+			e2Physics->xVelocity = e1Physics->xVelocity * e;
+			e2Physics->yVelocity = e1Physics->yVelocity * e;
+
+			e1Physics->xVelocity *= (1 - e);
+			e1Physics->yVelocity *= (1 - e);
+		}
+		else if (e2speed != 0)
+		{
+			e1Physics->xVelocity = e2Physics->xVelocity * e;
+			e1Physics->yVelocity = e2Physics->yVelocity * e;
+
+			e2Physics->xVelocity *= (1 - e);
+			e2Physics->yVelocity *= (1 - e);
+		}
+	}
+
+	static_cast<ColliderComponent*>(e1->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity, e1Physics->yVelocity));
+	static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity, e2Physics->yVelocity));
+}
+
+void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, Entity*& player)
+{
+	PhysicsComponent* physics = static_cast<PhysicsComponent*>(player->GetComponent(Component::Type::Physics));
+
+	float e = 0.8f; //elasticity restitution
+	float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
+
+	if (speed != 0)
+	{
+		float xDirection = physics->xVelocity / speed;
+		float yDirection = physics->yVelocity / speed;
+
+		float xDirectionNew = worldManifold.normal.x + xDirection;
+		float yDirectionNew = worldManifold.normal.y + yDirection;
+
+		float directionlenght = sqrt(xDirectionNew * xDirectionNew + yDirectionNew * yDirectionNew);
+
+		if (directionlenght != 0)
+		{
+			speed *= e;
+			physics->xVelocity = (xDirectionNew / directionlenght) * speed;
+			physics->yVelocity = (yDirectionNew / directionlenght) * speed;
+		}
 		else
-			normalScaler = 1.1f;
-
-		std::cout << "Normal Scaler: " << normalScaler << std::endl;
-
-		//problem with 270/180/0/360 ???
-		//apply torque as well
-		std::cout << enterAngle << std::endl;
-		physics->xVelocity = (cos(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.x * normalScaler;
-		physics->yVelocity = (-sin(exitAngle) * speed * PLAYER_WALL_RESTITUTION) + -normal.y * normalScaler;
-		static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-
-		std::cout << player->GetTypeAsString().c_str() << " pre solve with " << other->GetTypeAsString().c_str() << std::endl;
+		{
+			physics->xVelocity = -physics->xVelocity * e;
+			physics->yVelocity = -physics->yVelocity * e;
+		}
 	}
 }
 
 void CollisionSystem::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)
 {
-	Entity* player = nullptr;
+	/*Entity* player = nullptr;
 	Entity* other = nullptr;
 
 	FindPlayer(contact, player, other);
 	if (player != nullptr && other != nullptr)
-		std::cout << player->GetTypeAsString().c_str() << " post solve with " << other->GetTypeAsString().c_str() << std::endl;
+		std::cout << player->GetTypeAsString().c_str() << " post solve with " << other->GetTypeAsString().c_str() << std::endl;*/
 }
 
 void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *& other)
 {
-	Entity* a = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
-	Entity* b = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
-
-	if (contact->GetFixtureA()->GetBody()->GetUserData() != "Obstacle" || contact->GetFixtureB()->GetBody()->GetUserData() != "Obstacle")
+	if (contact->GetFixtureA()->GetBody()->GetUserData() != "Obstacle" && contact->GetFixtureB()->GetBody()->GetUserData() != "Obstacle")
 	{
+		Entity* a = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
+		Entity* b = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
+
 		if (a->GetType() == EntityType::Player)
 		{
 			player = a;
@@ -148,6 +210,17 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 		{
 			player = b;
 			other = a;
+		}
+	}
+	else
+	{
+		if (contact->GetFixtureA()->GetBody()->GetUserData() == "Obstacle")
+		{
+			player = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
+		}
+		else
+		{
+			player = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
 		}
 	}
 }

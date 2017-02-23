@@ -183,7 +183,22 @@ void LevelLoader::LoadColliders(const Value &colliderLayer, SystemManager& syste
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
 
-		if (entityName == "Poly")
+		if (entityName == "Box")
+		{
+			float w = entity["width"].GetFloat();
+			float h = entity["height"].GetFloat();
+
+			b2Body* body = bodyFactory->CreateBoxBody(
+				b2BodyType::b2_staticBody
+				, b2Vec2(x + w*.5f, y + h*.5f)
+				, b2Vec2(w*.5f, h*.5f)
+				, (uint16)EntityType::Obstacle
+				, OBSTACLE_MASK
+				, false);//create body
+
+			body->SetUserData("Obstacle");
+		}
+		else if (entityName == "Poly")
 		{
 			const Value& entityPolyArray = entity["polygon"]; //loop json entity
 			int count = entityPolyArray.Size();

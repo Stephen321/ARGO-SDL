@@ -12,6 +12,4 @@ public:
 	void							MoveVertical(int dir, Entity*& entity);
 
 	void							FireBullet(Entity*& entity);
-
-	void							RotateEntity(Entity* entity);
 };

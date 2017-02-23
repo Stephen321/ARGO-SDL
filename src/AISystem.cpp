@@ -82,13 +82,11 @@ void AISystem::Process(float dt)
 					}
 
 					helper::Vector2 dir = velocity.normalize();
+					physics->xDir = dir.x;
+					physics->yDir = dir.y;
 
-					physics->xAcceleration = 0.06f * dir.x;
-					physics->yAcceleration = 0.06f * dir.y;
-
-
-					physics->xVelocity += physics->xAcceleration;
-					physics->yVelocity += physics->yAcceleration;
+					//physics->xVelocity += physics->xAcceleration * dir.x;
+					//physics->yVelocity += physics->yAcceleration * dir.y;
 				}
 
 			}
