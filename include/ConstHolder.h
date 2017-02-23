@@ -31,6 +31,6 @@ const uint16 OBSTACLE_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI
 
 const float PLAYER_WALL_RESTITUTION = 0.5f;
 
-const int FLAG_CONNECTION_RADIUS = 500;
+const int FLAG_CONNECTION_RADIUS = 400;
 
-const int AI_DETECTION_RADIUS = 180;
+const int AI_DETECTION_RADIUS = 300;

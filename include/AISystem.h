@@ -26,5 +26,6 @@ private:
 	vector<GraphNode*> _checkpointNode;
 
 	void updateAStar(AIComponent* ai, TransformComponent* t);
+	GraphNode* findClosestNode(TransformComponent* t);
 };
 

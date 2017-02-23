@@ -38,7 +38,7 @@ void AISystem::Process(float dt)
 				AIComponent* ai = static_cast<AIComponent*>(e->GetComponent(Component::Type::AI));
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 
-				float updateRate = ai->PathFinderUpdateRate;
+				float updateRate = ai->pathFinderUpdateRate;
 				float updateTimer = ai->pathfinderUpdateTimer;
 				updateTimer += dt;
 				if (updateTimer > updateRate)
@@ -48,47 +48,56 @@ void AISystem::Process(float dt)
 				}
 				ai->pathfinderUpdateTimer = updateTimer;
 
-				if (ai->nextNode != nullptr)
+				if (ai->nextNode != nullptr && !ai->path.empty())
 				{
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 
-					float distanceToFlag = helper::Vector2(transform->rect.x, transform->rect.y).distance(_flagNode->getPosition());
-					if (distanceToFlag < AI_DETECTION_RADIUS)
+					float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->nextNode->getPosition());
+					if (distance < AI_DETECTION_RADIUS && ai->path.size() != 1)
 					{
-						ai->path.clear();
-						ai->startNode = nullptr;
-						ai->nextNode = _flagNode;
-					}
-					else
-					{
-						float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->nextNode->getPosition());
-						if (distance < AI_DETECTION_RADIUS)
-						{
-
 							ai->path.erase(ai->path.begin());
 							ai->nextNode = ai->path[0];
-
+					}
+					else if (ai->nextNode == _flagNode)
+					{
+						if (distance > AI_DETECTION_RADIUS + 50)
+						{
+							ai->inFlagRange = true;
 						}
 					}
 
 
+					helper::Vector2 AB = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
+					helper::Vector2 dir = AB.normalize();
 
-					helper::Vector2 velocity = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
-					helper::Vector2 dir = velocity.normalize();
+					helper::Vector2 force;
+					if (ai->path.size() > 1)
+					{
+						helper::Vector2 AB = ai->path[1]->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
+						helper::Vector2 dir = AB.normalize();
 
-					physics->xAcceleration = 0.05f * dir.x;
-					physics->yAcceleration = 0.05f * dir.y;
+						force.x += 0.025f *  dir.x;
+						force.y += 0.025f *  dir.y;
+					}
+					else
+					{
+						force.x += 0.025f * dir.x;
+						force.y += 0.025f * dir.y;
+					}
+
+					
+
+					force.x += 0.05f * dir.x;
+					force.y += 0.05f * dir.y;
+
+					physics->xAcceleration = force.x;
+					physics->yAcceleration = force.y;
 
 
 					physics->xVelocity += physics->xAcceleration;
 					physics->yVelocity += physics->yAcceleration;
 
 				}
-
-
-
-				
-				
 			}
 		}
 	}
@@ -96,35 +105,56 @@ void AISystem::Process(float dt)
 
 void AISystem::updateAStar(AIComponent* ai, TransformComponent* t)
 {
-	vector<GraphNode*> path;
-	if (ai->startNode == nullptr)
+	if (ai->nextNode == nullptr || (ai->nextNode == _flagNode && ai->inFlagRange))
 	{
-		vector<GraphNode*> nodes = _waypoints->getNodes();
-		int size = nodes.size();
-		int index = 0;
-		float closestDistance = 99999999.f;
-		for (int i = 0; i < size; i++)
+		ai->inFlagRange = false;
+		ai->nextNode = findClosestNode(t);
+		
+	}
+	if (ai->nextNode != _flagNode)
+	{
+		vector<GraphNode*> path;
+		_waypoints->reset();
+		//AStar
+		_waypoints->setHeuristics(ai->nextNode);
+		_waypoints->aStar(ai->nextNode, _flagNode, path);
+
+		//set colour
+		_flagNode->setColour(SDL_Color{ 255,0,0,255 });
+		ai->nextNode->setColour(SDL_Color{ 0,255,0,255 });
+
+		if (!path.empty())
 		{
-			float distance = (nodes[i]->getPosition() - helper::Vector2(t->rect.x, t->rect.y)).length();
-			if (distance < closestDistance)
+			int size = path.size() / 2;
+			for (int i = 0; i <size; i++)
 			{
-				closestDistance = distance;
-				index = i;
+				float distance = helper::Vector2(t->rect.x, t->rect.y).distance(ai->nextNode->getPosition());
+				if (distance < AI_DETECTION_RADIUS)
+				{
+					path.erase(path.begin());
+					ai->nextNode = path[0];
+				}
 			}
 		}
-		ai->startNode = nodes[index];
+
+		ai->path = path;
 	}
+}
 
-	_waypoints->reset();
-	//AStar
-	_waypoints->setHeuristics(ai->startNode);
-	_waypoints->aStar(ai->startNode, _flagNode, path);
-
-	//set colour
-	_flagNode->setColour(SDL_Color{ 255,0,0,255 });
-	ai->startNode->setColour(SDL_Color{ 0,255,0,255 });
-
-	ai->path = path;
-	ai->nextNode = ai->path[0];
-
+GraphNode* AISystem::findClosestNode(TransformComponent* t)
+{
+	vector<GraphNode*> nodes = _waypoints->getNodes();
+	int size = nodes.size();
+	int index = 0;
+	float closestDistance = 99999999.f;
+	for (int i = 0; i < size; i++)
+	{
+		float distance = (nodes[i]->getPosition() - helper::Vector2(t->rect.x, t->rect.y)).length();
+		if (distance < closestDistance)
+		{
+			closestDistance = distance;
+			index = i;
+		}
+	}
+	return nodes[index];
 }

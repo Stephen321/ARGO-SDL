@@ -10,10 +10,10 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		PathFinderUpdateRate(2.f),
+		pathFinderUpdateRate(1.f),
 		pathfinderUpdateTimer(0),
-		startNode(nullptr),
-		nextNode(nullptr)
+		nextNode(nullptr),
+		inFlagRange(false)
 	{
 	}
 
@@ -23,8 +23,9 @@ public:
 
 public:
 	vector<GraphNode*> path;
-	float PathFinderUpdateRate;
+	float pathFinderUpdateRate;
 	float pathfinderUpdateTimer;
-	GraphNode* startNode;
 	GraphNode* nextNode;
+
+	bool inFlagRange;
 };

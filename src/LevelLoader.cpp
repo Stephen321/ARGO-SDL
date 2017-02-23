@@ -191,8 +191,6 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>
 		float w = entity["width"].GetFloat();
 		float h = entity["height"].GetFloat();
 
-		
-
 		helper::Vector2 position = helper::Vector2(x + w*.5f, y + h*.5f);
 
 		const Value& properties = entity["properties"];
@@ -209,10 +207,7 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>
 			data = make_pair(GraphNode::EntityData::Checkpoint, 0);
 		}
 		waypoints->addNode(data, position);
-		Entity* point = ef->CreateEntity(EntityType::Point);
-		TransformComponent* transform = static_cast<TransformComponent*>(point->GetComponent(Component::Type::Transform));
-		transform->rect.x = x;
-		transform->rect.y = y;
+
 	}
 	//arc
 	for (int i = 0; i < wayPointSize; i++)
