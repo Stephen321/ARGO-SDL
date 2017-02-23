@@ -51,7 +51,7 @@ public:
 	SDL_Texture*					loadTexture(const std::string & path);
 
 private:
-	void							BindInput(Entity* player, Entity* weapon);
+	void							BindInput(Entity* player);
 
 	void							DebugBox2D();
 
@@ -74,9 +74,6 @@ private:
 	bool							_running;
 
 	unsigned int					_lastTime;//time of last update;
-
-
-	std::vector<Entity*>			_entities;
 
 	Graph							_waypoints;
 

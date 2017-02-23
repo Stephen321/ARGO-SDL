@@ -34,42 +34,20 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	_renderer = renderer;
 	_running = true;
 
-	_systemManager.Initialize(renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
+	_systemManager.Initialize(renderer, &_entityFactory, &_bodyFactory, &_world, &_waypoints,width, height);
 
 	_world.SetAllowSleeping(false);
 
-	_entityFactory.Initialize(&_systemManager, &_textureHolder);
+	_entityFactory.Initialize(&_textureHolder);
 	_bodyFactory.Initialize(&_world);
 
 	LoadContent();
 
 	Entity* player = nullptr;
-	Entity* flag = nullptr;
-
-	std::vector<Entity*> checkpoints = std::vector<Entity*>();
-	std::vector<Entity*>::iterator it = _entities.begin();
-
-	while (it != _entities.end())
-	{
-		if ((*it)->GetType() == EntityType::Player)
-		{
-			player = *it;
-		}
-		else if ((*it)->GetType() == EntityType::Flag)
-		{
-			flag = *it;
-		}
-		else if ((*it)->GetType() == EntityType::Checkpoint)
-		{
-			checkpoints.push_back(*it);
-		}
-		it++;
-	}
-
-	_systemManager.PostInitialize(checkpoints);
+	_systemManager.PostInitialize(player);
 
 
-
+	/*
 	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
 
 	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
@@ -86,18 +64,18 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	assert(flag != nullptr);
 
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
+	*/
 
 
-
-	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
+	Entity* ui = _entityFactory.CreateEntity(EntityType::UI,-1);
 
 
 	//shooting
-	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
-	_inputManager->AddKey(Event::SPACE, spaceIn, this);
+	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
+	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
 	_swapScene = CurrentScene::game;
-	BindInput(player, weapon);
+	BindInput(player);
 }
 
 void Game::LoadContent()
@@ -111,7 +89,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Checkpoint] = loadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = loadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json",_entities, &_entityFactory, &_bodyFactory, &_waypoints);
+	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
 	
 }
 
@@ -181,13 +159,9 @@ void Game::CleanUp()
 {
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
+	_world.~b2World();
 
-	for (int i = 0; i < _entities.size(); i++)
-	{
-		delete _entities.at(i);
-	}
-
-	_entities.clear();
+	_systemManager.~SystemManager();
 
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
@@ -218,7 +192,7 @@ SDL_Texture * Game::loadTexture(const std::string & path)
 	return texture;
 }
 
-void Game::BindInput(Entity* player, Entity* weapon)
+void Game::BindInput(Entity* player)
 {
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -256,31 +230,34 @@ void Game::DebugBox2D()
 	{
 		if (BodyIterator->IsActive())
 		{
-			Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
-			EntityType t = e->GetType();
-			if (t == EntityType::Player)
-			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			}
-			else if (t == EntityType::Checkpoint)
-			{
-				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
-			}
-			else if (t == EntityType::Point)
-			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
-			}
-			else if (t == EntityType::Flag)
-			{
-				SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
-			}
-			else if(t == EntityType::Obstacle)
+			if (BodyIterator->GetUserData())
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+				Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
+				EntityType t = e->GetType();
+				if (t == EntityType::Player)
+				{
+					SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				}
+				else if (t == EntityType::Checkpoint)
+				{
+					SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+				}
+				else if (t == EntityType::Point)
+				{
+					SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
+				}
+				else if (t == EntityType::Flag)
+				{
+					SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
+				}
+				else
+				{
+					SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+				}
 			}
 
 			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())

@@ -127,25 +127,28 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 	Entity* a = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
 	Entity* b = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
 
-	if (a->GetType() == EntityType::Player)
+	if (contact->GetFixtureA()->GetBody()->GetUserData() != "Obstacle" || contact->GetFixtureB()->GetBody()->GetUserData() != "Obstacle")
 	{
-		player = a;
-		other = b;
-	}
-	else if(b->GetType() == EntityType::Player)
-	{
-		player = b;
-		other = a;
-	}
-	else if (a->GetType() == EntityType::AI)
-	{
-		player = a;
-		other = b;
-	}
-	else if (b->GetType() == EntityType::AI)
-	{
-		player = b;
-		other = a;
+		if (a->GetType() == EntityType::Player)
+		{
+			player = a;
+			other = b;
+		}
+		else if (b->GetType() == EntityType::Player)
+		{
+			player = b;
+			other = a;
+		}
+		else if (a->GetType() == EntityType::AI)
+		{
+			player = a;
+			other = b;
+		}
+		else if (b->GetType() == EntityType::AI)
+		{
+			player = b;
+			other = a;
+		}
 	}
 }
 

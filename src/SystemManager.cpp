@@ -4,25 +4,36 @@
 
 
 SystemManager::SystemManager()
+	: _creationRequests(std::vector<std::pair<EntityType, std::vector<float>>>())
 {
 }
 
 
 SystemManager::~SystemManager()
 {
-	
+	delete _creationSystem;
 
+	SystemMapIterator it = _systems.begin();
+	for (; it != _systems.end(); ++it)
+	{
+		delete it->second;
+	}
+
+	for (InteractionSystemMapIterator it = _interactionSystems.begin(); it != _interactionSystems.end(); ++it)
+	{
+		delete it->second;
+	}
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
+void SystemManager::Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
- 	InitializeSystems(renderer, entities, entityFactory, bodyFactory, world, waypoints, width, height);
+ 	InitializeSystems(renderer, entityFactory, bodyFactory, world, waypoints, width, height);
 	InitializeInteractionSystems();
 }
 
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entity*>* entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);
@@ -49,8 +60,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	_systems[SystemType::UI] = uiSystem;
 
 	//SETUP GUN SYSTEM
-	GunSystem* gunSystem = new GunSystem(0);
-	gunSystem->Initialize(entities, entityFactory, bodyFactory);
+	GunSystem* gunSystem = new GunSystem(_creationRequests, 0);
 	_systems[SystemType::Gun] = gunSystem;
 
 	//SETUP AI SYSTEM
@@ -67,6 +77,9 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, std::vector<Entit
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
 	_systems[SystemType::Destruction] = destructionSystem;
 
+	//SETUP Destroy SYSTEM
+	_creationSystem = new CreationSystem(_creationRequests);
+	_creationSystem->Initialize(entityFactory, bodyFactory);
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -81,8 +94,40 @@ void SystemManager::InitializeInteractionSystems()
 
 #pragma endregion
 
-void SystemManager::PostInitialize(std::vector<Entity*>& checkpoints)
+void SystemManager::PostInitialize(Entity*& player)
 {
+	_creationSystem->Process(0);
+
+	Entity* flag = nullptr;
+
+	std::vector<Entity*> checkpoints = std::vector<Entity*>();
+
+	while (!_creationSystem->Empty())
+	{
+		std::pair<std::vector<SystemType>, Entity*>& systemCreatedEntity = _creationSystem->GetSystemCreatedEntity();
+
+		for (int i = 0; i < systemCreatedEntity.first.size(); i++)
+		{
+			AddEntity(systemCreatedEntity.first.at(i), systemCreatedEntity.second);
+		}
+
+		if (systemCreatedEntity.second->GetType() == EntityType::Player)
+		{
+			player = systemCreatedEntity.second;
+		}
+		else if (systemCreatedEntity.second->GetType() == EntityType::Flag)
+		{
+			flag = systemCreatedEntity.second;
+		}
+		else if (systemCreatedEntity.second->GetType() == EntityType::Checkpoint)
+		{
+			checkpoints.push_back(systemCreatedEntity.second);
+		}
+
+		_creationSystem->EntityToSystemAssigned();
+	}
+
+
 	//SETUP FLAG INTERACTION SYSTEM
 	GetFlagCheckpointSystem()->Initialize(checkpoints);
 }
@@ -96,9 +141,29 @@ void SystemManager::Process(float dt)
 
 	TryToDestroy(it, dt);
 
+	TryToCreateEntities(dt);
+
 	ProcessAllSystems(it, dt);
 
 	ProcessAllInteractionSystems(it, dt);
+}
+
+void SystemManager::TryToCreateEntities(float dt)
+{
+	_creationSystem->Process(dt);
+
+	while (!_creationSystem->Empty())
+	{
+		std::pair<std::vector<SystemType>, Entity*>& systemCreatedEntity = _creationSystem->GetSystemCreatedEntity();
+
+		for (int i = 0; i < systemCreatedEntity.first.size(); i++)
+		{
+			AddEntity(systemCreatedEntity.first.at(i), systemCreatedEntity.second);
+
+		}
+
+		_creationSystem->EntityToSystemAssigned();
+	}
 }
 
 void SystemManager::TryToDestroy(SystemMapIterator& it, float dt)
@@ -176,6 +241,7 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 		//fix weapon deletion
 		static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon])->RemoveEntity(entity, false);
 		break;
+
 	default:
 		break;
 	}
@@ -187,6 +253,17 @@ void SystemManager::Render(float dt)
 	_systems[SystemType::UI]->Process(dt);
 }
 
+void SystemManager::AddRequest(std::pair<EntityType, std::vector<float>>& creationRequest)
+{
+	_creationRequests.push_back(creationRequest);
+}
+void SystemManager::AddRequest(std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests)
+{
+	for (int i = 0; i < creationRequests.size(); i++)
+	{
+		_creationRequests.push_back(creationRequests.at(i));
+	}
+}
 
 void SystemManager::AddEntity(SystemType type, Entity* entity)
 {
