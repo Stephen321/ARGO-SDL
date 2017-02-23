@@ -1,27 +1,8 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
 
-#include "CameraSystem.h"
-#include "FunctionMaster.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "LevelLoader.h"
-
-class MainMenu : public EventListener, public Scene
+class MainMenu : public Scene
 {
 public:
 	MainMenu();

@@ -114,22 +114,12 @@ int Game::Update()
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-	SDL_RenderClear(_renderer);
-	
-	//test background in order to see the camera is following the player position
+	SDL_RenderClear(_renderer);	
 
 	//RENDER HERE
 	_systemManager.Render();
-
 	DebugBox2D();
 
-	//test draw world bounds
-	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_systemManager.GetCamera().worldToScreen(r));
-
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
 }
 

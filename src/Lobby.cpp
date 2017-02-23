@@ -1,13 +1,13 @@
 #include "Lobby.h"
 
-#include "ConstHolder.h"
-#include "Helpers.h"
-#include "LTimer.h"
+#include <string>
+#include <sstream>
 
 Lobby::Lobby()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
+	, _uiSystem(0)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
@@ -23,12 +23,20 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 	_renderer = renderer;
 	_running = true;
 	_swapScene = CurrentScene::LOBBY;
+	_selectedItemIndex = 0;
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_uiSystem.Initialize(_renderer);
 
+	Entity* ui = new Entity(EntityType::UI);
+	_uiSystem.AddEntity(ui);
+
+	LoadContent();
 
 	//Input
 	BindInput();
+
+	Refresh();
 }
 
 int Lobby::Update()
@@ -39,7 +47,6 @@ int Lobby::Update()
 	//UPDATE HERE	
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
-
 	//save the curent time for next frame
 	_lastTime = currentTime;
 
@@ -48,20 +55,12 @@ int Lobby::Update()
 
 void Lobby::Render()
 {
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(_renderer);
-
-	//test background in order to see the camera is following the player position
 
 	//RENDER HERE
 	_renderSystem.Process();
+	_uiSystem.Process();
 
-	//test draw world bounds
-	SDL_Rect r = { 0, 0, WORLD_WIDTH, WORLD_HEIGHT };
-	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(_renderer, &_cameraSystem.getCamera().worldToScreen(r));
-
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
 }
 
@@ -95,7 +94,8 @@ void Lobby::OnEvent(EventListener::Event evt)
 
 void Lobby::LoadContent()
 {
-
+	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
 }
 
 void Lobby::CleanUp()
@@ -109,8 +109,90 @@ void Lobby::CleanUp()
 
 void Lobby::BindInput()
 {
+	Command* enterIn = new InputCommand([&]()
+	{
+		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) { _running = false; }
+		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::RETURN, enterIn, this);
+
+	Command* pIn = new InputCommand([&]()
+	{
+		_uiSystem.DeleteText();
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::p, pIn, this);
+
+	Command* oIn = new InputCommand([&]()
+	{
+		Start();
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::o, oIn, this);
+
+
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
+}
+
+void Lobby::MoveUp()
+{
+	if (_selectedItemIndex - 1 >= 0)
+	{
+		_selectedItemIndex--;
+	}
+	// Jump to bottom
+	else
+	{
+		// _textRectangle.size() - 2 = 1 before icon
+		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+	}
+	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+}
+
+void Lobby::MoveDown()
+{
+	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	{
+		_selectedItemIndex++;
+	}
+	// Jump to top
+	else
+	{
+		_selectedItemIndex = 0;
+	}
+	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
+	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+}
+
+int Lobby::GetPressedItem()
+{
+	// Index in menu
+	return _selectedItemIndex;
+}
+
+void Lobby::Refresh()
+{
+	_uiSystem.DeleteText();
+	int amountOfLobbiesTest = 5;
+	for (int i = 0; i < amountOfLobbiesTest; i++)
+	{
+		std::ostringstream oss;
+		oss << "[" << i << "]" << " - " << i << "/" << 4;
+		std::string var = oss.str();
+
+		if (i == 0)
+		{
+			_uiSystem.CreateText(var, 50, 200);
+		}
+
+		else
+		{
+			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+		}
+	}
 }
