@@ -2,6 +2,8 @@
 
 void NetworkHandler::Disconnect()
 {
+	if (_playerID < 0)
+		return;
 	DisconnectData disconnect;
 	disconnect.id = _playerID;
 	disconnect.sessionID = _sessionID;
@@ -30,6 +32,8 @@ void NetworkHandler::Send(MessageData * data, const char * destHost, int destPor
 
 void NetworkHandler::Send(MessageData * data)
 {
+	data->id = _playerID;
+	data->sessionID = _sessionID;
 	_net.Send(data, _serverIP);
 }
 

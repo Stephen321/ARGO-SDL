@@ -191,6 +191,19 @@ void Lobby::BindInput()
 	_inputManager->AddKey(Event::o, oIn, this);
 
 
+	Command* hIn = new InputCommand([&]()
+	{
+		JoinSessionData data;
+		NetworkHandler::Instance().Send(&data);
+		//switch the player list scene
+		//test this otherwise
+		ConnectData cdata;
+		NetworkHandler::Instance().Send(&cdata);
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::h, hIn, this);
+
+
 	Command* backIn = new InputCommand([&]() { 
 		NetworkHandler::Instance().Disconnect();
 		_swapScene = Scene::CurrentScene::MAIN_MENU; 
