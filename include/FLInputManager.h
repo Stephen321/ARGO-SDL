@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef FLINPUTMANAGER_EXPORTS  
-#define MATHLIBRARY_API __declspec(dllexport)   
+#define FLINPUTMANAGER_API __declspec(dllexport)   
 #else  
 #define FLINPUTMANAGER_API __declspec(dllimport)   
 #endif 
