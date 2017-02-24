@@ -18,8 +18,10 @@ public:
 		pathFinderUpdateRate(1.f),
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
-		inFlagRange(false),
-		state(AIState::SeekFlag)
+		flagDetectionRange(false),
+		state(AIState::SeekFlag),
+		closestNodeFlag(false),
+		updateAStarFlag(false)
 	{
 	}
 
@@ -31,9 +33,14 @@ public:
 	vector<GraphNode*> path;
 	float pathFinderUpdateRate;
 	float pathfinderUpdateTimer;
+
+	GraphNode* destNode;
 	GraphNode* nextNode;
 
-	bool inFlagRange;
+	bool flagDetectionRange;
+
+	bool closestNodeFlag;
+	bool updateAStarFlag;
 
 	AIState state;
 };

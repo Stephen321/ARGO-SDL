@@ -51,12 +51,12 @@ void AISystem::Process(float dt)
 				ai->pathfinderUpdateTimer = updateTimer;
 
 				float distance = helper::Vector2(transform->rect.x, transform->rect.y).distance(ai->nextNode->getPosition());
-				if (distance < AI_DETECTION_RADIUS && ai->path.size() != 1)
+				if (distance < AI_NODE_COLLISION_RADIUS && ai->path.size() != 1)
 				{
 					ai->path.erase(ai->path.begin());
 					ai->nextNode = ai->path[0];
 				}
-
+				/*
 				switch (ai->state)
 				{
 				case AIState::SeekFlag:
@@ -70,18 +70,20 @@ void AISystem::Process(float dt)
 					}
 					break;
 				case AIState::SeekCheckpoint:
+				{
 					FlagComponent* flagComponent = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 					if (flagComponent->hasFlag)
 					{
 						seekCheckpoint(ai, flagComponent);
 					}
 					break;
+				}
 				case AIState::SeekPowerUp:
 					break;
 				default:
 					break;
 				}
-
+				*/
 
 				if (ai->nextNode != nullptr && !ai->path.empty())
 				{
@@ -130,9 +132,9 @@ void AISystem::Process(float dt)
 
 void AISystem::updateAStar(AIComponent* ai, TransformComponent* t)
 {
-	if (ai->nextNode == nullptr || (ai->nextNode == _flagNode && ai->inFlagRange))
+	if (ai->nextNode == nullptr || (ai->nextNode == _flagNode && ai->flagDetectionRange))
 	{
-		ai->inFlagRange = false;
+		ai->flagDetectionRange = false;
 		ai->nextNode = findClosestNode(t);
 		
 	}
@@ -154,7 +156,7 @@ void AISystem::updateAStar(AIComponent* ai, TransformComponent* t)
 			for (int i = 0; i <size; i++)
 			{
 				float distance = helper::Vector2(t->rect.x, t->rect.y).distance(ai->nextNode->getPosition());
-				if (distance < AI_DETECTION_RADIUS)
+				if (distance < AI_NODE_COLLISION_RADIUS)
 				{
 					path.erase(path.begin());
 					ai->nextNode = path[0];
@@ -183,27 +185,3 @@ GraphNode* AISystem::findClosestNode(TransformComponent* t)
 	return nodes[index];
 }
 
-void AISystem::seekCheckpoint(AIComponent* ai, FlagComponent* f)
-{
-	if (f->hasFlag)
-	{
-		int size = _checkpointNode.size();
-		for (int i = 0; i < size; i++)
-		{
-			if (f->currentCheckpointID == _checkpointNode[i]->data().second)
-			{
-				ai->nextNode = _checkpointNode[i];
-				break;
-			}
-		}
-		ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate;
-	}
-	else
-	{
-
-	}
-	
-}
-
-
-void seekPowerup();
