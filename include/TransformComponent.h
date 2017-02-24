@@ -7,16 +7,6 @@
 class TransformComponent : public Component
 {
 public:
-	TransformComponent()
-		: Component::Component(Component::Type::Transform)
-		, rect({ 0, 0, 0, 0 })
-		, origin({ 0, 0 })
-		, scaleX(1.f)
-		, scaleY(1.f)
-		, angle(0)
-	{
-	}
-
 	TransformComponent(float xPos, float yPos, int w, int h)
 		: Component::Component(Component::Type::Transform)
 		, rect({ (int)xPos, (int)yPos, (int)w, (int)h })

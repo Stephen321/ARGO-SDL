@@ -12,6 +12,7 @@
 #include "FlagCheckpointSystem.h"
 #include "WaypointSystem.h"
 #include "CreationSystem.h"
+#include "StatusEffectSystem.h"
 
 #include "InteractionSystemEvents.h"
 #include "SystemTypes.h"
@@ -59,6 +60,7 @@ public:
 	GunSystem*							GetGunSystem();
 	UISystem*							GetUISystem();
 	AISystem*							GetAISystem();
+	StatusEffectSystem*					GetStatusEffectSystem();
 
 	WeaponSystem*						GetWeaponInteractionSystem();
 	FlagCheckpointSystem*				GetFlagCheckpointSystem();

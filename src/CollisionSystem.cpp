@@ -1,7 +1,19 @@
 #include "CollisionSystem.h"
-#include "PhysicsComponent.h"
+
 #include "ColliderComponent.h"
+#include "PhysicsComponent.h"
+#include "TransformComponent.h"
+#include "HealthComponent.h"
+#include "SpriteComponent.h"
+#include "GunComponent.h"
+#include "AIComponent.h"
+#include "DestructionComponent.h"
+#include "FlagComponent.h"
+#include "CheckpointComponent.h"
+#include "StatusEffectComponent.h"
+
 #include "ConstHolder.h"
+#include "Helpers.h"
 
 #define _USE_MATH_DEFINES
 #include <iostream>
@@ -26,13 +38,15 @@ void CollisionSystem::Process(float dt)
 	if (_canUpdate)
 	{
 		_canUpdate = false;
-		//for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
-		//{
-		//	for (Entity* e : (*it).second)
-		//	{
+		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+		{
+			for (Entity* e : (*it).second)
+			{
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 
-		//	}
-		//}
+			//	collider->body->SetActive(collider->setActive);
+			}
+		}
 	}
 }
 
@@ -50,13 +64,81 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player)
+			{
+				CheckCharacterToCharacterCollision(player, other);
+				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+			}
+			else
+			{
+				CheckCharacterToObjectCollision(player, other);
+				std::cout << "CHARACTER->OBJECT: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+			}
 		}
 	}
 }
+
+void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& other)
+{
+	switch (other->GetType())
+	{
+	case EntityType::Checkpoint:
+
+		break;
+
+	case EntityType::PowerUp:
+
+		break;
+
+	case EntityType::Bullet:
+
+		break;
+
+	case EntityType::Flag:
+		if (!static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect))->staggered)
+		{
+			static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag))->hasFlag = true;
+			static_cast<ColliderComponent*>(other->GetComponent(Component::Type::Collider))->setActive = false;
+
+			_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
+		}
+
+		break;
+	}
+}
+void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity*& other)
+{
+	FlagComponent* pFlag = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	FlagComponent* oFlag = static_cast<FlagComponent*>(other->GetComponent(Component::Type::Flag)); 
+
+	StatusEffectComponent* playerStatusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
+	StatusEffectComponent* otherStatusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
+
+	if (pFlag->hasFlag)
+	{
+		if (!otherStatusEffects->staggered)
+		{
+			playerStatusEffects->staggered = true;
+			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+
+			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
+		}
+	}
+	else if (oFlag->hasFlag)
+	{
+		if (!playerStatusEffects->staggered)
+		{
+			otherStatusEffects->staggered = true;
+			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+
+			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
+		}
+	}
+}
+
 void CollisionSystem::EndContact(b2Contact* contact)
 {
-	void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
+	/*void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
 	void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
 
 	if (bodyAUserData != "Obstacle" && bodyBUserData != "Obstacle")
@@ -70,7 +152,7 @@ void CollisionSystem::EndContact(b2Contact* contact)
 		{
 			std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 		}
-	}
+	}*/
 }
 
 

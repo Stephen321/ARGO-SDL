@@ -18,6 +18,7 @@ public:
 		Destroy,
 		Checkpoint,
 		Flag,
+		StatusEffect,
 	};
 
 public:

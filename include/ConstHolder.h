@@ -13,9 +13,9 @@ const float DRAG = 0.95f;
 
 const int PIXELS_PER_METER = 100;
 
+const int MAX_FLAG_VELOCITY = 100;
 const int MAX_PLAYER_VELOCITY = 10;
-const int PLAYER_ACCEL_RATE = 2;
-const int AI_ACCEL_RATE = 0.06f;
+const float PLAYER_ACCEL_RATE = 2.0f;
 
 
 const int MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 1.5f;
@@ -35,3 +35,8 @@ const float PLAYER_WALL_RESTITUTION = 0.5f;
 const int FLAG_CONNECTION_RADIUS = 200;
 
 const int AI_DETECTION_RADIUS = 100;
+
+const float STAGGER_MAX_TIMER = 2.0f;
+const float INVINCIBLE_MAX_TIMER = 2.0f;
+const float INVISIBLE_MAX_TIMER = 2.0f;
+const float SPEED_UP_MAX_TIMER = 2.0f;

@@ -20,6 +20,9 @@ public:
 	void		PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
 private:
+	void		CheckCharacterToObjectCollision(Entity*& player, Entity*& other);
+	void		CheckCharacterToCharacterCollision(Entity*& player, Entity*& other);
+
 	void		FindPlayer(b2Contact* contact, Entity*& player, Entity*& other);
 	void		CharacterObstacleBounce(b2WorldManifold& worldManifold, Entity*& player);
 	void		EntityBounce(b2WorldManifold& worldManifold, Entity*& player, Entity*& other);

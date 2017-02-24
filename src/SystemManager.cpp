@@ -1,5 +1,7 @@
 #include "SystemManager.h"
 
+#include "CheckpointComponent.h"
+
 #include "ConstHolder.h"
 
 
@@ -63,6 +65,10 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	GunSystem* gunSystem = new GunSystem(_creationRequests, 0);
 	_systems[SystemType::Gun] = gunSystem;
 
+	//SETUP STATUS EFFECT SYSTEM
+	StatusEffectSystem* statusEffectSystem = new StatusEffectSystem(0);
+	_systems[SystemType::StatusEffect] = statusEffectSystem;
+
 	//SETUP AI SYSTEM
 	AISystem* aiSystem = new AISystem(0);
 	aiSystem->Initialize(waypoints);
@@ -121,6 +127,7 @@ void SystemManager::PostInitialize(Entity*& player)
 		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::Checkpoint)
 		{
+			static_cast<CheckpointComponent*>(systemCreatedEntity.second->GetComponent(Component::Type::Collider))->id = checkpoints.size()+1;
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
 
@@ -202,6 +209,8 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 	{
 	case EntityType::Flag:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Collision]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
 		//Implement Later
 		break;
 	case EntityType::Checkpoint:
@@ -211,9 +220,6 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 	case EntityType::Tile:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		//Implement Later
-		break;
-	case EntityType::Obstacle:
-		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		break;
 	case EntityType::Bullet:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
@@ -226,14 +232,15 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 	case EntityType::AI:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::AI]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::StatusEffect]->RemoveEntity(entity->GetType(), entity);
 		break;
 	case EntityType::Player:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Camera]->RemoveEntity(entity->GetType(), entity);
-		break;
-	case EntityType::Point:
-		//Implement Later??
+		_systems[SystemType::World]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::StatusEffect]->RemoveEntity(entity->GetType(), entity);
 		break;
 	case EntityType::Weapon:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
@@ -291,39 +298,37 @@ void SystemManager::RemoveEntity(InteractionSystemType type, Entity* entity, boo
 
 RenderSystem* SystemManager::GetRenderSystem()
 {
-	RenderSystem* renderSystem = static_cast<RenderSystem*>(_systems[SystemType::Render]);
-	return renderSystem;
+	return static_cast<RenderSystem*>(_systems[SystemType::Render]);
 }
 PhysicsSystem* SystemManager::GetPhysicsSystem()
 {
-	PhysicsSystem* physicsSystem = static_cast<PhysicsSystem*>(_systems[SystemType::Physics]);
-	return physicsSystem;
+	return static_cast<PhysicsSystem*>(_systems[SystemType::Physics]);
 }
 CameraSystem* SystemManager::GetCameraSystem()
 {
-	CameraSystem* cameraSystem = static_cast<CameraSystem*>(_systems[SystemType::Camera]);
-	return cameraSystem;
+	return static_cast<CameraSystem*>(_systems[SystemType::Camera]);
 }
 CollisionSystem* SystemManager::GetCollisionSystem()
 {
-	CollisionSystem* collisionSystem = static_cast<CollisionSystem*>(_systems[SystemType::Collision]);
-	return collisionSystem;
+	return static_cast<CollisionSystem*>(_systems[SystemType::Collision]);
 }
 GunSystem* SystemManager::GetGunSystem()
 {
-	GunSystem* gunSystem = static_cast<GunSystem*>(_systems[SystemType::Gun]);
-	return gunSystem;
+	return static_cast<GunSystem*>(_systems[SystemType::Gun]);
 }
 AISystem* SystemManager::GetAISystem()
 {
-	AISystem* aiSystem = static_cast<AISystem*>(_systems[SystemType::AI]);
-	return aiSystem;
+	return static_cast<AISystem*>(_systems[SystemType::AI]);
+}
+
+StatusEffectSystem* SystemManager::GetStatusEffectSystem()
+{
+	return static_cast<StatusEffectSystem*>(_systems[SystemType::StatusEffect]);
 }
 
 UISystem * SystemManager::GetUISystem()
 {
-	UISystem* uiSystem = static_cast<UISystem*>(_systems[SystemType::UI]);
-	return uiSystem;
+	return static_cast<UISystem*>(_systems[SystemType::UI]);
 }
 
 #pragma endregion
@@ -332,22 +337,17 @@ UISystem * SystemManager::GetUISystem()
 
 WeaponSystem* SystemManager::GetWeaponInteractionSystem()
 {
-	WeaponSystem* weaponInteractionSystemType = static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon]);
-	return weaponInteractionSystemType;
+	return static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon]);
 }
 
 FlagCheckpointSystem* SystemManager::GetFlagCheckpointSystem()
 {
-	FlagCheckpointSystem* flagInteractionSystemType = static_cast<FlagCheckpointSystem*>(_interactionSystems[InteractionSystemType::Flag]);
-	return flagInteractionSystemType;
+	return static_cast<FlagCheckpointSystem*>(_interactionSystems[InteractionSystemType::Flag]);
 }
 
 #pragma endregion
 
-
-
 Camera2D::Camera& SystemManager::GetCamera()
 {
-	CameraSystem* cameraSystem = static_cast<CameraSystem*>(_systems[SystemType::Camera]);
-	return cameraSystem->getCamera();
+	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->getCamera();
 }

@@ -236,6 +236,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
+    <ClInclude Include="include\StatusEffectComponent.h" />
+    <ClInclude Include="include\StatusEffectSystem.h" />
     <ClInclude Include="include\SystemTypes.h" />
     <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
@@ -296,6 +298,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
+    <ClCompile Include="src\StatusEffectSystem.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
     <ClCompile Include="src\UISystem.cpp" />

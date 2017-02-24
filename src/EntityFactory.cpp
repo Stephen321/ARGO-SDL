@@ -10,6 +10,7 @@
 #include "DestructionComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
+#include "StatusEffectComponent.h"
 
 #include "ConstHolder.h"
 
@@ -83,6 +84,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
+	player->AddComponent(new StatusEffectComponent());
 
 	return player;
 }
@@ -94,10 +96,11 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
-	ai->AddComponent(new PhysicsComponent(0, 0, AI_ACCEL_RATE, AI_ACCEL_RATE, 10));
+	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
+	ai->AddComponent(new StatusEffectComponent());
 
 	return ai;
 }
@@ -107,7 +110,7 @@ Entity* EntityFactory::CreatePowerUpEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]);
 
 	powerUp->AddComponent(spriteComponent);
-	powerUp->AddComponent(new TransformComponent());
+	powerUp->AddComponent(new TransformComponent(0, 0, 0, 0));
 	powerUp->AddComponent(new ColliderComponent());
 	powerUp->AddComponent(new DestructionComponent());
 
@@ -162,6 +165,7 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 	flag->AddComponent(spriteComponent);
 	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	flag->AddComponent(new ColliderComponent());
+	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 
 	return flag;
 }
@@ -193,14 +197,14 @@ Entity* EntityFactory::CreateTileEntity(int id)
 	}
 
 	tile->AddComponent(spriteComponent);
-	tile->AddComponent(new TransformComponent());
+	tile->AddComponent(new TransformComponent(0, 0, 0, 0));
 
 	return tile;
 }
 Entity* EntityFactory::CreateUIEntity(int id)
 {
 	Entity* ui = new Entity(EntityType::UI);
-	ui->AddComponent(new TransformComponent());
+	ui->AddComponent(new TransformComponent(0, 0, 0, 0));
 	ui->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 
 	return ui;

@@ -5,12 +5,13 @@ enum class SystemType
 	UI,
 	Render,
 	Destruction,
+	Collision,
 	Physics,
 	Camera,
-	Collision,
 	Gun,
 	AI,
 	World,
+	StatusEffect,
 };
 
 enum class InteractionSystemType

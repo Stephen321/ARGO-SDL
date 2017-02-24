@@ -140,6 +140,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Camera);
 	systemTypes.push_back(SystemType::World);
+	systemTypes.push_back(SystemType::StatusEffect);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, player);
 
@@ -172,6 +173,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 	systemTypes.push_back(SystemType::Render);
 	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::AI);
+	systemTypes.push_back(SystemType::StatusEffect);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, ai);
 
@@ -310,6 +312,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
+	systemTypes.push_back(SystemType::Physics);
+	systemTypes.push_back(SystemType::Collision);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, flag);
 

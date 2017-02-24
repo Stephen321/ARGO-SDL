@@ -1,6 +1,8 @@
 #include "AISystem.h"
 #include "AIComponent.h"
 #include "TransformComponent.h" 
+
+
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
 {
@@ -82,11 +84,12 @@ void AISystem::Process(float dt)
 					}
 
 					helper::Vector2 dir = velocity.normalize();
-					physics->xDir = dir.x;
-					physics->yDir = dir.y;
-
-					//physics->xVelocity += physics->xAcceleration * dir.x;
-					//physics->yVelocity += physics->yAcceleration * dir.y;
+					//physics->xDir = dir.x;
+					//physics->yDir = dir.y;
+					/*physics->xAcceleration = 0.06f;
+					physics->yAcceleration = 0.06f;
+					physics->xVelocity += physics->xAcceleration * dir.x;// *dt;
+					physics->yVelocity += physics->yAcceleration * dir.y;// *dt;*/
 				}
 
 			}
