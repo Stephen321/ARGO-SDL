@@ -30,8 +30,6 @@ Game::~Game()
 void Game::Initialize(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
-	_running = true;
-	_swapScene = CurrentScene::GAME;
 
 	_systemManager.Initialize(_renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -40,6 +38,7 @@ void Game::Initialize(SDL_Renderer* renderer)
 	_entityFactory.Initialize(&_systemManager, &_textureHolder);
 	_bodyFactory.Initialize(&_world);
 
+	Start();
 	LoadContent();
 
 	Entity* player = nullptr;
@@ -131,12 +130,14 @@ bool Game::IsRunning()
 
 void Game::Start()
 {
-
+	_running = true;
+	_swapScene = CurrentScene::GAME;
 }
 
 void Game::Stop()
 {
-
+	_running = false;
+	CleanUp();
 }
 
 void Game::OnEvent(EventListener::Event evt)
@@ -148,6 +149,15 @@ void Game::OnEvent(EventListener::Event evt)
 		case Event::ESCAPE:
 			//_inputManager->saveFile();
 			_running = false;
+
+		case Event::w:
+			_audioManager->PlayFX("Hum");
+		case Event::a:
+			_audioManager->PlayFX("Hum");
+		case Event::s:
+			_audioManager->PlayFX("Hum");
+		case Event::d:
+			_audioManager->PlayFX("Hum");
 		}
 	}
 }
@@ -197,10 +207,6 @@ void Game::CleanUp()
 	}
 
 	_entities.clear();
-
-	//SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
 }
 
 

@@ -44,5 +44,7 @@ private:
 	Options*						_options;
 	About*							_about;
 	int								_runningScene;
+
+	int								_previousScene;
 };
 

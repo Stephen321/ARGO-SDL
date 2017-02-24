@@ -2,29 +2,33 @@
 
 #include <SDL.h>
 #include <SDL_mixer.h>
+
 #include <string>
 #include <iostream>
+#include <map>
+#include <vector>
+
 
 class AudioManager
 {
 public:
-	AudioManager();
-	~AudioManager();
+										AudioManager();
+										~AudioManager();
 
-	static AudioManager* GetInstance();
+	static AudioManager*				GetInstance();
 
-	void PlayMusic(const std::string& fileName);
-	void PauseMusic();
-	void StopMusic(Mix_Chunk* sound);
-	void PlayFX(const std::string& fileName) const;
+	void								PlayMusic(const std::string& fileName);
+	void								PauseMusic();
+	void								StopMusic(Mix_Chunk* sound);
+	void								PlayFX(const std::string& fileName);
 
-	bool IsPaused() const;
-	bool IsStopped() const;
-	bool IsPlaying() const;
-	bool InErrorState() const;
+	void								SetVolume(bool volume);
 
 private:
-	static AudioManager* audioManagerInstance;
+	static AudioManager*				audioManagerInstance;
+
+	void								InitAudioDevice();
+	void								LoadSounds();
 
 	enum AudioState
 	{
@@ -35,15 +39,11 @@ private:
 		PLAYING
 	};
 
-	static AudioState currentState;
+	static AudioState					_currentState;
+	std::string							_sCurrentMusicFilename = "";
 
-	std::string m_sCurrentMusicFilename = "";
+	Mix_Chunk*							_previousSound;
 
-	void InitAudioDevice();
-
-private:
-	AudioManager & operator=(const AudioManager&)
-	{
-	}
+	std::map<std::string, Mix_Chunk*>	_soundMap;
 };
 
