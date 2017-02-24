@@ -109,6 +109,11 @@ int main(int argc, char** argv)
 			{
 				std::cout << "Sessions JoinSession: " << sessions.size() << std::endl;
 				JoinSessionData data = receiveData.GetData<JoinSessionData>();
+				if (exists(spectators, data.id) == false)//first check that the player isn't a spectator
+				{
+					break;
+				}
+
 				if (data.sessionID >= 0) //session exists
 				{
 					if (sessions[data.sessionID].Joinable()) //has space to join
@@ -135,8 +140,13 @@ int main(int argc, char** argv)
 					data.sessionID = sessionID;
 				}
 				RemoveSpectator(spectators, srcAddr);
+				net.Send(&data, srcAddr); //send joinsession
 
-				net.Send(&data, srcAddr);
+				PlayerListData pldata;
+				pldata.count = sessions[data.sessionID].GetPlayerCount();
+				pldata.players = sessions[data.sessionID].GetPlayerIDs();
+				net.Send(&pldata, srcAddr); //send player list
+
 				break;
 			}
 			case MessageType::Disconnect:

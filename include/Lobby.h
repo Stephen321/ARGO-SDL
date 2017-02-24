@@ -48,5 +48,6 @@ private:
 	int								_selectedItemIndex;
 
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
+	void							Refresh(const std::vector<int>& players);
 };
 

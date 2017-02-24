@@ -12,7 +12,8 @@ namespace Network
 		State,
 		SessionList,
 		JoinSession,
-		SetHost
+		SetHost,
+		PlayerList
 	};
 
 	struct MessageData {
@@ -54,7 +55,13 @@ namespace Network
 	};
 
 	struct SetHostData : MessageData {
-		SetHostData() { type == MessageType::SetHost; }
+		SetHostData() { type = MessageType::SetHost; }
+	};
+
+	struct PlayerListData : MessageData {
+		PlayerListData() { type = MessageType::PlayerList; }
+		int count;
+		std::vector<int> players;
 	};
 
 	//id in MessageData?
@@ -104,6 +111,11 @@ namespace Network
 				_data = new SetHostData(rhs.GetData<SetHostData>());
 				break;
 			}
+			case MessageType::PlayerList:
+			{
+				_data = new PlayerListData(rhs.GetData<PlayerListData>());
+				break;
+			}
 			}
 		}
 
@@ -111,6 +123,8 @@ namespace Network
 		void SetData(T data)
 		{
 			_data = new T(data);
+			_data->id = _id;
+			_data->sessionID = _sessionID;
 		}
 
 		~ReceivedData()
@@ -148,9 +162,17 @@ namespace Network
 			return *static_cast<T*>(_data);
 		}
 
+		void SetIDs(int id, int sessionID)
+		{
+			_id = id;
+			_sessionID = sessionID;
+		}
+
 	private:
 		IPaddress	_srcAddress;
 		MessageData* _data;
+		int _id;
+		int _sessionID;
 	};
 
 	class Net

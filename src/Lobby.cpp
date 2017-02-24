@@ -50,43 +50,54 @@ int Lobby::Update()
 
 	NetworkHandler& network = NetworkHandler::Instance();
 
-	ReceivedData data = network.Receive();
+	ReceivedData receivedData = network.Receive();
 
-	if (data.Empty() == false)
+	if (receivedData.Empty() == false)
 	{
 
-		switch (data.GetType())
+		switch (receivedData.GetType())
 		{
 		case MessageType::Connect:
 		{
-			ConnectData cdata = data.GetData<ConnectData>();
-			std::cout << "Got assigned ID: " << cdata.id << std::endl;
-			network.SetPlayerID(cdata.id);
+			ConnectData data = receivedData.GetData<ConnectData>();
+			std::cout << "Got assigned ID: " << data.id << std::endl;
+			network.SetPlayerID(data.id);
 			network.SetConnected(true);
 			break;
 		}
 		case MessageType::SessionList:
 		{
-			SessionListData sldata = data.GetData<SessionListData>();
-			std::cout << "Sessions Available: " << sldata.count << std::endl;
+			SessionListData data = receivedData.GetData<SessionListData>();
+			std::cout << "Sessions Available: " << data.count << std::endl;
 			std::vector<Session> sessions;
-			for (int i = 0; i < sldata.count; i++)
+			for (int i = 0; i < data.count; i++)
 			{
 				Session s;
-				s.id = sldata.sessionIDs[i];
-				s.currentPlayers = sldata.currentPlayers[i];
+				s.id = data.sessionIDs[i];
+				s.currentPlayers = data.currentPlayers[i];
 				std::cout << "Session ID: " << s.id;
-				std::cout << "  Players: " << s.currentPlayers << "/" << sldata.maxPlayers << std::endl;
+				std::cout << "  Players: " << s.currentPlayers << "/" << data.maxPlayers << std::endl;
 				sessions.push_back(s);
 			}
-			Refresh(sessions, sldata.maxPlayers);
+			Refresh(sessions, data.maxPlayers);
 			break;
-		}
+		}//two below are sent at the same time in response to client sending joinSession. 
 		case MessageType::JoinSession:
 		{
-			JoinSessionData jsdata = data.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
-			std::cout << "Joined session: " << jsdata.sessionID << std::endl;
-			network.SetSessionID(jsdata.sessionID);
+			JoinSessionData data = receivedData.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
+			std::cout << "Joined session: " << data.sessionID << std::endl;
+			network.SetSessionID(data.sessionID);
+			break;
+		}
+		case MessageType::PlayerList:
+		{
+			std::cout << "Player list data in lobby received" << std::endl;
+			PlayerListData data = receivedData.GetData<PlayerListData>();
+			for (int i = 0; i < data.count; i++)
+			{
+				std::cout << "Player: " << data.players[i] << std::endl;
+			}
+			Refresh(data.players);
 			break;
 		}
 		//have to add in host change here
@@ -121,8 +132,6 @@ void Lobby::Start()
 	//Input
 	BindInput();
 
-	std::cout << "connect to server for the first time!" << std::endl;
-
 	ConnectData data;
 	NetworkHandler::Instance().Send(&data);
 }
@@ -130,6 +139,7 @@ void Lobby::Start()
 void Lobby::Stop()
 {
 	_inputManager->ResetKey(Event::BACKSPACE);
+	_inputManager->ResetKey(Event::h);
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -196,9 +206,9 @@ void Lobby::BindInput()
 		JoinSessionData data;
 		NetworkHandler::Instance().Send(&data);
 		//switch the player list scene
-		//test this otherwise
-		ConnectData cdata;
-		NetworkHandler::Instance().Send(&cdata);
+		std::cout << "Sending player list data." << std::endl;
+		//change scene to players
+
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::h, hIn, this);
@@ -263,6 +273,32 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 		oss << "[" << sessions[i].id << "]" << " - " << sessions[i].currentPlayers << "/" << maxPlayers;
 		std::string var = oss.str();
 
+		if (i == 0)
+		{
+			_uiSystem.CreateText(var, 50, 200);
+		}
+
+		else
+		{
+			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+		}
+	}
+}
+
+void Lobby::Refresh(const std::vector<int>& players)
+{
+	_uiSystem.DeleteText();
+	for (int i = 0; i < players.size(); i++)
+	{
+		std::ostringstream oss;
+		oss << "Player [" << players[i] << "]";
+		if (players[i] == NetworkHandler::Instance().GetPlayerID())
+		{
+			oss << " (you!).";
+		}
+		oss << std::endl;
+
+		std::string var = oss.str();
 		if (i == 0)
 		{
 			_uiSystem.CreateText(var, 50, 200);

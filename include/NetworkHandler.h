@@ -27,7 +27,7 @@ public:
 	bool GetPlayerID() const { return _playerID; };
 
 private:
-	const int PORT = 6000; //5228; when using ec2
+	const int PORT = 5228; 
 	Net _net;
 	bool _connected;
 	int _sessionID;

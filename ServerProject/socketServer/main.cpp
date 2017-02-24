@@ -81,12 +81,13 @@ int main(int argc, char** argv)
 			{
 			case MessageType::Connect:
 			{
+				std::cout << "Sessions Connect: " << sessions.size() << std::endl;
 				ConnectData data = receiveData.GetData<ConnectData>();
 				std::cout << "spectators " << spectators.size() << std::endl;
 				if (exists(spectators, srcAddr) == false)//if the server isnt restarted and the same player trys to join again this isnt true
 				{
-					std::cout << "Player connected to server. ID: " << data.id << std::endl;
-					if (data.id <= 0)
+					std::cout << "Player connected to server. ID: " << data.id << " and SessionID: " << data.sessionID << std::endl;
+					if (data.id < 0)
 					{
 						data.id = playerCount++;
 						std::cout << "Spectator added. ID assigned: " << data.id << std::endl;
@@ -98,15 +99,35 @@ int main(int argc, char** argv)
 						net.Send(&data, srcAddr);
 					}
 				}
-				std::cout << "Sending session list to player: " << data.id << std::endl;
+				std::cout << "Sessions Connect: " << sessions.size() << std::endl;
 				SessionListData sessionData = CreateSessionListData(sessions);
+				std::cout << "Sending session list of size " << sessionData.count << " to player: " << data.id << std::endl;
 				net.Send(&sessionData, srcAddr);
 				break;
 			}
 			case MessageType::JoinSession:
 			{
+				std::cout << "Sessions JoinSession: " << sessions.size() << std::endl;
 				JoinSessionData data = receiveData.GetData<JoinSessionData>();
-				if (data.sessionID <= 0)
+				if (exists(spectators, data.id) == false)//first check that the player isn't a spectator
+				{
+					break;
+				}
+
+				if (data.sessionID >= 0) //session exists
+				{
+					if (sessions[data.sessionID].Joinable()) //has space to join
+					{
+						std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
+						sessions[data.sessionID].AddPlayer(data.id, srcAddr);
+					}
+					else 
+					{
+						//client will ensure to check session list before trying to join a session in case it is full
+						std::cout << "Can't join session as it is full..." << std::endl;
+					}
+				}
+				else //need to make a new session
 				{
 					int sessionID = sessionCount++;
 					std::cout << "Creating session " << sessionID << " with player " << data.id << " as host." << std::endl;
@@ -118,19 +139,20 @@ int main(int argc, char** argv)
 					//now tell the player what session they have just joined and the player list?. player list is in different scene so that scene could send a seperate message
 					data.sessionID = sessionID;
 				}
-				else
-				{
-					std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
-					sessions[data.sessionID].AddPlayer(data.id, srcAddr);
-				}
 				RemoveSpectator(spectators, srcAddr);
+				net.Send(&data, srcAddr); //send joinsession
 
-				net.Send(&data, srcAddr);
+				PlayerListData pldata;
+				pldata.count = sessions[data.sessionID].GetPlayerCount();
+				pldata.players = sessions[data.sessionID].GetPlayerIDs();
+				net.Send(&pldata, srcAddr); //send player list
+
 				break;
 			}
 			case MessageType::Disconnect:
 				DisconnectData data = receiveData.GetData<DisconnectData>();
-				std::cout << "Disconnecting player: " << data.id << " from session: " << data.sessionID << "which has " << sessions[data.sessionID].GetPlayerCount() << " players." << std::endl;
+				std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
+				std::cout << "Disconnecting player: " << data.id << " from session: " << data.sessionID << std::endl;
 				if (data.id >= 0) //is a valid id
 				{
 					std::cout << "spectators " << spectators.size() << std::endl;
@@ -159,6 +181,7 @@ int main(int argc, char** argv)
 					{
 						std::cout << "Removed spectator." << std::endl;
 						RemoveSpectator(spectators, srcAddr);
+						std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
 					}
 				}
 				break;

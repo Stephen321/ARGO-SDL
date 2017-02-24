@@ -50,3 +50,20 @@ IPaddress Session::GetPlayerIP(int playerID)
 	}
 	return IPaddress();
 }
+
+bool Session::Joinable() const
+{
+	return GetPlayerCount() < MAX_PLAYERS;
+}
+
+std::vector<int> Session::GetPlayerIDs() const
+{
+	std::vector<int> players;
+
+	for (std::map<int, IPaddress>::const_iterator it = _players.begin(); it != _players.end(); ++it)
+	{
+		players.push_back(it->first);
+	}
+
+	return players;
+}

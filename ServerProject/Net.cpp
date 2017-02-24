@@ -30,26 +30,26 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	_packet->len = 0;
 	WriteInt((Uint8)type);
 
+	//write id and session id which always exists
+	WriteInt(data->id);
+	WriteInt(data->sessionID);
+
 	int v = 0;
 	switch (type)
 	{
 	case MessageType::Connect:
 	{
 		ConnectData* cdata = (ConnectData*)data;
-		WriteInt(cdata->id);
 		break;
 	}
 	case MessageType::Disconnect:
 	{
 		DisconnectData* ddata = (DisconnectData*)data;
-		WriteInt(ddata->id);
-		WriteInt(ddata->sessionID);
 		break;
 	}
 	case MessageType::State:
 	{
 		StateData* sdata = (StateData*)data;
-		WriteInt(sdata->id);
 		WriteFloat(sdata->xPos);
 		WriteFloat(sdata->yPos);
 		WriteFloat(sdata->xVel);
@@ -71,8 +71,16 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	case MessageType::JoinSession:
 	{
 		JoinSessionData* jsdata = (JoinSessionData*)data;
-		WriteInt(jsdata->id);
-		WriteInt(jsdata->sessionID);
+		break;
+	}
+	case MessageType::PlayerList:
+	{
+		PlayerListData* pldata = (PlayerListData*)data;
+		WriteInt(pldata->count);
+		for (int i = 0; i < pldata->count; i++)
+		{
+			WriteInt(pldata->players[i]);
+		}
 		break;
 	}
 	}
@@ -94,21 +102,21 @@ Network::ReceivedData Network::Net::Receive()
 		receiveData.SetSrcAddress(_packet->address);
 		int byteOffset = 0;
 		MessageType type = (MessageType)ReadInt(byteOffset);
+		int id = ReadInt(byteOffset);
+		int sessionID = ReadInt(byteOffset);
+		receiveData.SetIDs(id, sessionID);
 
 		switch (type)
 		{
 		case MessageType::Connect:
 		{
 			ConnectData data;
-			data.id = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
 		case MessageType::Disconnect:
 		{
 			DisconnectData data;
-			data.id = ReadInt(byteOffset);
-			data.sessionID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 
@@ -116,7 +124,6 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::State:
 		{
 			StateData data;
-			data.id = ReadInt(byteOffset);
 			data.xPos = ReadFloat(byteOffset);
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
@@ -130,7 +137,7 @@ Network::ReceivedData Network::Net::Receive()
 			data.count = ReadInt(byteOffset);
 			data.maxPlayers = ReadInt(byteOffset);
 			for (int i = 0; i < data.count; i++)
-			{ //is order the same?
+			{ 
 				data.sessionIDs.push_back(ReadInt(byteOffset));
 				data.currentPlayers.push_back(ReadInt(byteOffset));
 			}
@@ -140,14 +147,23 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::JoinSession:
 		{
 			JoinSessionData data;
-			data.id = ReadInt(byteOffset);
-			data.sessionID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
 		case MessageType::SetHost:
 		{
 			SetHostData data;
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::PlayerList:
+		{
+			PlayerListData data;
+			data.count = ReadInt(byteOffset);
+			for (int i = 0; i < data.count; i++)
+			{
+				data.players.push_back(ReadInt(byteOffset));
+			}
 			receiveData.SetData(data);
 			break;
 		}

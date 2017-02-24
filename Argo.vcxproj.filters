@@ -334,9 +334,6 @@
     <ClCompile Include="src\Options.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\clientTest.cpp">
-      <Filter>Source Files\Other</Filter>
-    </ClCompile>
     <ClCompile Include="src\NetSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
