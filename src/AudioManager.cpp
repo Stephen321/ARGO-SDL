@@ -5,7 +5,7 @@
 
 // Initialize our static variables
 AudioManager* AudioManager::audioManagerInstance = 0;
-AudioManager::AudioState AudioManager::currentState = ERROR;
+AudioManager::AudioState AudioManager::_currentState = ERROR;
 
 AudioManager::AudioManager()
 {
@@ -22,6 +22,7 @@ AudioManager* AudioManager::GetInstance()
 	if (audioManagerInstance == 0)
 	{
 		audioManagerInstance = new AudioManager;
+		audioManagerInstance->InitAudioDevice();
 	}
 	return audioManagerInstance;
 }
@@ -30,38 +31,44 @@ void AudioManager::InitAudioDevice()
 {
 	if (SDL_Init(SDL_INIT_AUDIO) != -1)
 	{
-		if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
 		{
 			std::cerr << "Error initializing audio device...\n";
-			currentState = ERROR;
+			_currentState = ERROR;
 		}
 		else
 		{
-			currentState = WAITING;
+			_currentState = WAITING;
 		}
 	}
 	else
 	{
 		std::cerr << "Error initializing SDL audio subsystem...\n";
-		currentState = ERROR;
+		_currentState = ERROR;
 	}
+
+	LoadSounds();
+}
+
+void AudioManager::LoadSounds()
+{
+	_soundMap.insert(std::make_pair("Hum", Mix_LoadWAV("Media/Audio/Hum.wav")));
 }
 
 void AudioManager::PlayMusic(const std::string& fileName)
 {
-	if (currentState != ERROR)
+	if (_currentState != ERROR)
 	{
+		Mix_Music * music = Mix_LoadMUS(fileName.c_str());
 		// If no music is playing, play it
 		if (Mix_PlayingMusic() == 0)
 		{
-			// Load music
-
-			Mix_Music* music = Mix_LoadMUS(fileName.c_str());
-				
+			if (music == NULL)
+			{
+				printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+			}
 			//Play music
 			Mix_PlayMusic(music, -1);
-			currentState = PLAYING;
-			m_sCurrentMusicFilename = fileName.c_str();
 		}
 		else
 		{
@@ -73,7 +80,7 @@ void AudioManager::PlayMusic(const std::string& fileName)
 
 void AudioManager::PauseMusic()
 {
-	if (currentState != ERROR)
+	if (_currentState != ERROR)
 	{
 		// If music is playing, handle the pause request
 		if (Mix_PlayingMusic() == 1)
@@ -82,13 +89,13 @@ void AudioManager::PauseMusic()
 			{
 				// If we receive a pause request and the music is already paused, resume it.
 				Mix_ResumeMusic();
-				currentState = PLAYING;
+				_currentState = PLAYING;
 			}
 			else
 			{
 				// Otherwise, pause the music
 				Mix_PauseMusic();
-				currentState = PAUSED;
+				_currentState = PAUSED;
 			}
 		}
 	}
@@ -96,43 +103,65 @@ void AudioManager::PauseMusic()
 
 void AudioManager::StopMusic(Mix_Chunk* sound)
 {
-	if (currentState != ERROR)
+	if (_currentState != ERROR)
 	{
 		Mix_HaltMusic();
-		currentState = STOPPED;
-		Mix_FreeChunk(sound);
-		m_sCurrentMusicFilename = "";
+		_currentState = STOPPED;
 	}
 }
 
-void AudioManager::PlayFX(const std::string& fileName) const
+void AudioManager::PlayFX(const std::string& fileName)
 {
-	if (currentState != ERROR)
+	if (_currentState != ERROR)
 	{
-		// TODO: Alter this to work for mp3 as well
+		int SChannel = 0;
 
-		Mix_Chunk* fx = Mix_LoadWAV(fileName.c_str());
+		//Mix_Chunk *sound = Mix_LoadWAV(fileName.c_str());
 
-		Mix_PlayChannel(-1, fx, 0);		
+		if (_soundMap.at(fileName) == NULL)
+		{
+			//Mix_FreeChunk(sound);
+			_currentState = ERROR;
+			printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+		}
+
+		else if(Mix_Playing(SChannel) == 0)
+		{
+			if (_previousSound != nullptr)
+			{
+				//Mix_FreeChunk(_previousSound);
+			}
+
+			SChannel = Mix_PlayChannel(-1, _soundMap.at(fileName), 0);
+			_currentState = PLAYING;
+			//_previousSound = sound;
+		}
+
+		else if (Mix_Playing(SChannel) != 0)
+		{
+			//Mix_FreeChunk(sound);
+		}
 	}
 }
 
-bool AudioManager::IsPaused() const
+void AudioManager::SetVolume(bool volume)
 {
-	return currentState == PAUSED;
-}
+	if (volume) 
+	{
+		// set the music volume to 1/2 maximum, and then check it
+		printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) / 2));
+		printf("volume is now : %d\n", Mix_VolumeMusic(-1));
+	}
 
-bool AudioManager::IsStopped() const
-{
-	return currentState == STOPPED;
-}
+	else if (!volume) 
+	{
+		// set the music volume to 1/2 maximum, and then check it
+		printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) * 2));
+		printf("volume is now : %d\n", Mix_VolumeMusic(-1));
 
-bool AudioManager::IsPlaying() const
-{
-	return currentState == PLAYING;
-}
-
-bool AudioManager::InErrorState() const
-{
-	return currentState == ERROR;
+		if (Mix_VolumeMusic(-1) == 0)
+		{
+			Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1);
+		}
+	}
 }

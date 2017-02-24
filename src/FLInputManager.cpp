@@ -59,7 +59,7 @@ void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 		}
 	}
 
-	//*After a key is dispatched, see if it was previously held
+	//* After a key is dispatched, see if it was previously held
 	CheckPrevious(type, evt);
 }
 
@@ -414,10 +414,10 @@ void InputManager::ProcessInput()
 		case SDLK_x:			Dispatch(type, EventListener::Event::x);				break;
 		case SDLK_y:			Dispatch(type, EventListener::Event::y);				break;
 		case SDLK_z:			Dispatch(type, EventListener::Event::z);				break;
-		case SDLK_UP:			Dispatch(type, EventListener::Event::ARROW_UP);				break;
-		case SDLK_LEFT:			Dispatch(type, EventListener::Event::ARROW_LEFT);				break;
-		case SDLK_DOWN:			Dispatch(type, EventListener::Event::ARROW_DOWN);				break;
-		case SDLK_RIGHT:			Dispatch(type, EventListener::Event::ARROW_RIGHT);				break;
+		case SDLK_UP:			Dispatch(type, EventListener::Event::ARROW_UP);			break;
+		case SDLK_LEFT:			Dispatch(type, EventListener::Event::ARROW_LEFT);		break;
+		case SDLK_DOWN:			Dispatch(type, EventListener::Event::ARROW_DOWN);		break;
+		case SDLK_RIGHT:		Dispatch(type, EventListener::Event::ARROW_RIGHT);		break;
 
 		default: break;
 		}

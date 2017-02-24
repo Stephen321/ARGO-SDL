@@ -21,6 +21,7 @@
 // Resources
 #include "ResourceIdentifier.h"
 #include "LevelLoader.h"
+#include "AudioManager.h"
 
 // Systems
 #include "FunctionMaster.h"
@@ -64,6 +65,7 @@ protected:
 	virtual SDL_Texture*				LoadTexture(const std::string & path);
 
 	InputManager*						_inputManager = InputManager::GetInstance();
+	AudioManager*						_audioManager = AudioManager::GetInstance();
 
 	SDL_Renderer*						_renderer;
 
