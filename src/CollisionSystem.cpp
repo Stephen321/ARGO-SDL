@@ -44,7 +44,7 @@ void CollisionSystem::Process(float dt)
 			{
 				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 
-			//	collider->body->SetActive(collider->setActive);
+				collider->body->SetActive(collider->setActive);
 			}
 		}
 	}
@@ -76,6 +76,37 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 			}
 		}
 	}
+	/*else
+	{
+		if (bodyAUserData != "Obstacle")
+		{
+			Entity* flag = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
+
+			if (flag->GetType() == EntityType::Flag)
+			{
+				PhysicsComponent* physics = static_cast<PhysicsComponent*>(flag->GetComponent(Component::Type::Physics));
+
+				physics->xVelocity = -physics->xVelocity;
+				physics->yVelocity = -physics->yVelocity;
+
+				std::cout << "FLAG->Obstacle" << std::endl;
+			}
+		}
+		else
+		{
+			Entity* flag = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
+
+			if (flag->GetType() == EntityType::Flag)
+			{
+				PhysicsComponent* physics = static_cast<PhysicsComponent*>(flag->GetComponent(Component::Type::Physics));
+
+				physics->xVelocity = -physics->xVelocity;
+				physics->yVelocity = -physics->yVelocity;
+
+				std::cout << "FLAG->Obstacle" << std::endl;
+			}
+		}
+	}*/
 }
 
 void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& other)
@@ -129,7 +160,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!playerStatusEffects->staggered)
 		{
 			otherStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
@@ -188,36 +219,32 @@ void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, 
 
 	if (e1speed != 0 && e2speed != 0)
 	{
-		float e = 0.6f; //elasticity restitution
+		float xVelocityTemp = e1Physics->xVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		float yVelocityTemp = e1Physics->yVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 
-		float xVelocityTemp = e1Physics->xVelocity * e;
-		float yVelocityTemp = e1Physics->yVelocity * e;
-
-		e1Physics->xVelocity = e2Physics->xVelocity * e;
-		e1Physics->yVelocity = e2Physics->yVelocity * e;
+		e1Physics->xVelocity = e2Physics->xVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		e1Physics->yVelocity = e2Physics->yVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 
 		e2Physics->xVelocity = xVelocityTemp;
 		e2Physics->yVelocity = yVelocityTemp;
 	}
 	else
 	{
-		float e = 0.8f; //elasticity restitution
-
 		if (e1speed != 0)
 		{
-			e2Physics->xVelocity = e1Physics->xVelocity * e;
-			e2Physics->yVelocity = e1Physics->yVelocity * e;
+			e2Physics->xVelocity = e1Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e2Physics->yVelocity = e1Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 
-			e1Physics->xVelocity *= (1 - e);
-			e1Physics->yVelocity *= (1 - e);
+			e1Physics->xVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e1Physics->yVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
 		else if (e2speed != 0)
 		{
-			e1Physics->xVelocity = e2Physics->xVelocity * e;
-			e1Physics->yVelocity = e2Physics->yVelocity * e;
+			e1Physics->xVelocity = e2Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e1Physics->yVelocity = e2Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 
-			e2Physics->xVelocity *= (1 - e);
-			e2Physics->yVelocity *= (1 - e);
+			e2Physics->xVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e2Physics->yVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
 	}
 
@@ -229,7 +256,6 @@ void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, En
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(player->GetComponent(Component::Type::Physics));
 
-	float e = 0.8f; //elasticity restitution
 	float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 
 	if (speed != 0)
@@ -244,14 +270,14 @@ void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, En
 
 		if (directionlenght != 0)
 		{
-			speed *= e;
+			speed *= PLAYER_WALL_RESTITUTION;
 			physics->xVelocity = (xDirectionNew / directionlenght) * speed;
 			physics->yVelocity = (yDirectionNew / directionlenght) * speed;
 		}
 		else
 		{
-			physics->xVelocity = -physics->xVelocity * e;
-			physics->yVelocity = -physics->yVelocity * e;
+			physics->xVelocity = -physics->xVelocity * PLAYER_WALL_RESTITUTION;
+			physics->yVelocity = -physics->yVelocity * PLAYER_WALL_RESTITUTION;
 		}
 	}
 }
@@ -293,6 +319,26 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			player = b;
 			other = a;
 		}
+		/*else if (a->GetType() == EntityType::Flag)
+		{
+			player = a;
+			other = b;
+		}
+		else if (b->GetType() == EntityType::Flag)
+		{
+			player = b;
+			other = a;
+		}
+		else if (a->GetType() == EntityType::Bullet)
+		{
+			player = a;
+			other = b;
+		}
+		else if (b->GetType() == EntityType::Bullet)
+		{
+			player = b;
+			other = a;
+		}*/
 	}
 	else
 	{

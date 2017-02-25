@@ -61,12 +61,12 @@ void AISystem::Process(float dt)
 					ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
 					_waypoints->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 
-					string nodePath = "AI :";
+					/*string nodePath = "AI :";
 					for (int i = 0; i < path.size(); i++)
 					{
 						nodePath += path[i]->data() + " ,";
 					}
-					std::cout << nodePath << std::endl;
+					std::cout << nodePath << std::endl;*/
 					ai->path = path;
 	
 				}

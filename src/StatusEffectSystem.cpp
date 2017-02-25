@@ -36,15 +36,14 @@ void StatusEffectSystem::UpdateStatusEffect(bool& effect, float& effectTimer, fl
 {
 	if (effect)
 	{
-		if (effectTimer > 0)
+		if (effectTimer < 0)
+		{
+			effect = false;
+			effectTimer = 0;
+		}
+		else
 		{
 			effectTimer -= dt;
-
-			if (effectTimer < 0)
-			{
-				effect = false;
-				effectTimer = 0;
-			}
 		}
 	}
 }

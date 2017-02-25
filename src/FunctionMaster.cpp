@@ -1,21 +1,31 @@
 #include "FunctionMaster.h"
 
 #include "PhysicsComponent.h"
-#include "ColliderComponent.h"
 #include "TransformComponent.h"
 #include "GunComponent.h"
+#include "StatusEffectComponent.h"
 
 void FunctionMaster::MoveHorizontal(int dir, Entity*& entity)
 {
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(entity->GetComponent(Component::Type::StatusEffect));
 
-	physics->xDir = dir;
+	if (!effects->staggered)
+	{
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+
+		physics->xDir = dir;
+	}
 }
 void FunctionMaster::MoveVertical(int dir, Entity*& entity)
 {
-	PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+	StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(entity->GetComponent(Component::Type::StatusEffect));
 
-	physics->yDir = dir;
+	if (!effects->staggered)
+	{
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(entity->GetComponent(Component::Type::Physics));
+
+		physics->yDir = dir;
+	}
 }
 
 void FunctionMaster::FireBullet(Entity*& entity)
