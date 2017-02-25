@@ -126,11 +126,30 @@ void MainMenu::BindInput()
 {
 	Command* enterIn = new InputCommand([&]() 
 	{ 
-		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) { _running = false; }
+		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() -1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
+
+	Command* mlIn = new InputCommand([&]()
+	{
+		SDL_Point mousePos = _inputManager->GetMousePos();
+		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
+
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle.back()))) { _running = false; }
+		for (int i = 0; i < _uiSystem._interactiveTextRectangle.size() - 1; i++)
+		{
+			if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[i]))) 
+			{ 
+				_selectedItemIndex = i;
+				_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
+			}
+		}
+
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::MOUSE_LEFT, mlIn, this);
 
 	Command* sIn = new InputCommand([&]() { MainMenu::MoveDown(); }, Type::Press);
 	_inputManager->AddKey(Event::s, sIn, this);
@@ -164,6 +183,7 @@ void MainMenu::MoveDown()
 	{
 		_selectedItemIndex++;
 	}
+
 	// Jump to top
 	else
 	{
