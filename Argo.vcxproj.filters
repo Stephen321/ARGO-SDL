@@ -219,6 +219,24 @@
     <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\InteractionSystemEvents.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CreationSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SystemTypes.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StatusEffectComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StatusEffectSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PowerUpComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="include\AudioManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -331,6 +349,12 @@
     <ClCompile Include="src\UISystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\CreationSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StatusEffectSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+	</ClCompile>
     <ClCompile Include="src\AudioManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>

@@ -39,6 +39,11 @@ void PhysicsSystem::Process(float dt)
 				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
 
+				if (physics->xVelocity + physics->yVelocity != 0)
+				{
+					transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
+				}
+
 				float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 				if (currentVelocity > maxVelocity)
 				{
@@ -54,8 +59,11 @@ void PhysicsSystem::Process(float dt)
 				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
 				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
-				physics->xDir = 0;
-				physics->yDir = 0;
+				if (e->GetType() == EntityType::Player)
+				{
+					physics->xDir = 0;
+					physics->yDir = 0;
+				}
 			}
 		}
 	}

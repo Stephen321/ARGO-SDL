@@ -31,65 +31,43 @@ void Game::Initialize(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 
-	_systemManager.Initialize(_renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_world.SetAllowSleeping(false);
 
-	_entityFactory.Initialize(&_systemManager, &_textureHolder);
+	_entityFactory.Initialize(&_textureHolder);
 	_bodyFactory.Initialize(&_world);
 
 	Start();
 	LoadContent();
 
 	Entity* player = nullptr;
-	Entity* flag = nullptr;
 
-	std::vector<Entity*> checkpoints = std::vector<Entity*>();
-	std::vector<Entity*>::iterator it = _entities.begin();
+	_systemManager.PostInitialize(player);
 
-	while (it != _entities.end())
-	{
-		if ((*it)->GetType() == EntityType::Player)
-		{
-			player = *it;
-		}
-		else if ((*it)->GetType() == EntityType::Flag)
-		{
-			flag = *it;
-		}
-		else if ((*it)->GetType() == EntityType::Checkpoint)
-		{
-			checkpoints.push_back(*it);
-		}
-		it++;
-	}
-
-	_systemManager.PostInitialize(checkpoints);
-
-	Entity* weapon = _entityFactory.CreateEntity(EntityType::Weapon);
-
-	GunComponent* gun = static_cast<GunComponent*>(weapon->GetComponent(Component::Type::Gun));
-	gun->owner = player->GetType();
-
-	assert(weapon != nullptr);
-	
-	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
-
-	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
-	flagComponent->hasFlag = true;
-
-	assert(flag != nullptr);
-
-	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
-
-	Entity* ui = _entityFactory.CreateEntity(EntityType::UI);
 
 	//shooting
-	Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
-	_inputManager->AddKey(Event::SPACE, spaceIn, this);
+	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
+	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
 
-	BindInput(player, weapon);
+	_swapScene = CurrentScene::GAME;
+	BindInput(player);
 }
+
+void Game::LoadContent()
+{
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+
+	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
+	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
+
+	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
+	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
+}
+
 
 int Game::Update()
 {
@@ -163,7 +141,7 @@ void Game::OnEvent(EventListener::Event evt)
 	}
 }
 
-void Game::BindInput(Entity* player, Entity* weapon)
+void Game::BindInput(Entity* player)
 {
 	// Delete Key binding
 	Command* nIn = new InputCommand([&]()
@@ -202,31 +180,17 @@ void Game::BindInput(Entity* player, Entity* weapon)
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
-
-	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
-	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _entities, &_entityFactory, &_bodyFactory, &_waypoints);
-}
-
 void Game::CleanUp()
 {
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
+	_world.~b2World();
 
-	for (int i = 0; i < _entities.size(); i++)
-	{
-		delete _entities.at(i);
-	}
+	_systemManager.~SystemManager();
 
-	_entities.clear();
+	//SDL_DestroyWindow(_window);
+	//SDL_DestroyRenderer(_renderer);
+	SDL_Quit();
 }
 
 
@@ -253,7 +217,6 @@ SDL_Texture* Game::LoadTexture(const std::string & path)
 	return texture;
 }
 
-
 void Game::DebugBox2D()
 {
 	//DEBUG ASTAR
@@ -271,31 +234,34 @@ void Game::DebugBox2D()
 	{
 		if (BodyIterator->IsActive())
 		{
-			Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
-			EntityType t = e->GetType();
-			if (t == EntityType::Player)
-			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-			}
-			else if (t == EntityType::Checkpoint)
-			{
-				SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
-			}
-			else if (t == EntityType::Point)
-			{
-				SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
-			}
-			else if (t == EntityType::Flag)
-			{
-				SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
-			}
-			else if(t == EntityType::Obstacle)
+			if (BodyIterator->GetUserData())
 			{
 				SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+				Entity* e = static_cast<Entity*>(BodyIterator->GetUserData());
+				EntityType t = e->GetType();
+				if (t == EntityType::Player)
+				{
+					SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				}
+				else if (t == EntityType::Checkpoint)
+				{
+					SDL_SetRenderDrawColor(_renderer, 127, 255, 212, 255);
+				}
+				else if (t == EntityType::Point)
+				{
+					SDL_SetRenderDrawColor(_renderer, 0, 0, 50, 255);
+				}
+				else if (t == EntityType::Flag)
+				{
+					SDL_SetRenderDrawColor(_renderer, 255, 255, 0, 255);
+				}
+				else
+				{
+					SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+				}
 			}
 
 			for (b2Fixture* b2Fixture = BodyIterator->GetFixtureList(); b2Fixture != 0; b2Fixture = b2Fixture->GetNext())

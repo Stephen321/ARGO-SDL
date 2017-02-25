@@ -1,16 +1,29 @@
 #pragma once
+
 #include "InteractionSystem.h"
+#include "InteractionSystemEvents.h"
+
+
 class FlagCheckpointSystem : public InteractionSystem
 {
 public:
-						FlagCheckpointSystem(float updateRate = 0.f);
-						~FlagCheckpointSystem();
+										FlagCheckpointSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate = 0.f);
+										~FlagCheckpointSystem();
 
-	void				Initialize(std::vector<Entity*>& checkpoints);
+	void								Initialize(std::vector<Entity*>& checkpoints);
 
-	void				Process(float dt = 0.f) override;
+	void								Process(float dt = 0.f) override;
+	void								ListenForEvents();
+	void								FlagPickedEvent();
+	void								FlagDroppedEvent();
 
 private:
-	std::vector<Entity*> _checkpoints;
+	std::map<InteractionSystemEvent,
+		std::vector<
+		std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;
+	std::vector<Entity*>				_checkpoints;
+
+	const InteractionSystemEvent		FLAG_PICKED;
+	const InteractionSystemEvent		FLAG_DROPPED;
 };
 
