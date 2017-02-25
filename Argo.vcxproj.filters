@@ -237,6 +237,9 @@
     <ClInclude Include="include\PowerUpComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="include\AudioManager.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -351,6 +354,9 @@
     </ClCompile>
     <ClCompile Include="src\StatusEffectSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+	</ClCompile>
+    <ClCompile Include="src\AudioManager.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

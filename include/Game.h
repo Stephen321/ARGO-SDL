@@ -14,7 +14,7 @@
 #include "Entity.h"
 #include "SystemManager.h"
 
-#include <SDL.h>
+#include <SDL.h>#
 #include <vector>
 #include <queue>
 #include <map>
@@ -30,35 +30,35 @@
 // Debug
 using namespace Camera2D;
 
-class Game : public EventListener, public Scene
+class Game : public Scene
 {
 public:
 									Game();
 									~Game();
 
-	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
+	void							Initialize(SDL_Renderer* renderer) override;
 
 	int								Update() override;
 	void							Render() override;
 
-	void							OnEvent(Event evt) override;
-
 	bool							IsRunning() override;
 
-	void							LoadContent();
-	void							CleanUp();
+	void							Start() override;
+	void							Stop() override;
 
-	SDL_Texture*					loadTexture(const std::string & path);
+	void							OnEvent(Event evt) override;
 
 private:
 	void							BindInput(Entity* player);
 
+	void							LoadContent() override;
+	void							CleanUp() override;
+
+	SDL_Texture*					LoadTexture(const std::string & path) override;
+
 	void							DebugBox2D();
 
 private:
-	SDL_Window*						_window;
-	SDL_Renderer*					_renderer;
-
 	EntityFactory					_entityFactory;
 	BodyFactory						_bodyFactory;
 
@@ -79,9 +79,6 @@ private:
 
 	SystemManager					_systemManager;
 	FunctionMaster					_functionMaster;
-
-	CurrentScene					_swapScene;
-
 };
 
 #endif

@@ -19,26 +19,36 @@ public:
 	UISystem(float dt);
 	~UISystem();
 
-	void		Initialize(SDL_Renderer * renderer, Camera2D::Camera * camera);
+	void							Initialize(SDL_Renderer * renderer);
 
-	void		Process(float dt = 0.f) override;
-
-	void		CreateText(std::string message, int x, int y);
-	void		CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
-
-	void		UpdateText(std::string message, int index);
+	void							Process(float dt = 0.f) override;
 
 
-protected:
-	Camera2D::Camera*				_camera;
+	void							DeleteText();
+
+	void							CreateText(std::string message, int x, int y);
+	void							CreateTextAtOrigin(std::string message, int x, int y);
+	void							CreateTextAtCenter(std::string message, int x, int y);
+	void							CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+
+	void							UpdateText(std::string message, int index);
+	void							UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+
+
+	void							CreateDisplayText(std::string message, int x, int y);
+	void							CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+
+	std::vector<SDL_Rect>			_displayTextRectangle;
+	std::vector<SDL_Rect>			_interactiveTextRectangle;
+
+private:
 	SDL_Renderer*					_renderer;
 
-	int								_fontSize;
 	TTF_Font*						_font = NULL;
-	std::vector<SDL_Texture*>		_textTexture;
-	std::vector<SDL_Surface*>		_surface;
-	std::vector<SDL_Rect>			_textRectangle;
+	int								_fontSize;
 
-	int test = 0;
+	std::vector<SDL_Texture*>		_displayTextTexture;
+	std::vector<SDL_Texture*>		_interactiveTextTexture;
+
 };
 

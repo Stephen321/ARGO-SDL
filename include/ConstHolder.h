@@ -57,3 +57,7 @@ const float STAGGER_MAX_TIMER = 2.0f;
 const float INVINCIBLE_MAX_TIMER = 2.0f;
 const float INVISIBLE_MAX_TIMER = 2.0f;
 const float SPEED_UP_MAX_TIMER = 2.0f;
+
+const int SCREEN_WIDTH = 1600;
+const int SCREEN_HEIGHT = 900;
+

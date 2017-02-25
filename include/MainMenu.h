@@ -1,75 +1,40 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
 
-#include "CameraSystem.h"
-#include "FunctionMaster.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "LevelLoader.h"
-
-class MainMenu : public EventListener, public Scene
+class MainMenu : public Scene
 {
 public:
 	MainMenu();
 	~MainMenu();
 
-	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
+	void							Initialize(SDL_Renderer* renderer) override;
 
 	int								Update() override;
 	void							Render() override;
 
-	void							OnEvent(Event evt) override;
-
 	bool							IsRunning() override;
 
-private:
-	void							BindInput();
+	void							Start() override;
+	void							Stop() override;
 
-	void							CreateText(string message, int x, int y);
-	void							CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
-
-	void							UpdateText(std::string message, int index);
+	void							OnEvent(Event evt) override;
 
 private:
-	SDL_Window*						_window;
-	SDL_Renderer*					_renderer;
+	void							BindInput() override;
 
+	void							LoadContent() override;
+	void							CleanUp() override;
+
+private:
 	LevelLoader						_levelLoader;
-
-	InputManager*					_inputManager = InputManager::GetInstance();
-
-	std::map<TextureID, SDL_Texture*>_textureHolder;
-
-	bool							_running;
-
-	unsigned int					_lastTime;//time of last update;
 
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
-
-
-	TTF_Font*						_font = NULL;
-	std::vector<SDL_Texture*>		_textTexture;
-	std::vector<SDL_Surface*>		_surface;
-	std::vector<SDL_Rect>			_textRectangle;
+	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;
-	int								_fontSize;
 
 private:
 	void							MoveUp();

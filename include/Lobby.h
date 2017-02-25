@@ -1,71 +1,46 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
 
-#include "CameraSystem.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "FunctionMaster.h"
-#include "RenderSystem.h"
-
-class Lobby : public EventListener, public Scene
+class Lobby : public Scene
 {
 public:
 	Lobby();
 	~Lobby();
 
-	void							Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, int height);
+	void							Initialize(SDL_Renderer* renderer) override;
 
-	void							Render() override;
 	int								Update() override;
-
-	void							OnEvent(Event evt) override;
+	void							Render() override;
 
 	bool							IsRunning() override;
 
-private:
+	void							Start() override;
+	void							Stop() override;
 
-	void							BindInput();
-
-	void							CreateText(string message, int x, int y);
-	void							CreateTextColoured(string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	void							OnEvent(Event evt) override;
 
 private:
-	SDL_Window*						_window;
-	SDL_Renderer*					_renderer;
+	void							BindInput() override;
 
-	InputManager*					_inputManager = InputManager::GetInstance();
+	void							LoadContent() override;
+	void							CleanUp() override;
 
-	std::map<TextureID, SDL_Texture*>_textureHolder;
-
-	bool							_running;
-
-	unsigned int					_lastTime;//time of last update;
-
+private:
 	RenderSystem					_renderSystem;
 	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
-
-
-	TTF_Font*						_font = NULL;
-	std::vector<SDL_Texture*>		_textTexture;
-	std::vector<SDL_Surface*>		_surface;
-	std::vector<SDL_Rect>			_textRectangle;
+	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;
-	int								_fontSize;
+
+private:
+	void							MoveUp();
+	void							MoveDown();
+
+	int								GetPressedItem();
+	int								_selectedItemIndex;
+
+	void							Refresh();
 };
 

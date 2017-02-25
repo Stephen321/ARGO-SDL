@@ -56,7 +56,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP UI SYSTEM
 	UISystem* uiSystem = new UISystem(0);
-	uiSystem->Initialize(renderer, &cameraSystem->getCamera());
+	uiSystem->Initialize(renderer);
 	_systems[SystemType::UI] = uiSystem;
 
 	//SETUP GUN SYSTEM
