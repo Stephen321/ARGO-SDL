@@ -24,9 +24,11 @@ const float BULLET_FIRE_RATE = 1.0f;
 
 const uint16 PLAYER_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 AI_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
-const uint16 BULLET_MASK = (uint16)EntityType::AI | (uint16)EntityType::Obstacle | (uint16)EntityType::Player; 
+const uint16 BULLET_SENSOR_MASK = (uint16)EntityType::AI | (uint16)EntityType::Player; 
+const uint16 BULLET_BODY_MASK = (uint16)EntityType::Obstacle;
 const uint16 CHECKPOINT_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;
-const uint16 FLAG_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Obstacle;
+const uint16 FLAG_SENSOR_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;
+const uint16 FLAG_BODY_MASK = (uint16)EntityType::Obstacle;
 const uint16 POWERUP_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;
 const uint16 OBSTACLE_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Flag;
 

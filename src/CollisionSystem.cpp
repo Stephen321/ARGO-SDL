@@ -319,7 +319,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			player = b;
 			other = a;
 		}
-		/*else if (a->GetType() == EntityType::Flag)
+		else if (a->GetType() == EntityType::Flag)
 		{
 			player = a;
 			other = b;
@@ -338,7 +338,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 		{
 			player = b;
 			other = a;
-		}*/
+		}
 	}
 	else
 	{

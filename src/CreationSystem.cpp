@@ -224,13 +224,13 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupBulletEntity(co
 	SetupAngle(transform, information.second, index);
 	SetupVelocity(physics, information.second, index);
 
-	collider->body = _bodyFactory->CreateBoxBody(
+	collider->body = _bodyFactory->CreateBoxBodyWithSensor(
 		b2BodyType::b2_dynamicBody
 		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
 		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 		, (uint16)bullet->GetType()
-		, BULLET_MASK //fix later for not selfharm
-		, true);
+		, BULLET_SENSOR_MASK //fix later for not selfharm
+		, BULLET_BODY_MASK);
 
 	collider->body->SetUserData(bullet);
 	collider->body->SetFixedRotation(true);
@@ -298,13 +298,13 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 					  , (int)transform->rect.w
 					  , (int)transform->rect.h };
 
-	collider->body = _bodyFactory->CreateBoxBody(
+	collider->body = _bodyFactory->CreateBoxBodyWithSensor(
 		b2BodyType::b2_dynamicBody
 		, b2Vec2(transform->rect.x, transform->rect.y)
 		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
 		, (uint16)flag->GetType()
-		, FLAG_MASK
-		, true);
+		, FLAG_SENSOR_MASK
+		, FLAG_BODY_MASK);
 
 	collider->body->SetUserData(flag);
 	collider->body->SetFixedRotation(true);
