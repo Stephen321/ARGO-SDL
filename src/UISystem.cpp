@@ -88,6 +88,15 @@ void UISystem::DeleteText()
 	_interactiveTextRectangle.clear();
 }
 
+void UISystem::DeleteDisplayText()
+{
+	for (int i = 0; i < _displayTextTexture.size(); i++)
+	{
+		SDL_DestroyTexture(_displayTextTexture[i]);
+	}
+	_displayTextTexture.clear();
+}
+
 void UISystem::CreateText(std::string message, int x, int y)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });

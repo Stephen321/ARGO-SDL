@@ -12,6 +12,11 @@ struct Spectator {
 	IPaddress address;
 };
 
+struct Client {
+	int playerID;
+	int sessionID;
+};
+
 bool exists(const std::vector<Spectator>& spectators, const IPaddress& ip)
 {
 	for (std::vector<Spectator>::const_iterator it = spectators.begin(); it != spectators.end(); ++it)
@@ -58,11 +63,40 @@ void RemoveSpectator(std::vector<Spectator>& spectators, IPaddress srcAddr)
 	), spectators.end());
 }
 
+//custom hask function in order to use IPaddress as key
+namespace std 
+{
+	template <>
+	struct hash<IPaddress>
+	{
+		std::size_t operator()(const IPaddress& ip) const
+		{
+			using std::size_t;
+			using std::hash;
+			return ((hash<int>()(ip.host)
+				^ (hash<int>()(ip.port) << 1)) >> 1);
+		}
+	};
+
+}
+
+bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress address)
+{
+	for (std::unordered_map<IPaddress, Client>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if (it->first.host == address.host &&
+			it->first.port == address.port)
+			return true;
+	}
+	return false;
+}
+
 int main(int argc, char** argv)
 {
 
 	SDLNet_Init();
 
+	std::unordered_map<IPaddress, Client> clients; //player and session id to ip address mapping
 	std::vector<Spectator> spectators;
 	SessionMap sessions;
 
@@ -77,6 +111,7 @@ int main(int argc, char** argv)
 		if (receiveData.Empty() == false)
 		{
 			IPaddress srcAddr = receiveData.GetSrcAddress();
+			
 			switch (receiveData.GetType())
 			{
 			case MessageType::Connect:

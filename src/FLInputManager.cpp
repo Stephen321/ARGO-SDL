@@ -9,7 +9,8 @@ InputManager::InputManager()
 {
 	auto e = SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
 
-	if (e != 0) {
+	if (e != 0) 
+	{
 		// problem with SDL?...
 		std::cout << "Could not init SDL: " << SDL_GetError() << std::endl;
 	}
@@ -48,6 +49,37 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	}
 }
 
+void InputManager::EmptyKeys()
+{
+	for (auto& commandVector : commands)
+	{
+		for (auto command : *commandVector.second)
+		{
+			delete command;
+		}
+
+		delete commandVector.second;
+	}
+	int test = 0;
+	commands.erase(commands.begin(), commands.end());
+	listeners.erase(listeners.begin(), listeners.end());
+}
+
+void InputManager::EmptyKey(EventListener::Event evt)
+{
+	if (commands.count(evt) == 1)
+	{
+		for (auto command : *commands[evt])
+		{
+			delete command;
+		}
+
+		delete commands[evt];
+	}
+
+	commands.erase(evt);
+}
+
 //* Find a specific Event listener in the listeners dictionary, and call its onEvent() function
 void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 {
@@ -59,7 +91,7 @@ void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 		}
 	}
 
-	//*After a key is dispatched, see if it was previously held
+	//* After a key is dispatched, see if it was previously held
 	CheckPrevious(type, evt);
 }
 
@@ -414,10 +446,10 @@ void InputManager::ProcessInput()
 		case SDLK_x:			Dispatch(type, EventListener::Event::x);				break;
 		case SDLK_y:			Dispatch(type, EventListener::Event::y);				break;
 		case SDLK_z:			Dispatch(type, EventListener::Event::z);				break;
-		case SDLK_UP:			Dispatch(type, EventListener::Event::ARROW_UP);				break;
-		case SDLK_LEFT:			Dispatch(type, EventListener::Event::ARROW_LEFT);				break;
-		case SDLK_DOWN:			Dispatch(type, EventListener::Event::ARROW_DOWN);				break;
-		case SDLK_RIGHT:			Dispatch(type, EventListener::Event::ARROW_RIGHT);				break;
+		case SDLK_UP:			Dispatch(type, EventListener::Event::ARROW_UP);			break;
+		case SDLK_LEFT:			Dispatch(type, EventListener::Event::ARROW_LEFT);		break;
+		case SDLK_DOWN:			Dispatch(type, EventListener::Event::ARROW_DOWN);		break;
+		case SDLK_RIGHT:		Dispatch(type, EventListener::Event::ARROW_RIGHT);		break;
 
 		default: break;
 		}
@@ -799,6 +831,17 @@ float InputManager::GetRightTrigger()
 	return stick_Right_T;
 }
 
+//* Mouse
+SDL_Point InputManager::GetMousePos()
+{
+	int x;
+	int y;
+	SDL_GetMouseState(&x, &y);
+
+	return SDL_Point{ x, y };
+}
+
+
 //* Logger //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //* Add Event to output Log
 void InputManager::logEvent(std::string str)
@@ -976,4 +1019,8 @@ void InputManager::createKeyMap()
 	keyTypes[EventListener::Type::Release] = "Release";
 	keyTypes[EventListener::Type::Hold] = "Hold";
 	keyTypes[EventListener::Type::Down] = "Down";
+}
+
+EventListener::~EventListener()
+{
 }

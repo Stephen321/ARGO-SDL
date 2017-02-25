@@ -25,6 +25,7 @@ public:
 
 
 	void							DeleteText();
+	void							DeleteDisplayText();
 
 	void							CreateText(std::string message, int x, int y);
 	void							CreateTextAtOrigin(std::string message, int x, int y);

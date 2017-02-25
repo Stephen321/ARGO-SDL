@@ -22,7 +22,7 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 	_running = true;
-	_swapScene = CurrentScene::LOBBY;
+
 	_selectedItemIndex = 0;
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -31,6 +31,7 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 	Entity* ui = new Entity(EntityType::UI);
 	_uiSystem.AddEntity(ui);
 
+	Start();// - activate when loaded
 	LoadContent();
 
 
@@ -97,6 +98,7 @@ int Lobby::Update()
 			{
 				std::cout << "Player: " << data.players[i] << std::endl;
 			}
+			std::cout << "my id: " << NetworkHandler::Instance().GetPlayerID() << std::endl;
 			Refresh(data.players);
 			break;
 		}
@@ -134,12 +136,17 @@ void Lobby::Start()
 
 	ConnectData data;
 	NetworkHandler::Instance().Send(&data);
+
+	_swapScene = CurrentScene::LOBBY;
 }
 
 void Lobby::Stop()
 {
 	_inputManager->ResetKey(Event::BACKSPACE);
 	_inputManager->ResetKey(Event::h);
+
+	_running = false;
+	CleanUp();
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -162,11 +169,7 @@ void Lobby::LoadContent()
 
 void Lobby::CleanUp()
 {
-	//DESTROY HERE
 
-	//SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
 }
 
 void Lobby::BindInput()
@@ -195,7 +198,7 @@ void Lobby::BindInput()
 
 	Command* oIn = new InputCommand([&]()
 	{
-		Start();
+		Refresh();
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::o, oIn, this);
@@ -263,6 +266,9 @@ int Lobby::GetPressedItem()
 void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
 	if (sessions.empty())
 	{
 		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 200);
@@ -288,6 +294,9 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 void Lobby::Refresh(const std::vector<int>& players)
 {
 	_uiSystem.DeleteText();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 180);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
 	for (int i = 0; i < players.size(); i++)
 	{
 		std::ostringstream oss;
@@ -296,7 +305,6 @@ void Lobby::Refresh(const std::vector<int>& players)
 		{
 			oss << " (you!).";
 		}
-		oss << std::endl;
 
 		std::string var = oss.str();
 		if (i == 0)

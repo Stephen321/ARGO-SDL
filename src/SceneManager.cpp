@@ -33,24 +33,23 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 		_menu = new MainMenu();
 		_menu->Initialize(_renderer);
-
-		_game = new Game();
-		_game->Initialize(_renderer);
-
-		_lobby = new Lobby();
-		_lobby->Initialize(_renderer);
-
-		_options = new Options();
-		_options->Initialize(_renderer);
-
-		_about = new About();
-		_about->Initialize(_renderer);
-
 		_currentScene.push_back(_menu);
-		_currentScene.push_back(_game);
-		_currentScene.push_back(_lobby);
-		_currentScene.push_back(_options);
-		_currentScene.push_back(_about);
+
+		//_game = new Game();
+		//_game->Initialize(_renderer);
+		//_currentScene.push_back(_game);
+
+		//_lobby = new Lobby();
+		//_lobby->Initialize(_renderer);
+		//_currentScene.push_back(_lobby);
+
+		//_options = new Options();
+		//_options->Initialize(_renderer);
+		//_currentScene.push_back(_options);
+
+		//_about = new About();
+		//_about->Initialize(_renderer);
+		//_currentScene.push_back(_about);
 
 		_runningScene = 0;
 		_currentScene[_runningScene]->Start();
@@ -103,16 +102,56 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 
 void SceneManager::Update()
 {
-	if (_currentScene[_runningScene]->IsRunning())
+	if (_currentScene.back()->IsRunning())
 	{
-		int scene = _currentScene[_runningScene]->Update();
-		if (scene != _runningScene)
+		_previousScene = _runningScene;
+		_currentScene.back()->Render();
+		_runningScene = _currentScene.back()->Update();
+
+		// Stop Previous Scene
+		if (_runningScene != _previousScene)
 		{
-			_currentScene[_runningScene]->Stop();
-			_runningScene = scene;
-			_currentScene[_runningScene]->Start();
+			_currentScene.back()->Stop();
+
+			// Delete Object
+
+			_currentScene.pop_back();
+
+			if (_runningScene == 0)
+			{
+				_menu = new MainMenu();
+				_menu->Initialize(_renderer);
+				_currentScene.push_back(_menu);
+			}
+
+			else if (_runningScene == 1)
+			{
+				_game = new Game();
+				_game->Initialize(_renderer);
+				_currentScene.push_back(_game);
+			}
+
+			else if (_runningScene == 2)
+			{
+				_lobby = new Lobby();
+				_lobby->Initialize(_renderer);
+				_currentScene.push_back(_lobby);
+			}
+
+			else if (_runningScene == 3)
+			{
+				_options = new Options();
+				_options->Initialize(_renderer);
+				_currentScene.push_back(_options);
+			}
+
+			else if (_runningScene == 4)
+			{
+				_about = new About();
+				_about->Initialize(_renderer);
+				_currentScene.push_back(_about);
+			}
 		}
-		_currentScene[_runningScene]->Render();
 	}
 
 	else

@@ -30,8 +30,6 @@ Game::~Game()
 void Game::Initialize(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
-	_running = true;
-	_swapScene = CurrentScene::GAME;
 
 	_systemManager.Initialize(_renderer, &_entities, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -40,6 +38,7 @@ void Game::Initialize(SDL_Renderer* renderer)
 	_entityFactory.Initialize(&_systemManager, &_textureHolder);
 	_bodyFactory.Initialize(&_world);
 
+	Start();
 	LoadContent();
 
 	Entity* player = nullptr;
@@ -131,12 +130,15 @@ bool Game::IsRunning()
 
 void Game::Start()
 {
-
+	_running = true;
+	_swapScene = CurrentScene::GAME;
 }
 
 void Game::Stop()
 {
-
+	_running = false;
+	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void Game::OnEvent(EventListener::Event evt)
@@ -148,12 +150,30 @@ void Game::OnEvent(EventListener::Event evt)
 		case Event::ESCAPE:
 			//_inputManager->saveFile();
 			_running = false;
+
+		case Event::w:
+			_audioManager->PlayFX("Hum");
+		case Event::a:
+			_audioManager->PlayFX("Hum");
+		case Event::s:
+			_audioManager->PlayFX("Hum");
+		case Event::d:
+			_audioManager->PlayFX("Hum");
 		}
 	}
 }
 
 void Game::BindInput(Entity* player, Entity* weapon)
 {
+	// Delete Key binding
+	Command* nIn = new InputCommand([&]()
+	{
+		_inputManager->EmptyKey(Event::BACKSPACE);
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::NUM_0, nIn, this);
+
+
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
@@ -168,6 +188,16 @@ void Game::BindInput(Entity* player, Entity* weapon)
 
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+
+
+	// Recreate key binding
+	Command* noIn = new InputCommand([&]()
+	{
+		Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+		_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::NUM_1, noIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
@@ -197,11 +227,6 @@ void Game::CleanUp()
 	}
 
 	_entities.clear();
-
-	//SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDLNet_Quit();
-	SDL_Quit();
 }
 
 
