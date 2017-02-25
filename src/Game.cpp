@@ -180,20 +180,6 @@ void Game::BindInput(Entity* player)
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
-void Game::LoadContent()
-{
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
-
-	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
-	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
-	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
-
-	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
-}
-
 void Game::CleanUp()
 {
 	//DESTROY HERE
