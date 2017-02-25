@@ -9,7 +9,8 @@ InputManager::InputManager()
 {
 	auto e = SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
 
-	if (e != 0) {
+	if (e != 0) 
+	{
 		// problem with SDL?...
 		std::cout << "Could not init SDL: " << SDL_GetError() << std::endl;
 	}
@@ -46,6 +47,37 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	{
 		listeners[evt]->push_back(listener);
 	}
+}
+
+void InputManager::EmptyKeys()
+{
+	for (auto& commandVector : commands)
+	{
+		for (auto command : *commandVector.second)
+		{
+			delete command;
+		}
+
+		delete commandVector.second;
+	}
+	int test = 0;
+	commands.erase(commands.begin(), commands.end());
+	listeners.erase(listeners.begin(), listeners.end());
+}
+
+void InputManager::EmptyKey(EventListener::Event evt)
+{
+	if (commands.count(evt) == 1)
+	{
+		for (auto command : *commands[evt])
+		{
+			delete command;
+		}
+
+		delete commands[evt];
+	}
+
+	commands.erase(evt);
 }
 
 //* Find a specific Event listener in the listeners dictionary, and call its onEvent() function
@@ -799,6 +831,17 @@ float InputManager::GetRightTrigger()
 	return stick_Right_T;
 }
 
+//* Mouse
+SDL_Point InputManager::GetMousePos()
+{
+	int x;
+	int y;
+	SDL_GetMouseState(&x, &y);
+
+	return SDL_Point{ x, y };
+}
+
+
 //* Logger //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //* Add Event to output Log
 void InputManager::logEvent(std::string str)
@@ -976,4 +1019,8 @@ void InputManager::createKeyMap()
 	keyTypes[EventListener::Type::Release] = "Release";
 	keyTypes[EventListener::Type::Hold] = "Hold";
 	keyTypes[EventListener::Type::Down] = "Down";
+}
+
+EventListener::~EventListener()
+{
 }

@@ -138,6 +138,7 @@ void Game::Stop()
 {
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void Game::OnEvent(EventListener::Event evt)
@@ -164,6 +165,15 @@ void Game::OnEvent(EventListener::Event evt)
 
 void Game::BindInput(Entity* player, Entity* weapon)
 {
+	// Delete Key binding
+	Command* nIn = new InputCommand([&]()
+	{
+		_inputManager->EmptyKey(Event::BACKSPACE);
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::NUM_0, nIn, this);
+
+
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
@@ -178,6 +188,16 @@ void Game::BindInput(Entity* player, Entity* weapon)
 
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+
+
+	// Recreate key binding
+	Command* noIn = new InputCommand([&]()
+	{
+		Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+		_inputManager->AddKey(Event::BACKSPACE, backIn, this);
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::NUM_1, noIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
