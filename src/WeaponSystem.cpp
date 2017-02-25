@@ -67,9 +67,12 @@ void WeaponSystem::WeaponCreationEvent()
 	{
 		for (int i = 0; i < _interactionSystemEvents[WEAPON_CREATED].size(); i++)
 		{
-			AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
+			if (_interactionSystemEvents[WEAPON_CREATED].at(i).second != nullptr)
+			{
+				AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
+				_interactionSystemEvents[WEAPON_CREATED].erase(_interactionSystemEvents[WEAPON_CREATED].begin() + i);
+				i--;
+			}
 		}
-
-		_interactionSystemEvents[WEAPON_CREATED].clear();
 	}
 }

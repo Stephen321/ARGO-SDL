@@ -1,8 +1,5 @@
 #include "LevelLoader.h"
-#include "SpriteComponent.h"
-#include "TransformComponent.h"
-#include "ColliderComponent.h"
-#include "CheckpointComponent.h"
+#include "PowerUpComponent.h"
 #include "BasicTypes.h"
 #include "Helpers.h"
 
@@ -68,6 +65,8 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 	{
 		const Value& entity = entityDataArray[i];
 		string entityName = entity["name"].GetString();
+		
+		int	checkpointID = 0;
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
@@ -105,9 +104,10 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		}
 		else if (entityName == "Checkpoint")
 		{
+			checkpointID++;
 			std::vector<float> data = std::vector<float>();
 
-			data.push_back(-1); //id
+			data.push_back(checkpointID); //id
 			data.push_back(x); //xPosition
 			data.push_back(y); //yPosition
 			data.push_back(w); //width
@@ -146,6 +146,14 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 		float h = entity["height"].GetFloat();
 
 		helper::Vector2 position = helper::Vector2(x + w*.5f, y + h*.5f);
+
+		std::vector<float> data = std::vector<float>();
+
+		data.push_back(rand() % ((int)PowerUpComponent::Type::Count+1)); //id
+		data.push_back(x); //xPosition
+		data.push_back(y); //yPosition
+
+		systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::PowerUp, data));
 
 		const Value& properties = entity["properties"];
 		int currentNode = properties["node"].GetInt();

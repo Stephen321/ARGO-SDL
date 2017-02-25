@@ -8,7 +8,7 @@
 class CollisionSystem : public System, public b2ContactListener
 {
 public:
-				CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate = 0.f);
+				CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, std::vector<std::pair<EntityType, std::vector<float>>>& requests, float updateRate = 0.f);
 				~CollisionSystem();
 
 	void		Process(float dt = 0.f) override;
@@ -20,6 +20,11 @@ public:
 	void		PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
 private:
+	void		CheckCharacterToCheckpointCollision(Entity*& player, Entity*& other);
+	void		CheckCharacterToBulletCollision(Entity*& player, Entity*& other);
+	void		CheckCharacterToFlagCollision(Entity*& player, Entity*& other);
+	void		CheckCharacterToPowerUpCollision(Entity*& player, Entity*& other);
+
 	void		CheckCharacterToObjectCollision(Entity*& player, Entity*& other);
 	void		CheckCharacterToCharacterCollision(Entity*& player, Entity*& other);
 
@@ -29,5 +34,6 @@ private:
 
 private:
 	std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;
+	std::vector<std::pair<EntityType, std::vector<float>>>&						_creationRequests;
 };
 

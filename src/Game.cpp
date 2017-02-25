@@ -56,14 +56,6 @@ void Game::Initialize(SDL_Window*& window, SDL_Renderer*& renderer, int width, i
 	assert(weapon != nullptr);
 	
 	_systemManager.AddEntity(SystemManager::InteractionSystemType::Weapon, player, weapon);
-
-
-	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
-	flagComponent->hasFlag = true;
-
-	assert(flag != nullptr);
-
-	_systemManager.AddEntity(SystemManager::InteractionSystemType::Flag, player, flag);
 	*/
 
 

@@ -1,7 +1,5 @@
 #include "SystemManager.h"
 
-#include "CheckpointComponent.h"
-
 #include "ConstHolder.h"
 
 
@@ -52,7 +50,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_systems[SystemType::Physics] = physicsSystem;
 
 	//SETUP COLLISION SYSTEM
-	CollisionSystem* collisionSystem = new CollisionSystem(_interactionSystemEvents, COLLISION_SYSTEM_UPDATE);
+	CollisionSystem* collisionSystem = new CollisionSystem(_interactionSystemEvents, _creationRequests, COLLISION_SYSTEM_UPDATE);
 	world->SetContactListener(collisionSystem);
 	_systems[SystemType::Collision] = collisionSystem;
 
@@ -81,6 +79,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP Destroy SYSTEM
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
+	destructionSystem->Initialize(world);
 	_systems[SystemType::Destruction] = destructionSystem;
 
 	//SETUP Destroy SYSTEM
@@ -127,7 +126,6 @@ void SystemManager::PostInitialize(Entity*& player)
 		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::Checkpoint)
 		{
-			static_cast<CheckpointComponent*>(systemCreatedEntity.second->GetComponent(Component::Type::Collider))->id = checkpoints.size()+1;
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
 
@@ -166,7 +164,19 @@ void SystemManager::TryToCreateEntities(float dt)
 		for (int i = 0; i < systemCreatedEntity.first.size(); i++)
 		{
 			AddEntity(systemCreatedEntity.first.at(i), systemCreatedEntity.second);
+		}
 
+		if (systemCreatedEntity.second->GetType() == EntityType::Weapon)
+		{
+			for (int i = 0; i < _interactionSystemEvents[InteractionSystemEvent::WeaponCreated].size(); i++)
+			{
+				if (_interactionSystemEvents[InteractionSystemEvent::WeaponCreated].at(i).second == nullptr)
+				{
+					_interactionSystemEvents[InteractionSystemEvent::WeaponCreated].at(i).second = systemCreatedEntity.second;
+					break;
+				}
+			}
+			
 		}
 
 		_creationSystem->EntityToSystemAssigned();

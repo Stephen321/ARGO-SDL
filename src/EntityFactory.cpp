@@ -11,6 +11,7 @@
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
+#include "PowerUpComponent.h"
 
 #include "ConstHolder.h"
 
@@ -109,10 +110,32 @@ Entity* EntityFactory::CreatePowerUpEntity(int id)
 	Entity* powerUp = new Entity(EntityType::PowerUp);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]);
 
+	switch (id)
+	{
+	case 1:
+	{
+		spriteComponent->sourceRect = { 0, 0, 0, 0 };
+		break;
+	}
+	case 2:
+	{
+		spriteComponent->sourceRect = { 1, 0, 0, 0 };
+		break;
+	}
+	case 3:
+	{
+		spriteComponent->sourceRect = { 2, 0, 0, 0 };
+		break;
+	}
+	default:
+		break;
+	}
+
 	powerUp->AddComponent(spriteComponent);
-	powerUp->AddComponent(new TransformComponent(0, 0, 0, 0));
+	powerUp->AddComponent(new TransformComponent(0, 0, 48, 48));
 	powerUp->AddComponent(new ColliderComponent());
 	powerUp->AddComponent(new DestructionComponent());
+	powerUp->AddComponent(new PowerUpComponent(static_cast<PowerUpComponent::Type>(id)));
 
 	return powerUp;
 }
@@ -124,7 +147,7 @@ Entity* EntityFactory::CreateWeaponEntity(int id)
 
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
-	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
+	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO, id));
 	weapon->AddComponent(new DestructionComponent());
 
 	return weapon;
@@ -152,7 +175,7 @@ Entity* EntityFactory::CreateCheckpointEntity(int id)
 	checkpoint->AddComponent(spriteComponent);
 	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	checkpoint->AddComponent(new ColliderComponent());
-	checkpoint->AddComponent(new CheckpointComponent());
+	checkpoint->AddComponent(new CheckpointComponent(id));
 
 	return checkpoint;
 }

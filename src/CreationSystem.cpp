@@ -21,7 +21,10 @@ CreationSystem::~CreationSystem()
 {
 	for (int i = 0; i < _entities.size(); i++)
 	{
-		delete _entities.at(i);
+		if (_entities.at(i) != nullptr)
+		{
+			delete _entities.at(i);
+		}
 	}
 
 	_entities.clear();
@@ -99,7 +102,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupWeaponEntity(co
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	//SetupSize(transform, information.second, index);
 
 
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
@@ -185,18 +188,24 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPowerUpEntity(c
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(powerUp->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(powerUp->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(powerUp->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	//SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x *= transform->rect.w;
+	spriteComponent->sourceRect.y *= transform->rect.h;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->rect.x, transform->rect.y)
+		, b2Vec2(transform->origin.x, transform->origin.y)
 		, (uint16)powerUp->GetType()
-		, PLAYER_MASK
-		, false);
+		, POWERUP_MASK
+		, true);
 
 	collider->body->SetUserData(powerUp);
 	collider->body->SetFixedRotation(true);
@@ -224,10 +233,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupBulletEntity(co
 	SetupAngle(transform, information.second, index);
 	SetupVelocity(physics, information.second, index);
 
+	transform->origin = { (int)(transform->rect.w * 0.5f), (int)(transform->rect.h * 0.5f) };
+
 	collider->body = _bodyFactory->CreateBoxBodyWithSensor(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->rect.x, transform->rect.y)
+		, b2Vec2(transform->origin.x, transform->origin.y)
 		, (uint16)bullet->GetType()
 		, BULLET_SENSOR_MASK //fix later for not selfharm
 		, BULLET_BODY_MASK);
@@ -265,7 +276,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupCheckpointEntit
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_staticBody
 		, b2Vec2(transform->rect.x, transform->rect.y)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->origin.x, transform->origin.y)
 		, (uint16)checkpoint->GetType()
 		, CHECKPOINT_MASK
 		, true);
@@ -301,7 +312,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	collider->body = _bodyFactory->CreateBoxBodyWithSensor(
 		b2BodyType::b2_dynamicBody
 		, b2Vec2(transform->rect.x, transform->rect.y)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->origin.x, transform->origin.y)
 		, (uint16)flag->GetType()
 		, FLAG_SENSOR_MASK
 		, FLAG_BODY_MASK);
@@ -373,14 +384,14 @@ void CreationSystem::SetupSize(TransformComponent*& transform, const std::vector
 	if (information[index] != -1)
 	{
 		transform->rect.w = information[index];
-		index++;
 	}
+	index++;
 
 	if (information[index] != -1)
 	{
 		transform->rect.h = information[index];
-		index++;
 	}
+	index++;
 }
 void CreationSystem::SetupAngle(TransformComponent*& transform, const std::vector<float> &information, int& index)
 {

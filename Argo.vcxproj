@@ -236,6 +236,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
+    <ClInclude Include="include\PowerUpComponent.h" />
     <ClInclude Include="include\StatusEffectComponent.h" />
     <ClInclude Include="include\StatusEffectSystem.h" />
     <ClInclude Include="include\SystemTypes.h" />

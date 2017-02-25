@@ -11,6 +11,7 @@
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
+#include "PowerUpComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -21,9 +22,10 @@
 
 
 
-CollisionSystem::CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, float updateRate)
+CollisionSystem::CollisionSystem(std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& events, std::vector<std::pair<EntityType, std::vector<float>>>& requests, float updateRate)
 	: System(updateRate)
 	, _interactionSystemEvents(events)
+	, _creationRequests(requests)
 {
 }
 
@@ -76,37 +78,6 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 			}
 		}
 	}
-	/*else
-	{
-		if (bodyAUserData != "Obstacle")
-		{
-			Entity* flag = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
-
-			if (flag->GetType() == EntityType::Flag)
-			{
-				PhysicsComponent* physics = static_cast<PhysicsComponent*>(flag->GetComponent(Component::Type::Physics));
-
-				physics->xVelocity = -physics->xVelocity;
-				physics->yVelocity = -physics->yVelocity;
-
-				std::cout << "FLAG->Obstacle" << std::endl;
-			}
-		}
-		else
-		{
-			Entity* flag = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
-
-			if (flag->GetType() == EntityType::Flag)
-			{
-				PhysicsComponent* physics = static_cast<PhysicsComponent*>(flag->GetComponent(Component::Type::Physics));
-
-				physics->xVelocity = -physics->xVelocity;
-				physics->yVelocity = -physics->yVelocity;
-
-				std::cout << "FLAG->Obstacle" << std::endl;
-			}
-		}
-	}*/
 }
 
 void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& other)
@@ -114,29 +85,100 @@ void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& 
 	switch (other->GetType())
 	{
 	case EntityType::Checkpoint:
-
+		CheckCharacterToCheckpointCollision(player, other);
 		break;
 
 	case EntityType::PowerUp:
-
+		CheckCharacterToPowerUpCollision(player, other);
 		break;
 
 	case EntityType::Bullet:
-
+		CheckCharacterToBulletCollision(player, other);
 		break;
 
 	case EntityType::Flag:
-		if (!static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect))->staggered)
-		{
-			static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag))->hasFlag = true;
-			static_cast<ColliderComponent*>(other->GetComponent(Component::Type::Collider))->setActive = false;
-
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
-		}
-
+		CheckCharacterToFlagCollision(player, other);
 		break;
 	}
 }
+
+void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entity*& other)
+{
+	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+
+	if (flagComponent->hasFlag)
+	{
+		flagComponent->currentCheckpointID++;
+
+		if (flagComponent->currentCheckpointID == 4)
+		{
+			flagComponent->currentCheckpointID = 0;
+			flagComponent->currentLap++;
+		}
+	}
+}
+void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*& other)
+{
+	PowerUpComponent* powerUp = static_cast<PowerUpComponent*>(other->GetComponent(Component::Type::PowerUp));
+
+	if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
+	{
+		TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
+
+		std::vector<float> data = std::vector<float>();
+
+		data.push_back((int)powerUp->type); //id
+		data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
+		data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+
+		_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+
+		_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+	}
+	else
+	{
+		StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
+
+		switch (powerUp->type)
+		{
+		case PowerUpComponent::Type::Invicibility:
+			statusEffects->invincible = true;
+			statusEffects->invincibleTimer += INVINCIBLE_MAX_TIMER;
+			break;
+		case PowerUpComponent::Type::Invisibility:
+			statusEffects->invisible = true;
+			statusEffects->invisibleTimer += INVISIBLE_MAX_TIMER;
+			break;
+		case PowerUpComponent::Type::Speed:
+			statusEffects->speedUp = true;
+			statusEffects->speedUpTimer += SPEED_UP_MAX_TIMER;
+			break;
+		default:
+			break;
+		}
+	}
+
+	static_cast<DestructionComponent*>(other->GetComponent(Component::Type::Destroy))->destroy = true;
+}
+void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
+{
+	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
+
+	statusEffects->staggered = true;
+	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+}
+void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
+{
+	if (!static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect))->staggered)
+	{
+		static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag))->hasFlag = true;
+		static_cast<ColliderComponent*>(other->GetComponent(Component::Type::Collider))->setActive = false;
+
+		_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
+	}
+}
+
+
 void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity*& other)
 {
 	FlagComponent* pFlag = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
@@ -150,7 +192,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!otherStatusEffects->staggered)
 		{
 			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 		}
@@ -160,7 +202,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!playerStatusEffects->staggered)
 		{
 			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
