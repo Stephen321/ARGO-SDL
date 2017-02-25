@@ -22,6 +22,19 @@ const int MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 1.5f;
 const int BULLET_AMMO = 5;
 const float BULLET_FIRE_RATE = 1.0f;
 
+/*
+BULLETS NEED TO BE TESTED
+WEAPON NEEDS TO BE BINDED WITH A KEY
+SPRITE HOLDERS FOR ALL POWER UPS, WEAPONS, BULLETS
+SPAWN APPROPRIATE WEAPON WITH APPROPRIATE BULLET BASED ON ID WITH IMPLEMENTATION
+POWER UP SPAWNER NEEDS TO BE CREATED
+IMPLEMENT NONE WEAPON POWER UPS IN OTHER CODES
+
+PHYSICS NEED FIXING
+UI NOT DONE
+MENUES ARE SHIT
+*/
+
 const uint16 PLAYER_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 AI_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 BULLET_SENSOR_MASK = (uint16)EntityType::AI | (uint16)EntityType::Player; 
