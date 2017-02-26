@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef FLINPUTMANAGER_EXPORTS  
-#define MATHLIBRARY_API __declspec(dllexport)   
+#define FLINPUTMANAGER_API __declspec(dllexport)   
 #else  
 #define FLINPUTMANAGER_API __declspec(dllimport)   
 #endif 
@@ -171,6 +171,8 @@ public:
 	//* Pure virtual function that can be overriden inside any class that inherites from EventListener if needed
 	//* Not required to execute keys, ideal for standard event dispatch/ listen procedure for custom events
 	virtual void OnEvent(Event) = 0;
+
+	virtual ~EventListener();
 };
 
 //* Abstract class for input commands
@@ -202,10 +204,7 @@ public:
 
 	void clearKeys()
 	{
-		for (std::vector<std::function<void()>>::iterator it = m_functions.begin(); it != m_functions.end(); ++it)
-		{
-			delete &it;
-		}
+		m_functions.erase(m_functions.begin(), m_functions.end());
 	}
 };
 
@@ -247,6 +246,10 @@ public:
 
 	//* Create an EventListener object
 	void AddListener(EventListener::Event, EventListener*);
+
+	void EmptyKeys();
+
+	void EmptyKey(EventListener::Event evt);
 
 	//* Used to create a key event
 	void AddKey(EventListener::Event, Command*, EventListener*);
@@ -328,6 +331,9 @@ public:
 	Vector2f GetRightStickVectorNormal();
 	float GetRightStickAngle();
 	float GetRightTrigger();
+
+public:
+	SDL_Point GetMousePos();
 
 
 	//// Logger
@@ -478,6 +484,11 @@ class InputCommand : public Command
 {
 public:
 	InputCommand(std::function<void()> function, EventListener::Type type) : Command(function, type) {}
+
+	~InputCommand() override
+	{
+		clearKeys();
+	}
 
 	virtual void executePress()
 	{

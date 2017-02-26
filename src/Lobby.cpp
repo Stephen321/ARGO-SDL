@@ -22,7 +22,7 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 	_running = true;
-	_swapScene = CurrentScene::LOBBY;
+
 	_selectedItemIndex = 0;
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -31,6 +31,7 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 	Entity* ui = new Entity(EntityType::UI);
 	_uiSystem.AddEntity(ui);
 
+	//Start(); - activate when loaded
 	LoadContent();
 
 	//Input
@@ -72,12 +73,13 @@ bool Lobby::IsRunning()
 
 void Lobby::Start()
 {
-
+	_swapScene = CurrentScene::LOBBY;
 }
 
 void Lobby::Stop()
 {
-
+	_running = false;
+	CleanUp();
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -100,11 +102,7 @@ void Lobby::LoadContent()
 
 void Lobby::CleanUp()
 {
-	//DESTROY HERE
 
-	//SDL_DestroyWindow(_window);
-	SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
 }
 
 void Lobby::BindInput()
@@ -126,7 +124,7 @@ void Lobby::BindInput()
 
 	Command* oIn = new InputCommand([&]()
 	{
-		Start();
+		Refresh();
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::o, oIn, this);
@@ -178,7 +176,9 @@ int Lobby::GetPressedItem()
 void Lobby::Refresh()
 {
 	_uiSystem.DeleteText();
+
 	int amountOfLobbiesTest = 5;
+
 	for (int i = 0; i < amountOfLobbiesTest; i++)
 	{
 		std::ostringstream oss;

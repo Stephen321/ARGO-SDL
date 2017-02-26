@@ -1,6 +1,4 @@
 #include "AISystem.h"
-#include "FlagComponent.h"
-
 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
@@ -37,6 +35,7 @@ void AISystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
+				/*
 				AIComponent* ai = static_cast<AIComponent*>(e->GetComponent(Component::Type::AI));
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 
@@ -56,34 +55,19 @@ void AISystem::Process(float dt)
 					ai->path.erase(ai->path.begin());
 					ai->nextNode = ai->path[0];
 				}
-				/*
+				
 				switch (ai->state)
 				{
 				case AIState::SeekFlag:
-					if (ai->nextNode == _flagNode) // go to flag
-					{
-						if (distance > AI_DETECTION_RADIUS + 50)
-						{
-							ai->inFlagRange = true;
-							//ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate;
-						}
-					}
 					break;
 				case AIState::SeekCheckpoint:
-				{
-					FlagComponent* flagComponent = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
-					if (flagComponent->hasFlag)
-					{
-						seekCheckpoint(ai, flagComponent);
-					}
 					break;
-				}
 				case AIState::SeekPowerUp:
 					break;
 				default:
 					break;
 				}
-				*/
+				
 
 				if (ai->nextNode != nullptr && !ai->path.empty())
 				{
@@ -112,8 +96,6 @@ void AISystem::Process(float dt)
 						force.y += 0.025f * dir.y;
 					}
 
-					
-
 					force.x += 0.05f * dir.x;
 					force.y += 0.05f * dir.y;
 
@@ -124,7 +106,17 @@ void AISystem::Process(float dt)
 					physics->xVelocity += physics->xAcceleration;
 					physics->yVelocity += physics->yAcceleration;
 
+
+					//helper::Vector2 dir = velocity.normalize();
+					//physics->xDir = dir.x;
+					//physics->yDir = dir.y;
+					/*physics->xAcceleration = 0.06f;
+					physics->yAcceleration = 0.06f;
+					physics->xVelocity += physics->xAcceleration * dir.x;// *dt;
+					physics->yVelocity += physics->yAcceleration * dir.y;// *dt;
+
 				}
+			*/
 			}
 		}
 	}

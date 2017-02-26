@@ -19,6 +19,8 @@ public:
 		UI,
 		Checkpoint,
 		Flag,
+		StatusEffect,
+		PowerUp,
 	};
 
 public:

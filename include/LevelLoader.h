@@ -7,6 +7,7 @@
 #include "EntityFactory.h"
 #include "BodyFactory.h"
 #include "Graph.h"
+#include "SystemManager.h"
 
 using namespace rapidjson;
 
@@ -16,13 +17,13 @@ public:
 	LevelLoader() {};
 	~LevelLoader() {};
 
-	void LoadJson(const char* path, std::vector<Entity*>& entities, EntityFactory* entityFactory, BodyFactory* bodyFactory, Graph* waypoints);
+	void LoadJson(const char* path, SystemManager& SystemManager, BodyFactory* bodyFactory, Graph* waypoints);
 
 private:
-	void LoadTiles(const Value &tilesLayer, std::vector<Entity*>& entities, EntityFactory* ef, int tileWidth, int tileHeight);
-	void LoadEntities(const Value &entitieLayer, std::vector<Entity*>& entities, EntityFactory* ef, BodyFactory* bf);
-	void LoadWaypoints(const Value &waypointLayer, std::vector<Entity*>& entities, EntityFactory* ef, Graph* waypoints);
-	void LoadColliders(const Value &colliderLayer, std::vector<Entity*>& entities, EntityFactory* ef, BodyFactory* bf);
+	void LoadTiles(const Value &tilesLayer, SystemManager& SystemManager, int tileWidth, int tileHeight);
+	void LoadEntities(const Value &entitieLayer, SystemManager& SystemManager);
+	void LoadWaypoints(const Value &waypointLayer, SystemManager& SystemManager, Graph* waypoints);
+	void LoadColliders(const Value &colliderLayer, SystemManager& SystemManager, BodyFactory* bodyFactory);
 	
 };
 

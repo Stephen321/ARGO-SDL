@@ -87,13 +87,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\Box2D\lib\x86;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D-d.lib;SDL2_ttf.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\Box2D\lib\x86;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;Box2D-d.lib;SDL2_ttf.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -102,6 +102,8 @@
 copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 copy "$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86\*.dll"  "$(TargetDir)"
+
+copy "$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -113,13 +115,13 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64;$(ProjectDir)Dependencies\Box2D\lib\x64;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D-d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64;$(ProjectDir)Dependencies\Box2D\lib\x64;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;Box2D-d.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
@@ -128,6 +130,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 copy "$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64\*.dll"  "$(TargetDir)"
+
+copy "$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -141,16 +145,16 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\Box2D\lib\x86;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86;$(ProjectDir)Dependencies\Box2D\lib\x86;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x86</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib;SDL2_ttf.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;Box2D.lib;SDL2_ttf.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x86\SDL2.dll"  "$(TargetDir)"
@@ -158,6 +162,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 copy "$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86\*.dll"  "$(TargetDir)"
+
+copy "$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -175,16 +181,16 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies\SDL2-2.0.4\include;$(ProjectDir)Dependencies\SDL2_image-2.0.1\include;$(ProjectDir)include;$(ProjectDir)Dependencies\Box2D\include;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\include;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64;$(ProjectDir)Dependencies\Box2D\lib\x64;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64;$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64;$(ProjectDir)Dependencies\Box2D\lib\x64;$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64;$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x64</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;Box2D.lib</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;Box2D.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Dependencies\SDL2-2.0.4\lib\x64\SDL2.dll"  "$(TargetDir)"
@@ -192,6 +198,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 copy "$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x64\*.dll"  "$(TargetDir)"
+
+copy "$(ProjectDir)Dependencies\SDL2_mixer-2.0.1\lib\x64\*.dll"  "$(TargetDir)"
 
 echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
@@ -201,6 +209,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   <ItemGroup>
     <ClInclude Include="include\AIComponent.h" />
     <ClInclude Include="include\AISystem.h" />
+    <ClInclude Include="include\AudioManager.h" />
     <ClInclude Include="include\BasicTypes.h" />
     <ClInclude Include="include\About.h" />
     <ClInclude Include="include\BodyFactory.h" />
@@ -211,6 +220,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
+    <ClInclude Include="include\CreationSystem.h" />
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\DestructionComponent.h" />
     <ClInclude Include="include\DestructionSystem.h" />
@@ -230,10 +240,15 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\InteractionSystem.h" />
+    <ClInclude Include="include\InteractionSystemEvents.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
+    <ClInclude Include="include\PowerUpComponent.h" />
+    <ClInclude Include="include\StatusEffectComponent.h" />
+    <ClInclude Include="include\StatusEffectSystem.h" />
+    <ClInclude Include="include\SystemTypes.h" />
     <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
@@ -265,10 +280,12 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   <ItemGroup>
     <ClCompile Include="src\AISystem.cpp" />
     <ClCompile Include="src\About.cpp" />
+    <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CameraSystem.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
+    <ClCompile Include="src\CreationSystem.cpp" />
     <ClCompile Include="src\DestructionSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
@@ -292,6 +309,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
+    <ClCompile Include="src\StatusEffectSystem.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
     <ClCompile Include="src\UISystem.cpp" />
