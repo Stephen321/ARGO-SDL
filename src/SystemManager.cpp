@@ -85,6 +85,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	//SETUP Creation SYSTEM
 	_creationSystem = new CreationSystem(_creationRequests);
 	_creationSystem->Initialize(entityFactory, bodyFactory);
+
+	//SETUP remote SYSTEM
+	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
+	_remoteSystem->Initialize();
+	_systems[SystemType::Remote] = _remoteSystem;
 }
 void SystemManager::InitializeInteractionSystems()
 {
@@ -329,6 +334,11 @@ GunSystem* SystemManager::GetGunSystem()
 AISystem* SystemManager::GetAISystem()
 {
 	return static_cast<AISystem*>(_systems[SystemType::AI]);
+}
+
+RemoteSystem * SystemManager::GetRemoteSystem()
+{
+	return static_cast<RemoteSystem*>(_systems[SystemType::Remote]);
 }
 
 StatusEffectSystem* SystemManager::GetStatusEffectSystem()

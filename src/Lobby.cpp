@@ -129,10 +129,14 @@ int Lobby::Update()
 			ReadyData data = receivedData.GetData<ReadyData>();
 			for (int i = 0; i < data.ids.size(); i++)
 			{
-				std::cout << "ID: " << data.ids[i] << std::endl;
+				std::cout << "ID: " << data.ids[i] << " Ready: " << data.ready[i] << std::endl;
 			}
 			*_ids = data.ids;
-			_startReadyTimer = true;
+			if (data.allReady)
+			{
+				_startReadyTimer = true;
+			}
+			Refresh(data.ids, data.ready);
 			break;
 		}
 		//TODO: have to add in host change here, need host? make it so 4 players required to start and then they ready up
@@ -343,8 +347,12 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 	}
 }
 
-void Lobby::Refresh(const std::vector<int>& players)
+void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 {
+	if (ready.empty())
+	{
+		ready = std::vector<bool>(players.size(), false);
+	}
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
 	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
@@ -361,12 +369,26 @@ void Lobby::Refresh(const std::vector<int>& players)
 		std::string var = oss.str();
 		if (i == 0)
 		{
-			_uiSystem.CreateText(var, 50, 200);
+			if (ready[i])
+			{
+				_uiSystem.CreateTextColoured(var, 50, 200, 0, 0, 255, 255);
+			}
+			else
+			{
+				_uiSystem.CreateText(var, 50, 200);
+			}
 		}
 
 		else
 		{
-			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+			if (ready[i])
+			{
+				_uiSystem.CreateTextColoured(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50, 0, 0, 255, 255);
+			}
+			else
+			{
+				_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+			}
 		}
 	}
 }

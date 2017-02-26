@@ -34,6 +34,10 @@ namespace Network
 		float yPos;
 		float xVel;
 		float yVel;
+		float xDir;
+		float yDir;
+		float xAccel;
+		float yAccel;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }
@@ -68,6 +72,8 @@ namespace Network
 	struct ReadyData : MessageData {
 		ReadyData() { type = MessageType::Ready; }
 		std::vector<int> ids;
+		std::vector<bool> ready;
+		bool allReady;
 	};
 
 
@@ -204,6 +210,8 @@ namespace Network
 		void WriteString(std::string& s);
 		std::string ReadString(int& byteOffset);
 		std::string GetTypeAsString(MessageType type);
+		void WriteBool(bool value);
+		bool ReadBool(int & byteOffset);
 
 		UDPpacket* _packet;
 		UDPsocket _socket;

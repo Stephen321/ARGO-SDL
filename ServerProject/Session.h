@@ -19,6 +19,7 @@ public:
 	void Ready(int playerID);
 	bool AllReady() const;
 	bool IsReadytest();
+	std::vector<bool> GetReadied() const;
 private:
 	std::map<int, IPaddress> _players;
 	std::vector<bool> _readiedUp;

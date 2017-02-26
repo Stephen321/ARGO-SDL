@@ -54,6 +54,10 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yPos);
 		WriteFloat(sendData->xVel);
 		WriteFloat(sendData->yVel);
+		WriteFloat(sendData->xDir);
+		WriteFloat(sendData->yDir);
+		WriteFloat(sendData->xAccel);
+		WriteFloat(sendData->yAccel);
 		break;
 	}
 	case MessageType::SessionList:
@@ -91,6 +95,11 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		{
 			WriteInt(sendData->ids[i]);
 		}
+		for (int i = 0; i < sendData->ids.size(); i++)
+		{
+			WriteBool(sendData->ready[i]);
+		}
+		WriteBool(sendData->allReady);
 		break;
 	}
 	}
@@ -138,6 +147,10 @@ Network::ReceivedData Network::Net::Receive()
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
 			data.yVel = ReadFloat(byteOffset);
+			data.xDir = ReadFloat(byteOffset);
+			data.yDir = ReadFloat(byteOffset);
+			data.xAccel = ReadFloat(byteOffset);
+			data.yAccel = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -185,6 +198,11 @@ Network::ReceivedData Network::Net::Receive()
 			{
 				data.ids.push_back(ReadInt(byteOffset));
 			}
+			for (int i = 0; i < count; i++)
+			{
+				data.ready.push_back(ReadBool(byteOffset));
+			}
+			data.allReady = ReadBool(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -279,5 +297,16 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 		break;
 	}
 	return s;
+}
+
+void Network::Net::WriteBool(bool value)
+{
+	_packet->data[_packet->len++] = (value);
+}
+
+bool Network::Net::ReadBool(int & byteOffset)
+{
+	int value = _packet->data[byteOffset++];
+	return value;
 }
 

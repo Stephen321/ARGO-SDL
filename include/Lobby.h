@@ -55,6 +55,6 @@ private:
 	int								_countdownTextId;
 
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
-	void							Refresh(const std::vector<int>& players);
+	void							Refresh(const std::vector<int>& players, std::vector<bool> ready = std::vector<bool>());
 };
 

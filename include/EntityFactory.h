@@ -20,13 +20,14 @@ public:
 private:
 	Entity*								CreateWeaponEntity(int id);
 	Entity*								CreatePlayerEntity(int id);
+	Entity*								CreateRemotePlayerEntity(int id);
 	Entity*								CreateAIEntity(int id);
 	Entity*								CreatePowerUpEntity(int id);
 	Entity*								CreateBulletEntity(int id);
 	Entity*								CreateCheckpointEntity(int id);
 	Entity*								CreateFlagEntity(int id);
 	Entity*								CreateTileEntity(int id);
-	Entity*								CreateUIEntity(int id);
+	Entity*								CreateUIEntity(int id); 
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;

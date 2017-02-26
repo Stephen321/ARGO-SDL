@@ -11,6 +11,7 @@ enum class SystemType
 	Gun,
 	AI,
 	World,
+	Remote,
 	StatusEffect,
 };
 

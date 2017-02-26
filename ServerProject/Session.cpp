@@ -93,3 +93,8 @@ bool Session::IsReadytest()
 {
 	return _readiedUp[0];
 }
+
+std::vector<bool> Session::GetReadied() const
+{
+	return _readiedUp;
+}

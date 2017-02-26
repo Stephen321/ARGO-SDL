@@ -81,7 +81,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				{
 					std::vector<float> data = std::vector<float>();
 
-					data.push_back(-1); //id
+					data.push_back(NetworkHandler::Instance().GetPlayerID()); //id
 					data.push_back(x); //xPosition
 					data.push_back(y); //yPosition
 					data.push_back(w); //width
@@ -93,7 +93,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				{
 					std::vector<float> data = std::vector<float>();
 
-					data.push_back(-1); //id
+					data.push_back(ids[playerCount]); //id
 					data.push_back(x); //xPosition
 					data.push_back(y); //yPosition
 					data.push_back(w); //width

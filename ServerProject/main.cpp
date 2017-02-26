@@ -177,6 +177,12 @@ int main(int argc, char** argv)
 				RemoveSpectator(spectators, srcAddr);
 				net.Send(&data, srcAddr); //send joinsession
 
+				SessionListData sessionListData = CreateSessionListData(sessions);
+				for (int i = 0; i < spectators.size(); i++)
+				{
+					net.Send(&sessionListData, spectators[i].address); //send session list to all spectators
+				}
+
 				PlayerListData pldata;
 				pldata.count = sessions[data.sessionID].GetPlayerCount();
 				pldata.players = sessions[data.sessionID].GetPlayerIDs();
@@ -229,6 +235,7 @@ int main(int argc, char** argv)
 			case MessageType::Ready:
 			{
 				ReadyData data = receiveData.GetData<ReadyData>();
+				data.allReady = false;
 				std::cout << "Ready message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
 				if (data.sessionID != -1)
 				{
@@ -236,15 +243,35 @@ int main(int argc, char** argv)
 					std::cout << "That player is " << sessions[data.sessionID].IsReadytest() << std::endl;
 					std::cout << "That player id is " << sessions[data.sessionID].GetPlayerIDs()[0] << std::endl;
 					sessions[data.sessionID].Ready(data.id); //tell session that the player is ready
+					data.ready = sessions[data.sessionID].GetReadied();
+					data.ids = sessions[data.sessionID].GetPlayerIDs();
 					if (sessions[data.sessionID].AllReady()) //all readied up
 					{
+						data.allReady = true;
 						std::cout << "Session fully ready, start that game!" << std::endl;
-						data.ids = sessions[data.sessionID].GetPlayerIDs();
-
-						//TODO: simply this, also used in sending player list, need a SendToAll function
-						for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					}
+					//send to all needs to have time synced up correctly whern AllReady is true
+					//TODO: simply this, also used in sending player list, need a SendToAll function
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+					}
+				}
+				break;
+			}
+			case MessageType::State:
+			{
+				StateData data = receiveData.GetData<StateData>();
+				if (data.sessionID != -1)
+				{
+					std::cout << "State message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
+					//got state data from player, relay this data on to all other players in the session
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
 						{
-							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+							std::cout << "Relay data to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
 						}
 					}
 				}
