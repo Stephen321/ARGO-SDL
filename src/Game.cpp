@@ -63,6 +63,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
+	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);

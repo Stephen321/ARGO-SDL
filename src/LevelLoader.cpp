@@ -149,7 +149,7 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 
 		std::vector<float> data = std::vector<float>();
 
-		data.push_back(rand() % ((int)PowerUpComponent::Type::Count+1)); //id
+		data.push_back(rand() % ((int)PowerUpComponent::Type::Count)); //id
 		data.push_back(x); //xPosition
 		data.push_back(y); //yPosition
 

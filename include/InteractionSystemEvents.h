@@ -3,6 +3,7 @@
 enum class InteractionSystemEvent
 {
 	WeaponCreated,
+	WeaponAddBullets,
 	FlagPicked,
 	FlagDropped,
 };

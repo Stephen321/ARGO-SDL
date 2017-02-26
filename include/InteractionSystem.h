@@ -14,7 +14,7 @@ public:
 									~InteractionSystem();
 
 	void							AddEntity(Entity* gameObject, Entity* otherObject);
-	void							RemoveEntity(Entity* gameObject, bool firstObject);
+	virtual void					RemoveEntity(Entity* gameObject, bool firstObject);
 
 	virtual void					Process(float dt = 0.f);
 

@@ -1,6 +1,11 @@
 #include "WeaponSystem.h"
 
 #include "TransformComponent.h"
+#include "GunComponent.h"
+#include "DestructionComponent.h"
+#include "WeaponComponent.h"
+
+#include "ConstHolder.h"
 
 
 
@@ -8,6 +13,7 @@ WeaponSystem::WeaponSystem(std::map<InteractionSystemEvent, std::vector<std::pai
 	: InteractionSystem(updateRate)
 	, _interactionSystemEvents(events)
 	, WEAPON_CREATED(InteractionSystemEvent::WeaponCreated)
+	, BULLET_ADDITION(InteractionSystemEvent::WeaponAddBullets)
 {
 }
 
@@ -60,6 +66,7 @@ void WeaponSystem::Process(float dt)
 void WeaponSystem::ListenForEvents()
 {
 	WeaponCreationEvent();
+	WeaponBulletAddition();
 }
 void WeaponSystem::WeaponCreationEvent()
 {
@@ -69,10 +76,53 @@ void WeaponSystem::WeaponCreationEvent()
 		{
 			if (_interactionSystemEvents[WEAPON_CREATED].at(i).second != nullptr)
 			{
+				for (int j = 0; j < _entities.size(); j++)
+				{
+					if (_entities.at(j).first == _interactionSystemEvents[WEAPON_CREATED].at(i).first)
+					{
+						static_cast<DestructionComponent*>(_entities.at(j).second->GetComponent(Component::Type::Destroy))->destroy = true;
+						break;
+					}
+				}
 				AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
 				_interactionSystemEvents[WEAPON_CREATED].erase(_interactionSystemEvents[WEAPON_CREATED].begin() + i);
 				i--;
 			}
 		}
 	}
+}
+
+void WeaponSystem::WeaponBulletAddition()
+{
+	if (!_interactionSystemEvents[BULLET_ADDITION].empty())
+	{
+		for (int i = 0; i < _interactionSystemEvents[BULLET_ADDITION].size(); i++)
+		{
+			for (int j = 0; j < _entities.size(); j++)
+			{
+				if (_entities.at(j).first == _interactionSystemEvents[BULLET_ADDITION].at(i).first)
+				{
+					GunComponent* gun = static_cast<GunComponent*>(_entities.at(j).second->GetComponent(Component::Type::Gun));
+					gun->ammo += AMMO[gun->id];
+					break;
+				}
+			}
+
+			_interactionSystemEvents[BULLET_ADDITION].erase(_interactionSystemEvents[BULLET_ADDITION].begin() + i);
+			i--;
+		}
+	}
+}
+
+
+void WeaponSystem::RemoveEntity(Entity* gameObject, bool firstObject)
+{
+	WeaponComponent* weapon = static_cast<WeaponComponent*>(gameObject->GetComponent(Component::Type::Weapon));
+
+	if (weapon != nullptr)
+	{
+		weapon->hasWeapon = false;
+	}
+
+	InteractionSystem::RemoveEntity(gameObject, firstObject);
 }

@@ -12,6 +12,7 @@
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "WeaponComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -124,16 +125,27 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 	if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
 	{
 		TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
 
-		std::vector<float> data = std::vector<float>();
+		if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+		{
+			_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+		}
+		else
+		{
+			std::vector<float> data = std::vector<float>();
 
-		data.push_back((int)powerUp->type); //id
-		data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-		data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back((int)powerUp->type); //id
+			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
+			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
 
-		_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+			weapon->hasWeapon = true;
+			weapon->id = (int)powerUp->type;
 
-		_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+
+			_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+		}
 	}
 	else
 	{
@@ -144,14 +156,17 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 		case PowerUpComponent::Type::Invicibility:
 			statusEffects->invincible = true;
 			statusEffects->invincibleTimer += INVINCIBLE_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Invisibility:
 			statusEffects->invisible = true;
 			statusEffects->invisibleTimer += INVISIBLE_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Speed:
 			statusEffects->speedUp = true;
 			statusEffects->speedUpTimer += SPEED_UP_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
 			break;
 		default:
 			break;

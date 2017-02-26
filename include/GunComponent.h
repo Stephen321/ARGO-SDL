@@ -6,8 +6,9 @@
 class GunComponent : public Component
 {
 public:
-	GunComponent(float mt, int id)
+	GunComponent(float mt, int identification)
 		: maxTimer(mt)
+		, id(identification)
 		, ammo(0)
 		, fireTimer(0)
 		, canFire(true)
@@ -17,9 +18,10 @@ public:
 	{
 	}
 
-	GunComponent(float mt, int a, int id)
+	GunComponent(float mt, int a, int identification)
 		: maxTimer(mt)
 		, ammo(a)
+		, id(identification)
 		, fireTimer(0)
 		, canFire(true)
 		, triggered(false)

@@ -194,10 +194,10 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPowerUpEntity(c
 	SetupPosition(transform, information.second, index);
 	//SetupSize(transform, information.second, index);
 
-	spriteComponent->sourceRect.x *= transform->rect.w;
+	/*spriteComponent->sourceRect.x *= transform->rect.w;
 	spriteComponent->sourceRect.y *= transform->rect.h;
 	spriteComponent->sourceRect.w = transform->rect.w;
-	spriteComponent->sourceRect.h = transform->rect.h;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
