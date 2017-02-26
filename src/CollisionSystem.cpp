@@ -179,8 +179,17 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 {
 	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
 
-	statusEffects->staggered = true;
-	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+	if (!statusEffects->invincible)
+	{
+		if (statusEffects->invisible)
+		{
+			statusEffects->invisible = false;
+			statusEffects->invisibleTimer = 0;
+		}
+
+		statusEffects->staggered = true;
+		statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+	}
 }
 void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
 {
@@ -204,8 +213,19 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	if (pFlag->hasFlag)
 	{
-		if (!otherStatusEffects->staggered)
+		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
 		{
+			if (playerStatusEffects->invisible)
+			{
+				playerStatusEffects->invisible = false;
+				playerStatusEffects->invisibleTimer = 0;
+			}
+			if (otherStatusEffects->invisible)
+			{
+				otherStatusEffects->invisible = false;
+				otherStatusEffects->invisibleTimer = 0;
+			}
+
 			playerStatusEffects->staggered = true;
 			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
@@ -214,8 +234,19 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 	}
 	else if (oFlag->hasFlag)
 	{
-		if (!playerStatusEffects->staggered)
+		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
 		{
+			if (playerStatusEffects->invisible)
+			{
+				playerStatusEffects->invisible = false;
+				playerStatusEffects->invisibleTimer = 0;
+			}
+			if (otherStatusEffects->invisible)
+			{
+				otherStatusEffects->invisible = false;
+				otherStatusEffects->invisibleTimer = 0;
+			}
+
 			otherStatusEffects->staggered = true;
 			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 

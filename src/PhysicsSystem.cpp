@@ -2,6 +2,8 @@
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
 #include "ColliderComponent.h"
+#include "StatusEffectComponent.h"
+
 #include "ConstHolder.h"
 #include "Helpers.h"
 
@@ -30,14 +32,25 @@ void PhysicsSystem::Process(float dt)
 				PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+				StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
 
 				float maxVelocity = physics->maxVelocity;
 
 				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
 				float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
 
-				physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
-				physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
+
+				float xAccel = physics->xAcceleration;
+				float yAccel = physics->yAcceleration;
+
+				if (statusEffects->speedUp)
+				{
+					xAccel += xAccel;
+					yAccel += yAccel;
+				}
+
+				physics->xVelocity += (xDrag + (physics->xDir * xAccel)) * dt;//change dt to _updateRate?//maybe?
+				physics->yVelocity += (yDrag + (physics->yDir * yAccel)) * dt;
 
 				if (physics->xVelocity + physics->yVelocity != 0)
 				{
