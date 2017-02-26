@@ -43,12 +43,16 @@ private:
 private:
 	void							MoveUp();
 	void							MoveDown();
-	void							StartGame();
 
+	float							_connectTimer;
 	bool							_startingGame;
 	int								GetPressedItem();
 	int								_selectedItemIndex;
 	std::vector<int>*				_ids;
+	float							_readyTimer;
+	const int						READY_COUNTDOWN = 3;
+	bool							_startReadyTimer;
+	int								_countdownTextId;
 
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
 	void							Refresh(const std::vector<int>& players);

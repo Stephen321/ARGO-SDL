@@ -9,8 +9,9 @@ void NetworkHandler::Disconnect()
 	disconnect.sessionID = _sessionID;
 	Send(&disconnect);
 	std::cout << "Disconnecting " << _playerID << std::endl;
-	_playerID = 0;
+	_playerID = -1;
 	_sessionID = -1;
+	_connected = false;
 }
 
 NetworkHandler::NetworkHandler()
@@ -18,7 +19,7 @@ NetworkHandler::NetworkHandler()
 	, _playerID(-1)
 	, _sessionID(-1)
 {
-	SDLNet_ResolveHost(&_serverIP, "localhost", 5228);
+	SDLNet_ResolveHost(&_serverIP, "192.168.15.38", 5228);// "localhost", 5228);
 }
 
 NetworkHandler::~NetworkHandler()
@@ -35,7 +36,10 @@ void NetworkHandler::Send(MessageData * data, const char * destHost, int destPor
 void NetworkHandler::Send(MessageData * data)
 {
 	data->id = _playerID;
-	data->sessionID = _sessionID;
+	if (data->sessionID == -1)
+	{
+		data->sessionID = _sessionID;
+	}
 	_net.Send(data, _serverIP);
 }
 

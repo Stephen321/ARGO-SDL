@@ -13,7 +13,8 @@ namespace Network
 		SessionList,
 		JoinSession,
 		SetHost,
-		PlayerList
+		PlayerList,
+		Ready
 	};
 
 	struct MessageData {
@@ -63,6 +64,13 @@ namespace Network
 		int count;
 		std::vector<int> players;
 	};
+
+	struct ReadyData : MessageData {
+		ReadyData() { type = MessageType::Ready; }
+		std::vector<int> ids;
+	};
+
+
 
 	//id in MessageData?
 	//sessionId in MessageData?
@@ -114,6 +122,11 @@ namespace Network
 			case MessageType::PlayerList:
 			{
 				_data = new PlayerListData(rhs.GetData<PlayerListData>());
+				break;
+			}
+			case MessageType::Ready:
+			{
+				_data = new ReadyData(rhs.GetData<ReadyData>());
 				break;
 			}
 			}

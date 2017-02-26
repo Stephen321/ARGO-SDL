@@ -7,8 +7,12 @@ Lobby::Lobby()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
-	, _uiSystem(0)
+	, _uiSystem(0.f)
 	, _startingGame(false)
+	, _connectTimer(0.f)
+	, _readyTimer(READY_COUNTDOWN)
+	, _startReadyTimer(false)
+	, _countdownTextId(-1)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
@@ -38,6 +42,9 @@ void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 
 
 	Refresh();
+
+	_lastTime = LTimer::gameTime();
+	_readyTimer = READY_COUNTDOWN;
 }
 
 int Lobby::Update()
@@ -50,8 +57,19 @@ int Lobby::Update()
 	_inputManager->ProcessInput();
 	//save the curent time for next frame
 
-
 	NetworkHandler& network = NetworkHandler::Instance();
+
+	if (network.GetConnected() == false)
+	{
+		_connectTimer += dt;
+		if (_connectTimer > CONNECT_RETRY)
+		{
+			ConnectData data;
+			network.Send(&data);
+			_connectTimer = 0.f;
+		}
+	}
+
 
 	ReceivedData receivedData = network.Receive();
 
@@ -90,6 +108,7 @@ int Lobby::Update()
 			JoinSessionData data = receivedData.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
 			std::cout << "Joined session: " << data.sessionID << std::endl;
 			network.SetSessionID(data.sessionID);
+			std::cout << "my id: " << NetworkHandler::Instance().GetPlayerID() << std::endl;
 			break;
 		}
 		case MessageType::PlayerList:
@@ -104,7 +123,31 @@ int Lobby::Update()
 			Refresh(data.players);
 			break;
 		}
+		case MessageType::Ready:
+		{
+			std::cout << "Got ready message" << std::endl;
+			ReadyData data = receivedData.GetData<ReadyData>();
+			for (int i = 0; i < data.ids.size(); i++)
+			{
+				std::cout << "ID: " << data.ids[i] << std::endl;
+			}
+			*_ids = data.ids;
+			_startReadyTimer = true;
+			break;
+		}
 		//TODO: have to add in host change here, need host? make it so 4 players required to start and then they ready up
+		}
+	}
+
+	if (_startReadyTimer)
+	{
+		_uiSystem.DeleteDisplayTextByID(_countdownTextId);
+		_countdownTextId = _uiSystem.CreateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85, 255, 0, 0, 255);
+		_readyTimer -= dt;
+		if (_readyTimer < 0.f)
+		{//TODO: this has to be in sync
+			std::cout << "Starting game" << std::endl;
+			_startingGame = true;
 		}
 	}
 
@@ -194,39 +237,35 @@ void Lobby::BindInput()
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
 
-	Command* pIn = new InputCommand([&]()
+	Command* rIn = new InputCommand([&]() //ready up
 	{
-		_uiSystem.DeleteText();
+		ReadyData data;
+		NetworkHandler::Instance().Send(&data);
 	}, Type::Press);
-
-	_inputManager->AddKey(Event::p, pIn, this);
-
-	Command* oIn = new InputCommand([&]()
-	{
-		Refresh();
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::o, oIn, this);
-
-	Command* sIn = new InputCommand([&]()
-	{
-		StartGame();
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::s, sIn, this);
+	_inputManager->AddKey(Event::r, rIn, this);
 
 
-	Command* hIn = new InputCommand([&]()
+	Command* hIn = new InputCommand([&]() //host 
 	{
 		JoinSessionData data;
 		NetworkHandler::Instance().Send(&data);
 		//switch the player list scene
-		std::cout << "Sending player list data." << std::endl;
+		//change scene to players
+
+	}, Type::Press);
+	_inputManager->AddKey(Event::h, hIn, this);
+
+	Command* jIn = new InputCommand([&]() //join
+	{
+		JoinSessionData data;
+		data.sessionID = 0;
+		NetworkHandler::Instance().Send(&data);
+		//switch the player list scene
 		//change scene to players
 
 	}, Type::Press);
 
-	_inputManager->AddKey(Event::h, hIn, this);
+	_inputManager->AddKey(Event::j, jIn, this);
 
 
 	Command* backIn = new InputCommand([&]() { 
@@ -269,13 +308,6 @@ void Lobby::MoveDown()
 	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
 }
 
-void Lobby::StartGame()
-{
-	//TODO: swap scene here and make sure ids are passed in
-	std::cout << "Starting game" << std::endl;
-	_startingGame = true;
-	_ids->push_back(0);
-}
 
 int Lobby::GetPressedItem()
 {
@@ -315,7 +347,7 @@ void Lobby::Refresh(const std::vector<int>& players)
 {
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
-	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 180);
+	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
 	for (int i = 0; i < players.size(); i++)
 	{

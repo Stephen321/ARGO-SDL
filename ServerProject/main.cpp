@@ -156,7 +156,7 @@ int main(int argc, char** argv)
 						std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
 						sessions[data.sessionID].AddPlayer(data.id, srcAddr);
 					}
-					else 
+					else
 					{
 						//client will ensure to check session list before trying to join a session in case it is full
 						std::cout << "Can't join session as it is full..." << std::endl;
@@ -180,11 +180,16 @@ int main(int argc, char** argv)
 				PlayerListData pldata;
 				pldata.count = sessions[data.sessionID].GetPlayerCount();
 				pldata.players = sessions[data.sessionID].GetPlayerIDs();
-				net.Send(&pldata, srcAddr); //send player list
+				//TODO simplify this (also used in ready event)
+				for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+				{
+					net.Send(&pldata, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+				}
 
 				break;
 			}
 			case MessageType::Disconnect:
+			{
 				DisconnectData data = receiveData.GetData<DisconnectData>();
 				std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
 				std::cout << "Disconnecting player: " << data.id << " from session: " << data.sessionID << std::endl;
@@ -220,6 +225,31 @@ int main(int argc, char** argv)
 					}
 				}
 				break;
+			}
+			case MessageType::Ready:
+			{
+				ReadyData data = receiveData.GetData<ReadyData>();
+				std::cout << "Ready message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
+				if (data.sessionID != -1)
+				{
+					std::cout << "Session has " << sessions[data.sessionID].GetPlayerCount() << " players." << std::endl;
+					std::cout << "That player is " << sessions[data.sessionID].IsReadytest() << std::endl;
+					std::cout << "That player id is " << sessions[data.sessionID].GetPlayerIDs()[0] << std::endl;
+					sessions[data.sessionID].Ready(data.id); //tell session that the player is ready
+					if (sessions[data.sessionID].AllReady()) //all readied up
+					{
+						std::cout << "Session fully ready, start that game!" << std::endl;
+						data.ids = sessions[data.sessionID].GetPlayerIDs();
+
+						//TODO: simply this, also used in sending player list, need a SendToAll function
+						for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+						}
+					}
+				}
+				break;
+			}
 			}
 		}
 	};

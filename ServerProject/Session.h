@@ -16,7 +16,11 @@ public:
 	IPaddress GetPlayerIP(int playerID);
 	bool Joinable() const;
 	std::vector<int> GetPlayerIDs() const;
+	void Ready(int playerID);
+	bool AllReady() const;
+	bool IsReadytest();
 private:
 	std::map<int, IPaddress> _players;
+	std::vector<bool> _readiedUp;
 	bool _waiting;
 };

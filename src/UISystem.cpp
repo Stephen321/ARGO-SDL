@@ -94,6 +94,7 @@ void UISystem::DeleteDisplayText()
 	{
 		SDL_DestroyTexture(_displayTextTexture[i]);
 	}
+	_displayTextRectangle.clear();
 	_displayTextTexture.clear();
 }
 
@@ -179,6 +180,7 @@ void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Ui
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
+
 }
 
 void UISystem::UpdateText(std::string message, int index)
@@ -247,7 +249,7 @@ void UISystem::CreateDisplayText(std::string message, int x, int y)
 	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
 }
 
-void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+int UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
 
@@ -266,4 +268,12 @@ void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
+
+	return _displayTextTexture.size() - 1;
+}
+
+void UISystem::DeleteDisplayTextByID(int id)
+{
+	if (id >= 0 && id < _displayTextTexture.size())
+		SDL_DestroyTexture(_displayTextTexture[id]);
 }

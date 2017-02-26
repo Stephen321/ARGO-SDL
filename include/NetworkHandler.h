@@ -22,10 +22,9 @@ public:
 	void SetConnected(bool connected) {	_connected = connected;	}
 	void Disconnect();
 	void SetSessionID(int id) { _sessionID = id; }
-	void SetPlayerID(int id) { std::cout << " setting id to " << id << std::endl; _playerID = id;  std::cout << " id is " << _playerID << std::endl;
-	}
+	void SetPlayerID(int id) { _playerID = id; }
 	bool GetSessionID() const { return _sessionID; };
-	bool GetPlayerID() const { return _playerID; };
+	int GetPlayerID() const { return _playerID; };
 
 private:
 	const int PORT = 5228; 

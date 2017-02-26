@@ -13,6 +13,7 @@ int Session::GetPlayerCount() const
 void Session::AddPlayer(int playerID, IPaddress addr)
 {
 	_players.insert(std::pair<int, IPaddress>(playerID, addr));
+	_readiedUp.push_back(false);
 }
 
 bool Session::RemovePlayer(int playerID)
@@ -66,4 +67,29 @@ std::vector<int> Session::GetPlayerIDs() const
 	}
 
 	return players;
+}
+
+void Session::Ready(int playerID)
+{
+	int readyIndex = std::distance(_players.begin(), _players.find(playerID));
+	_readiedUp[readyIndex] = true;
+}
+
+bool Session::AllReady() const
+{
+	bool allready = true;
+	for (int i = 0; i < _readiedUp.size(); i++)
+	{
+		if (!_readiedUp[i])
+		{
+			allready = false;
+			break;
+		}
+	}
+	return allready;
+}
+
+bool Session::IsReadytest()
+{
+	return _readiedUp[0];
 }

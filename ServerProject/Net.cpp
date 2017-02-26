@@ -39,47 +39,57 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	{
 	case MessageType::Connect:
 	{
-		ConnectData* cdata = (ConnectData*)data;
+		ConnectData* sendData = (ConnectData*)data;
 		break;
 	}
 	case MessageType::Disconnect:
 	{
-		DisconnectData* ddata = (DisconnectData*)data;
+		DisconnectData* sendData = (DisconnectData*)data;
 		break;
 	}
 	case MessageType::State:
 	{
-		StateData* sdata = (StateData*)data;
-		WriteFloat(sdata->xPos);
-		WriteFloat(sdata->yPos);
-		WriteFloat(sdata->xVel);
-		WriteFloat(sdata->yVel);
+		StateData* sendData = (StateData*)data;
+		WriteFloat(sendData->xPos);
+		WriteFloat(sendData->yPos);
+		WriteFloat(sendData->xVel);
+		WriteFloat(sendData->yVel);
 		break;
 	}
 	case MessageType::SessionList:
 	{
-		SessionListData* sldata = (SessionListData*)data;
-		WriteInt(sldata->count);
-		WriteInt(sldata->maxPlayers);
-		for (int i = 0; i < sldata->count; i++)
+		SessionListData* sendData = (SessionListData*)data;
+		WriteInt(sendData->count);
+		WriteInt(sendData->maxPlayers);
+		for (int i = 0; i < sendData->count; i++)
 		{
-			WriteInt(sldata->sessionIDs[i]);
-			WriteInt(sldata->currentPlayers[i]);
+			WriteInt(sendData->sessionIDs[i]);
+			WriteInt(sendData->currentPlayers[i]);
 		}
 		break;
 	}
 	case MessageType::JoinSession:
 	{
-		JoinSessionData* jsdata = (JoinSessionData*)data;
+		JoinSessionData* sendData = (JoinSessionData*)data;
 		break;
 	}
 	case MessageType::PlayerList:
 	{
-		PlayerListData* pldata = (PlayerListData*)data;
-		WriteInt(pldata->count);
-		for (int i = 0; i < pldata->count; i++)
+		PlayerListData* sendData = (PlayerListData*)data;
+		WriteInt(sendData->count);
+		for (int i = 0; i < sendData->count; i++)
 		{
-			WriteInt(pldata->players[i]);
+			WriteInt(sendData->players[i]);
+		}
+		break;
+	}
+	case MessageType::Ready:
+	{
+		ReadyData* sendData = (ReadyData*)data;
+		WriteInt(sendData->ids.size());
+		for (int i = 0; i < sendData->ids.size(); i++)
+		{
+			WriteInt(sendData->ids[i]);
 		}
 		break;
 	}
@@ -167,6 +177,17 @@ Network::ReceivedData Network::Net::Receive()
 			receiveData.SetData(data);
 			break;
 		}
+		case MessageType::Ready:
+		{
+			ReadyData data;
+			int count = ReadInt(byteOffset);
+			for (int i = 0; i < count; i++)
+			{
+				data.ids.push_back(ReadInt(byteOffset));
+			}
+			receiveData.SetData(data);
+			break;
+		}
 		}
 	}
 	return receiveData;
@@ -249,6 +270,12 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 		break;
 	case MessageType::SetHost:
 		s = "SetHost";
+		break;
+	case MessageType::PlayerList:
+		s = "PlayerList";
+		break;
+	case MessageType::Ready:
+		s = "Ready";
 		break;
 	}
 	return s;

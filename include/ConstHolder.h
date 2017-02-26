@@ -18,6 +18,7 @@ const int MAX_FLAG_VELOCITY = 100;
 const int MAX_PLAYER_VELOCITY = 10;
 const float PLAYER_ACCEL_RATE = 2.0f;
 
+const float CONNECT_RETRY = 1.5f;
 
 const int MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 1.5f;
 const int BULLET_AMMO = 5;

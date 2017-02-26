@@ -37,7 +37,8 @@ public:
 
 
 	void							CreateDisplayText(std::string message, int x, int y);
-	void							CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	int								CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	void							DeleteDisplayTextByID(int id);
 
 	std::vector<SDL_Rect>			_displayTextRectangle;
 	std::vector<SDL_Rect>			_interactiveTextRectangle;
