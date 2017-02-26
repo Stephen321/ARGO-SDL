@@ -1,4 +1,5 @@
 #include "EntityFactory.h"
+
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
@@ -9,8 +10,10 @@
 #include "DestructionComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
+#include "StatusEffectComponent.h"
+#include "PowerUpComponent.h"
+
 #include "ConstHolder.h"
-#include "NetComponent.h"
 
 
 
@@ -25,51 +28,43 @@ EntityFactory::~EntityFactory()
 }
 
 
-void EntityFactory::Initialize(SystemManager* sm, std::map<TextureID, SDL_Texture*>* th)
+void EntityFactory::Initialize(std::map<TextureID, SDL_Texture*>* th)
 {
-	_systemManager = sm;
-
 	_textureHolder = th;
 }
 
-Entity* EntityFactory::CreateEntity(EntityType t)
+Entity* EntityFactory::CreateEntity(EntityType t, int id)
 {
 	Entity* entity = nullptr;
 
 	switch (t)
 	{
 	case EntityType::Tile:
-		entity = CreateTileEntity();
+		entity = CreateTileEntity(id);
 		break;
 	case EntityType::Checkpoint:
-		entity = CreateCheckpointEntity();
-		break;
-	case EntityType::Obstacle:
-		entity = CreateObstacleEntity();
+		entity = CreateCheckpointEntity(id);
 		break;
 	case EntityType::Bullet:
-		entity = CreateBulletEntity();
-		break;
-	case EntityType::Point:
-		entity = CreatePointEntity();
+		entity = CreateBulletEntity(id);
 		break;
 	case EntityType::PowerUp:
-		entity = CreatePowerUpEntity();
+		entity = CreatePowerUpEntity(id);
 		break;
 	case EntityType::AI:
-		entity = CreateAIEntity();
+		entity = CreateAIEntity(id);
 		break;
 	case EntityType::Player:
-		entity = CreatePlayerEntity();
+		entity = CreatePlayerEntity(id);
 		break;
 	case EntityType::Weapon:
-		entity = CreateWeaponEntity();
+		entity = CreateWeaponEntity(id);
 		break;
 	case EntityType::Flag:
-		entity = CreateFlagEntity();
+		entity = CreateFlagEntity(id);
 		break;
 	case EntityType::UI:
-		entity = CreateUIEntity();
+		entity = CreateUIEntity(id);
 		break;
 
 	default:
@@ -79,7 +74,7 @@ Entity* EntityFactory::CreateEntity(EntityType t)
 	return entity;
 }
 
-Entity* EntityFactory::CreatePlayerEntity()
+Entity* EntityFactory::CreatePlayerEntity(int id)
 {
 	Entity* player = new Entity(EntityType::Player);
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
@@ -90,63 +85,61 @@ Entity* EntityFactory::CreatePlayerEntity()
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
-	player->AddComponent(new NetComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, player);
-	_systemManager->AddEntity(SystemManager::SystemType::Physics, player);
-	_systemManager->AddEntity(SystemManager::SystemType::Camera, player);
-	_systemManager->AddEntity(SystemManager::SystemType::World, player);
-	_systemManager->AddEntity(SystemManager::SystemType::Net, player);
+	player->AddComponent(new StatusEffectComponent());
 
 	return player;
 }
-
-Entity* EntityFactory::CreateAIEntity()
+Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
-	ai->AddComponent(new PhysicsComponent(0, 0, 0, 0, 10));
+	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
+	ai->AddComponent(new StatusEffectComponent());
 
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, ai);
-	_systemManager->AddEntity(SystemManager::SystemType::Physics, ai);
-	_systemManager->AddEntity(SystemManager::SystemType::AI, ai);
 	return ai;
 }
-Entity* EntityFactory::CreateObstacleEntity()
-{
-
-	Entity* obstacle = new Entity(EntityType::Obstacle);
-	obstacle->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
-	obstacle->AddComponent(new TransformComponent());
-	obstacle->AddComponent(new ColliderComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, obstacle);
-
-	return obstacle;
-}
-
-Entity* EntityFactory::CreatePowerUpEntity()
+Entity* EntityFactory::CreatePowerUpEntity(int id)
 {
 	Entity* powerUp = new Entity(EntityType::PowerUp);
-	powerUp->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
-	powerUp->AddComponent(new TransformComponent());
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]);
+
+	switch (id)
+	{
+	case 1:
+	{
+		spriteComponent->sourceRect = { 0, 0, 0, 0 };
+		break;
+	}
+	case 2:
+	{
+		spriteComponent->sourceRect = { 1, 0, 0, 0 };
+		break;
+	}
+	case 3:
+	{
+		spriteComponent->sourceRect = { 2, 0, 0, 0 };
+		break;
+	}
+	default:
+		break;
+	}
+
+	powerUp->AddComponent(spriteComponent);
+	powerUp->AddComponent(new TransformComponent(0, 0, 48, 48));
 	powerUp->AddComponent(new ColliderComponent());
 	powerUp->AddComponent(new DestructionComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, powerUp);
-	_systemManager->AddEntity(SystemManager::SystemType::Destruction, powerUp);
+	powerUp->AddComponent(new PowerUpComponent(static_cast<PowerUpComponent::Type>(id)));
 
 	return powerUp;
 }
-
-Entity* EntityFactory::CreateWeaponEntity()
+Entity* EntityFactory::CreateWeaponEntity(int id)
 {
 	Entity* weapon = new Entity(EntityType::Weapon);
 
@@ -154,16 +147,12 @@ Entity* EntityFactory::CreateWeaponEntity()
 
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
-	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO));
+	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO, id));
 	weapon->AddComponent(new DestructionComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, weapon);
-	_systemManager->AddEntity(SystemManager::SystemType::Gun, weapon);
-	_systemManager->AddEntity(SystemManager::SystemType::Destruction, weapon);
 
 	return weapon;
 }
-Entity* EntityFactory::CreateBulletEntity()
+Entity* EntityFactory::CreateBulletEntity(int id)
 {
 	Entity* bullet = new Entity(EntityType::Bullet);
 
@@ -175,15 +164,9 @@ Entity* EntityFactory::CreateBulletEntity()
 	bullet->AddComponent(new ColliderComponent());
 	bullet->AddComponent(new DestructionComponent());
 
-	_systemManager->AddEntity(SystemManager::SystemType::Render, bullet);
-	_systemManager->AddEntity(SystemManager::SystemType::Physics, bullet);
-	_systemManager->AddEntity(SystemManager::SystemType::Destruction, bullet);
-
 	return bullet;
 }
-
-
-Entity* EntityFactory::CreateCheckpointEntity()
+Entity* EntityFactory::CreateCheckpointEntity(int id)
 {
 	Entity* checkpoint = new Entity(EntityType::Checkpoint);
 
@@ -192,14 +175,11 @@ Entity* EntityFactory::CreateCheckpointEntity()
 	checkpoint->AddComponent(spriteComponent);
 	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	checkpoint->AddComponent(new ColliderComponent());
-	checkpoint->AddComponent(new CheckpointComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, checkpoint);
+	checkpoint->AddComponent(new CheckpointComponent(id));
 
 	return checkpoint;
 }
-
-Entity* EntityFactory::CreateFlagEntity()
+Entity* EntityFactory::CreateFlagEntity(int id)
 {
 	Entity* flag = new Entity(EntityType::Flag);
 
@@ -208,38 +188,47 @@ Entity* EntityFactory::CreateFlagEntity()
 	flag->AddComponent(spriteComponent);
 	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	flag->AddComponent(new ColliderComponent());
-
-	_systemManager->AddEntity(SystemManager::SystemType::Render, flag);
+	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 
 	return flag;
 }
-
-Entity* EntityFactory::CreateTileEntity()
+Entity* EntityFactory::CreateTileEntity(int id)
 {
 	Entity* tile = new Entity(EntityType::Tile);
-	tile->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet]));
-	tile->AddComponent(new TransformComponent());
 
-	_systemManager->AddEntity(SystemManager::SystemType::Render, tile);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet]);
+
+	switch (id)
+	{
+	case 1:
+	{
+		spriteComponent->sourceRect = { 0, 0, 0, 0 };
+		break;
+	}
+	case 2:
+	{
+		spriteComponent->sourceRect = { 1, 0, 0, 0 };
+		break;
+	}
+	case 3:
+	{
+		spriteComponent->sourceRect = { 2, 0, 0, 0 };
+		break;
+	}
+	default:
+		break;
+	}
+
+	tile->AddComponent(spriteComponent);
+	tile->AddComponent(new TransformComponent(0, 0, 0, 0));
 
 	return tile;
 }
-
-Entity* EntityFactory::CreatePointEntity()
-{
-	Entity* point = new Entity(EntityType::Point);
-	point->AddComponent(new TransformComponent());
-
-	return point;
-}
-
-Entity* EntityFactory::CreateUIEntity()
+Entity* EntityFactory::CreateUIEntity(int id)
 {
 	Entity* ui = new Entity(EntityType::UI);
-	ui->AddComponent(new TransformComponent());
+	ui->AddComponent(new TransformComponent(0, 0, 0, 0));
 	ui->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
-
-	_systemManager->AddEntity(SystemManager::SystemType::UI, ui);
 
 	return ui;
 }

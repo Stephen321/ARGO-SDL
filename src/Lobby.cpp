@@ -8,6 +8,7 @@ Lobby::Lobby()
 	, _renderSystem()
 	, _functionMaster()
 	, _uiSystem(0)
+	, _startingGame(false)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
@@ -18,8 +19,9 @@ Lobby::~Lobby()
 {
 }
 
-void Lobby::Initialize(SDL_Renderer* renderer)
+void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 {
+	_ids = ids;
 	_renderer = renderer;
 	_running = true;
 
@@ -102,14 +104,17 @@ int Lobby::Update()
 			Refresh(data.players);
 			break;
 		}
-		//have to add in host change here
+		//TODO: have to add in host change here, need host? make it so 4 players required to start and then they ready up
 		}
 	}
 
 
 
 	_lastTime = currentTime;
-	return (int)_swapScene;
+	if (_startingGame)
+		return (int)CurrentScene::GAME;
+	else
+		return (int)_swapScene;
 }
 
 void Lobby::Render()
@@ -203,6 +208,13 @@ void Lobby::BindInput()
 
 	_inputManager->AddKey(Event::o, oIn, this);
 
+	Command* sIn = new InputCommand([&]()
+	{
+		StartGame();
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::s, sIn, this);
+
 
 	Command* hIn = new InputCommand([&]()
 	{
@@ -255,6 +267,14 @@ void Lobby::MoveDown()
 	}
 	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
 	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+}
+
+void Lobby::StartGame()
+{
+	//TODO: swap scene here and make sure ids are passed in
+	std::cout << "Starting game" << std::endl;
+	_startingGame = true;
+	_ids->push_back(0);
 }
 
 int Lobby::GetPressedItem()

@@ -127,14 +127,14 @@ void SceneManager::Update()
 			else if (_runningScene == 1)
 			{
 				_game = new Game();
-				_game->Initialize(_renderer);
+				_game->Initialize(_renderer, _ids);
 				_currentScene.push_back(_game);
 			}
 
 			else if (_runningScene == 2)
 			{
 				_lobby = new Lobby();
-				_lobby->Initialize(_renderer);
+				_lobby->Initialize(_renderer, &_ids);
 				_currentScene.push_back(_lobby);
 			}
 

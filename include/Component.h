@@ -19,7 +19,9 @@ public:
 		UI,
 		Checkpoint,
 		Flag,
-		Net
+		StatusEffect,
+		PowerUp,
+		Remote
 	};
 
 public:

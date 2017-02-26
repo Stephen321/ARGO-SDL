@@ -9,7 +9,7 @@ public:
 	Lobby();
 	~Lobby();
 
-	void							Initialize(SDL_Renderer* renderer) override;
+	void							Initialize(SDL_Renderer* renderer, std::vector<int>* ids);
 
 	int								Update() override;
 	void							Render() override;
@@ -43,9 +43,12 @@ private:
 private:
 	void							MoveUp();
 	void							MoveDown();
+	void							StartGame();
 
+	bool							_startingGame;
 	int								GetPressedItem();
 	int								_selectedItemIndex;
+	std::vector<int>*				_ids;
 
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
 	void							Refresh(const std::vector<int>& players);

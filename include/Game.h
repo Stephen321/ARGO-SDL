@@ -36,7 +36,7 @@ public:
 									Game();
 									~Game();
 
-	void							Initialize(SDL_Renderer* renderer) override;
+	void							Initialize(SDL_Renderer* renderer, const std::vector<int>& ids = std::vector<int>());
 
 	int								Update() override;
 	void							Render() override;
@@ -49,9 +49,9 @@ public:
 	void							OnEvent(Event evt) override;
 
 private:
-	void							BindInput(Entity* player, Entity* weapon);
+	void							BindInput(Entity* player);
 
-	void							LoadContent() override;
+	void							LoadContent(const std::vector<int>& ids);
 	void							CleanUp() override;
 
 	SDL_Texture*					LoadTexture(const std::string & path) override;
@@ -64,10 +64,16 @@ private:
 
 	LevelLoader						_levelLoader;
 
-	b2Vec2							_gravity;
-	b2World							_world;
+	InputManager*					_inputManager = InputManager::GetInstance();
 
-	std::vector<Entity*>			_entities;
+	std::map<TextureID, SDL_Texture*>_textureHolder;
+
+	b2Vec2							 _gravity;
+	b2World							 _world;
+
+	bool							_running;
+
+	unsigned int					_lastTime;//time of last update;
 
 	Graph							_waypoints;
 

@@ -9,7 +9,7 @@ void NetworkHandler::Disconnect()
 	disconnect.sessionID = _sessionID;
 	Send(&disconnect);
 	std::cout << "Disconnecting " << _playerID << std::endl;
-	_playerID = -1;
+	_playerID = 0;
 	_sessionID = -1;
 }
 

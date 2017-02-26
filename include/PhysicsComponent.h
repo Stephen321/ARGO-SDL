@@ -27,8 +27,8 @@ public:
 	float	xAcceleration;
 	float	yAcceleration;
 
-	int		xDir;
-	int		yDir;
+	float	xDir;
+	float	yDir;
 	
 	float	maxVelocity;
 };

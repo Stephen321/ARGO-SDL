@@ -9,6 +9,7 @@ class ColliderComponent : public Component
 public:
 	ColliderComponent()
 		: body(nullptr)
+		, setActive(true)
 		, Component::Component(Component::Type::Collider)
 	{
 	}
@@ -19,4 +20,5 @@ public:
 
 public:
 	b2Body* body;
+	bool	setActive;
 };

@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 
 	SDLNet_Init();
 
-	std::unordered_map<IPaddress, Client> clients; //player and session id to ip address mapping
+	//std::unordered_map<IPaddress, Client> clients; //player and session id to ip address mapping
 	std::vector<Spectator> spectators;
 	SessionMap sessions;
 

@@ -228,6 +228,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\CollisionSystem.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\ConstHolder.h" />
+    <ClInclude Include="include\CreationSystem.h" />
     <ClInclude Include="include\Debug.h" />
     <ClInclude Include="include\DestructionComponent.h" />
     <ClInclude Include="include\DestructionSystem.h" />
@@ -247,13 +248,17 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\HealthComponent.h" />
     <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\InteractionSystem.h" />
+    <ClInclude Include="include\InteractionSystemEvents.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\Lobby.h" />
     <ClInclude Include="include\LTimer.h" />
     <ClInclude Include="include\MainMenu.h" />
-    <ClInclude Include="include\NetComponent.h" />
-    <ClInclude Include="include\NetSystem.h" />
     <ClInclude Include="include\NetworkHandler.h" />
+    <ClInclude Include="include\PowerUpComponent.h" />
+    <ClInclude Include="include\RemoteComponent.h" />
+    <ClInclude Include="include\StatusEffectComponent.h" />
+    <ClInclude Include="include\StatusEffectSystem.h" />
+    <ClInclude Include="include\SystemTypes.h" />
     <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
@@ -292,6 +297,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Camera2D.cpp" />
     <ClCompile Include="src\CameraSystem.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
+    <ClCompile Include="src\CreationSystem.cpp" />
     <ClCompile Include="src\DestructionSystem.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityFactory.cpp" />
@@ -308,7 +314,6 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\LTimer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
-    <ClCompile Include="src\NetSystem.cpp" />
     <ClCompile Include="src\NetworkHandler.cpp" />
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
@@ -317,6 +322,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\Shake.cpp" />
+    <ClCompile Include="src\StatusEffectSystem.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\SystemManager.cpp" />
     <ClCompile Include="src\UISystem.cpp" />
