@@ -266,6 +266,7 @@ int main(int argc, char** argv)
 				{
 					std::cout << "State message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
 					//got state data from player, relay this data on to all other players in the session
+					//server or clients store data???
 					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
 					{
 						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player

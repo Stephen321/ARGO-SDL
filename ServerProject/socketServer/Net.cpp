@@ -39,48 +39,65 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	{
 	case MessageType::Connect:
 	{
-		ConnectData* cdata = (ConnectData*)data;
+		ConnectData* sendData = (ConnectData*)data;
 		break;
 	}
 	case MessageType::Disconnect:
 	{
-		DisconnectData* ddata = (DisconnectData*)data;
+		DisconnectData* sendData = (DisconnectData*)data;
 		break;
 	}
 	case MessageType::State:
 	{
-		StateData* sdata = (StateData*)data;
-		WriteFloat(sdata->xPos);
-		WriteFloat(sdata->yPos);
-		WriteFloat(sdata->xVel);
-		WriteFloat(sdata->yVel);
+		StateData* sendData = (StateData*)data;
+		WriteFloat(sendData->xPos);
+		WriteFloat(sendData->yPos);
+		WriteFloat(sendData->xVel);
+		WriteFloat(sendData->yVel);
+		WriteFloat(sendData->xAccel);
+		WriteFloat(sendData->yAccel);
 		break;
 	}
 	case MessageType::SessionList:
 	{
-		SessionListData* sldata = (SessionListData*)data;
-		WriteInt(sldata->count);
-		WriteInt(sldata->maxPlayers);
-		for (int i = 0; i < sldata->count; i++)
+		SessionListData* sendData = (SessionListData*)data;
+		WriteInt(sendData->count);
+		WriteInt(sendData->maxPlayers);
+		for (int i = 0; i < sendData->count; i++)
 		{
-			WriteInt(sldata->sessionIDs[i]);
-			WriteInt(sldata->currentPlayers[i]);
+			WriteInt(sendData->sessionIDs[i]);
+			WriteInt(sendData->currentPlayers[i]);
 		}
 		break;
 	}
 	case MessageType::JoinSession:
 	{
-		JoinSessionData* jsdata = (JoinSessionData*)data;
+		JoinSessionData* sendData = (JoinSessionData*)data;
 		break;
 	}
 	case MessageType::PlayerList:
 	{
-		PlayerListData* pldata = (PlayerListData*)data;
-		WriteInt(pldata->count);
-		for (int i = 0; i < pldata->count; i++)
+		PlayerListData* sendData = (PlayerListData*)data;
+		WriteInt(sendData->count);
+		for (int i = 0; i < sendData->count; i++)
 		{
-			WriteInt(pldata->players[i]);
+			WriteInt(sendData->players[i]);
 		}
+		break;
+	}
+	case MessageType::Ready:
+	{
+		ReadyData* sendData = (ReadyData*)data;
+		WriteInt(sendData->ids.size());
+		for (int i = 0; i < sendData->ids.size(); i++)
+		{
+			WriteInt(sendData->ids[i]);
+		}
+		for (int i = 0; i < sendData->ids.size(); i++)
+		{
+			WriteBool(sendData->ready[i]);
+		}
+		WriteBool(sendData->allReady);
 		break;
 	}
 	}
@@ -128,6 +145,8 @@ Network::ReceivedData Network::Net::Receive()
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
 			data.yVel = ReadFloat(byteOffset);
+			data.xAccel = ReadFloat(byteOffset);
+			data.yAccel = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -164,6 +183,22 @@ Network::ReceivedData Network::Net::Receive()
 			{
 				data.players.push_back(ReadInt(byteOffset));
 			}
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::Ready:
+		{
+			ReadyData data;
+			int count = ReadInt(byteOffset);
+			for (int i = 0; i < count; i++)
+			{
+				data.ids.push_back(ReadInt(byteOffset));
+			}
+			for (int i = 0; i < count; i++)
+			{
+				data.ready.push_back(ReadBool(byteOffset));
+			}
+			data.allReady = ReadBool(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -250,7 +285,24 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 	case MessageType::SetHost:
 		s = "SetHost";
 		break;
+	case MessageType::PlayerList:
+		s = "PlayerList";
+		break;
+	case MessageType::Ready:
+		s = "Ready";
+		break;
 	}
 	return s;
+}
+
+void Network::Net::WriteBool(bool value)
+{
+	_packet->data[_packet->len++] = (value);
+}
+
+bool Network::Net::ReadBool(int & byteOffset)
+{
+	int value = _packet->data[byteOffset++];
+	return value;
 }
 

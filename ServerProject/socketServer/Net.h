@@ -13,7 +13,8 @@ namespace Network
 		SessionList,
 		JoinSession,
 		SetHost,
-		PlayerList
+		PlayerList,
+		Ready
 	};
 
 	struct MessageData {
@@ -33,6 +34,8 @@ namespace Network
 		float yPos;
 		float xVel;
 		float yVel;
+		float xAccel;
+		float yAccel;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }
@@ -63,6 +66,15 @@ namespace Network
 		int count;
 		std::vector<int> players;
 	};
+
+	struct ReadyData : MessageData {
+		ReadyData() { type = MessageType::Ready; }
+		std::vector<int> ids;
+		std::vector<bool> ready;
+		bool allReady;
+	};
+
+
 
 	//id in MessageData?
 	//sessionId in MessageData?
@@ -114,6 +126,11 @@ namespace Network
 			case MessageType::PlayerList:
 			{
 				_data = new PlayerListData(rhs.GetData<PlayerListData>());
+				break;
+			}
+			case MessageType::Ready:
+			{
+				_data = new ReadyData(rhs.GetData<ReadyData>());
 				break;
 			}
 			}
@@ -191,6 +208,8 @@ namespace Network
 		void WriteString(std::string& s);
 		std::string ReadString(int& byteOffset);
 		std::string GetTypeAsString(MessageType type);
+		void WriteBool(bool value);
+		bool ReadBool(int & byteOffset);
 
 		UDPpacket* _packet;
 		UDPsocket _socket;
