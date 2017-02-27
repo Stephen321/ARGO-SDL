@@ -130,13 +130,14 @@ void Game::OnEvent(EventListener::Event evt)
 			_running = false;
 
 		case Event::w:
-			_audioManager->PlayFX("Hum");
+
 		case Event::a:
 			_audioManager->PlayFX("Hum");
 		case Event::s:
 			_audioManager->PlayFX("Hum");
 		case Event::d:
 			_audioManager->PlayFX("Hum");
+
 		}
 	}
 }
@@ -150,7 +151,6 @@ void Game::BindInput(Entity* player)
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::NUM_0, nIn, this);
-
 
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -166,7 +166,6 @@ void Game::BindInput(Entity* player)
 
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
-
 
 	// Recreate key binding
 	Command* noIn = new InputCommand([&]()
@@ -272,8 +271,6 @@ void Game::DebugBox2D()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
-					
-
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
 					int lenght = (int)polygonShape->GetVertexCount();
