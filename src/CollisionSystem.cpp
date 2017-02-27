@@ -177,10 +177,12 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 }
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {
-	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
+	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
 	if (!statusEffects->invincible)
 	{
+		//static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(0, 0));
+
 		if (statusEffects->invisible)
 		{
 			statusEffects->invisible = false;

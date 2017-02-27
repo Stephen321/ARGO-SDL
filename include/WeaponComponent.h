@@ -9,6 +9,7 @@ public:
 	WeaponComponent()
 		: id(-1)
 		, hasWeapon(false)
+		, fired(false)
 		, Component::Component(Component::Type::Weapon)
 	{
 	}
@@ -20,5 +21,6 @@ public:
 public:
 	int id;
 
+	bool fired;
 	bool hasWeapon;
 };

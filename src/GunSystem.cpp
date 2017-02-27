@@ -69,9 +69,11 @@ void GunSystem::CreateBulletRequest(Entity*& e, int id)
 
 	std::vector<float> data = std::vector<float>();
 
+	float barrelLenght = sqrt(gunTransform->rect.w * gunTransform->rect.w + gunTransform->rect.h * gunTransform->rect.h);
+
 	data.push_back(id); //id
-	data.push_back(gunTransform->rect.x * gunTransform->scaleX); //xPosition
-	data.push_back(gunTransform->rect.y * gunTransform->scaleY); //yPosition
+	data.push_back(gunTransform->rect.x + cos(gunTransform->angle * M_PI / 180.0f) * barrelLenght); //xPosition
+	data.push_back(gunTransform->rect.y + sin(gunTransform->angle * M_PI / 180.0f) * barrelLenght); //yPosition
 	data.push_back(-1); //width
 	data.push_back(-1); //height
 	data.push_back(gunTransform->angle); //angle

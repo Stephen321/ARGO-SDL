@@ -3,6 +3,7 @@
 #include "PhysicsComponent.h"
 #include "ColliderComponent.h"
 #include "StatusEffectComponent.h"
+#include "DestructionComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -43,7 +44,7 @@ void PhysicsSystem::Process(float dt)
 				float xAccel = physics->xAcceleration;
 				float yAccel = physics->yAcceleration;
 
-				if (statusEffects->speedUp)
+				if (statusEffects != nullptr && statusEffects->speedUp)
 				{
 					xAccel += xAccel;
 					yAccel += yAccel;
@@ -52,7 +53,7 @@ void PhysicsSystem::Process(float dt)
 				physics->xVelocity += (xDrag + (physics->xDir * xAccel)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * yAccel)) * dt;
 
-				if (physics->xVelocity + physics->yVelocity != 0)
+				if (e->GetType() == EntityType::AI && e->GetType() == EntityType::Player && physics->xVelocity + physics->yVelocity != 0)
 				{
 					transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
 				}
@@ -67,10 +68,21 @@ void PhysicsSystem::Process(float dt)
 				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
 
-				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity)); 
-				
-				transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-				transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+				if (e->GetType() == EntityType::Bullet)
+				{
+					if (physics->xVelocity + physics->yVelocity == 0)
+					{
+						static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
+					}
+				}
+
+				if (collider->body->IsActive())
+				{
+					collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+
+					transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+					transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+				}
 
 				if (e->GetType() == EntityType::Player)
 				{
