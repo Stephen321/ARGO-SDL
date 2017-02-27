@@ -182,7 +182,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
-	systemTypes.push_back(SystemType::Physics);
+	//systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Remote);
 	systemTypes.push_back(SystemType::StatusEffect);
 

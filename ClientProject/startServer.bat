@@ -1,3 +1,3 @@
 @echo off
-plink -P 2222 argo@127.0.0.1 -pw argo "cd socketServer/; ./start.sh"
+plink -i "C:\Users\Stephen\private_keys\ArgoTeamD.pem" ubuntu@34.251.220.117 "cd socketServer/; ./start.sh"
 

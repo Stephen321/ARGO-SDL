@@ -17,5 +17,14 @@ public:
 	}
 
 public:
+	struct State {
+		float xPos;
+		float yPos;
+		float xVel;
+		float yVel;
+		float ts;
+	};
+	State startState;
+	State endState;
 	int id;
 };

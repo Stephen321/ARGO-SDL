@@ -54,10 +54,6 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yPos);
 		WriteFloat(sendData->xVel);
 		WriteFloat(sendData->yVel);
-		WriteFloat(sendData->xDir);
-		WriteFloat(sendData->yDir);
-		WriteFloat(sendData->xAccel);
-		WriteFloat(sendData->yAccel);
 		break;
 	}
 	case MessageType::SessionList:
@@ -147,10 +143,6 @@ Network::ReceivedData Network::Net::Receive()
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
 			data.yVel = ReadFloat(byteOffset);
-			data.xDir = ReadFloat(byteOffset);
-			data.yDir = ReadFloat(byteOffset);
-			data.xAccel = ReadFloat(byteOffset);
-			data.yAccel = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

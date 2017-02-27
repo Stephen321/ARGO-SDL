@@ -34,10 +34,6 @@ namespace Network
 		float yPos;
 		float xVel;
 		float yVel;
-		float xDir;
-		float yDir;
-		float xAccel;
-		float yAccel;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }

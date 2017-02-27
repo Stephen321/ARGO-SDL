@@ -290,7 +290,6 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\RemoteSystem.cpp" />
     <ClCompile Include="ServerProject\Net.cpp" />
     <ClCompile Include="src\AISystem.cpp" />
     <ClCompile Include="src\About.cpp" />
@@ -320,6 +319,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\Options.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
+    <ClCompile Include="src\RemoteSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />

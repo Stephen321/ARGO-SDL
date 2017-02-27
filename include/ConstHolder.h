@@ -4,9 +4,9 @@
 
 const int SCREEN_FPS = 60;
 const float CAMERA_SYSTEM_UPDATE = 16.f / 1000.f;
+const float PHYSICS_SYSTEM_UPDATE = 0.f;// 16.f / 1000.f;
 const float COLLISION_SYSTEM_UPDATE = 16.f / 1000.f;
-const float NET_SYSTEM_UPDATE = 16.f / 1000.f;
-const float REMOTE_PACKET_RATE = 60.f / 1000.f;
+const float REMOTE_PACKET_RATE = (1000.f / 10.f) / 1000.f;// 60.f / 1000.f;
 
 const int WORLD_WIDTH = 3200;
 const int WORLD_HEIGHT = 3200;
@@ -40,7 +40,7 @@ MENUES ARE SHIT
 
 const uint16 PLAYER_MASK =  (uint16)EntityType::RemotePlayer | (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 AI_MASK =		(uint16)EntityType::RemotePlayer | (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
-const uint16 REMOTE_MASK =  (uint16)EntityType::RemotePlayer | (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
+const uint16 REMOTE_MASK =  (uint16)EntityType::RemotePlayer | (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag /*| (uint16)EntityType::Obstacle*/ | (uint16)EntityType::PowerUp;
 const uint16 BULLET_SENSOR_MASK = (uint16)EntityType::AI | (uint16)EntityType::Player;
 const uint16 BULLET_BODY_MASK = (uint16)EntityType::Obstacle;
 const uint16 CHECKPOINT_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;

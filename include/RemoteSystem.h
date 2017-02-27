@@ -15,5 +15,6 @@ public:
 	void Process(float dt = 0.f) override;
 
 private:
+	float	_movementTimer;
 };
 
