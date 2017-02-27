@@ -159,6 +159,7 @@ void Game::OnEvent(EventListener::Event evt)
 			_audioManager->PlayFX("Hum");
 		case Event::d:
 			_audioManager->PlayFX("Hum");
+
 		}
 	}
 }
@@ -172,7 +173,6 @@ void Game::BindInput(Entity* player, Entity* weapon)
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::NUM_0, nIn, this);
-
 
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
@@ -188,7 +188,6 @@ void Game::BindInput(Entity* player, Entity* weapon)
 
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
-
 
 	// Recreate key binding
 	Command* noIn = new InputCommand([&]()

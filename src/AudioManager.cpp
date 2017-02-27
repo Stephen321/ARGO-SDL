@@ -116,30 +116,16 @@ void AudioManager::PlayFX(const std::string& fileName)
 	{
 		int SChannel = 0;
 
-		//Mix_Chunk *sound = Mix_LoadWAV(fileName.c_str());
-
 		if (_soundMap.at(fileName) == NULL)
 		{
-			//Mix_FreeChunk(sound);
 			_currentState = ERROR;
 			printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
 		}
 
 		else if(Mix_Playing(SChannel) == 0)
 		{
-			if (_previousSound != nullptr)
-			{
-				//Mix_FreeChunk(_previousSound);
-			}
-
 			SChannel = Mix_PlayChannel(-1, _soundMap.at(fileName), 0);
 			_currentState = PLAYING;
-			//_previousSound = sound;
-		}
-
-		else if (Mix_Playing(SChannel) != 0)
-		{
-			//Mix_FreeChunk(sound);
 		}
 	}
 }

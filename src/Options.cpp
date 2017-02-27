@@ -96,8 +96,6 @@ void Options::CleanUp()
 
 }
 
-
-
 void Options::BindInput()
 {
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
