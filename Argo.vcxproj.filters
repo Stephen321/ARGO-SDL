@@ -240,6 +240,9 @@
     <ClInclude Include="include\AudioManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
+    <ClInclude Include="include\WeaponComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
@@ -354,7 +357,7 @@
     </ClCompile>
     <ClCompile Include="src\StatusEffectSystem.cpp">
       <Filter>Source Files\Systems</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="src\AudioManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>

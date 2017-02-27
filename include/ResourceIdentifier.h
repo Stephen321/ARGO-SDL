@@ -6,6 +6,7 @@ enum class TextureID
 	Bullet,
 	Flag,
 	Checkpoint,
+	PowerUp,
 	EntitySpriteSheet,
 	TilemapSpriteSheet,
 	UI,

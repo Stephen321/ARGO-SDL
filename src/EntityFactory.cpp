@@ -12,6 +12,7 @@
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "WeaponComponent.h"
 
 #include "ConstHolder.h"
 
@@ -86,6 +87,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
 	player->AddComponent(new StatusEffectComponent());
+	player->AddComponent(new WeaponComponent());
 
 	return player;
 }
@@ -102,34 +104,15 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
 	ai->AddComponent(new StatusEffectComponent());
+	ai->AddComponent(new WeaponComponent());
 
 	return ai;
 }
 Entity* EntityFactory::CreatePowerUpEntity(int id)
 {
 	Entity* powerUp = new Entity(EntityType::PowerUp);
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]);
-
-	switch (id)
-	{
-	case 1:
-	{
-		spriteComponent->sourceRect = { 0, 0, 0, 0 };
-		break;
-	}
-	case 2:
-	{
-		spriteComponent->sourceRect = { 1, 0, 0, 0 };
-		break;
-	}
-	case 3:
-	{
-		spriteComponent->sourceRect = { 2, 0, 0, 0 };
-		break;
-	}
-	default:
-		break;
-	}
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::PowerUp]);
+	spriteComponent->sourceRect = { id * 48, 0, 48, 48 };
 
 	powerUp->AddComponent(spriteComponent);
 	powerUp->AddComponent(new TransformComponent(0, 0, 48, 48));
@@ -144,10 +127,11 @@ Entity* EntityFactory::CreateWeaponEntity(int id)
 	Entity* weapon = new Entity(EntityType::Weapon);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon]);
+	spriteComponent->sourceRect = { id * 87, 0, 87, 26 };
 
-	weapon->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.25f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	weapon->AddComponent(new TransformComponent(0.f, 0.f, 87, 26, 30, 13, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
-	weapon->AddComponent(new GunComponent(BULLET_FIRE_RATE, BULLET_AMMO, id));
+	weapon->AddComponent(new GunComponent(FIRE_RATE[id], AMMO[id], id));
 	weapon->AddComponent(new DestructionComponent());
 
 	return weapon;
@@ -157,8 +141,9 @@ Entity* EntityFactory::CreateBulletEntity(int id)
 	Entity* bullet = new Entity(EntityType::Bullet);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet]);
+	spriteComponent->sourceRect = { id * 16, 0, 16, 16 };
 
-	bullet->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	bullet->AddComponent(new TransformComponent(0.f, 0.f, 16, 16, 8, 8, 1.0f, 1.0f, 0));
 	bullet->AddComponent(spriteComponent);
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
 	bullet->AddComponent(new ColliderComponent());

@@ -9,9 +9,8 @@
 #include "LTimer.h"
 
 #include <assert.h>
-#include "GunComponent.h"
-#include "DestructionComponent.h"
-#include "FlagComponent.h"
+#include "WeaponComponent.h"
+#include "StatusEffectComponent.h"
 
 Game::Game() 
 	: _gravity(0.f, 0.f)
@@ -41,17 +40,12 @@ void Game::Initialize(SDL_Renderer* renderer)
 	Start();
 	LoadContent();
 
-	Entity* player = nullptr;
+	player = nullptr;
 
 	_systemManager.PostInitialize(player);
 
-
-	//shooting
-	//Command* spaceIn = new InputCommand(std::bind(&FunctionMaster::FireBullet, _functionMaster, weapon), Type::Press);
-	//_inputManager->AddKey(Event::SPACE, spaceIn, this);
-
 	_swapScene = CurrentScene::GAME;
-	BindInput(player);
+	BindInput();
 }
 
 void Game::LoadContent()
@@ -63,6 +57,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
+	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
@@ -137,12 +132,11 @@ void Game::OnEvent(EventListener::Event evt)
 			_audioManager->PlayFX("Hum");
 		case Event::d:
 			_audioManager->PlayFX("Hum");
-
 		}
 	}
 }
 
-void Game::BindInput(Entity* player)
+void Game::BindInput()
 {
 	// Delete Key binding
 	Command* nIn = new InputCommand([&]()
@@ -177,6 +171,19 @@ void Game::BindInput(Entity* player)
 	_inputManager->AddKey(Event::NUM_1, noIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
+
+	Command* spaceIn = new InputCommand([&]()
+	{
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
+		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
+
+		if (!statusEffect->staggered && weapon->hasWeapon)
+		{
+			weapon->fired = true;
+		}
+
+	}, Type::Hold);
+	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 }
 
 void Game::CleanUp()

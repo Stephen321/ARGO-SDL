@@ -31,4 +31,5 @@ public:
 
 public:
 	Type	type;
+	int		waypointIndex;
 };

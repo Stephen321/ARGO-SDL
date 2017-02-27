@@ -21,6 +21,7 @@ public:
 		Flag,
 		StatusEffect,
 		PowerUp,
+		Weapon,
 	};
 
 public:
