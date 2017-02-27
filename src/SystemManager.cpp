@@ -73,7 +73,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_systems[SystemType::AI] = aiSystem;
 
 	//SETUP WORLD SYSTEM
-	WaypointSystem* waypointSystem = new WaypointSystem(0);
+	WaypointSystem* waypointSystem = new WaypointSystem(_creationRequests, _interactionSystemEvents, 0);
 	waypointSystem->Initialize(waypoints);
 	_systems[SystemType::World] = waypointSystem;
 

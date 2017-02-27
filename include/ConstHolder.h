@@ -22,12 +22,6 @@ const int		MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 1.5f;
 const int		AMMO[] { 8, 5, 15 };
 const float		FIRE_RATE[]{ 1.0f, 2.5f, 0.25f };
 
-/*
-BULLETS NEED TO BE TESTED
-WEAPON NEEDS TO BE BINDED WITH A KEY
-POWER UP SPAWNER NEEDS TO BE CREATED
-*/
-
 const uint16	PLAYER_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16	AI_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16	BULLET_SENSOR_MASK = (uint16)EntityType::AI | (uint16)EntityType::Player; 
@@ -50,6 +44,7 @@ const float		STAGGER_MAX_TIMER = 2.0f;
 const float		INVINCIBLE_MAX_TIMER = 2.0f;
 const float		INVISIBLE_MAX_TIMER = 2.0f;
 const float		SPEED_UP_MAX_TIMER = 2.0f;
+const float		POWER_UP_SPAWN_RATE = 5.0f;
 
 const int		SCREEN_WIDTH = 1600;
 const int		SCREEN_HEIGHT = 900;

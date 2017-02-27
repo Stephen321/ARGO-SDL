@@ -6,4 +6,5 @@ enum class InteractionSystemEvent
 	WeaponAddBullets,
 	FlagPicked,
 	FlagDropped,
+	PowerUpDestoyed,
 };
