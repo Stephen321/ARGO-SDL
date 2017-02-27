@@ -3,6 +3,7 @@
 #include "RemoteComponent.h"
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
+#include "Helpers.h"
 
 RemoteSystem::RemoteSystem(float updateRate)
 	: System(updateRate)
@@ -19,7 +20,8 @@ void RemoteSystem::Initialize()
 
 void RemoteSystem::Process(float dt)
 {
-	_movementTimer += dt;
+	if (dt > 5.f)
+		return;
 	System::Process(dt);
 	NetworkHandler& network = NetworkHandler::Instance();
 	if (_canUpdate)
@@ -39,7 +41,7 @@ void RemoteSystem::Process(float dt)
 		data.xPos = collider->body->GetPosition().x;
 		data.yPos = collider->body->GetPosition().y;
 
-		network.Send(&data); //send player state to server every REMOTE_PACKET_RATE (30 times a second default)
+		network.Send(&data); //send player state to server every REMOTE_PACKET_RATE
 	}
 
 	//always listening for messages
@@ -55,66 +57,62 @@ void RemoteSystem::Process(float dt)
 		{
 			StateData data = receivedData.GetData<StateData>();
 
-			for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+			for (Entity* e : _entities[EntityType::RemotePlayer]) //only going to receive updates for remote players
 			{
-				for (Entity* e : (*it).second)
+				RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+				if (remote->id == data.id) //we just received state data for this remote player
 				{
-					RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
-					if (remote->id == data.id) //we just received state data for this remote player
+					std::cout << "Received state data from " << data.id << std::endl;
+					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+					ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+
+					if (remote->timeSincePacket > _updateRate * 1.5f) //recover from packet loss, need to converge back to new position
 					{
-						std::cout << "Received state data from " << data.id << std::endl;
-						PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-						ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
-						//physics->xAcceleration = data.xAccel;
-						//physics->yAcceleration = data.yAccel;
-						//physics->xDir = data.xDir;
-						//physics->yDir = data.yDir;
+						std::cout << "got first packet after Packet loss, linear converge to where we will be (+ velocity)!" << std::endl;
+						remote->startState.xPos = collider->body->GetPosition().x;
+						remote->startState.yPos = collider->body->GetPosition().y;
+						//remote->startState.r = rb.rotation; velocity?
+
 						physics->xVelocity = data.xVel;
 						physics->yVelocity = data.yVel;
-						collider->body->SetTransform(b2Vec2(data.xPos, data.yPos), collider->body->GetAngle());
 
-						//Remote doesnt get the physics system doing this every physics system update: (!!! this is only done when received)....have another if statement that will transition between states with physics system update rate
-						//------------------------------------------------------------------------------------------------------------------------------
-						//PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-						TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-						//ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
-
-						float maxVelocity = physics->maxVelocity;
-
-						//float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
-						//float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
-
-						//physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
-						//physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
-
-						if (physics->xVelocity + physics->yVelocity != 0)
-						{
-							transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
-						}
-
-						float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-						if (currentVelocity > maxVelocity)
-						{
-							physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
-							physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
-						}
-
-						//if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
-						//if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
-						collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-
-						transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-						transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
-
-						//if (e->GetType() == EntityType::Player)
-						//{
-						//	physics->xDir = 0;
-						//	physics->yDir = 0;
-						//}
-						//------------------------------------------------------------------------------------------------------------------------------
-
+						b2Vec2 target = b2Vec2(data.xPos, data.yPos) + (b2Vec2(physics->xVelocity * _updateRate, physics->yVelocity * _updateRate));
+						remote->endState.xPos = target.x;
+						remote->endState.yPos = target.y;
+						//linearly converge to where we are plus the velocity so we move towards where we will be by the time we get there
 					}
+
+					//Just got a packet, reset timer for this remote player
+					remote->timeSincePacket = 0.f;
+					if (remote->startState == NULL) //if it is the first packet
+					{
+						std::cout << "got first packet" << std::endl;
+						remote->startState.xPos = data.xPos;
+						remote->startState.yPos = data.yPos;
+						remote->startState.xVel = data.xVel;
+						remote->startState.yVel = data.yVel;
+						remote->endState = remote->startState;
+					}
+					else //every other packet
+					{
+						remote->startState = remote->endState; //if we havnt reached the endState then we will snap to it...this is if a message arrives early
+						
+						//start state is currently where the player is. this means within updateRate the player may 
+						//not lerp fully to the endState as startState may be futher behind than remote actual state when the message was sent
+						//remote->startState.xPos = collider->body->GetPosition().x;
+						//remote->startState.yPos = collider->body->GetPosition().y;
+						//remote->startState.xVel = remote->endState.xVel;
+						//remote->startState.yVel = remote->endState.yVel;
+
+						remote->endState.xPos = data.xPos;
+						remote->endState.yPos = data.yPos;
+						remote->endState.xVel = data.xVel;
+						remote->endState.yVel = data.yVel;
+
+						physics->xVelocity = data.xVel;
+						physics->yVelocity = data.yVel;
+					}
+					break; //we've dealt with the data we received so we can break
 				}
 			}
 			break;
@@ -122,43 +120,53 @@ void RemoteSystem::Process(float dt)
 		}
 	}
 
-	if (_movementTimer > PHYSICS_SYSTEM_UPDATE)
+	for (Entity* e : _entities[EntityType::RemotePlayer])
 	{
-		_movementTimer = 0.f;
+		RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+		ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+		TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 
-		for (Entity* e : _entities[EntityType::RemotePlayer])
+
+		float maxVelocity = physics->maxVelocity;
+		float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
+		if (currentVelocity > maxVelocity)
 		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-			ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
-			TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-
-			float maxVelocity = physics->maxVelocity;
-
-			float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
-			float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
-
-			physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
-			physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
-
-			if (physics->xVelocity + physics->yVelocity != 0)
-			{
-				transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
-			}
-
-			float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-			if (currentVelocity > maxVelocity)
-			{
-				physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
-				physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
-			}
-
-			if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
-			if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
-			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-
-			transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-			transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+			physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
+			physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
 		}
+		
+		float percent = remote->timeSincePacket / _updateRate; //0 to 100%
+
+		if (percent > 1.2f)//start extrapolating as the packet is late
+		{
+			//set velocity to the velocity we had in the last packet we received
+			std::cout << "Start extrapolating" << std::endl;
+			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+		}
+		else //lerp between last packet and current packet receivedsss
+		{
+			b2Vec2 newPosition;
+			newPosition.x = lerp(remote->startState.xPos, remote->endState.xPos, percent);
+			newPosition.y = lerp(remote->startState.yPos, remote->endState.yPos, percent);
+			collider->body->SetTransform(newPosition, collider->body->GetAngle());
+		}
+		transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+		transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+
+
+		//calculate angle
+		if (remote->startState.xVel + remote->startState.yVel != 0)
+		{ //angle set to velocity (velocity is whatever the last packet we received said it was
+			if (remote->endState.xVel + remote->endState.yVel != 0)
+			{
+				float startAngle = atan2(remote->startState.yVel, remote->startState.xVel) * 180.f / M_PI;
+				float endAngle = atan2(remote->endState.yVel, remote->endState.xVel) * 180.f / M_PI;
+				transform->angle = lerp(startAngle, endAngle, percent);
+				std::cout << "start angle: " << startAngle << "  , " << endAngle << ".   " << transform->angle << std::endl;
+			}
+		}
+
+		remote->timeSincePacket += dt; //time since last packet, between 0 and _updateRate
 	}
 }
