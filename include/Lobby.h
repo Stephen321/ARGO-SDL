@@ -32,8 +32,6 @@ private:
 	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
-	CurrentScene					_swapScene;
-
 private:
 	void							MoveUp();
 	void							MoveDown();

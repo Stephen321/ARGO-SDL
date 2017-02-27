@@ -22,7 +22,14 @@ public:
 	void								StopMusic(Mix_Chunk* sound);
 	void								PlayFX(const std::string& fileName);
 
-	void								SetVolume(bool volume);
+	void								SetMusicVolume(bool volume);
+	int									GetMusicVolume();
+
+	void								SetHumVolume(bool volume);
+	int									GetHumVolume();
+
+	void								SetBulletVolume(bool volume);
+	int									GetBulletVolume();
 
 private:
 	static AudioManager*				audioManagerInstance;
@@ -45,5 +52,9 @@ private:
 	Mix_Chunk*							_previousSound;
 
 	std::map<std::string, Mix_Chunk*>	_soundMap;
+
+	int									_musicVolume;
+	int									_humVolume;
+	int									_bulletVolume;
 };
 

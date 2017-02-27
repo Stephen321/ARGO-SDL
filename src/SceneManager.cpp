@@ -35,22 +35,6 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 		_menu->Initialize(_renderer);
 		_currentScene.push_back(_menu);
 
-		//_game = new Game();
-		//_game->Initialize(_renderer);
-		//_currentScene.push_back(_game);
-
-		//_lobby = new Lobby();
-		//_lobby->Initialize(_renderer);
-		//_currentScene.push_back(_lobby);
-
-		//_options = new Options();
-		//_options->Initialize(_renderer);
-		//_currentScene.push_back(_options);
-
-		//_about = new About();
-		//_about->Initialize(_renderer);
-		//_currentScene.push_back(_about);
-
 		_runningScene = 0;
 	}
 
