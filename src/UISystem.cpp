@@ -196,6 +196,30 @@ void UISystem::UpdateText(std::string message, int index)
 	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
 }
 
+void UISystem::UpdateTextAtCenter(std::string message, int index)
+{
+	// Destroy Previous Image
+	SDL_DestroyTexture(_interactiveTextTexture[index]);
+
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_interactiveTextTexture[index] = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_interactiveTextTexture[index], NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = (_interactiveTextRectangle[index].x + _interactiveTextRectangle[index].w / 2) - width / 2;
+	textRectangle.y = _interactiveTextRectangle[index].y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_interactiveTextRectangle[index] = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
+}
+
 void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });

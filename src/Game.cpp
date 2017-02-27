@@ -152,7 +152,7 @@ void Game::OnEvent(EventListener::Event evt)
 			_running = false;
 
 		case Event::w:
-			_audioManager->PlayFX("Hum");
+
 		case Event::a:
 			_audioManager->PlayFX("Hum");
 		case Event::s:
@@ -305,8 +305,6 @@ void Game::DebugBox2D()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
-					
-
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
 					int lenght = (int)polygonShape->GetVertexCount();

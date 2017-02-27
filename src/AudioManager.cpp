@@ -53,6 +53,14 @@ void AudioManager::InitAudioDevice()
 void AudioManager::LoadSounds()
 {
 	_soundMap.insert(std::make_pair("Hum", Mix_LoadWAV("Media/Audio/Hum.wav")));
+	_humVolume = 64;
+	Mix_VolumeChunk(_soundMap.at("Hum"), _humVolume);
+
+	_musicVolume = 64;
+	Mix_VolumeMusic(_musicVolume);
+
+
+	_bulletVolume = 64;
 }
 
 void AudioManager::PlayMusic(const std::string& fileName)
@@ -130,24 +138,57 @@ void AudioManager::PlayFX(const std::string& fileName)
 	}
 }
 
-void AudioManager::SetVolume(bool volume)
+void AudioManager::SetMusicVolume(bool volume)
 {
-	if (volume) 
+	//if (!volume) 
+	//{
+	//	printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) * 1));
+	//	printf("volume is now : %d\n", Mix_VolumeMusic(-1));
+	//	_volume = Mix_VolumeMusic(-1);
+	//}
+
+	//else if (volume) 
+	//{
+	//	// set the music volume to 1/2 maximum, and then check it
+	//	printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1));
+	//	printf("volume is now : %d\n", Mix_VolumeMusic(-1));
+	//	_volume = Mix_VolumeMusic(-1);
+	//}
+
+	if (!volume)
 	{
-		// set the music volume to 1/2 maximum, and then check it
-		printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) / 2));
-		printf("volume is now : %d\n", Mix_VolumeMusic(-1));
+		if (_musicVolume >= 0 + 4) { _musicVolume -= 4; }
+		printf("volume was    : %d\n", Mix_VolumeMusic(_musicVolume));
 	}
 
-	else if (!volume) 
+	else if (volume)
 	{
-		// set the music volume to 1/2 maximum, and then check it
-		printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) * 2));
-		printf("volume is now : %d\n", Mix_VolumeMusic(-1));
-
-		if (Mix_VolumeMusic(-1) == 0)
-		{
-			Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1);
-		}
+		if (_musicVolume <= 128 - 4) { _musicVolume += 4; }
+		printf("volume was    : %d\n", Mix_VolumeMusic(_musicVolume));
 	}
+}
+
+int AudioManager::GetMusicVolume()
+{
+	return _musicVolume;
+}
+
+void AudioManager::SetHumVolume(bool volume)
+{
+	if (!volume)
+	{
+		if (_humVolume >= 0 + 4) { _humVolume -= 4; }
+		printf("volume was    : %d\n", Mix_VolumeChunk(_soundMap.at("Hum"), _humVolume));
+	}
+
+	else if (volume)
+	{
+		if (_humVolume <= 128 - 4) { _humVolume += 4; }
+		printf("volume was    : %d\n", Mix_VolumeChunk(_soundMap.at("Hum"), _humVolume));
+	}
+}
+
+int AudioManager::GetHumVolume()
+{
+	return _humVolume;
 }
