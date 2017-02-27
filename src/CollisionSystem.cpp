@@ -117,6 +117,11 @@ void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entit
 			{
 				flagComponent->currentCheckpointID = 0;
 				flagComponent->currentLap++;
+
+				if (flagComponent->currentLap == 4)
+				{
+					//WINNER
+				}
 			}
 		}
 	}
