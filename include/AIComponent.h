@@ -4,6 +4,7 @@
 #include "GraphNode.h"
 enum class AIState
 {
+	Entry,
 	SeekFlag,
 	SeekCheckpoint,
 	SeekPowerUp,
@@ -19,7 +20,7 @@ public:
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
 		flagDetectionRange(false),
-		state(AIState::SeekFlag),
+		state(AIState::Entry),
 		closestNodeFlag(false),
 		updateAStarFlag(false)
 	{

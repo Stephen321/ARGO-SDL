@@ -1,7 +1,7 @@
 #include "WaypointSystem.h"
-#include "AIComponent.h"
 #include "TransformComponent.h" 
-
+#include "ColliderComponent.h"
+#include "Helpers.h"
 WaypointSystem::WaypointSystem(float updateRate)
 	: System(updateRate)
 {
@@ -27,8 +27,10 @@ void WaypointSystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
+			
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-				helper::Vector2 position = helper::Vector2(transform->rect.x, transform->rect.y);
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+				helper::Vector2 position = helper::Vector2(metersToPixels(collider->body->GetPosition().x), metersToPixels(collider->body->GetPosition().y));
 
 				int maxNode = _waypoints->getNodesSize();
 				int flagNode = maxNode - 1;

@@ -90,8 +90,9 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Player, data));
 			}
-			else
+			else if(createAi == false)
 			{
+				createAi = true;
 				std::vector<float> data = std::vector<float>();
 
 				data.push_back(-1); //id
@@ -102,7 +103,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
 			}
-			createAi = true;
+			
 		}
 		else if (entityName == "Checkpoint")
 		{
@@ -168,7 +169,8 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 		}
 		else
 		{
-			nodeData = make_pair(GraphNode::EntityData::Checkpoint, 0);
+			int testdata = atoi(dataString.c_str());
+			nodeData = make_pair(GraphNode::EntityData::Checkpoint, testdata);
 		}
 		waypoints->addNode(nodeData, position);
 	}

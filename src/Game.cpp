@@ -122,6 +122,7 @@ void Game::Stop()
 
 void Game::OnEvent(EventListener::Event evt)
 {
+	/*
 	if (_running)
 	{
 		switch (evt)
@@ -139,7 +140,7 @@ void Game::OnEvent(EventListener::Event evt)
 		case Event::d:
 			_audioManager->PlayFX("Hum");
 		}
-	}
+	}*/
 }
 
 void Game::BindInput(Entity* player)

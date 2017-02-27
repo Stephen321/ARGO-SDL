@@ -178,16 +178,18 @@
                  "name":"0",
                  "properties":
                     {
+                     "data":0,
                      "neighbour":[1],
                      "node":0
                     },
                  "propertytypes":
                     {
+                     "data":"int",
                      "neighbour":"string",
                      "node":"int"
                     },
                  "rotation":0,
-                 "type":"dest;4",
+                 "type":"1",
                  "visible":true,
                  "width":64,
                  "x":353.333,
@@ -859,7 +861,7 @@
                      "node":"int"
                     },
                  "rotation":0,
-                 "type":"dest;3",
+                 "type":"3",
                  "visible":true,
                  "width":64,
                  "x":1055.88,
@@ -1993,7 +1995,7 @@
                      "node":"int"
                     },
                  "rotation":0,
-                 "type":"dest;5",
+                 "type":"5",
                  "visible":true,
                  "width":64,
                  "x":4610,
@@ -2329,7 +2331,7 @@
                      "node":"int"
                     },
                  "rotation":0,
-                 "type":"dest;2",
+                 "type":"2",
                  "visible":true,
                  "width":64,
                  "x":5434.67,
@@ -2602,7 +2604,7 @@
                      "node":"int"
                     },
                  "rotation":0,
-                 "type":"dest;1",
+                 "type":"1",
                  "visible":true,
                  "width":64,
                  "x":6078,

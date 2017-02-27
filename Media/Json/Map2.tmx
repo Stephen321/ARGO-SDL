@@ -116,8 +116,9 @@
   <object id="266" name="Flag" x="3776" y="2560" width="64" height="64"/>
  </objectgroup>
  <objectgroup color="#00aaff" name="Waypoints">
-  <object id="269" name="0" type="dest;4" x="353.333" y="512" width="64" height="64">
+  <object id="269" name="0" type="1" x="353.333" y="512" width="64" height="64">
    <properties>
+    <property name="data" type="int" value="0"/>
     <property name="neighbour" value="[1]"/>
     <property name="node" type="int" value="0"/>
    </properties>
@@ -308,7 +309,7 @@
     <property name="node" type="int" value="31"/>
    </properties>
   </object>
-  <object id="305" name="32" type="dest;3" x="1055.88" y="4795.27" width="64" height="64">
+  <object id="305" name="32" type="3" x="1055.88" y="4795.27" width="64" height="64">
    <properties>
     <property name="neighbour" value="[33]"/>
     <property name="node" type="int" value="32"/>
@@ -632,7 +633,7 @@
     <property name="node" type="int" value="85"/>
    </properties>
   </object>
-  <object id="335" name="86" type="dest;5" x="4610" y="3074" width="64" height="64">
+  <object id="335" name="86" type="5" x="4610" y="3074" width="64" height="64">
    <properties>
     <property name="neighbour" value="[62,63,87]"/>
     <property name="node" type="int" value="86"/>
@@ -728,7 +729,7 @@
     <property name="node" type="int" value="101"/>
    </properties>
   </object>
-  <object id="329" name="102" type="dest;2" x="5434.67" y="4637.7" width="64" height="64">
+  <object id="329" name="102" type="2" x="5434.67" y="4637.7" width="64" height="64">
    <properties>
     <property name="neighbour" value="[103,81,80]"/>
     <property name="node" type="int" value="102"/>
@@ -806,7 +807,7 @@
     <property name="node" type="int" value="114"/>
    </properties>
   </object>
-  <object id="383" name="115" type="dest;1" x="6078" y="1219" width="64" height="64">
+  <object id="383" name="115" type="1" x="6078" y="1219" width="64" height="64">
    <properties>
     <property name="neighbour" value="[116]"/>
     <property name="node" type="int" value="115"/>

@@ -36,9 +36,9 @@ UI NOT DONE
 MENUES ARE SHIT
 */
 
-
+//(uint16)EntityType::Player 
 const uint16 PLAYER_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
-const uint16 AI_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
+const uint16 AI_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 BULLET_SENSOR_MASK = (uint16)EntityType::AI | (uint16)EntityType::Player; 
 const uint16 BULLET_BODY_MASK = (uint16)EntityType::Obstacle;
 const uint16 CHECKPOINT_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;
@@ -55,9 +55,8 @@ const int FLAG_CONNECTION_RADIUS = 400;
 
 const int CHECKPOINT_COLLISION_RADIUS = 300;
 
-const int AI_FLAG_DETECTION_RANGE = 300;
-const int AI_NODE_COLLISION_RADIUS = 200;
-
+const int AI_FLAG_DETECTION_RANGE = 250;
+const int AI_NODE_COLLISION_RADIUS = 150;
 
 const float STAGGER_MAX_TIMER = 2.0f;
 const float INVINCIBLE_MAX_TIMER = 2.0f;
