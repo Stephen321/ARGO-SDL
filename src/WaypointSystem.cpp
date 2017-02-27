@@ -30,7 +30,7 @@ void WaypointSystem::Process(float dt)
 			
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
-				helper::Vector2 position = helper::Vector2(metersToPixels(collider->body->GetPosition().x), metersToPixels(collider->body->GetPosition().y));
+				helper::Vector2 position = helper::Vector2(transform->rect.x, transform->rect.y);
 
 				int maxNode = _waypoints->getNodesSize();
 				int flagNode = maxNode - 1;

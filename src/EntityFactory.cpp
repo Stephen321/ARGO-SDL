@@ -98,7 +98,7 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	ai->AddComponent(new HealthComponent(100, 100, true));
-	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
+	ai->AddComponent(new PhysicsComponent(0, 0, AI_ACCEL_RATE, AI_ACCEL_RATE, MAX_AI_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());

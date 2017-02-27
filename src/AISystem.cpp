@@ -10,7 +10,7 @@ AISystem::~AISystem()
 
 }
 
-void AISystem::Initialize(Graph* waypoints)
+void AISystem::Initialize(Graph* waypoints, Entity* player)
 {
 	_waypoints = waypoints;
 	vector<GraphNode*> nodes = _waypoints->getNodes();
@@ -21,7 +21,8 @@ void AISystem::Initialize(Graph* waypoints)
 			_checkpointNode.push_back(nodes[i]);
 	}
 	_flagNode = _waypoints->getNodes()[size - 1];
-	
+	_players.push_back(player);
+
 }
 
 
@@ -46,34 +47,29 @@ void AISystem::Process(float dt)
 				case AIState::SeekFlag:
 				{
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
-					SeekFlag(ai, flag, transform);
+					Seek(dt, e, ai, flag, transform);
+					break;
+				}
+				case AIState::Camp:
+				{
+					//FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+					//SeekCheckpoint(ai, flag, transform);
 					break;
 				}
 				case AIState::SeekCheckpoint:
 				{
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 					SeekCheckpoint(ai, flag, transform);
-				}
 					break;
+				}
+				
 				case AIState::SeekPowerUp:
 					break;
 				default:
 					break;
 				}
 
-				if (ai->updateAStarFlag)
-				{
-					float updateRate = ai->pathFinderUpdateRate;
-					float updateTimer = ai->pathfinderUpdateTimer;
-
-					updateTimer += dt;
-					if (updateTimer > updateRate)
-					{
-						updateTimer -= updateRate;
-						AStar(ai);
-					}
-					ai->pathfinderUpdateTimer = updateTimer;
-				}
+				
 
 				
 				if (ai->path.size() > 2)
@@ -95,7 +91,21 @@ void AISystem::Process(float dt)
 
 				if(!ai->path.empty())
 				{
+					/*
+					//eltaX = tx - cx;
+					//deltaY = ty - cy;
+					distance = sqrt(deltaX ^ 2 + deltaY ^ 2);
+					dvx = deltaX * maxSpeed / distance; //Normalizing and multiplying by max speed
+					dvy = deltaY * maxSpeed / distance;
+					deltaX = dvx - vx;
+					deltaY = dvy - vy;
+					diffSize = sqrt(deltaX ^ 2 + deltaY ^ 2);
+					ax = maxAcc * deltaX / diffSize;
+					ay = maxAcc * deltaY / diffSize;
 
+					vx += ax * dt // dt is the time that passed since the last frame
+						vy += ay * dt // 
+						*/
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					//go to path
 
@@ -104,33 +114,55 @@ void AISystem::Process(float dt)
 
 
 					helper::Vector2 AB = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
-					helper::Vector2 firstNodeDir = AB.normalize();
+				
+					
 
-					helper::Vector2 force;
+					
+					
+
 					
 					if (ai->path.size() > 1)
 					{
-						helper::Vector2 AB = ai->path[1]->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
-						helper::Vector2 SecondNodeDir = AB.normalize();
 
-						force.x += 0.015f *  SecondNodeDir.x;
-						force.y += 0.015f *  SecondNodeDir.y;
-						force.x += 0.05f * firstNodeDir.x;
-						force.y += 0.05f * firstNodeDir.y;
+						helper::Vector2 midpoint = (ai->nextNode->getPosition() + ai->path[1]->getPosition()) * 0.5f;
+						AB = midpoint - helper::Vector2(transform->rect.x, transform->rect.y);
+						
+						
+
+						//helper::Vector2 dot = x1*x2 + y1*y2;
+						//helper::Vector2 det = x1*y2 - y1*x2;
+						//angle = atan2(det, dot)
 					}
-					else
-					{
-						force.x += 0.065f * firstNodeDir.x;
-						force.y += 0.065f * firstNodeDir.y;
-					}
-		
+
 					
-					physics->xAcceleration = force.x;
-					physics->yAcceleration = force.y;
+
+				
+					helper::Vector2 direction = AB.normalize();
+					physics->xDir = direction.x;
+					physics->yDir = direction.y;
+
+					float force = 3.0f;
+					physics->xAcceleration = force;
+					physics->yAcceleration = force;
 
 
-					physics->xVelocity += force.x ;
-					physics->yVelocity += force.y ;
+					//physics->xVelocity += force.x* dt;
+					//physics->yVelocity += force.y * dt;
+
+
+					//if(direction.x )
+					/*
+					if (physics->xVelocity > physics->maxVelocity)
+					{
+						physics->xVelocity = physics->maxVelocity;
+					}
+					if (physics->yVelocity > physics->maxVelocity)
+					{
+						physics->yVelocity = physics->maxVelocity;
+					}*/
+
+
+					
 	
 				}
 			}
@@ -172,7 +204,7 @@ void AISystem::AStar(AIComponent* ai)
 	//call AStar
 	_waypoints->aStar(ai->nextNode, ai->destNode, path);
 
-	//set colour
+	//set colouraaa
 	ai->destNode->setColour(SDL_Color{ 255,0,0,255 });
 	ai->nextNode->setColour(SDL_Color{ 0,255,0,255 });
 
@@ -187,25 +219,31 @@ void AISystem::Entry(AIComponent* ai, TransformComponent* t)
 	ai->nextNode = DetermineClosestNode(t); //AI doesn't know starting node, so we search for the closest one. this is a manual update.
 	ai->destNode = _flagNode;
 	ai->pathfinderUpdateTimer = 0;
-	ai->closestNodeFlag = true; // flag that determine closest
-	ai->updateAStarFlag = true;
 	AStar(ai);
 }
 
-void AISystem::SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t)
+void AISystem::SeekFlag(Entity* e,AIComponent* ai, FlagComponent* f, TransformComponent* t)
 {
+	/*
+
 	if (!f->hasFlag)
 	{
 		//don't have flag, check for distance to flag and then set go to node!
 		float distanceToFlag = ai->destNode->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
-		if (distanceToFlag < AI_FLAG_DETECTION_RANGE)
+		if (distanceToFlag > AI_FLAG_DETECTION_RANGE + 200)
+		{
+
+			FlagPrediction(e, ai, t);
+		}
+		else if (distanceToFlag < AI_FLAG_DETECTION_RANGE)
 		{
 			ai->nextNode = ai->destNode;
 			ai->updateAStarFlag = false; // AI is in range, stop astar call
 			ai->closestNodeFlag = false; // stop checking for closest node.
 			ai->flagDetectionRange = true;
 		}
-		else if (distanceToFlag > AI_FLAG_DETECTION_RANGE)
+		
+		else if(distanceToFlag > AI_FLAG_DETECTION_RANGE + 50)
 		{
 			ai->updateAStarFlag = true;
 			ai->closestNodeFlag = true; // turn on checking for closest node
@@ -215,6 +253,7 @@ void AISystem::SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t
 				ai->nextNode = DetermineClosestNode(t);
 			}
 		}
+		
 	}
 	else
 	{
@@ -233,7 +272,7 @@ void AISystem::SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t
 		ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate; //set timer to update AStar
 		AStar(ai);   //manual call on AStar.
 		ai->updateAStarFlag = false; //turn off AStar on nodes.
-	}
+	}*/
 }
 
 void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t)
@@ -264,6 +303,8 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 		//lose flag, transition to seek flag 
 		ai->state = AIState::SeekFlag;
 		ai->destNode = _flagNode;
-		ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate; //set timer to update AStar
+		ai->nextNode = DetermineClosestNode(t);	
+		ai->pathfinderUpdateTimer = 0;
+		AStar(ai);
 	}
 }

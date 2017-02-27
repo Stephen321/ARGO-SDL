@@ -139,7 +139,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	GetFlagCheckpointSystem()->Initialize(checkpoints);
 	//SETUP WAYPOINT AND AI SYSTEM
 	GetWaypointSystem()->Initialize(waypoints);
-	GetAISystem()->Initialize(waypoints);
+	GetAISystem()->Initialize(waypoints, player);
 }
 
 void SystemManager::Process(float dt)

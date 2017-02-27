@@ -6,6 +6,7 @@ enum class AIState
 {
 	Entry,
 	SeekFlag,
+	Camp,
 	SeekCheckpoint,
 	SeekPowerUp,
 };
@@ -20,9 +21,7 @@ public:
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
 		flagDetectionRange(false),
-		state(AIState::Entry),
-		closestNodeFlag(false),
-		updateAStarFlag(false)
+		state(AIState::Entry)
 	{
 	}
 
@@ -39,9 +38,6 @@ public:
 	GraphNode* nextNode;
 
 	bool flagDetectionRange;
-
-	bool closestNodeFlag;
-	bool updateAStarFlag;
 
 	AIState state;
 };

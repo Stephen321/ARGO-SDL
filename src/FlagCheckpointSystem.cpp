@@ -124,7 +124,7 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 
 				collider->setActive = true;
 				collider->body->SetTransform(b2Vec2(pixelsToMeters(actorTransform->rect.x), pixelsToMeters(actorTransform->rect.y)), 0);
-				static_cast<CheckpointComponent*>(_checkpoints.at(flag->currentCheckpointID + 1)->GetComponent(Component::Type::Checkpoint))->highlighted = false;
+				static_cast<CheckpointComponent*>(_checkpoints.at(flag->currentCheckpointID)->GetComponent(Component::Type::Checkpoint))->highlighted = false;
 			}
 
 			RemoveEntity(_interactionSystemEvents[FLAG_DROPPED].at(i).first, true);

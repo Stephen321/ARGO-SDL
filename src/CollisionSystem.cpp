@@ -105,16 +105,21 @@ void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& 
 void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entity*& other)
 {
 	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(other->GetComponent(Component::Type::Checkpoint));
 
 	if (flagComponent->hasFlag)
 	{
-		flagComponent->currentCheckpointID++;
-
-		if (flagComponent->currentCheckpointID == 4)
+		if (flagComponent->currentCheckpointID + 1 == checkpoint->id)
 		{
-			flagComponent->currentCheckpointID = 0;
-			flagComponent->currentLap++;
+			flagComponent->currentCheckpointID++;
+			if (flagComponent->currentCheckpointID == 4)
+			{
+				flagComponent->currentCheckpointID = 0;
+				flagComponent->currentLap++;
+			}
 		}
+
+		
 	}
 }
 void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*& other)
