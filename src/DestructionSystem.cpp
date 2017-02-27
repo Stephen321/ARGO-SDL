@@ -1,5 +1,6 @@
 #include "DestructionSystem.h"
 #include "DestructionComponent.h"
+#include "ColliderComponent.h"
 
 
 DestructionSystem::DestructionSystem(float update)
@@ -11,6 +12,11 @@ DestructionSystem::~DestructionSystem()
 {
 }
 
+
+void DestructionSystem::Initialize(b2World* b2world)
+{
+	_b2world = b2world;
+}
 
 void DestructionSystem::Process(float dt)
 {
@@ -42,6 +48,15 @@ void DestructionSystem::DestroyEntity()
 	if (!_toBeDestroyed.empty())
 	{
 		int index = _toBeDestroyed.size() - 1;
+		
+		ColliderComponent* collider = static_cast<ColliderComponent*>(_toBeDestroyed.at(index)->GetComponent(Component::Type::Collider));
+
+		if (collider != nullptr)
+		{
+			_b2world->SetAllowSleeping(true);
+			_b2world->DestroyBody(collider->body);
+			_b2world->SetAllowSleeping(false);
+		}
 
 		delete _toBeDestroyed.at(index);
 		_toBeDestroyed.at(index) = nullptr;

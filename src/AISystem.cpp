@@ -1,6 +1,8 @@
 #include "AISystem.h"
 #include "AIComponent.h"
 #include "TransformComponent.h" 
+
+
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
 {
@@ -59,12 +61,12 @@ void AISystem::Process(float dt)
 					ai->startingNode->setColour(SDL_Color{ 0,255,0,255 });
 					_waypoints->getNodes()[destNode]->setColour(SDL_Color{ 255,0,0,255 });
 
-					string nodePath = "AI :";
+					/*string nodePath = "AI :";
 					for (int i = 0; i < path.size(); i++)
 					{
 						nodePath += path[i]->data() + " ,";
 					}
-					std::cout << nodePath << std::endl;
+					std::cout << nodePath << std::endl;*/
 					ai->path = path;
 	
 				}
@@ -82,13 +84,12 @@ void AISystem::Process(float dt)
 					}
 
 					helper::Vector2 dir = velocity.normalize();
-
-					physics->xAcceleration = 0.06f * dir.x;
-					physics->yAcceleration = 0.06f * dir.y;
-
-
-					physics->xVelocity += physics->xAcceleration;
-					physics->yVelocity += physics->yAcceleration;
+					//physics->xDir = dir.x;
+					//physics->yDir = dir.y;
+					/*physics->xAcceleration = 0.06f;
+					physics->yAcceleration = 0.06f;
+					physics->xVelocity += physics->xAcceleration * dir.x;// *dt;
+					physics->yVelocity += physics->yAcceleration * dir.y;// *dt;*/
 				}
 
 			}

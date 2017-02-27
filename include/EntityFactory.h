@@ -7,38 +7,29 @@
 #include "SDL_image.h"
 #include "ResourceIdentifier.h"
 
-
-class SystemManager;
-
 class EntityFactory
 {
 public: 
 										EntityFactory();
 										~EntityFactory();
 
-	void								Initialize(SystemManager* sm, std::map<TextureID, SDL_Texture*>* th);
+	void								Initialize(std::map<TextureID, SDL_Texture*>* th);
 
-	Entity*								CreateEntity(EntityType t);
+	Entity*								CreateEntity(EntityType t, int id);
 
 private:
-	Entity*								CreateWeaponEntity();
-	Entity*								CreatePlayerEntity();
-	Entity*								CreateAIEntity();
-	Entity*								CreateObstacleEntity();
-	Entity*								CreatePowerUpEntity();
-	Entity*								CreateBulletEntity();
-	Entity*								CreateCheckpointEntity();
-	Entity*								CreateFlagEntity();
-	Entity*								CreateTileEntity();
-	Entity*								CreatePointEntity();
-	Entity*								CreateUIEntity();
+	Entity*								CreateWeaponEntity(int id);
+	Entity*								CreatePlayerEntity(int id);
+	Entity*								CreateAIEntity(int id);
+	Entity*								CreatePowerUpEntity(int id);
+	Entity*								CreateBulletEntity(int id);
+	Entity*								CreateCheckpointEntity(int id);
+	Entity*								CreateFlagEntity(int id);
+	Entity*								CreateTileEntity(int id);
+	Entity*								CreateUIEntity(int id);
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;
-
-	SystemManager*						_systemManager;
 };
-
-#include "SystemManager.h"
 
 #endif
