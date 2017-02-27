@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include "WeaponComponent.h"
+#include "StatusEffectComponent.h"
 
 Game::Game() 
 	: _gravity(0.f, 0.f)
@@ -131,7 +132,6 @@ void Game::OnEvent(EventListener::Event evt)
 			_audioManager->PlayFX("Hum");
 		case Event::d:
 			_audioManager->PlayFX("Hum");
-
 		}
 	}
 }
@@ -175,13 +175,14 @@ void Game::BindInput()
 	Command* spaceIn = new InputCommand([&]()
 	{
 		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
+		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-		if (weapon->hasWeapon)
+		if (!statusEffect->staggered && weapon->hasWeapon)
 		{
 			weapon->fired = true;
 		}
 
-	}, Type::Press);
+	}, Type::Hold);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
 }
 

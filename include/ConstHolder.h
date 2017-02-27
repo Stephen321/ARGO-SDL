@@ -20,7 +20,7 @@ const float		PLAYER_ACCEL_RATE = 2.0f;
 
 const int		MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 1.5f;
 const int		AMMO[] { 8, 5, 15 };
-const float		FIRE_RATE[]{ 1.0f, 2.5f, 0.25f };
+const float		FIRE_RATE[]{ 1.0f, 2.5f, 0.1f };
 
 const uint16	PLAYER_MASK = (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16	AI_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;

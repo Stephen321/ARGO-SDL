@@ -122,7 +122,7 @@ void WaypointSystem::CreatePowerUp(float dt)
 	{
 		std::vector<GraphNode*>& nodes = _waypoints->getNodes();
 		
-		int maxPowerUps = _powerUpCount < nodes.size() * 0.5f;
+		int maxPowerUps = nodes.size() * 0.5f;
 		int powerUpsToSpawn = rand() % 3 + 1;
 		int guard = 0;
 
