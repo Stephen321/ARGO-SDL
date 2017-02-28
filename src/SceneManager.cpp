@@ -3,7 +3,7 @@
 #include "ConstHolder.h"
 #include "Helpers.h"
 #include "LTimer.h"
-
+#include "NetworkHandler.h"
 #include "Debug.h"
 
 
@@ -36,6 +36,7 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 		_currentScene.push_back(_menu);
 
 		_runningScene = 0;
+		_currentScene[_runningScene]->Start();
 	}
 
 	return _running;
@@ -56,6 +57,10 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 			{
 				DEBUG_MSG("Renderer creation success");
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				if (SDLNet_Init() != 0)
+				{
+					DEBUG_MSG("SDLNet init success");
+				}
 			}
 			else
 			{
@@ -106,14 +111,14 @@ void SceneManager::Update()
 			else if (_runningScene == 1)
 			{
 				_game = new Game();
-				_game->Initialize(_renderer);
+				_game->Initialize(_renderer, _ids);
 				_currentScene.push_back(_game);
 			}
 
 			else if (_runningScene == 2)
 			{
 				_lobby = new Lobby();
-				_lobby->Initialize(_renderer);
+				_lobby->Initialize(_renderer, &_ids);
 				_currentScene.push_back(_lobby);
 			}
 
@@ -136,6 +141,8 @@ void SceneManager::Update()
 	else
 	{
 		_running = false;
+		if (NetworkHandler::Instance().GetConnected())
+			NetworkHandler::Instance().Disconnect();
 	}
 }
 

@@ -44,6 +44,7 @@ private:
 	Options*						_options;
 	About*							_about;
 	int								_runningScene;
+	std::vector<int>				_ids;
 
 	int								_previousScene;
 };

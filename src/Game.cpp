@@ -26,7 +26,7 @@ Game::~Game()
 	_world.~b2World();
 }
 
-void Game::Initialize(SDL_Renderer* renderer)
+void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 {
 	_renderer = renderer;
 
@@ -38,7 +38,7 @@ void Game::Initialize(SDL_Renderer* renderer)
 	_bodyFactory.Initialize(&_world);
 
 	Start();
-	LoadContent();
+	LoadContent(ids);
 
 	player = nullptr;
 
@@ -48,7 +48,7 @@ void Game::Initialize(SDL_Renderer* renderer)
 	BindInput();
 }
 
-void Game::LoadContent()
+void Game::LoadContent(const std::vector<int>& ids)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
 
@@ -60,7 +60,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
+	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints, ids);
 }
 
 
@@ -192,12 +192,7 @@ void Game::CleanUp()
 	//DESTROY HERE
 	_world.SetAllowSleeping(true);
 	_world.~b2World();
-
 	_systemManager.~SystemManager();
-
-	//SDL_DestroyWindow(_window);
-	//SDL_DestroyRenderer(_renderer);
-	//SDL_Quit();
 }
 
 

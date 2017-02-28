@@ -36,3 +36,13 @@ inline float pixelsToMeters(float pixels)
 {
 	return pixels / PIXELS_PER_METER;
 }
+
+inline float lerp(float start, float end, float percent)
+{
+	if (percent > 1.f)
+		percent = 1.f;
+	else if (percent < 0.f)
+		percent = 0.f;
+
+	return start + (percent * (end - start));
+}

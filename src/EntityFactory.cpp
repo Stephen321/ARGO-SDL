@@ -9,13 +9,13 @@
 #include "DestructionComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
+#include "RemoteComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
 #include "AnimationComponent.h"
 #include "WeaponComponent.h"
 
 #include "ConstHolder.h"
-
 
 
 
@@ -52,11 +52,14 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 	case EntityType::PowerUp:
 		entity = CreatePowerUpEntity(id);
 		break;
-	case EntityType::AI:
-		entity = CreateAIEntity(id);
-		break;
 	case EntityType::Player:
 		entity = CreatePlayerEntity(id);
+		break;
+	case EntityType::RemotePlayer:
+		entity = CreateRemotePlayerEntity(id);
+		break;
+	case EntityType::AI:
+		entity = CreateAIEntity(id);
 		break;
 	case EntityType::Weapon:
 		entity = CreateWeaponEntity(id);
@@ -88,12 +91,31 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
+	if (id != -1)//is in multiplayer game
+		player->AddComponent(new RemoteComponent(id));
 	player->AddComponent(new StatusEffectComponent());
 	player->AddComponent(new AnimationComponent());
 	player->AddComponent(new WeaponComponent());
 
 	return player;
 }
+
+Entity* EntityFactory::CreateRemotePlayerEntity(int id)
+{
+	Entity* remotePlayer = new Entity(EntityType::RemotePlayer);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+
+	remotePlayer->AddComponent(spriteComponent);
+	remotePlayer->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
+	remotePlayer->AddComponent(new ColliderComponent());
+	remotePlayer->AddComponent(new FlagComponent());
+	remotePlayer->AddComponent(new RemoteComponent(id));
+	remotePlayer->AddComponent(new StatusEffectComponent());
+
+	return remotePlayer;
+}
+
 Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);

@@ -2,8 +2,9 @@
 #include "PowerUpComponent.h"
 #include "BasicTypes.h"
 #include "Helpers.h"
+#include "NetworkHandler.h"
 
-void LevelLoader::LoadJson(const char* path, SystemManager& systemManager, BodyFactory* bodyFactory, Graph* waypoints)
+void LevelLoader::LoadJson(const char* path, SystemManager& systemManager, BodyFactory* bodyFactory, Graph* waypoints, const std::vector<int>& ids)
 {
 	FILE* fp = NULL;
 	fopen_s(&fp, path, "rb");
@@ -24,7 +25,7 @@ void LevelLoader::LoadJson(const char* path, SystemManager& systemManager, BodyF
 
 	const Value& layerArray = doc["layers"];
 	LoadTiles(layerArray[0u], systemManager,  doc["tilewidth"].GetInt(), doc["tileheight"].GetInt());
-	LoadEntities(layerArray[1], systemManager);
+	LoadEntities(layerArray[1], systemManager, ids);
 	LoadWaypoints(layerArray[2], systemManager, waypoints);
 	LoadColliders(layerArray[3], systemManager, bodyFactory);
 }
@@ -54,13 +55,12 @@ void LevelLoader::LoadTiles(const Value &tileLayer, SystemManager& systemManager
 	}
 }
 
-void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& systemManager)
+void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& systemManager, const std::vector<int>& ids)
 {
 	const Value& entityDataArray = entitiesLayer["objects"];
 
-	bool createAi = false;
-	bool createPlayer = false;
-
+	int playerCount = 0;
+	bool playerCreated = false;
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
@@ -74,10 +74,38 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		float h = entity["height"].GetFloat();
 		if (entityName == "PlayerSolo")
 		{
-			if (!createPlayer)
-			{ 
-				createPlayer = true;
+			//TODO: use ids here to determine type AI/Player/RemotePlayer, then use other stuff to create them
+			if (playerCount < ids.size())
+			{
+				if (ids[playerCount] == NetworkHandler::Instance().GetPlayerID())
+				{
+					std::vector<float> data = std::vector<float>();
 
+					data.push_back(NetworkHandler::Instance().GetPlayerID()); //id
+					data.push_back(x); //xPosition
+					data.push_back(y); //yPosition
+					data.push_back(w); //width
+					data.push_back(h); //height
+
+					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Player, data));
+				}
+				else
+				{
+					std::vector<float> data = std::vector<float>();
+
+					data.push_back(ids[playerCount]); //id
+					data.push_back(x); //xPosition
+					data.push_back(y); //yPosition
+					data.push_back(w); //width
+					data.push_back(h); //height
+
+					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::RemotePlayer, data));
+				}
+				playerCount++;
+			}
+			else if (ids.size() == 0 && playerCreated == false) //no remote players so first is player
+			{
+				playerCreated = true;
 				std::vector<float> data = std::vector<float>();
 
 				data.push_back(-1); //id
@@ -87,8 +115,9 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				data.push_back(h); //height
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Player, data));
+
 			}
-			else
+			else //fill rest with ai
 			{
 				std::vector<float> data = std::vector<float>();
 
@@ -100,7 +129,6 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
 			}
-			createAi = true;
 		}
 		else if (entityName == "Checkpoint")
 		{

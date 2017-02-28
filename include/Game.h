@@ -36,7 +36,7 @@ public:
 									Game();
 									~Game();
 
-	void							Initialize(SDL_Renderer* renderer) override;
+	void							Initialize(SDL_Renderer* renderer, const std::vector<int>& ids = std::vector<int>());
 
 	int								Update() override;
 	void							Render() override;
@@ -51,7 +51,7 @@ public:
 private:
 	void							BindInput();
 
-	void							LoadContent() override;
+	void							LoadContent(const std::vector<int>& ids);
 	void							CleanUp() override;
 
 	SDL_Texture*					LoadTexture(const std::string & path) override;

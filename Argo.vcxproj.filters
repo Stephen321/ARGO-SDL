@@ -201,6 +201,9 @@
     <ClInclude Include="include\Options.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="ServerProject\Net.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
     <ClInclude Include="include\FlagComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -212,6 +215,9 @@
     </ClInclude>
     <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkHandler.h">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\InteractionSystemEvents.h">
       <Filter>Header Files\Other</Filter>
@@ -237,7 +243,13 @@
     <ClInclude Include="include\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimationSystem.h">
+    <ClInclude Include="include\AnimationSystem.h">	
+      <Filter>Header Files\Components</Filter>
+	</ClInclude>
+    <ClInclude Include="include\RemoteComponent.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RemoteSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\WeaponComponent.h">
@@ -346,11 +358,17 @@
     <ClCompile Include="src\Options.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="ServerProject\Net.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\FlagCheckpointSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\UISystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkHandler.cpp">
+      <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="src\CreationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
@@ -363,6 +381,9 @@
     </ClCompile>
     <ClCompile Include="src\AnimationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+	  </ClCompile>
+      <ClCompile Include="src\RemoteSystem.cpp">
+        <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -7,7 +7,12 @@ Lobby::Lobby()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
 	, _functionMaster()
-	, _uiSystem(0)
+	, _uiSystem(0.f)
+	, _startingGame(false)
+	, _connectTimer(0.f)
+	, _readyTimer(READY_COUNTDOWN)
+	, _startReadyTimer(false)
+	, _countdownTextId(-1)
 {
 	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
@@ -18,8 +23,9 @@ Lobby::~Lobby()
 {
 }
 
-void Lobby::Initialize(SDL_Renderer* renderer)
+void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 {
+	_ids = ids;
 	_renderer = renderer;
 	_running = true;
 
@@ -33,14 +39,14 @@ void Lobby::Initialize(SDL_Renderer* renderer)
 	Entity* ui = new Entity(EntityType::UI);
 	_uiSystem.AddEntity(ui);
 
-	// Scene
-	//Start(); - activate when loaded
+	Start();// - activate when loaded
 	LoadContent();
 
-	//Input
-	BindInput();
 
 	Refresh();
+
+	_lastTime = LTimer::gameTime();
+	_readyTimer = READY_COUNTDOWN;
 }
 
 int Lobby::Update()
@@ -52,9 +58,112 @@ int Lobby::Update()
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
 	//save the curent time for next frame
-	_lastTime = currentTime;
 
-	return (int)_swapScene;
+	NetworkHandler& network = NetworkHandler::Instance();
+
+	if (network.GetConnected() == false)
+	{
+		_connectTimer += dt;
+		if (_connectTimer > CONNECT_RETRY)
+		{
+			ConnectData data;
+			network.Send(&data);
+			_connectTimer = 0.f;
+		}
+	}
+
+
+	ReceivedData receivedData = network.Receive();
+
+	if (receivedData.Empty() == false)
+	{
+
+		switch (receivedData.GetType())
+		{
+		case MessageType::Connect:
+		{
+			ConnectData data = receivedData.GetData<ConnectData>();
+			std::cout << "Got assigned ID: " << data.id << std::endl;
+			network.SetPlayerID(data.id);
+			network.SetConnected(true);
+			break;
+		}
+		case MessageType::SessionList:
+		{
+			SessionListData data = receivedData.GetData<SessionListData>();
+			std::cout << "Sessions Available: " << data.count << std::endl;
+			std::vector<Session> sessions;
+			for (int i = 0; i < data.count; i++)
+			{
+				Session s;
+				s.id = data.sessionIDs[i];
+				s.currentPlayers = data.currentPlayers[i];
+				std::cout << "Session ID: " << s.id;
+				std::cout << "  Players: " << s.currentPlayers << "/" << data.maxPlayers << std::endl;
+				sessions.push_back(s);
+			}
+			Refresh(sessions, data.maxPlayers);
+			break;
+		}//two below are sent at the same time in response to client sending joinSession. 
+		case MessageType::JoinSession:
+		{
+			JoinSessionData data = receivedData.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
+			std::cout << "Joined session: " << data.sessionID << std::endl;
+			network.SetSessionID(data.sessionID);
+			std::cout << "my id: " << NetworkHandler::Instance().GetPlayerID() << std::endl;
+			break;
+		}
+		case MessageType::PlayerList:
+		{
+			std::cout << "Player list data in lobby received" << std::endl;
+			PlayerListData data = receivedData.GetData<PlayerListData>();
+			for (int i = 0; i < data.count; i++)
+			{
+				std::cout << "Player: " << data.players[i] << std::endl;
+			}
+			std::cout << "my id: " << NetworkHandler::Instance().GetPlayerID() << std::endl;
+			Refresh(data.players);
+			break;
+		}
+		case MessageType::Ready:
+		{
+			std::cout << "Got ready message" << std::endl;
+			ReadyData data = receivedData.GetData<ReadyData>();
+			for (int i = 0; i < data.ids.size(); i++)
+			{
+				std::cout << "ID: " << data.ids[i] << " Ready: " << data.ready[i] << std::endl;
+			}
+			*_ids = data.ids;
+			if (data.allReady)
+			{
+				_startReadyTimer = true;
+			}
+			Refresh(data.ids, data.ready);
+			break;
+		}
+		//TODO: have to add in host change here, need host? make it so 4 players required to start and then they ready up
+		}
+	}
+
+	if (_startReadyTimer)
+	{
+		_uiSystem.DeleteDisplayTextByID(_countdownTextId);
+		_countdownTextId = _uiSystem.CreateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85, 255, 0, 0, 255);
+		_readyTimer -= dt;
+		if (_readyTimer < 0.f)
+		{//TODO: this has to be in sync
+			std::cout << "Starting game" << std::endl;
+			_startingGame = true;
+		}
+	}
+
+
+
+	_lastTime = currentTime;
+	if (_startingGame)
+		return (int)CurrentScene::GAME;
+	else
+		return (int)_swapScene;
 }
 
 void Lobby::Render()
@@ -76,11 +185,20 @@ bool Lobby::IsRunning()
 
 void Lobby::Start()
 {
+	//Input
+	BindInput();
+
+	ConnectData data;
+	NetworkHandler::Instance().Send(&data);
+
 	_swapScene = CurrentScene::LOBBY;
 }
 
 void Lobby::Stop()
 {
+	_inputManager->ResetKey(Event::BACKSPACE);
+	_inputManager->ResetKey(Event::h);
+
 	_running = false;
 	CleanUp();
 }
@@ -118,22 +236,41 @@ void Lobby::BindInput()
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
 
-	Command* pIn = new InputCommand([&]()
+	Command* rIn = new InputCommand([&]() //ready up
 	{
-		_uiSystem.DeleteText();
+		ReadyData data;
+		NetworkHandler::Instance().Send(&data);
+	}, Type::Press);
+	_inputManager->AddKey(Event::r, rIn, this);
+
+
+	Command* hIn = new InputCommand([&]() //host 
+	{
+		JoinSessionData data;
+		NetworkHandler::Instance().Send(&data);
+		//switch the player list scene
+		//change scene to players
+
+	}, Type::Press);
+	_inputManager->AddKey(Event::h, hIn, this);
+
+	Command* jIn = new InputCommand([&]() //join
+	{
+		JoinSessionData data;
+		data.sessionID = 0;
+		NetworkHandler::Instance().Send(&data);
+		//switch the player list scene
+		//change scene to players
+
 	}, Type::Press);
 
-	_inputManager->AddKey(Event::p, pIn, this);
+	_inputManager->AddKey(Event::j, jIn, this);
 
-	Command* oIn = new InputCommand([&]()
-	{
-		Refresh();
+
+	Command* backIn = new InputCommand([&]() { 
+		NetworkHandler::Instance().Disconnect();
+		_swapScene = Scene::CurrentScene::MAIN_MENU; 
 	}, Type::Press);
-
-	_inputManager->AddKey(Event::o, oIn, this);
-
-
-	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	_inputManager->AddListener(Event::ESCAPE, this);
@@ -170,22 +307,27 @@ void Lobby::MoveDown()
 	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
+
 int Lobby::GetPressedItem()
 {
 	// Index in menu
 	return _selectedItemIndex;
 }
 
-void Lobby::Refresh()
+void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
-
-	int amountOfLobbiesTest = 5;
-
-	for (int i = 0; i < amountOfLobbiesTest; i++)
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	if (sessions.empty())
+	{
+		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 200);
+	}
+	for (int i = 0; i < sessions.size(); i++)
 	{
 		std::ostringstream oss;
-		oss << "[" << i << "]" << " - " << i << "/" << 4;
+		oss << "[" << sessions[i].id << "]" << " - " << sessions[i].currentPlayers << "/" << maxPlayers;
 		std::string var = oss.str();
 
 		if (i == 0)
@@ -201,4 +343,50 @@ void Lobby::Refresh()
 
 	_uiSystem.CreateText("Create New Lobby", SCREEN_WIDTH / 4, 700);
 	_uiSystem.CreateText("Refresh", SCREEN_WIDTH / 1.5, 700);
+}
+
+void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
+{
+	if (ready.empty())
+	{
+		ready = std::vector<bool>(players.size(), false);
+	}
+	_uiSystem.DeleteText();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	for (int i = 0; i < players.size(); i++)
+	{
+		std::ostringstream oss;
+		oss << "Player [" << players[i] << "]";
+		if (players[i] == NetworkHandler::Instance().GetPlayerID())
+		{
+			oss << " (you!).";
+		}
+
+		std::string var = oss.str();
+		if (i == 0)
+		{
+			if (ready[i])
+			{
+				_uiSystem.CreateTextColoured(var, 50, 200, 0, 0, 255, 255);
+			}
+			else
+			{
+				_uiSystem.CreateText(var, 50, 200);
+			}
+		}
+
+		else
+		{
+			if (ready[i])
+			{
+				_uiSystem.CreateTextColoured(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50, 0, 0, 255, 255);
+			}
+			else
+			{
+				_uiSystem.CreateText(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50);
+			}
+		}
+	}
 }

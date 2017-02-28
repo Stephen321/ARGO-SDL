@@ -12,6 +12,7 @@
 #include "FlagCheckpointSystem.h"
 #include "WaypointSystem.h"
 #include "CreationSystem.h"
+#include "RemoteSystem.h"
 #include "StatusEffectSystem.h"
 #include "AnimationSystem.h"
 
@@ -21,9 +22,6 @@
 
 class SystemManager
 {
-public:
-	
-
 public:
 	typedef std::map<InteractionSystemType, InteractionSystem*>::iterator InteractionSystemMapIterator;
 	typedef std::map<SystemType, System*>::iterator SystemMapIterator;
@@ -61,9 +59,9 @@ public:
 	GunSystem*							GetGunSystem();
 	UISystem*							GetUISystem();
 	AISystem*							GetAISystem();
+	RemoteSystem*						GetRemoteSystem();
 	StatusEffectSystem*					GetStatusEffectSystem();
 	AnimationSystem*					GetAnimationSystem();
-
 	WeaponSystem*						GetWeaponInteractionSystem();
 	FlagCheckpointSystem*				GetFlagCheckpointSystem();
 

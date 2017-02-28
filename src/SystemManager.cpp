@@ -45,7 +45,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_systems[SystemType::Render] = rendererSystem;
 
 	//SETUP PHYSICS SYSTEM
-	PhysicsSystem* physicsSystem = new PhysicsSystem(0);
+	PhysicsSystem* physicsSystem = new PhysicsSystem(PHYSICS_SYSTEM_UPDATE);
 	_systems[SystemType::Physics] = physicsSystem;
 
 	//SETUP COLLISION SYSTEM
@@ -89,6 +89,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	AnimationSystem* animationSystem = new AnimationSystem();
 	animationSystem->Initialize();
 	_systems[SystemType::Animation] = animationSystem;
+
+	//SETUP remote SYSTEM
+	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
+	_remoteSystem->Initialize();
+	_systems[SystemType::Remote] = _remoteSystem;
 }
 
 void SystemManager::InitializeInteractionSystems()
@@ -336,6 +341,11 @@ AISystem* SystemManager::GetAISystem()
 	return static_cast<AISystem*>(_systems[SystemType::AI]);
 }
 
+RemoteSystem * SystemManager::GetRemoteSystem()
+{
+	return static_cast<RemoteSystem*>(_systems[SystemType::Remote]);
+}
+
 StatusEffectSystem* SystemManager::GetStatusEffectSystem()
 {
 	return static_cast<StatusEffectSystem*>(_systems[SystemType::StatusEffect]);
@@ -350,7 +360,6 @@ UISystem * SystemManager::GetUISystem()
 {
 	return static_cast<UISystem*>(_systems[SystemType::UI]);
 }
-
 #pragma endregion
 
 #pragma region Get Interaction Systems
