@@ -53,7 +53,7 @@ void PhysicsSystem::Process(float dt)
 				physics->xVelocity += (xDrag + (physics->xDir * xAccel)) * dt;//change dt to _updateRate?//maybe?
 				physics->yVelocity += (yDrag + (physics->yDir * yAccel)) * dt;
 
-				if (e->GetType() == EntityType::AI && e->GetType() == EntityType::Player && physics->xVelocity + physics->yVelocity != 0)
+				if ((e->GetType() == EntityType::AI || e->GetType() == EntityType::Player) && physics->xVelocity + physics->yVelocity != 0)
 				{
 					transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
 				}

@@ -3,7 +3,6 @@
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
 #include "AIComponent.h"
@@ -82,7 +81,6 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 
 	player->AddComponent(spriteComponent);
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
-	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
@@ -98,7 +96,6 @@ Entity* EntityFactory::CreateAIEntity(int id)
 
 	ai->AddComponent(spriteComponent);
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
-	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());

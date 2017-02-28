@@ -3,7 +3,6 @@
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
 #include "AIComponent.h"
