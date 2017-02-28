@@ -67,8 +67,6 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 	{
 		const Value& entity = entityDataArray[i];
 		string entityName = entity["name"].GetString();
-		
-		int	checkpointID = 0;
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
@@ -107,10 +105,10 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		}
 		else if (entityName == "Checkpoint")
 		{
-			checkpointID++;
+			std::string dataString = entity["type"].GetString();
 			std::vector<float> data = std::vector<float>();
 
-			data.push_back(checkpointID); //id
+			data.push_back(atoi(dataString.c_str())); //id
 			data.push_back(x); //xPosition
 			data.push_back(y); //yPosition
 			data.push_back(w); //width
@@ -169,11 +167,11 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 		}
 		else
 		{
-			int testdata = atoi(dataString.c_str());
-			nodeData = make_pair(GraphNode::EntityData::Checkpoint, testdata);
+			nodeData = make_pair(GraphNode::EntityData::Checkpoint, atoi(dataString.c_str()));
 		}
 		waypoints->addNode(nodeData, position);
 	}
+	int test = waypoints->getNodesSize();
 	//arc
 	for (int i = 0; i < wayPointSize; i++)
 	{

@@ -216,6 +216,66 @@ Entity* EntityFactory::CreateTileEntity(int id)
 		spriteComponent->sourceRect = { 2, 0, 0, 0 };
 		break;
 	}
+	case 4:
+	{
+		spriteComponent->sourceRect = { 3, 0, 0, 0 };
+		break;
+	}
+	case 5:
+	{
+		spriteComponent->sourceRect = { 4, 0, 0, 0 };
+		break;
+	}
+	case 6:
+	{
+		spriteComponent->sourceRect = { 0, 1, 0, 0 };
+		break;
+	}
+	case 7:
+	{
+		spriteComponent->sourceRect = { 1, 1, 0, 0 };
+		break;
+	}
+	case 8:
+	{
+		spriteComponent->sourceRect = { 2, 1, 0, 0 };
+		break;
+	}
+	case 9:
+	{
+		spriteComponent->sourceRect = { 3, 1, 0, 0 };
+		break;
+	}
+	case 10:
+	{
+		spriteComponent->sourceRect = { 4, 1, 0, 0 };
+		break;
+	}
+	case 11:
+	{
+		spriteComponent->sourceRect = { 0, 2, 0, 0 };
+		break;
+	}
+	case 12:
+	{
+		spriteComponent->sourceRect = { 1, 2, 0, 0 };
+		break;
+	}
+	case 13:
+	{
+		spriteComponent->sourceRect = { 2, 2, 0, 0 };
+		break;
+	}
+	case 14:
+	{
+		spriteComponent->sourceRect = { 3, 2, 0, 0 };
+		break;
+	}
+	case 15:
+	{
+		spriteComponent->sourceRect = { 4, 2, 0, 0 };
+		break;
+	}
 	default:
 		break;
 	}

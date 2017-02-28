@@ -48,6 +48,18 @@ void AISystem::Process(float dt)
 				{
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 					Seek(dt, e, ai, flag, transform);
+					if (ai->path.size() > 2)
+					{
+						float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
+						int radii = AI_NODE_COLLISION_RADIUS + NODE_RADIUS;
+						//if ((AB.x*AB.x + AB.y*AB.y) < radii*radii)
+						if (distance < AI_NODE_COLLISION_RADIUS)
+						{
+							ai->path.erase(ai->path.begin());
+							ai->nextNode = ai->path.front();
+						}
+
+					}
 					break;
 				}
 				case AIState::Camp:
@@ -60,6 +72,17 @@ void AISystem::Process(float dt)
 				{
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 					SeekCheckpoint(ai, flag, transform);
+					if (ai->path.size() > 1)
+					{
+						float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
+						int radii = AI_NODE_COLLISION_RADIUS + NODE_RADIUS;
+						//if ((AB.x*AB.x + AB.y*AB.y) < radii*radii)
+						if (distance < AI_NODE_COLLISION_RADIUS)
+						{
+							ai->path.erase(ai->path.begin());
+							ai->nextNode = ai->path[0];
+						}
+					}
 					break;
 				}
 				
@@ -72,18 +95,11 @@ void AISystem::Process(float dt)
 				
 
 				
-				if (ai->path.size() > 2)
-				{
-					float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-					if (distance < AI_NODE_COLLISION_RADIUS)
-					{
 
-						ai->path.erase(ai->path.begin());
+					
 
-						ai->nextNode = ai->path[0];
 
-					}
-				}
+				
 				
 	
 				
@@ -107,19 +123,19 @@ void AISystem::Process(float dt)
 						vy += ay * dt // 
 						*/
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
+					helper::Vector2 AB = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
 					//go to path
 
 
 					//go to checkpoint
-
-
-					helper::Vector2 AB = ai->nextNode->getPosition() - helper::Vector2(transform->rect.x, transform->rect.y);
+					
+	
 				
 					
 
 					
 					
-
+					/*
 					
 					if (ai->path.size() > 1)
 					{
@@ -132,7 +148,7 @@ void AISystem::Process(float dt)
 						//helper::Vector2 dot = x1*x2 + y1*y2;
 						//helper::Vector2 det = x1*y2 - y1*x2;
 						//angle = atan2(det, dot)
-					}
+					}*/
 
 					
 
@@ -141,7 +157,7 @@ void AISystem::Process(float dt)
 					physics->xDir = direction.x;
 					physics->yDir = direction.y;
 
-					float force = 3.0f;
+					float force = 4.0f;
 					physics->xAcceleration = force;
 					physics->yAcceleration = force;
 
@@ -184,8 +200,9 @@ GraphNode* AISystem::DetermineClosestNode(TransformComponent* t)
 	int size = nodes.size();
 	for (int i = 0; i < size; i++)
 	{
+		
 		float distance = (nodes[i]->getPosition() - helper::Vector2(t->rect.x, t->rect.y)).length();
-		if (distance < closestNodeDistance)
+		if (distance < closestNodeDistance && distance < AI_NODE_COLLISION_RADIUS)
 		{
 			closestNodeDistance = distance;
 			closestNodeIndex = i;
@@ -202,14 +219,17 @@ void AISystem::AStar(AIComponent* ai)
 	_waypoints->setHeuristics(ai->nextNode);
 
 	//call AStar
-	_waypoints->aStar(ai->nextNode, ai->destNode, path);
-
+	//_waypoints->aStar(ai->nextNode, ai->destNode, path);
+	_waypoints->aStar(ai->nextNode , ai->destNode, path);
 	//set colouraaa
 	ai->destNode->setColour(SDL_Color{ 255,0,0,255 });
 	ai->nextNode->setColour(SDL_Color{ 0,255,0,255 });
 
 	if (!path.empty())
+	{
 		ai->path = path;
+		
+	}
 }
 
 void AISystem::Entry(AIComponent* ai, TransformComponent* t)
@@ -288,13 +308,13 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 			int size = _checkpointNode.size();
 			for (int i = 0; i < size; i++)
 			{
-				if (f->currentCheckpointID == _checkpointNode[i]->data().second)
+				if (f->currentCheckpointID + 1== _checkpointNode[i]->data().second)
 				{
 					ai->destNode = _checkpointNode[i];
 					break;
 				}
 			}
-			ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate; //set timer to update AStar
+			ai->nextNode = DetermineClosestNode(t);
 			AStar(ai);   //manual call on AStar.
 		}
 	}
@@ -304,7 +324,7 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 		ai->state = AIState::SeekFlag;
 		ai->destNode = _flagNode;
 		ai->nextNode = DetermineClosestNode(t);	
-		ai->pathfinderUpdateTimer = 0;
-		AStar(ai);
+		//ai->pathfinderUpdateTimer = 0;
+		//AStar(ai);
 	}
 }

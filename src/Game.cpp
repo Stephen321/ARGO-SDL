@@ -57,7 +57,7 @@ void Game::Initialize(SDL_Renderer* renderer)
 
 void Game::LoadContent()
 {
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
@@ -66,7 +66,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints);
+	_levelLoader.LoadJson("Media/Json/NormalMap.json", _systemManager, &_bodyFactory, &_waypoints);
 }
 
 

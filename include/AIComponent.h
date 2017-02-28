@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "GraphNode.h"
+
 enum class AIState
 {
 	Entry,
@@ -17,7 +18,7 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		pathFinderUpdateRate(1.f),
+		pathFinderUpdateRate(1.5f),
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
 		flagDetectionRange(false),
@@ -33,7 +34,7 @@ public:
 	vector<GraphNode*> path;
 	float pathFinderUpdateRate;
 	float pathfinderUpdateTimer;
-
+	float closestNodeDelayTimer;
 	GraphNode* destNode;
 	GraphNode* nextNode;
 

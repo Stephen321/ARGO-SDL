@@ -38,31 +38,36 @@ private:
 			float distanceToDest = ai->destNode->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
 			if (distanceToDest < AI_FLAG_DETECTION_RADIUS)
 			{
-				ai->nextNode = ai->destNode;
+			    ai->nextNode = ai->destNode;
 				ai->flagDetectionRange = true;
 			}
-			else 
+			else
 			{
 				float updateRate = ai->pathFinderUpdateRate;
 				float updateTimer = ai->pathfinderUpdateTimer;
 				//check for closest node
+				//float distanceToFlag = ai->flagDetectionRange->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
 				if (ai->flagDetectionRange)
 				{
+					ai->closestNodeDelayTimer += dt;
 					ai->flagDetectionRange = false; //not in anymore, call and determin closest node
 					ai->nextNode = DetermineClosestNode(t);
 					updateTimer = 0;
 				}
+				
 				//update Astar
-		
 				updateTimer += dt;
 				if (updateTimer > updateRate)
 				{
+					std::cout << "calling ASTAR!!!";
 					updateTimer -= updateRate;
 					AStar(ai);
+					//ai->nextNode = ai->path.front();
 				}
 				ai->pathfinderUpdateTimer = updateTimer;
-				Prediction();
+				//Prediction();
 			}
+			
 		}
 		else
 		{
@@ -72,7 +77,7 @@ private:
 			int size = _checkpointNode.size();
 			for (int i = 0; i < size; i++)
 			{
-				if (f->currentCheckpointID == _checkpointNode[i]->data().second)
+				if (f->currentCheckpointID + 1 == _checkpointNode[i]->data().second)
 				{
 					ai->destNode = _checkpointNode[i];
 					break;
@@ -80,6 +85,7 @@ private:
 			}
 			ai->pathfinderUpdateTimer = ai->pathFinderUpdateRate; //set timer to update AStar
 			AStar(ai);   //manual call on AStar.
+			
 		}
 	}
 
