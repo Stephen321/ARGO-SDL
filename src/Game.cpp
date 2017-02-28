@@ -197,7 +197,7 @@ void Game::CleanUp()
 
 	//SDL_DestroyWindow(_window);
 	//SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
+	//SDL_Quit();
 }
 
 
