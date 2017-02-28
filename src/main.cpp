@@ -7,7 +7,6 @@
 
 #include "SceneManager.h"
 #include "Game.h"
-#include "Debug.h"
 #include "NetworkHandler.h"
 
 using namespace std;
@@ -25,10 +24,8 @@ int main(int argc, char** argv)
 	SceneManager* sceneManager = new SceneManager();
 
 	//Adjust screen positions as needed
-	DEBUG_MSG("Game Initialising");
 	sceneManager->Initialize("Argo",100,100,1600,900, SDL_WINDOW_INPUT_FOCUS);
 
-	DEBUG_MSG("Game Loop Starting......");
 	LTimer capTimer;//to cap framerate
 
 	while (sceneManager->IsRunning())

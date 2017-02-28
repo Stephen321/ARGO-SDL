@@ -42,7 +42,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP RENDER SYSTEM
 	RenderSystem* rendererSystem = new RenderSystem(0);
-	rendererSystem->Initialize(renderer, &cameraSystem->getCamera());
+	rendererSystem->Initialize(renderer, &cameraSystem->GetCamera());
 	_systems[SystemType::Render] = rendererSystem;
 
 	//SETUP PHYSICS SYSTEM
@@ -368,5 +368,5 @@ FlagCheckpointSystem* SystemManager::GetFlagCheckpointSystem()
 
 Camera2D::Camera& SystemManager::GetCamera()
 {
-	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->getCamera();
+	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->GetCamera();
 }

@@ -40,9 +40,9 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Start();
 	LoadContent(ids);
 
-	player = nullptr;
+	_player = nullptr;
 
-	_systemManager.PostInitialize(player);
+	_systemManager.PostInitialize(_player);
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -146,16 +146,16 @@ void Game::BindInput()
 
 	_inputManager->AddKey(Event::NUM_0, nIn, this);
 
-	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, _player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, _player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, _player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, _player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
@@ -174,8 +174,8 @@ void Game::BindInput()
 
 	Command* spaceIn = new InputCommand([&]()
 	{
-		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
-		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(_player->GetComponent(Component::Type::Weapon));
+		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
 
 		if (!statusEffect->staggered && weapon->hasWeapon)
 		{
@@ -192,30 +192,6 @@ void Game::CleanUp()
 	_world.SetAllowSleeping(true);
 	_world.~b2World();
 	_systemManager.~SystemManager();
-}
-
-
-SDL_Texture* Game::LoadTexture(const std::string & path)
-{
-	SDL_Texture* texture = NULL;
-
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(_renderer, surface);
-		if (texture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-
-		SDL_FreeSurface(surface);
-	}
-
-	return texture;
 }
 
 void Game::DebugBox2D()

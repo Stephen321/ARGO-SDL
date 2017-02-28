@@ -1,15 +1,16 @@
 #include "MainMenu.h"
 
+#include "ConstHolder.h"
+
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 
 MainMenu::MainMenu()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
-	, _functionMaster()
 	, _uiSystem(0)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }

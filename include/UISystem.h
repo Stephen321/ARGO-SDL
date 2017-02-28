@@ -40,8 +40,8 @@ public:
 	int								CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 	void							DeleteDisplayTextByID(int id);
 
-	std::vector<SDL_Rect>&	GetInteractiveTextRectangle();
-	std::vector<SDL_Rect>&	GetDisplayTextRectangle();
+	std::vector<SDL_Rect>&			GetInteractiveTextRectangle();
+	std::vector<SDL_Rect>&			GetDisplayTextRectangle();
 
 private:
 	SDL_Renderer*					_renderer;

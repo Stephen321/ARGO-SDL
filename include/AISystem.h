@@ -11,13 +11,13 @@ using namespace helper;
 class AISystem : public System
 {
 public:
-	AISystem(float updateRate = 0.f);
-	~AISystem();
+			AISystem(float updateRate = 0.f);
+			~AISystem();
 
-	void Initialize(Graph* waypoints);
-	void Process(float dt = 0.f) override;
+	void	Initialize(Graph* waypoints);
+	void	Process(float dt = 0.f) override;
 
 private:
-	Graph* _waypoints;
+	Graph*	_waypoints;
 };
 

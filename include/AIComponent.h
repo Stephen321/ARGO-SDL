@@ -22,8 +22,11 @@ public:
 
 public:
 	vector<GraphNode*> path;
-	float updateRate;
-	float updateTimer;
-	bool callAstar;
-	GraphNode* startingNode;
+
+	GraphNode*			startingNode;
+
+	float				updateRate;
+	float				updateTimer;
+
+	bool				callAstar;
 };

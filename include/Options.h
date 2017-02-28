@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Scene.h"
+#include "RenderSystem.h"
+#include "UISystem.h"
+#include "CameraSystem.h"
 
 class Options : public EventListener, public Scene
 {
@@ -26,21 +29,19 @@ private:
 	void							LoadContent() override;
 	void							CleanUp() override;
 
-private:
-	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
-	CameraSystem					_cameraSystem;
-	UISystem						_uiSystem;
-
-private:
 	void							MoveUp();
 	void							MoveDown();
 
 	int								GetPressedItem();
-	int								_selectedItemIndex;
-
 
 	std::string						GetMusicVolume();
 	std::string						GetHumVolume();
+
+private:
+	RenderSystem					_renderSystem;
+	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
+
+	int								_selectedItemIndex;
 };
 

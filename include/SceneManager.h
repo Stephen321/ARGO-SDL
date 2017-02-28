@@ -11,13 +11,12 @@
 #include "Options.h"
 #include "About.h"
 
-#include "CameraSystem.h"
 
 class SceneManager
 {
 public:
-	SceneManager();
-	~SceneManager();
+									SceneManager();
+									~SceneManager();
 
 	bool							Initialize(const char* title, int xpos, int ypos, int width, int height, int flags);
 	void							Update();
@@ -28,14 +27,6 @@ private:
 	bool							SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags);
 
 private:
-	SDL_Window*						_window;
-	SDL_Renderer*					_renderer;
-
-	bool							_running;
-
-	CameraSystem					_cameraSystem;
-
-private:
 	std::vector<Scene*>				_currentScene;
 
 	MainMenu*						_menu;
@@ -43,9 +34,15 @@ private:
 	Lobby*							_lobby;
 	Options*						_options;
 	About*							_about;
-	int								_runningScene;
+
+	SDL_Window*						_window;
+	SDL_Renderer*					_renderer;
+
 	std::vector<int>				_ids;
 
+	int								_runningScene;
 	int								_previousScene;
+
+	bool							_running;
 };
 

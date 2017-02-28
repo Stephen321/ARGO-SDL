@@ -1,12 +1,13 @@
 #include "Lobby.h"
 
+#include "ConstHolder.h"
+
 #include <string>
 #include <sstream>
 
 Lobby::Lobby()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
-	, _functionMaster()
 	, _uiSystem(0.f)
 	, _startingGame(false)
 	, _connectTimer(0.f)
@@ -14,7 +15,7 @@ Lobby::Lobby()
 	, _startReadyTimer(false)
 	, _countdownTextId(-1)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }

@@ -1,5 +1,4 @@
 #include "LevelLoader.h"
-#include "PowerUpComponent.h"
 #include "BasicTypes.h"
 #include "Helpers.h"
 #include "NetworkHandler.h"

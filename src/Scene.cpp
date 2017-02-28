@@ -1,6 +1,4 @@
 #include "Scene.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
 
 Scene::Scene()
 	: _running(false)

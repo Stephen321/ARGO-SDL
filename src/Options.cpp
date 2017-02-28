@@ -1,15 +1,16 @@
 #include "Options.h"
 
+#include "ConstHolder.h"
+
 #include <string>
 #include <sstream>
 
 Options::Options()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
-	, _functionMaster()
 	, _uiSystem(0)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
