@@ -112,7 +112,7 @@ void Lobby::BindInput()
 {
 	Command* enterIn = new InputCommand([&]()
 	{
-		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) { _running = false; }
+		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() - 1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 	}, Type::Press);
 
@@ -149,15 +149,15 @@ void Lobby::MoveUp()
 	else
 	{
 		// _textRectangle.size() - 2 = 1 before icon
-		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+		_selectedItemIndex = _uiSystem.GetInteractiveTextRectangle().size() - 1;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 void Lobby::MoveDown()
 {
-	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	if (_selectedItemIndex < _uiSystem.GetInteractiveTextRectangle().size() - 1)
 	{
 		_selectedItemIndex++;
 	}
@@ -166,8 +166,8 @@ void Lobby::MoveDown()
 	{
 		_selectedItemIndex = 0;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 int Lobby::GetPressedItem()
@@ -195,7 +195,7 @@ void Lobby::Refresh()
 
 		else
 		{
-			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+			_uiSystem.CreateText(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50);
 		}
 	}
 

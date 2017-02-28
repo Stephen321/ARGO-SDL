@@ -147,18 +147,9 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 
 		helper::Vector2 position = helper::Vector2(x + w*.5f, y + h*.5f);
 
-		std::vector<float> data = std::vector<float>();
-
-		data.push_back(rand() % ((int)PowerUpComponent::Type::Count+1)); //id
-		data.push_back(x); //xPosition
-		data.push_back(y); //yPosition
-
-		systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::PowerUp, data));
-
 		const Value& properties = entity["properties"];
-		int currentNode = properties["node"].GetInt();
 
-		waypoints->addNode(to_string(currentNode), position);
+		waypoints->addNode("", position);
 	}
 	//arc
 	for (int i = 0; i < wayPointSize; i++)

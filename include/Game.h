@@ -49,7 +49,7 @@ public:
 	void							OnEvent(Event evt) override;
 
 private:
-	void							BindInput(Entity* player);
+	void							BindInput();
 
 	void							LoadContent() override;
 	void							CleanUp() override;
@@ -79,6 +79,8 @@ private:
 
 	SystemManager					_systemManager;
 	FunctionMaster					_functionMaster;
+
+	Entity*							player;
 };
 
 #endif

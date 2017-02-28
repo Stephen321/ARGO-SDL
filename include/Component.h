@@ -22,6 +22,7 @@ public:
 		StatusEffect,
 		PowerUp,
 		Animation,
+		Weapon,
 	};
 
 public:
