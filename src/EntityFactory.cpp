@@ -11,11 +11,8 @@
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
-<<<<<<< HEAD
 #include "AnimationComponent.h"
-=======
 #include "WeaponComponent.h"
->>>>>>> master
 
 #include "ConstHolder.h"
 
@@ -86,21 +83,14 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 
 
 	player->AddComponent(spriteComponent);
-<<<<<<< HEAD
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
-	player->AddComponent(new HealthComponent(100, 100, true));
-=======
 	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
->>>>>>> master
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
 	player->AddComponent(new StatusEffectComponent());
-<<<<<<< HEAD
 	player->AddComponent(new AnimationComponent());
-=======
 	player->AddComponent(new WeaponComponent());
->>>>>>> master
 
 	return player;
 }
@@ -110,22 +100,15 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
 
 	ai->AddComponent(spriteComponent);
-<<<<<<< HEAD
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
-	ai->AddComponent(new HealthComponent(100, 100, true));
-=======
 	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
->>>>>>> master
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
 	ai->AddComponent(new StatusEffectComponent());
-<<<<<<< HEAD
 	ai->AddComponent(new AnimationComponent());
-=======
 	ai->AddComponent(new WeaponComponent());
->>>>>>> master
 
 	return ai;
 }
