@@ -38,8 +38,6 @@ private:
 	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
-	CurrentScene					_swapScene;
-
 private:
 	void							MoveUp();
 	void							MoveDown();
@@ -53,7 +51,7 @@ private:
 	const int						READY_COUNTDOWN = 3;
 	bool							_startReadyTimer;
 	int								_countdownTextId;
-
+	
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
 	void							Refresh(const std::vector<int>& players, std::vector<bool> ready = std::vector<bool>());
 };

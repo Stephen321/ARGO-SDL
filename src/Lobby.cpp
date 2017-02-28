@@ -32,6 +32,8 @@ void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 	_selectedItemIndex = 0;
 
 	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	// UI
 	_uiSystem.Initialize(_renderer);
 
 	Entity* ui = new Entity(EntityType::UI);

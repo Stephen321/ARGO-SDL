@@ -10,6 +10,4 @@ public:
 
 	void							MoveHorizontal(int dir, Entity*& entity);
 	void							MoveVertical(int dir, Entity*& entity);
-
-	void							FireBullet(Entity*& entity);
 };

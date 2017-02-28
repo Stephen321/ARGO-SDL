@@ -35,6 +35,10 @@ void NetworkHandler::Send(MessageData * data, const char * destHost, int destPor
 
 void NetworkHandler::Send(MessageData * data)
 {
+	if (_net._testSocketCreated == false)
+	{
+		init(6000);
+	}
 	data->id = _playerID;
 	if (data->sessionID == -1)
 	{
@@ -50,5 +54,6 @@ Network::ReceivedData NetworkHandler::Receive()
 
 void NetworkHandler::init(int port)
 {
+	std::cout << " init called " << std::endl;
 	_net = Net(port);
 }

@@ -3,15 +3,14 @@
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "HealthComponent.h"
 #include "SpriteComponent.h"
 #include "GunComponent.h"
 #include "AIComponent.h"
-#include "DestructionComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "WeaponComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -105,15 +104,24 @@ void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& 
 void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entity*& other)
 {
 	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(other->GetComponent(Component::Type::Checkpoint));
 
 	if (flagComponent->hasFlag)
 	{
-		flagComponent->currentCheckpointID++;
-
-		if (flagComponent->currentCheckpointID == 4)
+		if (flagComponent->currentCheckpointID + 1 == checkpoint->id)
 		{
-			flagComponent->currentCheckpointID = 0;
-			flagComponent->currentLap++;
+			flagComponent->currentCheckpointID++;
+
+			if (flagComponent->currentCheckpointID == 4)
+			{
+				flagComponent->currentCheckpointID = 0;
+				flagComponent->currentLap++;
+
+				if (flagComponent->currentLap == 4)
+				{
+					//WINNER
+				}
+			}
 		}
 	}
 }
@@ -124,16 +132,27 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 	if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
 	{
 		TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
 
-		std::vector<float> data = std::vector<float>();
+		if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+		{
+			_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+		}
+		else
+		{
+			std::vector<float> data = std::vector<float>();
 
-		data.push_back((int)powerUp->type); //id
-		data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-		data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back((int)powerUp->type); //id
+			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
+			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
 
-		_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+			weapon->hasWeapon = true;
+			weapon->id = (int)powerUp->type;
 
-		_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+
+			_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+		}
 	}
 	else
 	{
@@ -144,28 +163,42 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 		case PowerUpComponent::Type::Invicibility:
 			statusEffects->invincible = true;
 			statusEffects->invincibleTimer += INVINCIBLE_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Invisibility:
 			statusEffects->invisible = true;
 			statusEffects->invisibleTimer += INVISIBLE_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Speed:
 			statusEffects->speedUp = true;
 			statusEffects->speedUpTimer += SPEED_UP_MAX_TIMER;
+			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
 			break;
 		default:
 			break;
 		}
 	}
 
-	static_cast<DestructionComponent*>(other->GetComponent(Component::Type::Destroy))->destroy = true;
+	_interactionSystemEvents.at(InteractionSystemEvent::PowerUpDestoyed).push_back(std::pair<Entity*, Entity*>(other, player));
 }
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {
-	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
+	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-	statusEffects->staggered = true;
-	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+	if (!statusEffects->invincible)
+	{
+		//static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(0, 0));
+
+		if (statusEffects->invisible)
+		{
+			statusEffects->invisible = false;
+			statusEffects->invisibleTimer = 0;
+		}
+
+		statusEffects->staggered = true;
+		statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+	}
 }
 void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
 {
@@ -189,8 +222,19 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	if (pFlag->hasFlag)
 	{
-		if (!otherStatusEffects->staggered)
+		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
 		{
+			if (playerStatusEffects->invisible)
+			{
+				playerStatusEffects->invisible = false;
+				playerStatusEffects->invisibleTimer = 0;
+			}
+			if (otherStatusEffects->invisible)
+			{
+				otherStatusEffects->invisible = false;
+				otherStatusEffects->invisibleTimer = 0;
+			}
+
 			playerStatusEffects->staggered = true;
 			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
@@ -199,8 +243,19 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 	}
 	else if (oFlag->hasFlag)
 	{
-		if (!playerStatusEffects->staggered)
+		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
 		{
+			if (playerStatusEffects->invisible)
+			{
+				playerStatusEffects->invisible = false;
+				playerStatusEffects->invisibleTimer = 0;
+			}
+			if (otherStatusEffects->invisible)
+			{
+				otherStatusEffects->invisible = false;
+				otherStatusEffects->invisibleTimer = 0;
+			}
+
 			otherStatusEffects->staggered = true;
 			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 

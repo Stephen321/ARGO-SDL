@@ -9,6 +9,7 @@ Network::Net::Net(int port, int packetSize)
 		std::cout << "Failed to open socket on port " << port << std::endl;
 	}
 	_packet = SDLNet_AllocPacket(packetSize);
+	_testSocketCreated = true;
 }
 
 Network::Net::Net()

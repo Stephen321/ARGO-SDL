@@ -2,7 +2,7 @@
 
 #include "System.h"
 #include "PhysicsSystem.h"
-#include "PhysicsComponent.h"
+
 #include "ConstHolder.h"
 #include "Helpers.h"
 #include "Graph.h"

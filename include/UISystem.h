@@ -33,8 +33,8 @@ public:
 	void							CreateTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
 	void							UpdateText(std::string message, int index);
+	void							UpdateTextAtCenter(std::string message, int index);
 	void							UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
-
 
 	void							CreateDisplayText(std::string message, int x, int y);
 	int								CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);

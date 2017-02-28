@@ -73,16 +73,16 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_systems[SystemType::AI] = aiSystem;
 
 	//SETUP WORLD SYSTEM
-	WaypointSystem* waypointSystem = new WaypointSystem(0);
+	WaypointSystem* waypointSystem = new WaypointSystem(_creationRequests, _interactionSystemEvents, 0);
 	waypointSystem->Initialize(waypoints);
 	_systems[SystemType::World] = waypointSystem;
 
-	//SETUP Destroy SYSTEM
+	//SETUP DESTROY SYSTEM
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
 	destructionSystem->Initialize(world);
 	_systems[SystemType::Destruction] = destructionSystem;
 
-	//SETUP Creation SYSTEM
+	//SETUP CREATION SYSTEM
 	_creationSystem = new CreationSystem(_creationRequests);
 	_creationSystem->Initialize(entityFactory, bodyFactory);
 

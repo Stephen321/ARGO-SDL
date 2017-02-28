@@ -155,9 +155,9 @@ void RemoteSystem::Process(float dt)
 		transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
 
-		//calculate angle
+		//calculate angle lerped between start and end state velocities
 		if (remote->startState.xVel + remote->startState.yVel != 0)
-		{ //angle set to velocity (velocity is whatever the last packet we received said it was
+		{ 
 			if (remote->endState.xVel + remote->endState.yVel != 0)
 			{
 				float startAngle = atan2(remote->startState.yVel, remote->startState.xVel) * 180.f / M_PI;
@@ -180,9 +180,7 @@ void RemoteSystem::Process(float dt)
 						endAngle += 360.f;
 					}
 				}
-
 				transform->angle = lerp(startAngle, endAngle, percent);
-				std::cout << "start angle: " << startAngle << "  , " << endAngle << ".   " << transform->angle << std::endl;
 			}
 		}
 

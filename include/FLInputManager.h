@@ -222,16 +222,16 @@ private:
 	//* Dictionary holding a list of litener objects for each event
 	std::map<EventListener::Event, std::vector<EventListener*>*> listeners; //* Pointer to vector of EventListeners
 
-																			//* Dictionary holding a bool for each event
+    //* Dictionary holding a bool for each event
 	std::map<EventListener::Event, bool> beingHeld; //* Bool used to detect if the desired Event was previously being held
 
-													//* Dictionary holding a list of command objects for each event
+    //* Dictionary holding a list of command objects for each event
 	std::map<EventListener::Event, std::vector<Command*>*> commands; //* Pointer to vector of Commands
 
-																	 //* Dictionary holding a bool for each event
+    //* Dictionary holding a bool for each event
 	std::map<EventListener::Event, bool> controllerHeld; //* Bool used to detect if the desired Event was previously being held
 
-														 //// Instance Variables
+    //// Instance Variables
 public:
 	//* Used to get the Class Instance
 	static InputManager* GetInstance();

@@ -198,7 +198,7 @@ namespace Network
 		void Send(MessageData* data, const char * destHost, int destPort);
 		void Send(MessageData* data, IPaddress destAddr);
 		ReceivedData Receive();
-
+		bool	_testSocketCreated;
 	private:
 		void WriteInt(int value);
 		int ReadInt(int& byteOffset);

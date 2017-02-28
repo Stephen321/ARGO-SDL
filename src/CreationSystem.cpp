@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
 #include "CheckpointComponent.h"
+#include "PowerUpComponent.h"
 
 #include "BasicTypes.h"
 #include "Helpers.h"
@@ -231,15 +232,17 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPowerUpEntity(c
 	ColliderComponent* collider = static_cast<ColliderComponent*>(powerUp->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(powerUp->GetComponent(Component::Type::Transform));
 	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(powerUp->GetComponent(Component::Type::Sprite));
+	PowerUpComponent* powerUpComponent = static_cast<PowerUpComponent*>(powerUp->GetComponent(Component::Type::PowerUp));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
 	//SetupSize(transform, information.second, index);
+	powerUpComponent->waypointIndex = (int)information.second.at(index);
 
-	spriteComponent->sourceRect.x *= transform->rect.w;
+	/*spriteComponent->sourceRect.x *= transform->rect.w;
 	spriteComponent->sourceRect.y *= transform->rect.h;
 	spriteComponent->sourceRect.w = transform->rect.w;
-	spriteComponent->sourceRect.h = transform->rect.h;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody

@@ -21,7 +21,8 @@ public:
 		Flag,
 		StatusEffect,
 		PowerUp,
-		Remote
+		Remote,
+		Weapon,
 	};
 
 public:
