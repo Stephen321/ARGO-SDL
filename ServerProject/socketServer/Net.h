@@ -14,7 +14,8 @@ namespace Network
 		JoinSession,
 		SetHost,
 		PlayerList,
-		Ready
+		Ready,
+		PickUpFlag
 	};
 
 	struct MessageData {
@@ -34,8 +35,6 @@ namespace Network
 		float yPos;
 		float xVel;
 		float yVel;
-		float xAccel;
-		float yAccel;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }
@@ -72,6 +71,10 @@ namespace Network
 		std::vector<int> ids;
 		std::vector<bool> ready;
 		bool allReady;
+	};
+
+	struct PickUpFlagData : MessageData {
+		PickUpFlagData() { type = MessageType::PickUpFlag; }
 	};
 
 
@@ -131,6 +134,11 @@ namespace Network
 			case MessageType::Ready:
 			{
 				_data = new ReadyData(rhs.GetData<ReadyData>());
+				break;
+			}
+			case MessageType::PickUpFlag:
+			{
+				_data = new PickUpFlagData(rhs.GetData<PickUpFlagData>());
 				break;
 			}
 			}
@@ -196,10 +204,11 @@ namespace Network
 	{
 	public:
 		Net(int port, int packetSize = 256);
+		Net();
 		void Send(MessageData* data, const char * destHost, int destPort);
 		void Send(MessageData* data, IPaddress destAddr);
 		ReceivedData Receive();
-
+		bool	_testSocketCreated;
 	private:
 		void WriteInt(int value);
 		int ReadInt(int& byteOffset);

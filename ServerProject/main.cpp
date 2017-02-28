@@ -91,6 +91,7 @@ bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress addr
 	return false;
 }
 
+#undef main
 int main(int argc, char** argv)
 {
 
@@ -144,6 +145,7 @@ int main(int argc, char** argv)
 			{
 				std::cout << "Sessions JoinSession: " << sessions.size() << std::endl;
 				JoinSessionData data = receiveData.GetData<JoinSessionData>();
+				std::cout << "JoinSession SessionID: " << data.sessionID << std::endl;
 				if (exists(spectators, data.id) == false)//first check that the player isn't a spectator
 				{
 					break;
@@ -221,6 +223,20 @@ int main(int argc, char** argv)
 						{
 							std::cout << "Session: " << data.sessionID << " has 0 players and will be removed." << std::endl;
 							sessions.erase(sessions.find(data.sessionID));
+						}
+						else
+						{ //update the other players player lists
+							std::cout << "Notify other players. " << std::endl;
+							PlayerListData pldata;
+							pldata.count = sessions[data.sessionID].GetPlayerCount();
+							pldata.players = sessions[data.sessionID].GetPlayerIDs();
+							for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+							{
+								if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)
+								{
+									net.Send(&pldata, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+								}
+							}
 						}
 					}
 					else //only a spectator

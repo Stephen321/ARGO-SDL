@@ -91,6 +91,7 @@ bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress addr
 	return false;
 }
 
+#undef main
 int main(int argc, char** argv)
 {
 
@@ -222,6 +223,20 @@ int main(int argc, char** argv)
 							std::cout << "Session: " << data.sessionID << " has 0 players and will be removed." << std::endl;
 							sessions.erase(sessions.find(data.sessionID));
 						}
+						else
+						{ //update the other players player lists
+							std::cout << "Notify other players. " << std::endl;
+							PlayerListData pldata;
+							pldata.count = sessions[data.sessionID].GetPlayerCount();
+							pldata.players = sessions[data.sessionID].GetPlayerIDs();
+							for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+							{
+								if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)
+								{
+									net.Send(&pldata, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+								}
+							}
+						}
 					}
 					else //only a spectator
 					{
@@ -266,6 +281,7 @@ int main(int argc, char** argv)
 				{
 					std::cout << "State message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
 					//got state data from player, relay this data on to all other players in the session
+					//server or clients store data???
 					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
 					{
 						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player

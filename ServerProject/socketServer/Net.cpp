@@ -9,6 +9,11 @@ Network::Net::Net(int port, int packetSize)
 		std::cout << "Failed to open socket on port " << port << std::endl;
 	}
 	_packet = SDLNet_AllocPacket(packetSize);
+	_testSocketCreated = true;
+}
+
+Network::Net::Net()
+{
 }
 
 void Network::Net::Send(MessageData * data, const char * destHost, int destPort)
@@ -54,8 +59,6 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yPos);
 		WriteFloat(sendData->xVel);
 		WriteFloat(sendData->yVel);
-		WriteFloat(sendData->xAccel);
-		WriteFloat(sendData->yAccel);
 		break;
 	}
 	case MessageType::SessionList:
@@ -104,8 +107,6 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 
 	_packet->address.host = destAddr.host;
 	_packet->address.port = destAddr.port;
-	std::cout << "Sending a " << GetTypeAsString(type).c_str() << " packet to: " << destAddr.host << ":" << destAddr.port << std::endl;
-	//_packet->len--;
 	if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
 		std::cout << "Failed to send packet." << std::endl;
 }
@@ -145,8 +146,6 @@ Network::ReceivedData Network::Net::Receive()
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
 			data.yVel = ReadFloat(byteOffset);
-			data.xAccel = ReadFloat(byteOffset);
-			data.yAccel = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -290,6 +289,9 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 		break;
 	case MessageType::Ready:
 		s = "Ready";
+		break;
+	case MessageType::PickUpFlag:
+		s = "PickUpFlag";
 		break;
 	}
 	return s;
