@@ -234,18 +234,15 @@
     <ClInclude Include="include\AudioManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="include\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\AnimationSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-=======
     <ClInclude Include="include\WeaponComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
->>>>>>> master
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">
