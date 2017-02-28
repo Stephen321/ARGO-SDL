@@ -230,15 +230,8 @@ void Lobby::BindInput()
 {
 	Command* enterIn = new InputCommand([&]()
 	{
-		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() - 1) 
-		{
-			//there should be no quit button in here
-			//_running = false;
-		}
-		else 
-		{
-			_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
-		}
+		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() - 1) { _running = false; }
+		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
@@ -293,15 +286,15 @@ void Lobby::MoveUp()
 	else
 	{
 		// _textRectangle.size() - 2 = 1 before icon
-		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+		_selectedItemIndex = _uiSystem.GetInteractiveTextRectangle().size() - 1;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 void Lobby::MoveDown()
 {
-	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	if (_selectedItemIndex < _uiSystem.GetInteractiveTextRectangle().size() - 1)
 	{
 		_selectedItemIndex++;
 	}
@@ -310,8 +303,8 @@ void Lobby::MoveDown()
 	{
 		_selectedItemIndex = 0;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 
@@ -344,7 +337,7 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 
 		else
 		{
-			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+			_uiSystem.CreateText(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50);
 		}
 	}
 }
@@ -385,11 +378,11 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 		{
 			if (ready[i])
 			{
-				_uiSystem.CreateTextColoured(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50, 0, 0, 255, 255);
+				_uiSystem.CreateTextColoured(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50, 0, 0, 255, 255);
 			}
 			else
 			{
-				_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
+				_uiSystem.CreateText(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50);
 			}
 		}
 	}

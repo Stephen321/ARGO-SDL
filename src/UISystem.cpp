@@ -301,3 +301,12 @@ void UISystem::DeleteDisplayTextByID(int id)
 	if (id >= 0 && id < _displayTextTexture.size())
 		SDL_DestroyTexture(_displayTextTexture[id]);
 }
+
+std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle()
+{
+	return _displayTextRectangle;
+}
+std::vector<SDL_Rect>& UISystem::GetInteractiveTextRectangle()
+{
+	return _interactiveTextRectangle;
+}

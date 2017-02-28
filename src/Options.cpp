@@ -130,28 +130,28 @@ void Options::BindInput()
 		SDL_Point mousePos = _inputManager->GetMousePos();
 		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
 
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[0]))) 
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[0]))) 
 		{ 
 			_audioManager->SetMusicVolume(false); 
 			_uiSystem.UpdateTextAtCenter(GetMusicVolume(), 1);
 			_audioManager->PlayFX("Hum");
 		}
 
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[2]))) 
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[2])))
 		{ 
 			_audioManager->SetMusicVolume(true);
 			_uiSystem.UpdateTextAtCenter(GetMusicVolume(), 1);
 			_audioManager->PlayFX("Hum");
 		}
 
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[3])))
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[3])))
 		{
 			_audioManager->SetHumVolume(false);
 			_uiSystem.UpdateTextAtCenter(GetHumVolume(), 4);
 			_audioManager->PlayFX("Hum");
 		}
 
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[5])))
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[5])))
 		{
 			_audioManager->SetHumVolume(true);
 			_uiSystem.UpdateTextAtCenter(GetHumVolume(), 4);
@@ -179,15 +179,15 @@ void Options::MoveUp()
 	else
 	{
 		// _textRectangle.size() - 2 = 1 before icon
-		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+		_selectedItemIndex = _uiSystem.GetInteractiveTextRectangle().size() - 1;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 void Options::MoveDown()
 {
-	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	if (_selectedItemIndex < _uiSystem.GetInteractiveTextRectangle().size() - 1)
 	{
 		_selectedItemIndex++;
 	}
@@ -197,8 +197,8 @@ void Options::MoveDown()
 	{
 		_selectedItemIndex = 0;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 int Options::GetPressedItem()
