@@ -193,10 +193,6 @@ void Game::CleanUp()
 	_world.~b2World();
 
 	_systemManager.~SystemManager();
-
-	//SDL_DestroyWindow(_window);
-	//SDL_DestroyRenderer(_renderer);
-	SDL_Quit();
 }
 
 
