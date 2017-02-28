@@ -194,6 +194,7 @@ namespace Network
 	{
 	public:
 		Net(int port, int packetSize = 256);
+		Net();
 		void Send(MessageData* data, const char * destHost, int destPort);
 		void Send(MessageData* data, IPaddress destAddr);
 		ReceivedData Receive();

@@ -11,6 +11,10 @@ Network::Net::Net(int port, int packetSize)
 	_packet = SDLNet_AllocPacket(packetSize);
 }
 
+Network::Net::Net()
+{
+}
+
 void Network::Net::Send(MessageData * data, const char * destHost, int destPort)
 {
 	IPaddress destAddr;

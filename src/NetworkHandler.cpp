@@ -15,8 +15,8 @@ void NetworkHandler::Disconnect()
 }
 
 NetworkHandler::NetworkHandler()
-	: _net(6001)//PORT)
-	, _playerID(-1)
+	:// _net(6001)//PORT)
+	 _playerID(-1)
 	, _sessionID(-1)
 {
 	SDLNet_ResolveHost(&_serverIP, "localhost", 5228);// "localhost", 5228);
@@ -46,4 +46,9 @@ void NetworkHandler::Send(MessageData * data)
 Network::ReceivedData NetworkHandler::Receive()
 {
 	return _net.Receive();
+}
+
+void NetworkHandler::init(int port)
+{
+	_net = Net(port);
 }

@@ -161,7 +161,26 @@ void RemoteSystem::Process(float dt)
 			if (remote->endState.xVel + remote->endState.yVel != 0)
 			{
 				float startAngle = atan2(remote->startState.yVel, remote->startState.xVel) * 180.f / M_PI;
+				if (startAngle < 0.f)
+					startAngle += 360.f;
 				float endAngle = atan2(remote->endState.yVel, remote->endState.xVel) * 180.f / M_PI;
+				if (endAngle < 0.f)
+					endAngle += 360.f;
+				if (startAngle < 20.f && endAngle > 340.f)
+					startAngle += 360.f;
+
+				if (abs(endAngle - startAngle) > 180.f)
+				{
+					if (startAngle < endAngle)
+					{
+						startAngle += 360.f;
+					}
+					else if (endAngle < startAngle)
+					{
+						endAngle += 360.f;
+					}
+				}
+
 				transform->angle = lerp(startAngle, endAngle, percent);
 				std::cout << "start angle: " << startAngle << "  , " << endAngle << ".   " << transform->angle << std::endl;
 			}

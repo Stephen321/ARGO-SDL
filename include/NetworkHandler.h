@@ -25,6 +25,7 @@ public:
 	void SetPlayerID(int id) { _playerID = id; }
 	bool GetSessionID() const { return _sessionID; };
 	int GetPlayerID() const { return _playerID; };
+	void init(int port);
 
 private:
 	const int PORT = 5228; 

@@ -165,7 +165,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
 
 copy "$(ProjectDir)Dependencies\SDL2_image-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
-copy "$(ProjectDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll"  "$(TargetDir)"
+copy "$(ProjectDir)Dependencies\SDL2_net-2.0.1\lib\x86\*.dll"  "$(TargetDir)"
 
 copy "$(ProjectDir)Dependencies\SDL2_ttf-2.0.14\lib\x86\*.dll"  "$(TargetDir)"
 
