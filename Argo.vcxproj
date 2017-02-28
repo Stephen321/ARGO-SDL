@@ -248,7 +248,6 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\StatusEffectComponent.h" />
     <ClInclude Include="include\StatusEffectSystem.h" />
     <ClInclude Include="include\SystemTypes.h" />
-    <ClInclude Include="include\WaypointComponent.h" />
     <ClInclude Include="include\Options.h" />
     <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\PhysicsComponent.h" />

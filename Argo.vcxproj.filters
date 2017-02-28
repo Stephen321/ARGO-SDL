@@ -183,9 +183,6 @@
     <ClInclude Include="include\AIComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\WaypointComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\WaypointSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>

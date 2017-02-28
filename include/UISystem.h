@@ -38,14 +38,17 @@ public:
 	void							CreateDisplayText(std::string message, int x, int y);
 	void							CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
-	std::vector<SDL_Rect>			_displayTextRectangle;
-	std::vector<SDL_Rect>			_interactiveTextRectangle;
+	const std::vector<SDL_Rect>&	GetDisplayTextRectangle() const;
+	const std::vector<SDL_Rect>&	GetInteractiveTextRectangle() const;
 
 private:
 	SDL_Renderer*					_renderer;
 
 	TTF_Font*						_font = NULL;
 	int								_fontSize;
+
+	std::vector<SDL_Rect>			_displayTextRectangle;
+	std::vector<SDL_Rect>			_interactiveTextRectangle;
 
 	std::vector<SDL_Texture*>		_displayTextTexture;
 	std::vector<SDL_Texture*>		_interactiveTextTexture;

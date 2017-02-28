@@ -282,3 +282,13 @@ void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
 }
+
+
+const std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle() const
+{
+	return _displayTextRectangle;
+}
+const std::vector<SDL_Rect>& UISystem::GetInteractiveTextRectangle() const
+{
+	return _interactiveTextRectangle;
+}
