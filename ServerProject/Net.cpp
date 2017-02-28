@@ -107,8 +107,6 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 
 	_packet->address.host = destAddr.host;
 	_packet->address.port = destAddr.port;
-	std::cout << "Sending a " << GetTypeAsString(type).c_str() << " packet to: " << destAddr.host << ":" << destAddr.port << std::endl;
-	//_packet->len--;
 	if (SDLNet_UDP_Send(_socket, -1, _packet) == 0)
 		std::cout << "Failed to send packet." << std::endl;
 }
@@ -291,6 +289,9 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 		break;
 	case MessageType::Ready:
 		s = "Ready";
+		break;
+	case MessageType::PickUpFlag:
+		s = "PickUpFlag";
 		break;
 	}
 	return s;

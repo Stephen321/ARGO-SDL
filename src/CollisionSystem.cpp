@@ -65,7 +65,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || other->GetType() == EntityType::RemotePlayer)
+			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player)
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;

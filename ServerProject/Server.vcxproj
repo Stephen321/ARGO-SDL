@@ -100,7 +100,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86;$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"
@@ -148,7 +148,7 @@ call $(ProjectDir)updateServer.bat</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SDL2-2.0.4\lib\x86;$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)Dependencies\SDL2_net-2.0.1\lib\x86\SDL2_net.dll" "$(TargetDir)"

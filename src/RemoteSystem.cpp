@@ -62,13 +62,11 @@ void RemoteSystem::Process(float dt)
 				RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
 				if (remote->id == data.id) //we just received state data for this remote player
 				{
-					std::cout << "Received state data from " << data.id << std::endl;
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 
 					if (remote->timeSincePacket > _updateRate * 1.5f) //recover from packet loss, need to converge back to new position
 					{
-						std::cout << "got first packet after Packet loss, linear converge to where we will be (+ velocity)!" << std::endl;
 						remote->startState.xPos = collider->body->GetPosition().x;
 						remote->startState.yPos = collider->body->GetPosition().y;
 						//remote->startState.r = rb.rotation; velocity?
@@ -140,8 +138,6 @@ void RemoteSystem::Process(float dt)
 
 		if (percent > 1.2f)//start extrapolating as the packet is late
 		{
-			//set velocity to the velocity we had in the last packet we received
-			std::cout << "Start extrapolating" << std::endl;
 			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
 		}
 		else //lerp between last packet and current packet receivedsss

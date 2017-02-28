@@ -14,7 +14,8 @@ namespace Network
 		JoinSession,
 		SetHost,
 		PlayerList,
-		Ready
+		Ready,
+		PickUpFlag
 	};
 
 	struct MessageData {
@@ -70,6 +71,10 @@ namespace Network
 		std::vector<int> ids;
 		std::vector<bool> ready;
 		bool allReady;
+	};
+
+	struct PickUpFlagData : MessageData {
+		PickUpFlagData() { type = MessageType::PickUpFlag; }
 	};
 
 
@@ -129,6 +134,11 @@ namespace Network
 			case MessageType::Ready:
 			{
 				_data = new ReadyData(rhs.GetData<ReadyData>());
+				break;
+			}
+			case MessageType::PickUpFlag:
+			{
+				_data = new PickUpFlagData(rhs.GetData<PickUpFlagData>());
 				break;
 			}
 			}
