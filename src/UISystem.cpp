@@ -180,7 +180,6 @@ void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Ui
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
-
 }
 
 void UISystem::UpdateText(std::string message, int index)
