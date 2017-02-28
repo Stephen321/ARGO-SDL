@@ -1,5 +1,6 @@
 #include "AISystem.h"
 #include "AIComponent.h"
+#include "PhysicsComponent.h"
 #include "TransformComponent.h" 
 
 
