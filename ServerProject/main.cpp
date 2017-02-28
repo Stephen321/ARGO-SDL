@@ -175,6 +175,7 @@ int main(int argc, char** argv)
 
 					//now tell the player what session they have just joined and the player list?. player list is in different scene so that scene could send a seperate message
 					data.sessionID = sessionID;
+					data.host = true; //if made a new session then we are the host
 				}
 				RemoveSpectator(spectators, srcAddr);
 				net.Send(&data, srcAddr); //send joinsession

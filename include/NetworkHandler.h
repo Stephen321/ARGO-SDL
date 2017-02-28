@@ -19,7 +19,9 @@ public:
 	NetworkHandler& operator=(NetworkHandler const&) = delete;
 	NetworkHandler& operator=(NetworkHandler &&) = delete;
 	bool GetConnected() const { return _connected; };
-	void SetConnected(bool connected) {	_connected = connected;	}
+	void SetConnected(bool connected) { _connected = connected; }
+	bool GetHost() const { return _host; };
+	void SetHost(bool host) { _host = host; }
 	void Disconnect();
 	void SetSessionID(int id) { _sessionID = id; }
 	void SetPlayerID(int id) { _playerID = id; }
@@ -34,6 +36,7 @@ private:
 	int _sessionID;
 	int _playerID;
 	IPaddress _serverIP;
+	bool _host;
 
 private:
 	NetworkHandler();

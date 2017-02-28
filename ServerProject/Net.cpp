@@ -76,6 +76,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	case MessageType::JoinSession:
 	{
 		JoinSessionData* sendData = (JoinSessionData*)data;
+		WriteBool(sendData->host);
 		break;
 	}
 	case MessageType::PlayerList:
@@ -165,6 +166,7 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::JoinSession:
 		{
 			JoinSessionData data;
+			data.host = ReadBool(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

@@ -110,6 +110,8 @@ int Lobby::Update()
 			JoinSessionData data = receivedData.GetData<JoinSessionData>(); //client gets session id, switch scene to player list, get id before or after scene switch??
 			std::cout << "Joined session: " << data.sessionID << std::endl;
 			network.SetSessionID(data.sessionID);
+			network.SetHost(data.host);
+			std::cout << "host :  " << data.host << std::endl;
 			std::cout << "my id: " << NetworkHandler::Instance().GetPlayerID() << std::endl;
 			break;
 		}

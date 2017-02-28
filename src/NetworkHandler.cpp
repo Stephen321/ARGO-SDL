@@ -16,10 +16,11 @@ void NetworkHandler::Disconnect()
 
 NetworkHandler::NetworkHandler()
 	:// _net(6001)//PORT)
-	 _playerID(-1)
+		_playerID(-1)
 	, _sessionID(-1)
+	, _host(false)
 {
-	SDLNet_ResolveHost(&_serverIP, "34.251.127.190", 5228);// "localhost", 5228);
+	SDLNet_ResolveHost(&_serverIP, "localhost", 5228);// "localhost", 5228);
 }
 
 NetworkHandler::~NetworkHandler()

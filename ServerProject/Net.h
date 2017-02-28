@@ -53,7 +53,8 @@ namespace Network
 	};
 
 	struct JoinSessionData : MessageData {
-		JoinSessionData() { type = MessageType::JoinSession; }
+		JoinSessionData() : host(false) { type = MessageType::JoinSession; }
+		bool host;
 	};
 
 	struct SetHostData : MessageData {
