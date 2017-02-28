@@ -65,15 +65,26 @@ void PhysicsSystem::Process(float dt)
 					physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
 				}
 
-				if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
-				if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
 				if (e->GetType() == EntityType::Bullet)
 				{
+					if (std::abs(physics->xVelocity) < 0.5f) 
+					{ 
+						physics->xVelocity = 0.f; 
+					}
+					if (std::abs(physics->yVelocity) < 0.5f) 
+					{ 
+						physics->yVelocity = 0.f; 
+					}
+
 					if (physics->xVelocity + physics->yVelocity == 0)
 					{
 						static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
 					}
+				}
+				else
+				{
+					if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
+					if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
 				}
 
 				if (collider->body->IsActive())
