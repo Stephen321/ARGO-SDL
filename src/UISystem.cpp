@@ -284,11 +284,11 @@ void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint
 }
 
 
-const std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle() const
+std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle()
 {
 	return _displayTextRectangle;
 }
-const std::vector<SDL_Rect>& UISystem::GetInteractiveTextRectangle() const
+std::vector<SDL_Rect>& UISystem::GetInteractiveTextRectangle()
 {
 	return _interactiveTextRectangle;
 }

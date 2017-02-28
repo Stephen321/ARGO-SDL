@@ -107,12 +107,12 @@ void MainMenu::LoadContent()
 {
 	// Text
 	_uiSystem.CreateText("Arcade Mode", 25, 450);
-	_uiSystem.CreateText("Multiplayer", _uiSystem._interactiveTextRectangle[0].x + _uiSystem._interactiveTextRectangle[0].w / 2, _uiSystem._interactiveTextRectangle[0].y + 100);
-	_uiSystem.CreateText("Options", _uiSystem._interactiveTextRectangle[1].x + _uiSystem._interactiveTextRectangle[1].w / 2, _uiSystem._interactiveTextRectangle[1].y + 100);
-	_uiSystem.CreateText("About", _uiSystem._interactiveTextRectangle[2].x + _uiSystem._interactiveTextRectangle[2].w / 2, _uiSystem._interactiveTextRectangle[2].y + 100);
-	_uiSystem.CreateText("Quit", _uiSystem._interactiveTextRectangle[3].x + _uiSystem._interactiveTextRectangle[3].w / 2, _uiSystem._interactiveTextRectangle[3].y + 100);
+	_uiSystem.CreateText("Multiplayer", _uiSystem.GetInteractiveTextRectangle()[0].x + _uiSystem.GetInteractiveTextRectangle()[0].w / 2, _uiSystem.GetInteractiveTextRectangle()[0].y + 100);
+	_uiSystem.CreateText("Options", _uiSystem.GetInteractiveTextRectangle()[1].x + _uiSystem.GetInteractiveTextRectangle()[1].w / 2, _uiSystem.GetInteractiveTextRectangle()[1].y + 100);
+	_uiSystem.CreateText("About", _uiSystem.GetInteractiveTextRectangle()[2].x + _uiSystem.GetInteractiveTextRectangle()[2].w / 2, _uiSystem.GetInteractiveTextRectangle()[2].y + 100);
+	_uiSystem.CreateText("Quit", _uiSystem.GetInteractiveTextRectangle()[3].x + _uiSystem.GetInteractiveTextRectangle()[3].w / 2, _uiSystem.GetInteractiveTextRectangle()[3].y + 100);
 
-	_uiSystem.CreateDisplayTextColoured(">", _uiSystem._interactiveTextRectangle[0].x + _uiSystem._interactiveTextRectangle[0].w + 50, _uiSystem._interactiveTextRectangle[0].y, 255, 0, 0, 255);
+	_uiSystem.CreateDisplayTextColoured(">", _uiSystem.GetInteractiveTextRectangle()[0].x + _uiSystem.GetInteractiveTextRectangle()[0].w + 50, _uiSystem.GetInteractiveTextRectangle()[0].y, 255, 0, 0, 255);
 
 	//TTF_CloseFont(_font); // Free Font Memory
 }
@@ -126,7 +126,7 @@ void MainMenu::BindInput()
 {
 	Command* enterIn = new InputCommand([&]() 
 	{ 
-		if (_selectedItemIndex == _uiSystem._interactiveTextRectangle.size() -1) { _running = false; }
+		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() -1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 	}, Type::Press);
 
@@ -137,10 +137,10 @@ void MainMenu::BindInput()
 		SDL_Point mousePos = _inputManager->GetMousePos();
 		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
 
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle.back()))) { _running = false; }
-		for (int i = 0; i < _uiSystem._interactiveTextRectangle.size() - 1; i++)
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle().back()))) { _running = false; }
+		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size() - 1; i++)
 		{
-			if (SDL_HasIntersection(&mouseRect, &(_uiSystem._interactiveTextRectangle[i]))) 
+			if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[i]))) 
 			{ 
 				_selectedItemIndex = i;
 				_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
@@ -171,15 +171,15 @@ void MainMenu::MoveUp()
 	else
 	{
 		// _textRectangle.size() - 2 = 1 before icon
-		_selectedItemIndex = _uiSystem._interactiveTextRectangle.size() - 1;
+		_selectedItemIndex = _uiSystem.GetInteractiveTextRectangle().size() - 1;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 void MainMenu::MoveDown()
 {
-	if (_selectedItemIndex < _uiSystem._interactiveTextRectangle.size() - 1)
+	if (_selectedItemIndex < _uiSystem.GetInteractiveTextRectangle().size() - 1)
 	{
 		_selectedItemIndex++;
 	}
@@ -189,8 +189,8 @@ void MainMenu::MoveDown()
 	{
 		_selectedItemIndex = 0;
 	}
-	_uiSystem._displayTextRectangle.back().x = _uiSystem._interactiveTextRectangle[_selectedItemIndex].x + _uiSystem._interactiveTextRectangle[_selectedItemIndex].w + 50;
-	_uiSystem._displayTextRectangle.back().y = _uiSystem._interactiveTextRectangle[_selectedItemIndex].y;
+	_uiSystem.GetDisplayTextRectangle().back().x = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].x + _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].w + 50;
+	_uiSystem.GetDisplayTextRectangle().back().y = _uiSystem.GetInteractiveTextRectangle()[_selectedItemIndex].y;
 }
 
 int MainMenu::GetPressedItem()

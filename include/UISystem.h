@@ -38,8 +38,8 @@ public:
 	void							CreateDisplayText(std::string message, int x, int y);
 	void							CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
-	const std::vector<SDL_Rect>&	GetDisplayTextRectangle() const;
-	const std::vector<SDL_Rect>&	GetInteractiveTextRectangle() const;
+	std::vector<SDL_Rect>&	GetInteractiveTextRectangle();
+	std::vector<SDL_Rect>&	GetDisplayTextRectangle();
 
 private:
 	SDL_Renderer*					_renderer;

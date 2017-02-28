@@ -224,17 +224,6 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 	{
 		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
 		{
-			if (playerStatusEffects->invisible)
-			{
-				playerStatusEffects->invisible = false;
-				playerStatusEffects->invisibleTimer = 0;
-			}
-			if (otherStatusEffects->invisible)
-			{
-				otherStatusEffects->invisible = false;
-				otherStatusEffects->invisibleTimer = 0;
-			}
-
 			playerStatusEffects->staggered = true;
 			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
@@ -245,22 +234,22 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 	{
 		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
 		{
-			if (playerStatusEffects->invisible)
-			{
-				playerStatusEffects->invisible = false;
-				playerStatusEffects->invisibleTimer = 0;
-			}
-			if (otherStatusEffects->invisible)
-			{
-				otherStatusEffects->invisible = false;
-				otherStatusEffects->invisibleTimer = 0;
-			}
-
 			otherStatusEffects->staggered = true;
 			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
+	}
+
+	if (playerStatusEffects->invisible)
+	{
+		playerStatusEffects->invisible = false;
+		playerStatusEffects->invisibleTimer = 0;
+	}
+	if (otherStatusEffects->invisible)
+	{
+		otherStatusEffects->invisible = false;
+		otherStatusEffects->invisibleTimer = 0;
 	}
 }
 
