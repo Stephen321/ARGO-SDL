@@ -12,6 +12,7 @@ enum class SystemType
 	AI,
 	World,
 	StatusEffect,
+	Animation
 };
 
 enum class InteractionSystemType

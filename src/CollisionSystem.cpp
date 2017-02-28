@@ -12,6 +12,7 @@
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "AnimationComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -166,6 +167,9 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 
 	statusEffects->staggered = true;
 	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+
+	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+	animation->state = AnimationComponent::State::Staggered;
 }
 void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
 {
@@ -207,6 +211,9 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
 	}
+
+	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+	animation->state = AnimationComponent::State::Bumping;
 }
 
 void CollisionSystem::EndContact(b2Contact* contact)
@@ -322,6 +329,9 @@ void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, En
 			physics->yVelocity = -physics->yVelocity * PLAYER_WALL_RESTITUTION;
 		}
 	}
+
+	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+	animation->state = AnimationComponent::State::Bumping;
 }
 
 void CollisionSystem::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)
@@ -387,10 +397,24 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 		if (contact->GetFixtureA()->GetBody()->GetUserData() == "Obstacle")
 		{
 			player = static_cast<Entity*>(contact->GetFixtureB()->GetBody()->GetUserData());
+
+			// Wall Collision
+			if (player->GetType() == EntityType::Player || player->GetType() == EntityType::AI)
+			{
+				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+				animation->state = AnimationComponent::State::Bumping;
+			}
 		}
 		else
 		{
 			player = static_cast<Entity*>(contact->GetFixtureA()->GetBody()->GetUserData());
+
+			// Wall Collision
+			if (player->GetType() == EntityType::Player || player->GetType() == EntityType::AI)
+			{
+				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+				animation->state = AnimationComponent::State::Bumping;
+			}
 		}
 	}
 }

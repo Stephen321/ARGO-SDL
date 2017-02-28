@@ -121,10 +121,16 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(player->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	//SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x = 0;
+	spriteComponent->sourceRect.y = 0;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		  b2BodyType::b2_dynamicBody
@@ -144,6 +150,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	systemTypes.push_back(SystemType::Camera);
 	systemTypes.push_back(SystemType::World);
 	systemTypes.push_back(SystemType::StatusEffect);
+	systemTypes.push_back(SystemType::Animation);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, player);
 

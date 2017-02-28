@@ -12,6 +12,7 @@
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "AnimationComponent.h"
 
 #include "ConstHolder.h"
 
@@ -79,13 +80,16 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	Entity* player = new Entity(EntityType::Player);
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
 
+
+
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
 	player->AddComponent(new HealthComponent(100, 100, true));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
 	player->AddComponent(new StatusEffectComponent());
+	player->AddComponent(new AnimationComponent());
 
 	return player;
 }
@@ -95,13 +99,14 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
 
 	ai->AddComponent(spriteComponent);
-	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
 	ai->AddComponent(new HealthComponent(100, 100, true));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
 	ai->AddComponent(new AIComponent());
 	ai->AddComponent(new StatusEffectComponent());
+	ai->AddComponent(new AnimationComponent());
 
 	return ai;
 }

@@ -116,6 +116,33 @@ void Options::LoadContent()
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 300);
 
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 300);
+
+	// Fire
+	_uiSystem.CreateDisplayText("Weapon Volume    =    ", SCREEN_WIDTH / 4, 400);
+
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 400);
+
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 400);
+
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 400);
+
+	// Collision
+	_uiSystem.CreateDisplayText("Collision Volume    =    ", SCREEN_WIDTH / 4, 500);
+
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 500);
+
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 500);
+
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 500);
+
+	// Checkpoint
+	_uiSystem.CreateDisplayText("Checkpoint Volume    =    ", SCREEN_WIDTH / 4, 600);
+
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 600);
+
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 600);
+
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 600);
 }
 
 void Options::CleanUp()

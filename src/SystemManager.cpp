@@ -8,7 +8,6 @@ SystemManager::SystemManager()
 {
 }
 
-
 SystemManager::~SystemManager()
 {
 	delete _creationSystem;
@@ -85,7 +84,13 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	//SETUP Destroy SYSTEM
 	_creationSystem = new CreationSystem(_creationRequests);
 	_creationSystem->Initialize(entityFactory, bodyFactory);
+
+	//SETUP Animation SYSTEM
+	AnimationSystem* animationSystem = new AnimationSystem();
+	animationSystem->Initialize();
+	_systems[SystemType::Animation] = animationSystem;
 }
+
 void SystemManager::InitializeInteractionSystems()
 {
 	//SETUP WEAPON INTERACTION SYSTEM
@@ -334,6 +339,11 @@ AISystem* SystemManager::GetAISystem()
 StatusEffectSystem* SystemManager::GetStatusEffectSystem()
 {
 	return static_cast<StatusEffectSystem*>(_systems[SystemType::StatusEffect]);
+}
+
+AnimationSystem * SystemManager::GetAnimationSystem()
+{
+	return static_cast<AnimationSystem*>(_systems[SystemType::Animation]);
 }
 
 UISystem * SystemManager::GetUISystem()

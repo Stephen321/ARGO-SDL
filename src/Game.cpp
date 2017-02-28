@@ -61,7 +61,7 @@ void Game::LoadContent()
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/playerSS.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
@@ -144,14 +144,7 @@ void Game::OnEvent(EventListener::Event evt)
 
 void Game::BindInput(Entity* player)
 {
-	// Delete Key binding
-	Command* nIn = new InputCommand([&]()
-	{
-		_inputManager->EmptyKey(Event::BACKSPACE);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_0, nIn, this);
-
+	// In
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
@@ -164,18 +157,26 @@ void Game::BindInput(Entity* player)
 	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
+
+	// Up
+	Command* wUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, player), Type::Release);
+	_inputManager->AddKey(Event::w, wUp, this);
+
+	Command* aUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, player), Type::Release);
+	_inputManager->AddKey(Event::a, aUp, this);
+
+	Command* sUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, player), Type::Release);
+	_inputManager->AddKey(Event::s, sUp, this);
+
+	Command* dUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, player), Type::Release);
+	_inputManager->AddKey(Event::d, dUp, this);
+
+
+	// Back to Main Menu
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
-	// Recreate key binding
-	Command* noIn = new InputCommand([&]()
-	{
-		Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
-		_inputManager->AddKey(Event::BACKSPACE, backIn, this);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_1, noIn, this);
-
+	// Exit Game
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 

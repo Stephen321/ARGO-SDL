@@ -198,4 +198,7 @@ void Lobby::Refresh()
 			_uiSystem.CreateText(var, 50, _uiSystem._interactiveTextRectangle[i - 1].y + 50);
 		}
 	}
+
+	_uiSystem.CreateText("Create New Lobby", SCREEN_WIDTH / 4, 700);
+	_uiSystem.CreateText("Refresh", SCREEN_WIDTH / 1.5, 700);
 }
