@@ -5,11 +5,9 @@
 #include "LTimer.h"
 #include "NetworkHandler.h"
 
-
 SceneManager::SceneManager()
 {
 }
-
 
 SceneManager::~SceneManager()
 {
@@ -85,6 +83,7 @@ void SceneManager::Update()
 			_currentScene.back()->Stop();
 
 			// Delete Object
+			//Change numbers into enums, use switch instead of ifs
 			//delete _currentScene.back();
 
 			_currentScene.pop_back();

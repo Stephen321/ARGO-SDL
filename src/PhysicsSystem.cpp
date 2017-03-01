@@ -95,11 +95,11 @@ void PhysicsSystem::Process(float dt)
 					transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 				}
 
-				if (e->GetType() == EntityType::Player)
-				{
-					physics->xDir = 0;
-					physics->yDir = 0;
-				}
+				//if (e->GetType() == EntityType::Player)
+				//{
+					//physics->xDir = 0;
+					//physics->yDir = 0;
+				//}
 			}
 		}
 	}

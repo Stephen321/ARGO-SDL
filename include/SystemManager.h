@@ -14,6 +14,7 @@
 #include "CreationSystem.h"
 #include "RemoteSystem.h"
 #include "StatusEffectSystem.h"
+#include "AnimationSystem.h"
 
 #include "InteractionSystemEvents.h"
 #include "SystemTypes.h"
@@ -53,6 +54,7 @@ public:
 	AISystem*							GetAISystem();
 	RemoteSystem*						GetRemoteSystem();
 	StatusEffectSystem*					GetStatusEffectSystem();
+	AnimationSystem*					GetAnimationSystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
 	FlagCheckpointSystem*				GetFlagCheckpointSystem();
 

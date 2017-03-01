@@ -217,6 +217,8 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   <ItemGroup>
     <ClInclude Include="include\AIComponent.h" />
     <ClInclude Include="include\AISystem.h" />
+    <ClInclude Include="include\AnimationComponent.h" />
+    <ClInclude Include="include\AnimationSystem.h" />
     <ClInclude Include="include\AudioManager.h" />
     <ClInclude Include="include\BasicTypes.h" />
     <ClInclude Include="include\About.h" />
@@ -291,6 +293,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="ServerProject\Net.cpp" />
     <ClCompile Include="src\AISystem.cpp" />
     <ClCompile Include="src\About.cpp" />
+    <ClCompile Include="src\AnimationSystem.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\BodyFactory.cpp" />
     <ClCompile Include="src\Camera2D.cpp" />

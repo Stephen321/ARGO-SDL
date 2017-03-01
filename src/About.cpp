@@ -70,6 +70,7 @@ void About::Stop()
 {
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void About::OnEvent(EventListener::Event evt)

@@ -42,6 +42,8 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_player = nullptr;
 
+	CreateUI();
+
 	_systemManager.PostInitialize(_player);
 
 	_swapScene = CurrentScene::GAME;
@@ -55,9 +57,11 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/playerSS.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
+
+	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints, ids);
@@ -125,7 +129,7 @@ void Game::OnEvent(EventListener::Event evt)
 			_running = false;
 
 		case Event::w:
-
+			_audioManager->PlayFX("Hum");
 		case Event::a:
 			_audioManager->PlayFX("Hum");
 		case Event::s:
@@ -138,14 +142,6 @@ void Game::OnEvent(EventListener::Event evt)
 
 void Game::BindInput()
 {
-	// Delete Key binding
-	Command* nIn = new InputCommand([&]()
-	{
-		_inputManager->EmptyKey(Event::BACKSPACE);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_0, nIn, this);
-
 	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, _player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
@@ -158,18 +154,26 @@ void Game::BindInput()
 	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, _player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
+
+	// Up
+	Command* wUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::w, wUp, this);
+
+	Command* aUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::a, aUp, this);
+
+	Command* sUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::s, sUp, this);
+
+	Command* dUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::d, dUp, this);
+
+
+	// Back to Main Menu
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
-	// Recreate key binding
-	Command* noIn = new InputCommand([&]()
-	{
-		Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
-		_inputManager->AddKey(Event::BACKSPACE, backIn, this);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_1, noIn, this);
-
+	// Exit Game
 	_inputManager->AddListener(Event::ESCAPE, this);
 
 	Command* spaceIn = new InputCommand([&]()
@@ -305,4 +309,56 @@ void Game::DebugBox2D()
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+void Game::CreateUI()
+{
+	// Poll
+	std::vector<float> pollPosition1 = std::vector<float>();
+	pollPosition1.push_back(0); //id
+	pollPosition1.push_back(64); //xPosition
+	pollPosition1.push_back(64); //yPosition
+	pollPosition1.push_back(64); //width
+	pollPosition1.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition1));
+
+	std::vector<float> pollPosition2 = std::vector<float>();
+	pollPosition2.push_back(2); //id
+	pollPosition2.push_back(64); //xPosition
+	pollPosition2.push_back(128); //yPosition
+	pollPosition2.push_back(64); //width
+	pollPosition2.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition2));
+
+	std::vector<float> pollPosition3 = std::vector<float>();
+	pollPosition3.push_back(3); //id
+	pollPosition3.push_back(64); //xPosition
+	pollPosition3.push_back(192); //yPosition
+	pollPosition3.push_back(64); //width
+	pollPosition3.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition3));
+
+	// Weapon
+	std::vector<float> weapon = std::vector<float>();
+	weapon.push_back(4); //id
+	weapon.push_back(SCREEN_WIDTH - 128); //xPosition
+	weapon.push_back(64); //yPosition
+	weapon.push_back(64); //width
+	weapon.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, weapon));
+
+	// Text
+	_systemManager.GetUISystem()->CreateDisplayText("1", 48, 64);
+	_systemManager.GetUISystem()->CreateDisplayText("2", 48, 128);
+	_systemManager.GetUISystem()->CreateDisplayText("3", 48, 192);
+
+	// Next Checkpoint Text
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 64);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 128);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 192);
+}
+
+void Game::UpdateUI()
+{
+
 }

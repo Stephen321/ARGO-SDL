@@ -13,6 +13,7 @@ enum class SystemType
 	World,
 	Remote,
 	StatusEffect,
+	Animation
 };
 
 enum class InteractionSystemType

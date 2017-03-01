@@ -197,11 +197,12 @@ void Lobby::Start()
 
 void Lobby::Stop()
 {
-	_inputManager->ResetKey(Event::BACKSPACE);
-	_inputManager->ResetKey(Event::h);
+	//_inputManager->ResetKey(Event::BACKSPACE);
+	//_inputManager->ResetKey(Event::h);
 
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -237,6 +238,37 @@ void Lobby::BindInput()
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
 
+	Command* mlIn = new InputCommand([&]()
+	{
+		SDL_Point mousePos = _inputManager->GetMousePos();
+		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
+
+		// Last Button - Create New Lobby
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle().back())))
+		{
+			JoinSessionData data;
+			NetworkHandler::Instance().Send(&data);
+			std::cout << "Create New Lobby" << std::endl;
+		}
+
+
+		// Lobbies
+		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size() - 1; i++)
+		{
+			if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[i])))
+			{
+				JoinSessionData data;
+				data.sessionID = _session[i].id;
+				NetworkHandler::Instance().Send(&data);
+				std::cout << "ID: " << data.sessionID << std::endl;
+			}
+		}
+
+	}, Type::Press);
+
+	_inputManager->AddKey(Event::MOUSE_LEFT, mlIn, this);
+
+
 	Command* rIn = new InputCommand([&]() //ready up
 	{
 		ReadyData data;
@@ -244,36 +276,14 @@ void Lobby::BindInput()
 	}, Type::Press);
 	_inputManager->AddKey(Event::r, rIn, this);
 
-
-	Command* hIn = new InputCommand([&]() //host 
-	{
-		JoinSessionData data;
-		NetworkHandler::Instance().Send(&data);
-		//switch the player list scene
-		//change scene to players
-
-	}, Type::Press);
-	_inputManager->AddKey(Event::h, hIn, this);
-
-	Command* jIn = new InputCommand([&]() //join
-	{
-		JoinSessionData data;
-		data.sessionID = 0;
-		NetworkHandler::Instance().Send(&data);
-		//switch the player list scene
-		//change scene to players
-
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::j, jIn, this);
-
-
+	// Back to Main Menu
 	Command* backIn = new InputCommand([&]() { 
 		NetworkHandler::Instance().Disconnect();
 		_swapScene = Scene::CurrentScene::MAIN_MENU; 
 	}, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
+	// Exit
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
@@ -321,6 +331,7 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 	_uiSystem.DeleteDisplayText();
 	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+
 	if (sessions.empty())
 	{
 		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 200);
@@ -341,6 +352,10 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 			_uiSystem.CreateText(var, 50, _uiSystem.GetInteractiveTextRectangle()[i - 1].y + 50);
 		}
 	}
+
+	_session = sessions;
+
+	_uiSystem.CreateTextAtCenter("Create New Lobby", SCREEN_WIDTH / 2, 700);
 }
 
 void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
@@ -351,12 +366,15 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 	}
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
+
 	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		std::ostringstream oss;
 		oss << "Player [" << players[i] << "]";
+
 		if (players[i] == NetworkHandler::Instance().GetPlayerID())
 		{
 			oss << " (you!).";

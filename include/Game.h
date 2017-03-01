@@ -45,6 +45,9 @@ private:
 
 	void							DebugBox2D();
 
+	void							CreateUI();
+	void							UpdateUI();
+
 private:
 	EntityFactory					_entityFactory;
 	BodyFactory						_bodyFactory;

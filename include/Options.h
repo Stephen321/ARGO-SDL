@@ -36,6 +36,10 @@ private:
 
 	std::string						GetMusicVolume();
 	std::string						GetHumVolume();
+	std::string						GetWeaponVolume();
+	std::string						GetCheckpointVolume();
+	std::string						GetCollisionVolume();
+	std::string						GetUIVolume();
 
 private:
 	RenderSystem					_renderSystem;

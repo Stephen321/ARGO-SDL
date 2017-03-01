@@ -219,8 +219,14 @@
     <ClInclude Include="include\AudioManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="include\RemoteComponent.h">
+    <ClInclude Include="include\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationSystem.h">	
+      <Filter>Header Files\Components</Filter>
+	</ClInclude>
+    <ClInclude Include="include\RemoteComponent.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="include\RemoteSystem.h">
       <Filter>Header Files\Systems</Filter>
@@ -376,8 +382,11 @@
     <ClCompile Include="src\AudioManager.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="src\RemoteSystem.cpp">
+    <ClCompile Include="src\AnimationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+	  </ClCompile>
+      <ClCompile Include="src\RemoteSystem.cpp">
+        <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

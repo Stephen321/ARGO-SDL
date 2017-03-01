@@ -56,6 +56,8 @@ private:
 	int								_selectedItemIndex;
 	int								_countdownTextId;
 
+	std::vector<Session>			_session;
+
 	bool							_startReadyTimer;
 	bool							_startingGame;
 
