@@ -144,6 +144,7 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
 			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
 
+			weapon->fired = false;
 			weapon->hasWeapon = true;
 			weapon->id = (int)powerUp->type;
 

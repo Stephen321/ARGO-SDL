@@ -131,12 +131,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	//SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
 
 	spriteComponent->sourceRect.x = 0;
 	spriteComponent->sourceRect.y = 0;
 	spriteComponent->sourceRect.w = transform->rect.w;
-	spriteComponent->sourceRect.h = transform->rect.h;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		  b2BodyType::b2_dynamicBody
@@ -175,12 +175,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	//SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
 
 	spriteComponent->sourceRect.x = 0;
 	spriteComponent->sourceRect.y = 0;
 	spriteComponent->sourceRect.w = transform->rect.w;
-	spriteComponent->sourceRect.h = transform->rect.h;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
@@ -216,12 +216,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	//SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
 
 	spriteComponent->sourceRect.x = 0;
 	spriteComponent->sourceRect.y = 0;
 	spriteComponent->sourceRect.w = transform->rect.w;
-	spriteComponent->sourceRect.h = transform->rect.h;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody

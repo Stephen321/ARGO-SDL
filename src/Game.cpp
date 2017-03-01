@@ -179,11 +179,13 @@ void Game::BindInput()
 	Command* spaceIn = new InputCommand([&]()
 	{
 		WeaponComponent* weapon = static_cast<WeaponComponent*>(_player->GetComponent(Component::Type::Weapon));
-		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-
-		if (!statusEffect->staggered && weapon->hasWeapon)
+		
+		if ( weapon->hasWeapon)
 		{
-			weapon->fired = true;
+			if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
+			{
+				weapon->fired = true;
+			}
 		}
 
 	}, Type::Hold);

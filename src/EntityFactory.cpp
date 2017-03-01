@@ -82,9 +82,11 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 {
 	Entity* player = new Entity(EntityType::Player);
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+	player->AddComponent(new TransformComponent(0, 0, 96, 96));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
@@ -101,9 +103,11 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 {
 	Entity* remotePlayer = new Entity(EntityType::RemotePlayer);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	remotePlayer->AddComponent(spriteComponent);
-	remotePlayer->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+	remotePlayer->AddComponent(new TransformComponent(0, 0, 96, 96));
 	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	remotePlayer->AddComponent(new ColliderComponent());
 	remotePlayer->AddComponent(new FlagComponent());
@@ -117,9 +121,11 @@ Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	ai->AddComponent(spriteComponent);
-	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+	ai->AddComponent(new TransformComponent(0, 0, 96, 96));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
