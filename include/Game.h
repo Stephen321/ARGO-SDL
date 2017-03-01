@@ -60,7 +60,6 @@ private:
 	FunctionMaster					_functionMaster;
 
 	Entity*							_player;
-	InputManager*					_inputManager = InputManager::GetInstance();
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 

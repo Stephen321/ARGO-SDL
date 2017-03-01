@@ -29,12 +29,6 @@ private:
 private:
 	std::vector<Scene*>				_currentScene;
 
-	MainMenu*						_menu;
-	Game*							_game;
-	Lobby*							_lobby;
-	Options*						_options;
-	About*							_about;
-
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 

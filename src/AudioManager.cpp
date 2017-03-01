@@ -4,7 +4,7 @@
 //#include "utilities.h"
 
 // Initialize our static variables
-AudioManager* AudioManager::audioManagerInstance = 0;
+AudioManager* AudioManager::_audioManagerInstance = 0;
 AudioManager::AudioState AudioManager::_currentState = ERROR;
 
 AudioManager::AudioManager()
@@ -19,12 +19,12 @@ AudioManager::~AudioManager()
 // Singleton pattern
 AudioManager* AudioManager::GetInstance()
 {
-	if (audioManagerInstance == 0)
+	if (_audioManagerInstance == 0)
 	{
-		audioManagerInstance = new AudioManager;
-		audioManagerInstance->InitAudioDevice();
+		_audioManagerInstance = new AudioManager;
+		_audioManagerInstance->InitAudioDevice();
 	}
-	return audioManagerInstance;
+	return _audioManagerInstance;
 }
 
 void AudioManager::InitAudioDevice()
