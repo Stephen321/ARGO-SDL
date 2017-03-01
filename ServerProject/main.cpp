@@ -108,7 +108,6 @@ int main(int argc, char** argv)
 	while (true)
 	{
 		ReceivedData receiveData = net.Receive();
-
 		if (receiveData.Empty() == false)
 		{
 			IPaddress srcAddr = receiveData.GetSrcAddress();
@@ -170,6 +169,7 @@ int main(int argc, char** argv)
 					std::cout << "Creating session " << sessionID << " with player " << data.id << " as host." << std::endl;
 					//error check if player already in session.
 					Session s;
+					s.id = sessionID;
 					s.AddPlayer(data.id, srcAddr);
 					sessions.insert(std::pair<int, Session>(sessionID, s));
 
@@ -257,7 +257,6 @@ int main(int argc, char** argv)
 				if (data.sessionID != -1)
 				{
 					std::cout << "Session has " << sessions[data.sessionID].GetPlayerCount() << " players." << std::endl;
-					std::cout << "That player is " << sessions[data.sessionID].IsReadytest() << std::endl;
 					std::cout << "That player id is " << sessions[data.sessionID].GetPlayerIDs()[0] << std::endl;
 					sessions[data.sessionID].Ready(data.id); //tell session that the player is ready
 					data.ready = sessions[data.sessionID].GetReadied();
@@ -281,16 +280,51 @@ int main(int argc, char** argv)
 				StateData data = receiveData.GetData<StateData>();
 				if (data.sessionID != -1)
 				{
-					std::cout << "State message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
-					//got state data from player, relay this data on to all other players in the session
-					//server or clients store data???
+					if (data.host) //host is sending state to everybody else
+					{
+						for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+						{
+							if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
+							{
+								net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+								std::cout << "Relay data " << data.remoteID << " to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
+							}
+						}
+					}
+					else //this is a player sending data to host
+					{//send data to host
+						std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
+						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetHostID()));
+					}
+				}
+				break;
+			}
+			case MessageType::CreatePowerUp:
+			{
+				CreatePowerUpData data = receiveData.GetData<CreatePowerUpData>();
+				if (data.sessionID != -1)
+				{
 					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
 					{
-						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send data back to the original player
 						{
 							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
-							std::cout << "Relay data to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
+							std::cout << "Telling " << sessions[data.sessionID].GetPlayerIDs()[i] << " to create power up." << std::endl;
 						}
+					}
+				}
+				break;
+			}
+			case MessageType::Fire:
+			{
+				FireData data = receiveData.GetData<FireData>();
+				if (data.sessionID != -1)
+				{
+					std::cout << "got fire packet " << std::endl;
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						std::cout << "Send fire event to all players in session: " << data.sessionID << std::endl;
 					}
 				}
 				break;

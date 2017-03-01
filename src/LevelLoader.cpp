@@ -61,6 +61,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 	int playerCount = 0;
 	bool playerCreated = false;
+	int aiID = (ids.empty()) ? -1 : 10000; //ai ids set to big number (server should do this)
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
@@ -99,7 +100,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 					data.push_back(w); //width
 					data.push_back(h); //height
 
-					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::RemotePlayer, data));
+					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Remote, data));
 				}
 				playerCount++;
 			}
@@ -108,7 +109,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				playerCreated = true;
 				std::vector<float> data = std::vector<float>();
 
-				data.push_back(-1); //id
+				data.push_back(-1);
 				data.push_back(x); //xPosition
 				data.push_back(y); //yPosition
 				data.push_back(w); //width
@@ -121,7 +122,14 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 			{
 				std::vector<float> data = std::vector<float>();
 
-				data.push_back(-1); //id
+				if (aiID == -1)
+				{
+					data.push_back(aiID); //id
+				}
+				else
+				{
+					data.push_back(aiID++); //id
+				}
 				data.push_back(x); //xPosition
 				data.push_back(y); //yPosition
 				data.push_back(w); //width

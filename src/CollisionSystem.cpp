@@ -11,10 +11,11 @@
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
 #include "WeaponComponent.h"
+#include "RemoteComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
-
+#include "NetworkHandler.h"
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <math.h>
@@ -65,7 +66,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player)
+			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || other->GetType() == EntityType::Remote)
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
@@ -281,65 +282,76 @@ void CollisionSystem::PreSolve(b2Contact * contact, const b2Manifold * oldManifo
 
 	FindPlayer(contact, player, other);
 
-	b2WorldManifold worldManifold;
-	contact->GetWorldManifold(&worldManifold);
 	if (player != nullptr && other != nullptr)
 	{
-		EntityBounce(worldManifold, player, other);
+		EntityBounce(contact, player, other);
 		
 	}
 	else if (player != nullptr)
 	{
-		CharacterObstacleBounce(worldManifold, player);
+		CharacterObstacleBounce(contact, player);
 	}
 }
 
-void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, Entity*& e2)
+void CollisionSystem::EntityBounce(b2Contact * contact, Entity*& e1, Entity*& e2)
 {
 	PhysicsComponent* e1Physics = static_cast<PhysicsComponent*>(e1->GetComponent(Component::Type::Physics));
 	PhysicsComponent* e2Physics = static_cast<PhysicsComponent*>(e2->GetComponent(Component::Type::Physics));
+	ColliderComponent* e1Collider = static_cast<ColliderComponent*>(e1->GetComponent(Component::Type::Collider));
+	ColliderComponent* e2Collider = static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider));
 
+	float e1XVel = e1Physics->xVelocity;
+	float e1YVel = e1Physics->yVelocity;
+	float e2XVel = e2Physics->xVelocity;
+	float e2YVel = e2Physics->yVelocity;
 
-	float e1speed = sqrt(e1Physics->xVelocity * e1Physics->xVelocity + e1Physics->yVelocity * e1Physics->yVelocity);
-	float e2speed = sqrt(e2Physics->xVelocity * e2Physics->xVelocity + e2Physics->yVelocity * e2Physics->yVelocity);
+	float e1speed = sqrt(e1XVel * e1XVel + e1YVel * e1YVel);
+	float e2speed = sqrt(e2XVel * e2XVel + e2YVel * e2YVel);
 
 	if (e1speed != 0 && e2speed != 0)
 	{
-		float xVelocityTemp = e1Physics->xVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
-		float yVelocityTemp = e1Physics->yVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		float xVelocityTemp = e1XVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		float yVelocityTemp = e1YVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 
-		e1Physics->xVelocity = e2Physics->xVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
-		e1Physics->yVelocity = e2Physics->yVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		e1XVel = e2XVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
+		e1YVel = e2YVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 
-		e2Physics->xVelocity = xVelocityTemp;
-		e2Physics->yVelocity = yVelocityTemp;
+		e2XVel = xVelocityTemp;
+		e2YVel = yVelocityTemp;
 	}
 	else
 	{
 		if (e1speed != 0)
 		{
-			e2Physics->xVelocity = e1Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
-			e2Physics->yVelocity = e1Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e2XVel = e1XVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e2YVel = e1YVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 
-			e1Physics->xVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
-			e1Physics->yVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e1XVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e1YVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
 		else if (e2speed != 0)
 		{
-			e1Physics->xVelocity = e2Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
-			e1Physics->yVelocity = e2Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e1XVel = e2XVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
+			e1YVel = e2YVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 
-			e2Physics->xVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
-			e2Physics->yVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e2XVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
+			e2YVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
 	}
 
-	static_cast<ColliderComponent*>(e1->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity, e1Physics->yVelocity));
-	static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity, e2Physics->yVelocity));
+	e1Physics->xVelocity = e1XVel;
+	e1Physics->yVelocity = e1YVel;
+	e2Physics->xVelocity = e2XVel;
+	e2Physics->yVelocity = e2YVel;
+	e1Collider->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity, e1Physics->yVelocity));
+	e2Collider->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity, e2Physics->yVelocity));
 }
 
-void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, Entity*& player)
+void CollisionSystem::CharacterObstacleBounce(b2Contact * contact, Entity*& player)
 {
+	b2WorldManifold worldManifold;
+	contact->GetWorldManifold(&worldManifold);
+
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(player->GetComponent(Component::Type::Physics));
 
 	float speed = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
@@ -391,6 +403,16 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			other = b;
 		}
 		else if (b->GetType() == EntityType::Player)
+		{
+			player = b;
+			other = a;
+		}
+		else if (a->GetType() == EntityType::Remote)
+		{
+			player = a;
+			other = b;
+		}
+		else if (b->GetType() == EntityType::Remote)
 		{
 			player = b;
 			other = a;

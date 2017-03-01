@@ -5,6 +5,7 @@
 #include "ColliderComponent.h"
 #include "CheckpointComponent.h"
 #include "PowerUpComponent.h"
+#include "NetworkHandler.h"
 
 #include "BasicTypes.h"
 #include "Helpers.h"
@@ -67,7 +68,7 @@ void CreationSystem::Process(float dt)
 			_systemCreatedEntities.push_back(SetupPlayerEntity(_creationRequests.at(index)));
 			_entities.push_back(_systemCreatedEntities.back().second);
 			break;
-		case EntityType::RemotePlayer:
+		case EntityType::Remote:
 			_systemCreatedEntities.push_back(SetupRemotePlayerEntity(_creationRequests.at(index)));
 			_entities.push_back(_systemCreatedEntities.back().second);
 			break;
@@ -160,7 +161,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEntity(const std::pair<EntityType, std::vector<float>>& information)
 {
-	Entity* remotePlayer = _entityFactory->CreateEntity(EntityType::RemotePlayer, information.second[0]);
+	Entity* remotePlayer = _entityFactory->CreateEntity(EntityType::Remote, information.second[0]);
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(remotePlayer->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(remotePlayer->GetComponent(Component::Type::Transform));
@@ -217,8 +218,19 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
-	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::AI);
+	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
+	{
+		systemTypes.push_back(SystemType::Remote); 
+		if (NetworkHandler::Instance().GetHost()) //only the host in the multiplayer game adds physics component
+		{
+			systemTypes.push_back(SystemType::Physics);
+		}
+	}
+	else
+	{
+		systemTypes.push_back(SystemType::Physics);
+	}
 	systemTypes.push_back(SystemType::StatusEffect);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, ai);

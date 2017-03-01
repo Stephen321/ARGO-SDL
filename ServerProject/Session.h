@@ -5,6 +5,7 @@
 #include <vector>
 
 const int MAX_PLAYERS = 4;
+const float TIME_OUT = 2000000000.f; //2 billion nanoseconds == 2 seconds
 
 class Session {
 public:
@@ -18,10 +19,14 @@ public:
 	std::vector<int> GetPlayerIDs() const;
 	void Ready(int playerID);
 	bool AllReady() const;
-	bool IsReadytest();
 	std::vector<bool> GetReadied() const;
+	int id;
 private:
-	std::map<int, IPaddress> _players;
-	std::vector<bool> _readiedUp;
+	struct Player
+	{
+		IPaddress address;
+		bool ready;
+	};
+	std::map<int, Player> _players;
 	bool _waiting;
 };

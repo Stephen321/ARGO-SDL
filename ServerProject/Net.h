@@ -15,7 +15,9 @@ namespace Network
 		SetHost,
 		PlayerList,
 		Ready,
-		PickUpFlag
+		PickUpFlag,
+		CreatePowerUp,
+		Fire
 	};
 
 	struct MessageData {
@@ -30,11 +32,13 @@ namespace Network
 	};
 
 	struct StateData : MessageData {
-		StateData() { type = MessageType::State; }
+		StateData() : host(false) { type = MessageType::State; }
 		float xPos;
 		float yPos;
 		float xVel;
 		float yVel;
+		bool host;
+		int remoteID;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }
@@ -58,7 +62,7 @@ namespace Network
 	};
 
 	struct SetHostData : MessageData {
-		SetHostData() { type = MessageType::SetHost; }
+		SetHostData()  { type = MessageType::SetHost; }
 	};
 
 	struct PlayerListData : MessageData {
@@ -76,6 +80,15 @@ namespace Network
 
 	struct PickUpFlagData : MessageData {
 		PickUpFlagData() { type = MessageType::PickUpFlag; }
+	};
+
+	struct CreatePowerUpData : MessageData {
+		CreatePowerUpData() { type = MessageType::CreatePowerUp; }
+		int index;
+		int powerType;
+	};
+	struct FireData : MessageData {
+		FireData() { type = MessageType::Fire; }
 	};
 
 
@@ -140,6 +153,16 @@ namespace Network
 			case MessageType::PickUpFlag:
 			{
 				_data = new PickUpFlagData(rhs.GetData<PickUpFlagData>());
+				break;
+			}
+			case MessageType::CreatePowerUp:
+			{
+				_data = new CreatePowerUpData(rhs.GetData<CreatePowerUpData>());
+				break;
+			}
+			case MessageType::Fire:
+			{
+				_data = new FireData(rhs.GetData<FireData>());
 				break;
 			}
 			}

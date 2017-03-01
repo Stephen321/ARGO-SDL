@@ -4,6 +4,7 @@
 #include "PowerUpComponent.h"
 #include "PhysicsComponent.h"
 #include "DestructionComponent.h"
+#include "NetworkHandler.h"
 
 WaypointSystem::WaypointSystem(std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests, std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& interactionSystemEvents, float updateRate)
 	: System(updateRate)
@@ -31,7 +32,10 @@ void WaypointSystem::Process(float dt)
 	{
 		_canUpdate = false;
 
-		CreatePowerUp(dt);
+		if (NetworkHandler::Instance().GetPlayerID() == -1 || (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost()))
+		{ //singleplayer or multiplayer and host
+			CreatePowerUp(dt);
+		}//multiplayer non hosts dont create power ups
 		ListenForEvents();
 
 		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
@@ -136,13 +140,22 @@ void WaypointSystem::CreatePowerUp(float dt)
 			{
 				std::vector<float> data = std::vector<float>();
 
-				data.push_back(rand() % ((int)PowerUpComponent::Type::Count)); //id
+				int powerType = rand() % ((int)PowerUpComponent::Type::Count);
+				data.push_back(powerType); //id
 				data.push_back(nodes[index]->getPosition().x); //xPosition
 				data.push_back(nodes[index]->getPosition().y); //yPosition
 				data.push_back(index); //yPosition
 
 				_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::PowerUp, data));
 				nodes[index]->setData("PowerUp");
+
+				if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+				{//multiplayer & host
+					CreatePowerUpData createData;
+					createData.index = index;
+					createData.powerType = powerType;
+					NetworkHandler::Instance().Send(&createData);
+				}
 				powerUpsToSpawn--;
 				_powerUpCount++;
 			}

@@ -179,7 +179,16 @@ void Game::BindInput()
 
 		if (!statusEffect->staggered && weapon->hasWeapon)
 		{
-			weapon->fired = true;
+			if (NetworkHandler::Instance().GetPlayerID() != -1)
+			{
+				FireData data;
+				NetworkHandler::Instance().Send(&data);
+				std::cout << "sending fire data" << std::endl;
+			}
+			else
+			{
+				weapon->fired = true;
+			}
 		}
 
 	}, Type::Hold);

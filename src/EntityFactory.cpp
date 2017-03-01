@@ -54,7 +54,7 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 	case EntityType::Player:
 		entity = CreatePlayerEntity(id);
 		break;
-	case EntityType::RemotePlayer:
+	case EntityType::Remote:
 		entity = CreateRemotePlayerEntity(id);
 		break;
 	case EntityType::AI:
@@ -97,7 +97,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 
 Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 {
-	Entity* remotePlayer = new Entity(EntityType::RemotePlayer);
+	Entity* remotePlayer = new Entity(EntityType::Remote);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
 
 	remotePlayer->AddComponent(spriteComponent);
@@ -107,6 +107,7 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 	remotePlayer->AddComponent(new FlagComponent());
 	remotePlayer->AddComponent(new RemoteComponent(id));
 	remotePlayer->AddComponent(new StatusEffectComponent());
+	remotePlayer->AddComponent(new WeaponComponent());
 
 	return remotePlayer;
 }
@@ -121,6 +122,8 @@ Entity* EntityFactory::CreateAIEntity(int id)
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
+	if (id != -1)//is in multiplayer game
+		ai->AddComponent(new RemoteComponent(id));
 	ai->AddComponent(new AIComponent());
 	ai->AddComponent(new StatusEffectComponent());
 	ai->AddComponent(new WeaponComponent());

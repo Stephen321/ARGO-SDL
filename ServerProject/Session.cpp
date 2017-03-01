@@ -12,21 +12,27 @@ int Session::GetPlayerCount() const
 
 void Session::AddPlayer(int playerID, IPaddress addr)
 {
-	_players.insert(std::pair<int, IPaddress>(playerID, addr));
-	_readiedUp.push_back(false);
+	Player p;
+	p.address = addr;
+	p.ready = false;
+	_players.insert(std::pair<int, Player>(playerID, p));
+	for (std::map<int, Player>::iterator it = _players.begin(); it != _players.end(); ++it)
+	{
+		it->second.ready = false; //unready everybody when someone joins
+	}
 }
 
 bool Session::RemovePlayer(int playerID)
 {
 	bool removingHost = false;
-	std::map<int, IPaddress>::const_iterator idToErase = _players.find(playerID);
+	std::map<int, Player>::const_iterator idToErase = _players.find(playerID);
 	if (playerID == GetHostID()) //host is being removed!
 	{
 		removingHost = true;
 	}
 	if (idToErase != _players.end())
 	{
-		_players.erase(idToErase);
+		_players.erase(idToErase); //also removes ready value 
 	}
 	return removingHost;
 }
@@ -42,11 +48,11 @@ int Session::GetHostID()
 
 IPaddress Session::GetPlayerIP(int playerID)
 {
-	for (std::map<int, IPaddress>::const_iterator it = _players.begin(); it != _players.end(); ++it)
+	for (std::map<int, Player>::const_iterator it = _players.begin(); it != _players.end(); ++it)
 	{
 		if (it->first == playerID)
 		{
-			return it->second;
+			return it->second.address;
 		}
 	}
 	return IPaddress();
@@ -61,7 +67,7 @@ std::vector<int> Session::GetPlayerIDs() const
 {
 	std::vector<int> players;
 
-	for (std::map<int, IPaddress>::const_iterator it = _players.begin(); it != _players.end(); ++it)
+	for (std::map<int, Player>::const_iterator it = _players.begin(); it != _players.end(); ++it)
 	{
 		players.push_back(it->first);
 	}
@@ -71,16 +77,15 @@ std::vector<int> Session::GetPlayerIDs() const
 
 void Session::Ready(int playerID)
 {
-	int readyIndex = std::distance(_players.begin(), _players.find(playerID));
-	_readiedUp[readyIndex] = true;
+	_players[playerID].ready = true;
 }
 
 bool Session::AllReady() const
 {
 	bool allready = true;
-	for (int i = 0; i < _readiedUp.size(); i++)
+	for (std::map<int, Player>::const_iterator it = _players.begin(); it != _players.end(); ++it)
 	{
-		if (!_readiedUp[i])
+		if (!it->second.ready)
 		{
 			allready = false;
 			break;
@@ -89,12 +94,12 @@ bool Session::AllReady() const
 	return allready;
 }
 
-bool Session::IsReadytest()
-{
-	return _readiedUp[0];
-}
-
 std::vector<bool> Session::GetReadied() const
 {
-	return _readiedUp;
+	std::vector<bool> readiedUp;
+	for (std::map<int, Player>::const_iterator it = _players.begin(); it != _players.end(); ++it)
+	{
+		readiedUp.push_back(it->second.ready);
+	}
+	return readiedUp;
 }

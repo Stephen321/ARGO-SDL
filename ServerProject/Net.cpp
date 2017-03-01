@@ -59,6 +59,8 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yPos);
 		WriteFloat(sendData->xVel);
 		WriteFloat(sendData->yVel);
+		WriteBool(sendData->host);
+		WriteInt(sendData->remoteID);
 		break;
 	}
 	case MessageType::SessionList:
@@ -104,6 +106,13 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteBool(sendData->allReady);
 		break;
 	}
+	case MessageType::CreatePowerUp:
+	{
+		CreatePowerUpData* sendData = (CreatePowerUpData*)data;
+		WriteInt(sendData->index);
+		WriteInt(sendData->powerType);
+		break;
+	}
 	}
 
 	_packet->address.host = destAddr.host;
@@ -147,6 +156,8 @@ Network::ReceivedData Network::Net::Receive()
 			data.yPos = ReadFloat(byteOffset);
 			data.xVel = ReadFloat(byteOffset);
 			data.yVel = ReadFloat(byteOffset);
+			data.host = ReadBool(byteOffset);
+			data.remoteID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -200,6 +211,14 @@ Network::ReceivedData Network::Net::Receive()
 				data.ready.push_back(ReadBool(byteOffset));
 			}
 			data.allReady = ReadBool(byteOffset);
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::CreatePowerUp:
+		{
+			CreatePowerUpData data;
+			data.index = ReadInt(byteOffset);
+			data.powerType = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -294,6 +313,15 @@ std::string Network::Net::GetTypeAsString(MessageType type)
 		break;
 	case MessageType::PickUpFlag:
 		s = "PickUpFlag";
+		break;
+	case MessageType::CreatePowerUp:
+		s = "CreatePowerUp";
+		break;
+	case MessageType::Fire:
+		s = "Fire";
+		break; 
+	default:
+		s = "No type to string case found.";
 		break;
 	}
 	return s;

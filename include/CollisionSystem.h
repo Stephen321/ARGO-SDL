@@ -29,8 +29,8 @@ private:
 	void		CheckCharacterToCharacterCollision(Entity*& player, Entity*& other);
 
 	void		FindPlayer(b2Contact* contact, Entity*& player, Entity*& other);
-	void		CharacterObstacleBounce(b2WorldManifold& worldManifold, Entity*& player);
-	void		EntityBounce(b2WorldManifold& worldManifold, Entity*& player, Entity*& other);
+	void		CharacterObstacleBounce(b2Contact * contact, Entity*& player);
+	void		EntityBounce(b2Contact * contact, Entity*& player, Entity*& other);
 
 private:
 	std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;

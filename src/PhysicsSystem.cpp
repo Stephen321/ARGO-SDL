@@ -4,6 +4,7 @@
 #include "ColliderComponent.h"
 #include "StatusEffectComponent.h"
 #include "DestructionComponent.h"
+#include "RemoteComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -35,6 +36,10 @@ void PhysicsSystem::Process(float dt)
 				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 				StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
 
+				//if (e->GetType() == EntityType::AI)
+				//{
+				//	std::cout << "AI velocity: " << physics->xVelocity << " , y: " << physics->yVelocity << std::endl;
+				//}
 				float maxVelocity = physics->maxVelocity;
 
 				float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;

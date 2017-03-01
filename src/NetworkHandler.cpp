@@ -38,7 +38,7 @@ void NetworkHandler::Send(MessageData * data)
 {
 	if (_net._testSocketCreated == false)
 	{
-		init(5228);
+		init(6000);
 	}
 	data->id = _playerID;
 	if (data->sessionID == -1)
