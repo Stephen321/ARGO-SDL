@@ -80,12 +80,7 @@ void PhysicsSystem::Process(float dt)
 					//physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
 					float maxVelocity = physics->maxVelocity;
 					/**/
-					float xDrag = -physics->xVelocity * DRAG ;
-					float yDrag = -physics->yVelocity * DRAG ;
-
-					physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
-					physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
-
+					
 					float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 					if (currentVelocity > maxVelocity)
 					{

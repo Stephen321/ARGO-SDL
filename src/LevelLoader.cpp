@@ -90,7 +90,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 			}
 			else if(createAi == false)
 			{
-				createAi = true;
+				//createAi = true;
 				std::vector<float> data = std::vector<float>();
 
 				data.push_back(-1); //id
