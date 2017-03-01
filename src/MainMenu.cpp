@@ -6,11 +6,8 @@
 #include "SpriteComponent.h"
 
 MainMenu::MainMenu()
-	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _renderSystem()
-	, _uiSystem(0)
+	: _uiSystem(0)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
@@ -22,23 +19,13 @@ MainMenu::~MainMenu()
 
 void MainMenu::Initialize(SDL_Renderer* renderer)
 {
-	_renderer = renderer;
+	Scene::Initialize(renderer);
+
 	_selectedItemIndex = 0;
 
-	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_uiSystem.Initialize(_renderer);
 
-
-	//SDL_Rect rect = SDL_Rect();
-	//rect.x = 0;
-	//rect.y = 0;
-	//rect.w = 1;
-	//rect.h = 1;
-
-
 	Entity* ui = new Entity(EntityType::UI);
-	//ui->AddComponent(new TransformComponent(rect, 1, 1));
-	//ui->AddComponent(new SpriteComponent(_textureHolder[TextureID::UI]));
 	_uiSystem.AddEntity(ui);
 
 	Start();
@@ -68,7 +55,6 @@ void MainMenu::Render()
 	SDL_RenderClear(_renderer);
 
 	//RENDER HERE
-	_renderSystem.Process();
 	_uiSystem.Process(0);
 
 	SDL_RenderPresent(_renderer);
@@ -95,7 +81,6 @@ void MainMenu::Stop()
 {
 	_running = false;
 	CleanUp();
-	_inputManager->EmptyKeys();
 }
 
 void MainMenu::OnEvent(EventListener::Event evt)
@@ -126,7 +111,10 @@ void MainMenu::LoadContent()
 
 void MainMenu::CleanUp()
 {
-
+	_inputManager->EmptyKeys();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteText();
+	_uiSystem.DeleteEntites();
 }
 
 void MainMenu::BindInput()

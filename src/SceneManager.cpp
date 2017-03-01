@@ -84,8 +84,7 @@ void SceneManager::Update()
 
 			// Delete Object
 			//Change numbers into enums, use switch instead of ifs
-			//delete _currentScene.back();
-
+			delete _currentScene.back();
 			_currentScene.pop_back();
 
 			if (_runningScene == 0)

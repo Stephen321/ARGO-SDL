@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "RenderSystem.h"
 #include "UISystem.h"
-#include "CameraSystem.h"
 
 class MainMenu : public Scene
 {
@@ -33,8 +31,6 @@ private:
 	void							MoveDown();
 
 private:
-	RenderSystem					_renderSystem;
-	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;

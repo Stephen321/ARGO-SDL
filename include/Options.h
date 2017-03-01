@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Scene.h"
-#include "RenderSystem.h"
 #include "UISystem.h"
-#include "CameraSystem.h"
 
-class Options : public EventListener, public Scene
+class Options : public Scene
 {
 public:
 	Options();
@@ -42,8 +40,6 @@ private:
 	std::string						GetUIVolume();
 
 private:
-	RenderSystem					_renderSystem;
-	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
 	int								_selectedItemIndex;

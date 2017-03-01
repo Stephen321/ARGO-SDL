@@ -24,12 +24,14 @@ CreationSystem::~CreationSystem()
 	{
 		if (_entities.at(i) != nullptr)
 		{
-			delete _entities.at(i);
+			if (_entities.at(i)->GetComponents().size() != 0 && _entities.at(i)->GetComponents().size() < 20)
+			{
+				delete _entities.at(i);
+			}
 		}
 	}
 
 	_entities.clear();
-
 }
 
 

@@ -60,8 +60,17 @@ void InputManager::EmptyKeys()
 
 		delete commandVector.second;
 	}
-
 	commands.erase(commands.begin(), commands.end());
+
+	for (auto& listenerVector : listeners)
+	{
+		//for (auto listener : *listenerVector.second)
+		//{
+		//	delete listener;
+		//}
+
+		delete listenerVector.second;
+	}
 	listeners.erase(listeners.begin(), listeners.end());
 }
 

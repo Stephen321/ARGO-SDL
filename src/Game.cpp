@@ -23,7 +23,6 @@ Game::Game()
 
 Game::~Game()
 {
-	_world.~b2World();
 }
 
 void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
@@ -115,7 +114,6 @@ void Game::Stop()
 {
 	_running = false;
 	CleanUp();
-	_inputManager->EmptyKeys();
 }
 
 void Game::OnEvent(EventListener::Event evt)
@@ -193,9 +191,9 @@ void Game::BindInput()
 void Game::CleanUp()
 {
 	//DESTROY HERE
+	_inputManager->EmptyKeys();
+
 	_world.SetAllowSleeping(true);
-	_world.~b2World();
-	_systemManager.~SystemManager();
 }
 
 void Game::DebugBox2D()

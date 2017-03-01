@@ -12,6 +12,9 @@ SystemManager::~SystemManager()
 {
 	delete _creationSystem;
 
+	GetUISystem()->DeleteDisplayText();
+	GetUISystem()->DeleteText();
+
 	SystemMapIterator it = _systems.begin();
 	for (; it != _systems.end(); ++it)
 	{

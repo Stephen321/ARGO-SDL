@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "RenderSystem.h"
-#include "CameraSystem.h"
+#include "UISystem.h"
 
 class About : public EventListener, public Scene
 {
@@ -29,7 +28,6 @@ private:
 	void							CleanUp() override;
 
 private:
-	RenderSystem					_renderSystem;
-	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
 };
 

@@ -6,16 +6,13 @@
 #include <sstream>
 
 Lobby::Lobby()
-	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _renderSystem()
-	, _uiSystem(0.f)
+	: _uiSystem(0.f)
 	, _startingGame(false)
 	, _connectTimer(0.f)
 	, _readyTimer(READY_COUNTDOWN)
 	, _startReadyTimer(false)
 	, _countdownTextId(-1)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
@@ -26,13 +23,12 @@ Lobby::~Lobby()
 
 void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 {
+	Scene::Initialize(renderer);
+
 	_ids = ids;
-	_renderer = renderer;
+
 	_running = true;
-
 	_selectedItemIndex = 0;
-
-	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// UI
 	_uiSystem.Initialize(_renderer);
@@ -172,7 +168,6 @@ void Lobby::Render()
 	SDL_RenderClear(_renderer);
 
 	//RENDER HERE
-	_renderSystem.Process();
 	_uiSystem.Process();
 
 	SDL_RenderPresent(_renderer);
@@ -202,7 +197,6 @@ void Lobby::Stop()
 
 	_running = false;
 	CleanUp();
-	_inputManager->EmptyKeys();
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -225,7 +219,10 @@ void Lobby::LoadContent()
 
 void Lobby::CleanUp()
 {
-
+	_inputManager->EmptyKeys();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteText();
+	_uiSystem.DeleteEntites();
 }
 
 void Lobby::BindInput()
