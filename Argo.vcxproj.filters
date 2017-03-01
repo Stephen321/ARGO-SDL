@@ -52,6 +52,12 @@
     <Filter Include="Source Files\AStar">
       <UniqueIdentifier>{d40d044d-eac5-4ce9-89f0-17611edc615a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Other\Enums">
+      <UniqueIdentifier>{718127f5-f04d-42fa-81b8-36927d6b7ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Other\Helpers">
+      <UniqueIdentifier>{6e3874dc-39a3-4434-9f18-98507c58893d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -72,16 +78,7 @@
     <ClInclude Include="include\PhysicsSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\Debug.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\Entity.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LTimer.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FLInputManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Camera2D.h">
@@ -105,9 +102,6 @@
     <ClInclude Include="include\LevelLoader.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="include\ResourceIdentifier.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -116,12 +110,6 @@
     </ClInclude>
     <ClInclude Include="include\EntityFactory.h">
       <Filter>Header Files\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Helpers.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\EntityType.h">
-      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Game.h">
       <Filter>Header Files\Scenes</Filter>
@@ -154,9 +142,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\EntityType.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BasicTypes.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\GunSystem.h">
@@ -219,14 +204,8 @@
     <ClInclude Include="include\NetworkHandler.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="include\InteractionSystemEvents.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\CreationSystem.h">
       <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SystemTypes.h">
-      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\StatusEffectComponent.h">
       <Filter>Header Files\Components</Filter>
@@ -254,6 +233,30 @@
     </ClInclude>
     <ClInclude Include="include\WeaponComponent.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InteractionSystemEvents.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceIdentifier.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SystemTypes.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicTypes.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Helpers.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FLInputManager.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LTimer.h">
+      <Filter>Header Files\Other\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

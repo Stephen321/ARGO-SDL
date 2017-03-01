@@ -3,9 +3,6 @@
 #include "ColliderComponent.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "SpriteComponent.h"
-#include "GunComponent.h"
-#include "AIComponent.h"
 #include "FlagComponent.h"
 #include "CheckpointComponent.h"
 #include "StatusEffectComponent.h"
@@ -375,9 +372,6 @@ void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, En
 			physics->yVelocity = -physics->yVelocity * PLAYER_WALL_RESTITUTION;
 		}
 	}
-
-	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
-	animation->state = AnimationComponent::State::Bumping;
 }
 
 void CollisionSystem::PostSolve(b2Contact * contact, const b2ContactImpulse * impulse)

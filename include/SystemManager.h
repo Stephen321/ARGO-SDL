@@ -30,16 +30,9 @@ public:
 										~SystemManager();
 
 	void								Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
-	void								InitializeInteractionSystems();
 	void								PostInitialize(Entity*& player);
 
 	void								Process(float dt = 0.f);
-	void								TryToCreateEntities(float dt);
-	void								TryToDestroy(SystemMapIterator& it, float dt);
-	void								ProcessAllSystems(SystemMapIterator& it, float dt);
-	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
-	void								DestroyBasedOnType(Entity*& entity);
 	void								Render(float dt = 0.f);
 
 	void								AddRequest(std::pair<EntityType, std::vector<float>>& creationRequest);
@@ -66,6 +59,16 @@ public:
 	FlagCheckpointSystem*				GetFlagCheckpointSystem();
 
 	Camera2D::Camera&					GetCamera();
+
+private:
+	void								InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
+	void								InitializeInteractionSystems();
+
+	void								TryToCreateEntities(float dt);
+	void								TryToDestroy(SystemMapIterator& it, float dt);
+	void								ProcessAllSystems(SystemMapIterator& it, float dt);
+	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
+	void								DestroyBasedOnType(Entity*& entity);
 
 private:
 	std::map<InteractionSystemType, 

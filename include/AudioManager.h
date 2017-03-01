@@ -11,6 +11,16 @@
 
 class AudioManager
 {
+private:
+	enum AudioState
+	{
+		ERROR = 0,
+		WAITING,
+		PAUSED,
+		STOPPED,
+		PLAYING
+	};
+
 public:
 										AudioManager();
 										~AudioManager();
@@ -44,20 +54,11 @@ public:
 	bool								IsMusicPlaying();
 
 private:
-	static AudioManager*				audioManagerInstance;
-
 	void								InitAudioDevice();
 	void								LoadSounds();
 
-	enum AudioState
-	{
-		ERROR = 0,
-		WAITING,
-		PAUSED,
-		STOPPED,
-		PLAYING
-	};
-
+private:
+	static AudioManager*				_audioManagerInstance;
 	static AudioState					_currentState;
 	std::string							_sCurrentMusicFilename = "";
 

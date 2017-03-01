@@ -4,8 +4,6 @@
 #include "rapidjson\document.h"
 #include "rapidjson\filereadstream.h"
 #include "Box2D\Box2D.h"
-#include "EntityFactory.h"
-#include "BodyFactory.h"
 #include "Graph.h"
 #include "SystemManager.h"
 
@@ -24,6 +22,5 @@ private:
 	void LoadEntities(const Value &entitieLayer, SystemManager& SystemManager, const std::vector<int>& ids);
 	void LoadWaypoints(const Value &waypointLayer, SystemManager& SystemManager, Graph* waypoints);
 	void LoadColliders(const Value &colliderLayer, SystemManager& SystemManager, BodyFactory* bodyFactory);
-	
 };
 

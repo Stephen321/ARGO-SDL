@@ -15,8 +15,8 @@
 class SceneManager
 {
 public:
-	SceneManager();
-	~SceneManager();
+									SceneManager();
+									~SceneManager();
 
 	bool							Initialize(const char* title, int xpos, int ypos, int width, int height, int flags);
 	void							Update();

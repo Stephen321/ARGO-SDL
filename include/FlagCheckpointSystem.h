@@ -13,6 +13,8 @@ public:
 	void								Initialize(std::vector<Entity*>& checkpoints);
 
 	void								Process(float dt = 0.f) override;
+
+private:
 	void								ListenForEvents();
 	void								FlagPickedEvent();
 	void								FlagDroppedEvent();

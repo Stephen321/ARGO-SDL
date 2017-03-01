@@ -15,7 +15,9 @@ public:
 	void								Initialize(Graph* waypoint);
 	void								Process(float dt) override;
 
+private:
 	void								CreatePowerUp(float dt);
+
 	void								ListenForEvents();
 	void								PowerUpDestructionEvent();
 

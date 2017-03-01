@@ -45,10 +45,10 @@ public:
 
 	void							CreateBackButton(std::string message, int x, int y);
 	void							DeleteBackButton();
+	SDL_Rect&						GetBackButton();
 
 	std::vector<SDL_Rect>&			GetInteractiveTextRectangle();
 	std::vector<SDL_Rect>&			GetDisplayTextRectangle();
-	SDL_Rect&						GetBackButton();
 
 private:
 	SDL_Renderer*					_renderer;
