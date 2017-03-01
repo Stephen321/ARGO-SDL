@@ -201,6 +201,7 @@ void Lobby::Stop()
 
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void Lobby::OnEvent(EventListener::Event evt)
@@ -273,18 +274,6 @@ void Lobby::BindInput()
 		NetworkHandler::Instance().Send(&data);
 	}, Type::Press);
 	_inputManager->AddKey(Event::r, rIn, this);
-
-	//Command* jIn = new InputCommand([&]() //join
-	//{
-	//	JoinSessionData data;
-	//	data.sessionID = 0;
-	//	NetworkHandler::Instance().Send(&data);
-	//	//switch the player list scene
-	//	//change scene to players
-
-	//}, Type::Press);
-	//_inputManager->AddKey(Event::j, jIn, this);
-
 
 	// Back to Main Menu
 	Command* backIn = new InputCommand([&]() { 

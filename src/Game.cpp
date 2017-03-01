@@ -42,6 +42,8 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	player = nullptr;
 
+	CreateUI();
+
 	_systemManager.PostInitialize(player);
 
 	_swapScene = CurrentScene::GAME;
@@ -58,6 +60,8 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/playerSS.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
+
+	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints, ids);
@@ -125,7 +129,7 @@ void Game::OnEvent(EventListener::Event evt)
 			_running = false;
 
 		case Event::w:
-
+			_audioManager->PlayFX("Hum");
 		case Event::a:
 			_audioManager->PlayFX("Hum");
 		case Event::s:
@@ -330,4 +334,56 @@ void Game::DebugBox2D()
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+void Game::CreateUI()
+{
+	// Poll
+	std::vector<float> pollPosition1 = std::vector<float>();
+	pollPosition1.push_back(0); //id
+	pollPosition1.push_back(64); //xPosition
+	pollPosition1.push_back(64); //yPosition
+	pollPosition1.push_back(64); //width
+	pollPosition1.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition1));
+
+	std::vector<float> pollPosition2 = std::vector<float>();
+	pollPosition2.push_back(2); //id
+	pollPosition2.push_back(64); //xPosition
+	pollPosition2.push_back(128); //yPosition
+	pollPosition2.push_back(64); //width
+	pollPosition2.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition2));
+
+	std::vector<float> pollPosition3 = std::vector<float>();
+	pollPosition3.push_back(3); //id
+	pollPosition3.push_back(64); //xPosition
+	pollPosition3.push_back(192); //yPosition
+	pollPosition3.push_back(64); //width
+	pollPosition3.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition3));
+
+	// Weapon
+	std::vector<float> weapon = std::vector<float>();
+	weapon.push_back(4); //id
+	weapon.push_back(SCREEN_WIDTH - 128); //xPosition
+	weapon.push_back(64); //yPosition
+	weapon.push_back(64); //width
+	weapon.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, weapon));
+
+	// Text
+	_systemManager.GetUISystem()->CreateDisplayText("1", 48, 64);
+	_systemManager.GetUISystem()->CreateDisplayText("2", 48, 128);
+	_systemManager.GetUISystem()->CreateDisplayText("3", 48, 192);
+
+	// Next Checkpoint Text
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 64);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 128);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 192);
+}
+
+void Game::UpdateUI()
+{
+
 }

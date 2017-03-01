@@ -12,6 +12,7 @@
 #include <map>
 
 #include "Camera2D.h"
+#include "ResourceIdentifier.h"
 
 class UISystem : public System
 {
@@ -22,6 +23,8 @@ public:
 	void							Initialize(SDL_Renderer * renderer);
 
 	void							Process(float dt = 0.f) override;
+
+	SDL_Texture *					LoadTexture(const std::string & path);
 
 
 	void							DeleteText();
@@ -55,5 +58,6 @@ private:
 	std::vector<SDL_Texture*>		_displayTextTexture;
 	std::vector<SDL_Texture*>		_interactiveTextTexture;
 
+	std::map<TextureID, SDL_Texture*>_textureHolder;
 };
 
