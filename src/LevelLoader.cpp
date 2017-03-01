@@ -60,7 +60,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 {
 	const Value& entityDataArray = entitiesLayer["objects"];
 
-	bool createAi = false;
+	int j = 0;
 	bool createPlayer = false;
 
 	for (int i = 0; i < entityDataArray.Size(); i++)
@@ -74,6 +74,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		float h = entity["height"].GetFloat();
 		if (entityName == "PlayerSolo")
 		{
+			j++;
 			if (!createPlayer)
 			{ 
 				createPlayer = true;
@@ -88,18 +89,24 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Player, data));
 			}
-			else if(createAi == false)
+			else 
 			{
-				//createAi = true;
-				std::vector<float> data = std::vector<float>();
+				//if (j == 4)
+				//{
 
-				data.push_back(-1); //id
-				data.push_back(x); //xPosition
-				data.push_back(y); //yPosition
-				data.push_back(w); //width
-				data.push_back(h); //height
+					std::vector<float> data = std::vector<float>();
 
-				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
+					data.push_back(-1); //id
+					data.push_back(x); //xPosition
+					data.push_back(y); //yPosition
+					data.push_back(w); //width
+					data.push_back(h); //height
+
+					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
+				//}
+	
+				
+				
 			}
 			
 		}

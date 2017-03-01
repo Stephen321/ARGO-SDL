@@ -31,27 +31,17 @@ private:
 
 	void Entry(AIComponent* ai, TransformComponent* t);
 
-
 	void SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t);
-	void SeekPowerup()
-	{
+	
 
-	}
-
-	void UsePowerup()
-	{
-
-	}
-
+	void AStarUpdate(AIComponent* ai, TransformComponent* t, float dt);
 	void AStar(AIComponent* ai);
 	GraphNode* DetermineClosestNode(TransformComponent* t);
 
+	void tranverseNode(AIComponent* ai, TransformComponent* t);
 	void Prediction(Entity* currentEntity, AIComponent* ai, TransformComponent* t);
 
-	void Shoot()
-	{
-
-	}
-	helper::Vector2& Avoidance(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force);
+	void AISystem::Avoidance(Entity* self, helper::Vector2& velocity, const helper::Vector2& AIPosition, float force);
+	helper::Vector2 CalculateAvoidanceForce(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force);
 };
 

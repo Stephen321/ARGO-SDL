@@ -18,7 +18,7 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		pathFinderUpdateRate(2.5f),
+		pathFinderUpdateRate(2.0f),
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
 		flagDetectionRange(false),

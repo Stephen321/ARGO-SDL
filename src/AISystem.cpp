@@ -1,4 +1,5 @@
 #include "AISystem.h"
+#include "StatusEffectComponent.h"
 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
@@ -51,62 +52,28 @@ void AISystem::Process(float dt)
 					break;
 				case AIState::SeekFlag:
 				{
+					float force = 3.0f;
+
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+
 					Seek(ai, flag, transform);
 					if (!ai->flagDetectionRange)
 					{
-						//loop through all players and calculate distance and then add avoidance force
-						for (int i = 0; i < _players.size(); i++)
-						{
-							FlagComponent* playerFlag = static_cast<FlagComponent*>(_players[i]->GetComponent(Component::Type::Flag));
-							if (!playerFlag->hasFlag)
-							{
-								TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
-								velocity += Avoidance(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), 2.0f);
-							}
-						}
-						//loop through all AI and calculate distance and then add avoidance force
-						for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
-						{
-							for (Entity* otherAI : (*it).second)
-							{
-								if (e != otherAI) //check if not self.
-								{
-									FlagComponent* otherAIFlag = static_cast<FlagComponent*>(otherAI->GetComponent(Component::Type::Flag));
-									if (!otherAIFlag->hasFlag)
-									{
-										TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
-										velocity += Avoidance(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), 2.0f);
-									}
-								}
-							}
-						}
-
+						force = 1.0f;
 						//update Astar
-						float updateRate = ai->pathFinderUpdateRate;
-						float updateTimer = ai->pathfinderUpdateTimer;
-						updateTimer += dt;
-						if (updateTimer > updateRate)
-						{
-							std::cout << "calling ASTAR!!!";
-							updateTimer -= updateRate;
-							AStar(ai);
-							//ai->nextNode = ai->path.front();
-						}
-						ai->pathfinderUpdateTimer = updateTimer;
+						AStarUpdate(ai, transform, dt);
 
+						//prediction
 						Prediction(e, ai, transform);
 					}
-					
+
+					//avoidance
+					Avoidance(e, velocity, AIPosition, force);
+
 					//Move along the Path
 					if (ai->path.size() > 2)
 					{
-						float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-						if (distance < AI_NODE_COLLISION_RADIUS)
-						{
-							ai->path.erase(ai->path.begin());
-							ai->nextNode = ai->path.front();
-						}
+						tranverseNode(ai, transform);
 					}
 					break;
 				}
@@ -114,73 +81,36 @@ void AISystem::Process(float dt)
 				{
 					if (ai->path.size() > 1)
 					{
-						float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-						if (distance < AI_NODE_COLLISION_RADIUS)
-						{
-							ai->path.erase(ai->path.begin());
-							ai->nextNode = ai->path.front();
-						}
+						tranverseNode(ai, transform);
 					}
 					else
 					{
 						float distance = _flagNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-						if (distance < AI_TO_CHASE_RANGE_OFFSET + AI_TO_CHASE_RANGE_OFFSET + AI_TO_CHASE_RANGE_OFFSET)
+						if (distance < AI_CAMP_FLAG_DETECTION_RANGE)
 						{
 							ai->state = AIState::SeekFlag;
 							ai->destNode = _flagNode;
 						}
+						Prediction(e, ai, transform);
 					}
 
+					
+
+
+					Avoidance(e, velocity, AIPosition, 6.f);
 					break;
 				}
 				case AIState::SeekCheckpoint:
 				{
 					FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 					SeekCheckpoint(ai, flag, transform);
-				
-
-					//loop through all players and calculate distance and then add avoidance force
-					for (int i = 0; i < _players.size(); i++)
-					{
-						TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
-						velocity += Avoidance(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), 6.f);
-					}
-					//loop through all AI and calculate distance and then add avoidance force
-					for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
-					{
-						for (Entity* otherAI : (*it).second)
-						{
-							if (e != otherAI) //check if not self.
-							{
-								TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
-								velocity += Avoidance(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), 6.f);
-							}
-						}
-					}
-
-					//update Astar
-					float updateRate = ai->pathFinderUpdateRate;
-					float updateTimer = ai->pathfinderUpdateTimer;		
-					updateTimer += dt;
-					if (updateTimer > updateRate)
-					{
-						std::cout << "calling ASTAR!!!";
-						updateTimer -= updateRate;
-						ai->nextNode = DetermineClosestNode(transform);
-						AStar(ai);
-						ai->nextNode = ai->path.front();
-					}
-					ai->pathfinderUpdateTimer = updateTimer;
-
+					Avoidance(e, velocity, AIPosition, 6.f);
+					AStarUpdate(ai, transform, dt);
+					
 					//Move along the Path
 					if (ai->path.size() > 1)
 					{
-						float distance = ai->nextNode->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-						if (distance < AI_NODE_COLLISION_RADIUS)
-						{
-							ai->path.erase(ai->path.begin());
-							ai->nextNode = ai->path.front();
-						}
+						tranverseNode(ai, transform);
 					}
 
 					break;
@@ -192,34 +122,29 @@ void AISystem::Process(float dt)
 					break;
 				}
 
-				
-
-				
-
-					
-
-
-				
-				
-	
-				
-
-
 				if(!ai->path.empty())
 				{
 					helper::Vector2 nextNodeVector2 = ai->nextNode->getPosition() - AIPosition;
 					helper::Vector2 waypointDirection = nextNodeVector2.normalize();
 
-
-					float force = 4.0f;
-
-					velocity += waypointDirection * 4.0f;			
+					velocity += waypointDirection * 5.0f;			
 				}
 
-				float xDrag = -physics->xVelocity * DRAG;
-				float yDrag = -physics->yVelocity * DRAG;
-				physics->xVelocity += (velocity.x + xDrag) * dt;
-				physics->yVelocity += (velocity.y + yDrag) * dt;
+				float maxVelocity = 10.0f;
+				float currentVelocity = sqrt(velocity.x* velocity.x + velocity.y * velocity.y);
+				if (currentVelocity > maxVelocity)
+				{
+					velocity = velocity.normalize() * maxVelocity;
+				}
+
+				StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
+				if (!statusEffect->staggered)
+				{
+					float xDrag = -physics->xVelocity * DRAG;
+					float yDrag = -physics->yVelocity * DRAG;
+					physics->xVelocity += (velocity.x + xDrag) * dt;
+					physics->yVelocity += (velocity.y + yDrag) * dt;
+				}		
 			}
 		}
 	}
@@ -297,66 +222,60 @@ void AISystem::Prediction(Entity* self, AIComponent* ai, TransformComponent* t)
 		}
 	}
 
-	
-		//loop through AI and find AI with flag
-		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	//loop through AI and find AI with flag
+	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	{
+		for (Entity* AIEntities : (*it).second)
 		{
-			for (Entity* AIEntities : (*it).second)
+			if (self != AIEntities)
 			{
-				if (self != AIEntities)
+				FlagComponent* f = static_cast<FlagComponent*>(AIEntities->GetComponent(Component::Type::Flag));
+				if (f->hasFlag)
 				{
-					FlagComponent* f = static_cast<FlagComponent*>(AIEntities->GetComponent(Component::Type::Flag));
-					if (f->hasFlag)
-					{
-						entityWithFlag = AIEntities;
-						break;
-					}
-				}
-			}
-		}
-	
-		if (entityWithFlag != nullptr)
-		{
-			FlagComponent* f = static_cast<FlagComponent*>(entityWithFlag->GetComponent(Component::Type::Flag));
-			int size = _checkpointNode.size();
-			int target = f->currentCheckpointID + 1;
-			for (int i = 0; i < size; i++)
-			{
-				if (target == _checkpointNode[i]->data().second)
-				{
-
-					float selfDistanceToCheckpoint = _checkpointNode[i]->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
-
-					TransformComponent* transform = static_cast<TransformComponent*>(entityWithFlag->GetComponent(Component::Type::Transform));
-					float otherDistanceToCheckpoint = _checkpointNode[i]->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
-
-
-					if (selfDistanceToCheckpoint > otherDistanceToCheckpoint + AI_TO_CHASE_RANGE_OFFSET )
-					{
-						target++;
-						if (target > 4)
-							target = 1;
-						for (int j = 0; j < size; j++)
-						{
-							if (target == _checkpointNode[j]->data().second)
-							{
-								ai->destNode = _checkpointNode[j];
-								break;
-							}
-						}
-
-						ai->nextNode = DetermineClosestNode(t);
-						AStar(ai);
-						ai->state = AIState::Camp;
-					}
+					entityWithFlag = AIEntities;
 					break;
 				}
 			}
 		}
+	}
 	
-	
+	if (entityWithFlag != nullptr)
+	{
+		FlagComponent* f = static_cast<FlagComponent*>(entityWithFlag->GetComponent(Component::Type::Flag));
+		int size = _checkpointNode.size();
+		int target = f->currentCheckpointID + 1;
+		for (int i = 0; i < size; i++)
+		{
+			if (target == _checkpointNode[i]->data().second)
+			{
 
+				float selfDistanceToCheckpoint = _checkpointNode[i]->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
 
+				TransformComponent* transform = static_cast<TransformComponent*>(entityWithFlag->GetComponent(Component::Type::Transform));
+				float otherDistanceToCheckpoint = _checkpointNode[i]->getPosition().distance(helper::Vector2(transform->rect.x, transform->rect.y));
+
+				if (selfDistanceToCheckpoint > otherDistanceToCheckpoint + AI_TO_CHASE_RANGE_OFFSET )
+				{
+					target++;
+					if (target > 4)
+						target = 1;
+					for (int j = 0; j < size; j++)
+					{
+						if (target == _checkpointNode[j]->data().second)
+						{
+							ai->destNode = _checkpointNode[j];
+							break;
+						}
+					}
+
+					ai->nextNode = DetermineClosestNode(t);
+					AStar(ai);
+					ai->state = AIState::Camp;
+				}
+				break;
+			}
+		}
+	}
 }
 
 void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t)
@@ -367,7 +286,7 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 		float distanceToCheckpoint = ai->destNode->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
 		if (distanceToCheckpoint < CHECKPOINT_COLLISION_RADIUS)
 		{
-			//f->currentCheckpointID++; 
+			ai->nextNode = ai->destNode;
 			//reach checkpoint, increase and search for next waypoint node.
 			int size = _checkpointNode.size();
 			for (int i = 0; i < size; i++)
@@ -378,8 +297,9 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 					break;
 				}
 			}
-			ai->nextNode = DetermineClosestNode(t);
-			AStar(ai);   //manual call on AStar.
+			//ai->nextNode = DetermineClosestNode(t);
+			//AStar(ai);   //manual call on AStar.
+			ai->pathfinderUpdateTimer = 0;
 		}
 	}
 	else
@@ -389,11 +309,32 @@ void AISystem::SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformCompon
 		ai->destNode = _flagNode;
 		ai->nextNode = DetermineClosestNode(t);	
 		ai->pathfinderUpdateTimer = 0;
-		//AStar(ai);
 	}
 }
 
-helper::Vector2& AISystem::Avoidance(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force)
+void AISystem::Avoidance(Entity* self, helper::Vector2& velocity, const helper::Vector2& AIPosition, float force)
+{
+	//loop through all players and calculate distance and then add avoidance force
+	for (int i = 0; i < _players.size(); i++)
+	{
+		TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
+		velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), force);
+	}
+	//loop through all AI and calculate distance and then add avoidance force
+	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	{
+		for (Entity* otherAI : (*it).second)
+		{
+			if (self != otherAI) //check if not self.
+			{
+				TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
+				velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), force);
+			}
+		}
+	}
+}
+
+helper::Vector2 AISystem::CalculateAvoidanceForce(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force)
 {
 	helper::Vector2 velocity = helper::Vector2(0, 0);
 	helper::Vector2 AB = AIPosition - otherPosition;
@@ -404,7 +345,6 @@ helper::Vector2& AISystem::Avoidance(const helper::Vector2& AIPosition, const he
 	}
 	return velocity;
 }
-
 
 GraphNode* AISystem::DetermineClosestNode(TransformComponent* t)
 {
@@ -417,7 +357,6 @@ GraphNode* AISystem::DetermineClosestNode(TransformComponent* t)
 	int size = nodes.size();
 	for (int i = 0; i < size; i++)
 	{
-
 		float distance = (nodes[i]->getPosition() - helper::Vector2(t->rect.x, t->rect.y)).length();
 		if ( distance < AI_NODE_COLLISION_RADIUS && distance < closestNodeDistance)
 		{
@@ -428,6 +367,31 @@ GraphNode* AISystem::DetermineClosestNode(TransformComponent* t)
 	return nodes[closestNodeIndex];
 }
 
+void AISystem::tranverseNode(AIComponent* ai, TransformComponent* t)
+{
+	float distance = ai->nextNode->getPosition().distance(helper::Vector2(t->rect.x, t->rect.y));
+	if (distance < AI_NODE_COLLISION_RADIUS)
+	{
+		ai->path.erase(ai->path.begin());
+		ai->nextNode = ai->path.front();
+	}
+}
+
+void AISystem::AStarUpdate(AIComponent* ai, TransformComponent* t ,float dt)
+{
+	//update Astar
+	float updateRate = ai->pathFinderUpdateRate;
+	float updateTimer = ai->pathfinderUpdateTimer;
+	updateTimer += dt;
+	if (updateTimer > updateRate)
+	{
+		std::cout << "calling ASTAR!!!";
+		updateTimer -= updateRate;
+		AStar(ai);
+	}
+	ai->pathfinderUpdateTimer = updateTimer;
+}
+
 void AISystem::AStar(AIComponent* ai)
 {
 	vector<GraphNode*> path;
@@ -436,15 +400,13 @@ void AISystem::AStar(AIComponent* ai)
 	_waypoints->setHeuristics(ai->nextNode);
 
 	//call AStar
-	//_waypoints->aStar(ai->nextNode, ai->destNode, path);
 	_waypoints->aStar(ai->nextNode, ai->destNode, path);
-	//set colouraaa
+	//set colour
 	ai->destNode->setColour(SDL_Color{ 255,0,0,255 });
 	ai->nextNode->setColour(SDL_Color{ 0,255,0,255 });
 
 	if (!path.empty())
 	{
 		ai->path = path;
-
 	}
 }
