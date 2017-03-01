@@ -128,8 +128,6 @@ void WaypointSystem::CreatePowerUp(float dt)
 
 		while (powerUpsToSpawn != 0 && _powerUpCount < maxPowerUps)
 		{
-			bool spawned = false;
-
 			int index = rand() % nodes.size();
 
 			if (nodes[index]->data().empty())
@@ -139,7 +137,7 @@ void WaypointSystem::CreatePowerUp(float dt)
 				data.push_back(rand() % ((int)PowerUpComponent::Type::Count)); //id
 				data.push_back(nodes[index]->getPosition().x); //xPosition
 				data.push_back(nodes[index]->getPosition().y); //yPosition
-				data.push_back(index); //yPosition
+				data.push_back(index); //node index
 
 				_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::PowerUp, data));
 				nodes[index]->setData("PowerUp");
