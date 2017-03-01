@@ -83,12 +83,18 @@ void MainMenu::Start()
 {
 	_running = true;
 	_swapScene = CurrentScene::MAIN_MENU;
+
+	if (!_audioManager->IsMusicPlaying())
+	{
+		_audioManager->PlayMusic("MusicMenu");
+	}
 }
 
 void MainMenu::Stop()
 {
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void MainMenu::OnEvent(EventListener::Event evt)
@@ -128,6 +134,7 @@ void MainMenu::BindInput()
 	{ 
 		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() -1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
+		if (_swapScene == CurrentScene::GAME) { _audioManager->StopMusic(); }
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);
@@ -144,6 +151,7 @@ void MainMenu::BindInput()
 			{ 
 				_selectedItemIndex = i;
 				_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
+				if (_swapScene == CurrentScene::GAME) { _audioManager->StopMusic(); }
 			}
 		}
 

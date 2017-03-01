@@ -19,8 +19,9 @@ public:
 
 	void								PlayMusic(const std::string& fileName);
 	void								PauseMusic();
-	void								StopMusic(Mix_Chunk* sound);
+	void								StopMusic();
 	void								PlayFX(const std::string& fileName);
+	void								ClearSounds();
 
 	void								SetMusicVolume(bool volume);
 	int									GetMusicVolume();
@@ -28,8 +29,19 @@ public:
 	void								SetHumVolume(bool volume);
 	int									GetHumVolume();
 
-	void								SetBulletVolume(bool volume);
-	int									GetBulletVolume();
+	void								SetWeaponVolume(bool volume);
+	int									GetWeaponVolume();
+
+	void								SetCheckpointVolume(bool volume);
+	int									GetCheckpointVolume();
+
+	void								SetCollisionVolume(bool volume);
+	int									GetCollisionVolume();
+
+	void								SetUIVolume(bool volume);
+	int									GetUIVolume();
+
+	bool								IsMusicPlaying();
 
 private:
 	static AudioManager*				audioManagerInstance;
@@ -49,12 +61,15 @@ private:
 	static AudioState					_currentState;
 	std::string							_sCurrentMusicFilename = "";
 
-	Mix_Chunk*							_previousSound;
-
 	std::map<std::string, Mix_Chunk*>	_soundMap;
+	std::map<std::string, Mix_Music*>	_musicMap;
 
 	int									_musicVolume;
+
 	int									_humVolume;
-	int									_bulletVolume;
+	int									_weaponVolume;
+	int									_checkpointVolume;
+	int									_collisionVolume;
+	int									_uiVolume;
 };
 

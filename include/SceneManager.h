@@ -11,7 +11,6 @@
 #include "Options.h"
 #include "About.h"
 
-#include "CameraSystem.h"
 
 class SceneManager
 {
@@ -28,24 +27,15 @@ private:
 	bool							SetupSDL(const char* title, int xpos, int ypos, int width, int height, int flags);
 
 private:
+	std::vector<Scene*>				_currentScene;
+
 	SDL_Window*						_window;
 	SDL_Renderer*					_renderer;
 
-	bool							_running;
-
-	CameraSystem					_cameraSystem;
-
-private:
-	std::vector<Scene*>				_currentScene;
-
-	MainMenu*						_menu;
-	Game*							_game;
-	Lobby*							_lobby;
-	Options*						_options;
-	About*							_about;
-	int								_runningScene;
 	std::vector<int>				_ids;
 
+	int								_runningScene;
 	int								_previousScene;
-};
 
+	bool							_running;
+};

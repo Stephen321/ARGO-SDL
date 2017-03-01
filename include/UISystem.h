@@ -43,8 +43,12 @@ public:
 	int								CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 	void							DeleteDisplayTextByID(int id);
 
-	std::vector<SDL_Rect>&	GetInteractiveTextRectangle();
-	std::vector<SDL_Rect>&	GetDisplayTextRectangle();
+	void							CreateBackButton(std::string message, int x, int y);
+	void							DeleteBackButton();
+
+	std::vector<SDL_Rect>&			GetInteractiveTextRectangle();
+	std::vector<SDL_Rect>&			GetDisplayTextRectangle();
+	SDL_Rect&						GetBackButton();
 
 private:
 	SDL_Renderer*					_renderer;
@@ -54,6 +58,7 @@ private:
 
 	std::vector<SDL_Rect>			_displayTextRectangle;
 	std::vector<SDL_Rect>			_interactiveTextRectangle;
+	SDL_Rect						_backButton();
 
 	std::vector<SDL_Texture*>		_displayTextTexture;
 	std::vector<SDL_Texture*>		_interactiveTextTexture;
@@ -61,3 +66,9 @@ private:
 	std::map<TextureID, SDL_Texture*>_textureHolder;
 };
 
+// process - entities
+// player
+// weapon
+// player to weapon - weapon gets ammunition / belongs to player
+// weapon - gun - ammunition
+// access flag component - current checkpoint / laps

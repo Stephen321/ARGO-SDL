@@ -8,7 +8,6 @@ UISystem::UISystem(float updateRate)
 {
 }
 
-
 UISystem::~UISystem()
 {
 }
@@ -278,7 +277,6 @@ void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
 }
-
 
 // Display Text
 void UISystem::CreateDisplayText(std::string message, int x, int y)
