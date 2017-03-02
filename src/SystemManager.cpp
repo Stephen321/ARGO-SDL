@@ -97,7 +97,6 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP remote SYSTEM
 	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
-	_remoteSystem->Initialize();
 	_systems[SystemType::Remote] = _remoteSystem;
 }
 
