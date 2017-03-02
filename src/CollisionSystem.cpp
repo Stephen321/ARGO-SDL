@@ -63,7 +63,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player)
+			if (other->GetType() == EntityType::AI)
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
@@ -143,8 +143,8 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			std::vector<float> data = std::vector<float>();
 
 			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back(powerUpTransform->rect.x); //xPosition
+			data.push_back(powerUpTransform->rect.y); //yPosition
 
 			weapon->fired = false;
 			weapon->hasWeapon = true;

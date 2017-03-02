@@ -35,17 +35,6 @@ void SystemManager::Initialize(SDL_Renderer*& renderer, EntityFactory* entityFac
 	InitializeInteractionSystems();
 }
 
-void SystemManager::InitializeInteractionSystems()
-{
-	//SETUP WEAPON INTERACTION SYSTEM
-	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
-	weaponSystem->Initialize(&GetCamera());
-	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
-
-	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
-	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
-}
-
 
 #pragma region Initialization
 
@@ -103,13 +92,22 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP Animation SYSTEM
 	AnimationSystem* animationSystem = new AnimationSystem();
-	animationSystem->Initialize();
 	_systems[SystemType::Animation] = animationSystem;
 
 	//SETUP remote SYSTEM
 	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
-	_remoteSystem->Initialize();
 	_systems[SystemType::Remote] = _remoteSystem;
+}
+
+void SystemManager::InitializeInteractionSystems()
+{
+	//SETUP WEAPON INTERACTION SYSTEM
+	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
+	weaponSystem->Initialize(&GetCamera());
+	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
+
+	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
+	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
 }
 
 #pragma endregion

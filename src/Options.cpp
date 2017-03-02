@@ -19,7 +19,6 @@ Options::~Options()
 void Options::Initialize(SDL_Renderer* renderer)
 {
 	Scene::Initialize(renderer);
-
 	//UI
 	_uiSystem.Initialize(_renderer);
 
