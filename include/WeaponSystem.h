@@ -15,6 +15,8 @@ public:
 	virtual void						RemoveEntity(Entity* gameObject, bool firstObject) override;
 
 	void								Process(float dt = 0.f) override;
+
+private:
 	void								ListenForEvents();
 	void								WeaponCreationEvent();
 	void								WeaponBulletAddition();

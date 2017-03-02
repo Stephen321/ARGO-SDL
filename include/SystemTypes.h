@@ -10,9 +10,10 @@ enum class SystemType
 	Camera,
 	Gun,
 	AI,
-	World,
+	Waypoint,
 	Remote,
 	StatusEffect,
+	Animation
 };
 
 enum class InteractionSystemType

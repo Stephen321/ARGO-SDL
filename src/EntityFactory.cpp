@@ -1,3 +1,4 @@
+
 #include "EntityFactory.h"
 
 #include "ColliderComponent.h"
@@ -12,10 +13,11 @@
 #include "RemoteComponent.h"
 #include "StatusEffectComponent.h"
 #include "PowerUpComponent.h"
+#include "AnimationComponent.h"
 #include "WeaponComponent.h"
+#include "NetworkHandler.h"
 
 #include "ConstHolder.h"
-
 
 
 EntityFactory::EntityFactory()	
@@ -80,16 +82,20 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 Entity* EntityFactory::CreatePlayerEntity(int id)
 {
 	Entity* player = new Entity(EntityType::Player);
+
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	player->AddComponent(new TransformComponent(0, 0, 96, 96));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
 	if (id != -1)//is in multiplayer game
 		player->AddComponent(new RemoteComponent(id));
 	player->AddComponent(new StatusEffectComponent());
+	player->AddComponent(new AnimationComponent());
 	player->AddComponent(new WeaponComponent());
 
 	return player;
@@ -99,14 +105,17 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 {
 	Entity* remotePlayer = new Entity(EntityType::Remote);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	remotePlayer->AddComponent(spriteComponent);
-	remotePlayer->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	remotePlayer->AddComponent(new TransformComponent(0, 0, 96, 96));
 	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	remotePlayer->AddComponent(new ColliderComponent());
 	remotePlayer->AddComponent(new FlagComponent());
 	remotePlayer->AddComponent(new RemoteComponent(id));
 	remotePlayer->AddComponent(new StatusEffectComponent());
+	remotePlayer->AddComponent(new AnimationComponent());
 	remotePlayer->AddComponent(new WeaponComponent());
 
 	return remotePlayer;
@@ -116,9 +125,12 @@ Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	ai->AddComponent(spriteComponent);
-	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+
+	ai->AddComponent(new TransformComponent(0, 0, 96, 96));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
@@ -126,6 +138,7 @@ Entity* EntityFactory::CreateAIEntity(int id)
 		ai->AddComponent(new RemoteComponent(id));
 	ai->AddComponent(new AIComponent());
 	ai->AddComponent(new StatusEffectComponent());
+	ai->AddComponent(new AnimationComponent());
 	ai->AddComponent(new WeaponComponent());
 
 	return ai;
@@ -197,6 +210,10 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 	flag->AddComponent(spriteComponent);
 	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
 	flag->AddComponent(new ColliderComponent());
+	if (id != -1)//is in multiplayer game
+	{
+		flag->AddComponent(new RemoteComponent(id));
+	}
 	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 
 	return flag;
@@ -224,6 +241,66 @@ Entity* EntityFactory::CreateTileEntity(int id)
 		spriteComponent->sourceRect = { 2, 0, 0, 0 };
 		break;
 	}
+	case 4:
+	{
+		spriteComponent->sourceRect = { 3, 0, 0, 0 };
+		break;
+	}
+	case 5:
+	{
+		spriteComponent->sourceRect = { 4, 0, 0, 0 };
+		break;
+	}
+	case 6:
+	{
+		spriteComponent->sourceRect = { 0, 1, 0, 0 };
+		break;
+	}
+	case 7:
+	{
+		spriteComponent->sourceRect = { 1, 1, 0, 0 };
+		break;
+	}
+	case 8:
+	{
+		spriteComponent->sourceRect = { 2, 1, 0, 0 };
+		break;
+	}
+	case 9:
+	{
+		spriteComponent->sourceRect = { 3, 1, 0, 0 };
+		break;
+	}
+	case 10:
+	{
+		spriteComponent->sourceRect = { 4, 1, 0, 0 };
+		break;
+	}
+	case 11:
+	{
+		spriteComponent->sourceRect = { 0, 2, 0, 0 };
+		break;
+	}
+	case 12:
+	{
+		spriteComponent->sourceRect = { 1, 2, 0, 0 };
+		break;
+	}
+	case 13:
+	{
+		spriteComponent->sourceRect = { 2, 2, 0, 0 };
+		break;
+	}
+	case 14:
+	{
+		spriteComponent->sourceRect = { 3, 2, 0, 0 };
+		break;
+	}
+	case 15:
+	{
+		spriteComponent->sourceRect = { 4, 2, 0, 0 };
+		break;
+	}
 	default:
 		break;
 	}
@@ -236,8 +313,38 @@ Entity* EntityFactory::CreateTileEntity(int id)
 Entity* EntityFactory::CreateUIEntity(int id)
 {
 	Entity* ui = new Entity(EntityType::UI);
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::UI]);
+
+	switch (id)
+	{
+	case 1:
+	{
+		spriteComponent->sourceRect = { 0, 0, 0, 0 };
+		break;
+	}
+	case 2:
+	{
+		spriteComponent->sourceRect = { 1, 0, 0, 0 };
+		break;
+	}
+	case 3:
+	{
+		spriteComponent->sourceRect = { 2, 0, 0, 0 };
+		break;
+	}
+	case 4:
+	{
+		spriteComponent->sourceRect = { 3, 0, 0, 0 };
+		break;
+	}
+	default:
+		break;
+	}
+
+
+	ui->AddComponent(spriteComponent);
 	ui->AddComponent(new TransformComponent(0, 0, 0, 0));
-	ui->AddComponent(new SpriteComponent((*_textureHolder)[TextureID::EntitySpriteSheet]));
 
 	return ui;
 }

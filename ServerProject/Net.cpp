@@ -61,8 +61,6 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yVel);
 		WriteBool(sendData->host);
 		WriteInt(sendData->remoteID);
-		WriteBool(sendData->hasWeapon);
-		WriteInt(sendData->weaponAngle);
 		break;
 	}
 	case MessageType::SessionList:
@@ -166,8 +164,6 @@ Network::ReceivedData Network::Net::Receive()
 			data.yVel = ReadFloat(byteOffset);
 			data.host = ReadBool(byteOffset);
 			data.remoteID = ReadInt(byteOffset);
-			data.hasWeapon = ReadBool(byteOffset);
-			data.weaponAngle = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

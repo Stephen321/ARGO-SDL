@@ -8,10 +8,12 @@ SystemManager::SystemManager()
 {
 }
 
-
 SystemManager::~SystemManager()
 {
 	delete _creationSystem;
+
+	GetUISystem()->DeleteDisplayText();
+	GetUISystem()->DeleteText();
 
 	SystemMapIterator it = _systems.begin();
 	for (; it != _systems.end(); ++it)
@@ -25,15 +27,29 @@ SystemManager::~SystemManager()
 	}
 }
 
-void SystemManager::Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
+
+
+void SystemManager::Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
 {
- 	InitializeSystems(renderer, entityFactory, bodyFactory, world, waypoints, width, height);
+	InitializeSystems(renderer, entityFactory, bodyFactory, world, width, height);
 	InitializeInteractionSystems();
 }
 
+void SystemManager::InitializeInteractionSystems()
+{
+	//SETUP WEAPON INTERACTION SYSTEM
+	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
+	weaponSystem->Initialize(&GetCamera());
+	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
+
+	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
+	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
+}
+
+
 #pragma region Initialization
 
-void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height)
+void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height)
 {
 	//SETUP CAMERA SYSTEM
 	CameraSystem* cameraSystem = new CameraSystem(CAMERA_SYSTEM_UPDATE);
@@ -42,7 +58,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP RENDER SYSTEM
 	RenderSystem* rendererSystem = new RenderSystem(0);
-	rendererSystem->Initialize(renderer, &cameraSystem->getCamera());
+	rendererSystem->Initialize(renderer, &cameraSystem->GetCamera());
 	_systems[SystemType::Render] = rendererSystem;
 
 	//SETUP PHYSICS SYSTEM
@@ -69,13 +85,12 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP AI SYSTEM
 	AISystem* aiSystem = new AISystem(0);
-	aiSystem->Initialize(waypoints);
 	_systems[SystemType::AI] = aiSystem;
 
-	//SETUP WORLD SYSTEM
+	//SETUP Waypoint SYSTEM
 	WaypointSystem* waypointSystem = new WaypointSystem(_creationRequests, _interactionSystemEvents, 0);
-	waypointSystem->Initialize(waypoints);
-	_systems[SystemType::World] = waypointSystem;
+	_systems[SystemType::Waypoint] = waypointSystem;
+
 
 	//SETUP DESTROY SYSTEM
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
@@ -86,25 +101,19 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_creationSystem = new CreationSystem(_creationRequests);
 	_creationSystem->Initialize(entityFactory, bodyFactory);
 
+	//SETUP Animation SYSTEM
+	AnimationSystem* animationSystem = new AnimationSystem();
+	animationSystem->Initialize();
+	_systems[SystemType::Animation] = animationSystem;
+
 	//SETUP remote SYSTEM
 	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE, _creationRequests);
-	_remoteSystem->Initialize(waypoints);
 	_systems[SystemType::Remote] = _remoteSystem;
-}
-void SystemManager::InitializeInteractionSystems()
-{
-	//SETUP WEAPON INTERACTION SYSTEM
-	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
-	weaponSystem->Initialize(&GetCamera());
-	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
-
-	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
-	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
 }
 
 #pragma endregion
 
-void SystemManager::PostInitialize(Entity*& player)
+void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 {
 	_creationSystem->Process(0);
 
@@ -140,6 +149,10 @@ void SystemManager::PostInitialize(Entity*& player)
 
 	//SETUP FLAG INTERACTION SYSTEM
 	GetFlagCheckpointSystem()->Initialize(checkpoints);
+	//SETUP WAYPOINT AND AI SYSTEM
+	GetWaypointSystem()->Initialize(waypoints);
+	GetAISystem()->Initialize(waypoints, player);
+	GetRemoteSystem()->Initialize(waypoints);
 }
 
 void SystemManager::Process(float dt)
@@ -254,7 +267,7 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Camera]->RemoveEntity(entity->GetType(), entity);
-		_systems[SystemType::World]->RemoveEntity(entity->GetType(), entity);
+		_systems[SystemType::Waypoint]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::StatusEffect]->RemoveEntity(entity->GetType(), entity);
 		break;
 	case EntityType::Weapon:
@@ -345,6 +358,17 @@ StatusEffectSystem* SystemManager::GetStatusEffectSystem()
 {
 	return static_cast<StatusEffectSystem*>(_systems[SystemType::StatusEffect]);
 }
+WaypointSystem* SystemManager::GetWaypointSystem()
+{
+	WaypointSystem* waypointSystem = static_cast<WaypointSystem*>(_systems[SystemType::Waypoint]);
+	return waypointSystem;
+}
+
+
+AnimationSystem * SystemManager::GetAnimationSystem()
+{
+	return static_cast<AnimationSystem*>(_systems[SystemType::Animation]);
+}
 
 UISystem * SystemManager::GetUISystem()
 {
@@ -368,5 +392,5 @@ FlagCheckpointSystem* SystemManager::GetFlagCheckpointSystem()
 
 Camera2D::Camera& SystemManager::GetCamera()
 {
-	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->getCamera();
+	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->GetCamera();
 }

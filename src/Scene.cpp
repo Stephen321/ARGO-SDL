@@ -1,6 +1,4 @@
 #include "Scene.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
 
 Scene::Scene()
 	: _running(false)
@@ -15,6 +13,7 @@ Scene::~Scene()
 
 void Scene::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 }
 
 int Scene::Update()

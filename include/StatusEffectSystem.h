@@ -10,5 +10,7 @@ public:
 							~StatusEffectSystem();
 
 	void					Process(float dt) override;
+
+private:
 	void					UpdateStatusEffect(bool& effect, float& effectTimer, float dt);
 };

@@ -5,11 +5,8 @@
 #include "LTimer.h"
 
 About::About()
-	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _renderSystem()
-	, _functionMaster()
+	: _uiSystem(0)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
@@ -20,11 +17,9 @@ About::~About()
 
 void About::Initialize(SDL_Renderer* renderer)
 {
-	_renderer = renderer;
-	_running = true;
-	_swapScene = CurrentScene::ABOUT;
-
-	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	Scene::Initialize(renderer);
+	
+	Start();
 
 	//Input
 	BindInput();
@@ -50,7 +45,7 @@ void About::Render()
 	SDL_RenderClear(_renderer);
 
 	//RENDER HERE
-	_renderSystem.Process();
+	_uiSystem.Process();
 
 	SDL_RenderPresent(_renderer);
 }
@@ -64,7 +59,7 @@ bool About::IsRunning()
 void About::Start()
 {
 	_running = true;
-	_swapScene = CurrentScene::LOBBY;
+	_swapScene = CurrentScene::ABOUT;
 }
 
 void About::Stop()
@@ -73,14 +68,29 @@ void About::Stop()
 	CleanUp();
 }
 
-void About::OnEvent(EventListener::Event evt)
+void About::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				_running = false;
+				break;
+				//case Event::w:
+				//	_audioManager->PlayFX("Click");
+				//	break;
+				//case Event::s:
+				//	_audioManager->PlayFX("Click");
+				//	break;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -100,5 +110,8 @@ void About::LoadContent()
 
 void About::CleanUp()
 {
-
+	_inputManager->EmptyKeys();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteText();
+	_uiSystem.DeleteEntites();
 }

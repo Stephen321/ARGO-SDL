@@ -1,25 +1,7 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
-
-#include "CameraSystem.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "FunctionMaster.h"
-#include "RenderSystem.h"
+#include "UISystem.h"
 
 class About : public EventListener, public Scene
 {
@@ -37,7 +19,7 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput() override;
@@ -46,8 +28,6 @@ private:
 	void							CleanUp() override;
 
 private:
-	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
-	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
 };
 

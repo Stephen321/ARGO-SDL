@@ -25,13 +25,13 @@ public:
 	}
 
 public:
-	bool staggered;
-	bool speedUp;
-	bool invisible;
-	bool invincible;
+	bool	staggered;
+	bool	speedUp;
+	bool	invisible;
+	bool	invincible;
 
-	float staggeredTimer;
-	float speedUpTimer;
-	float invisibleTimer;
-	float invincibleTimer;
+	float	staggeredTimer;
+	float	speedUpTimer;
+	float	invisibleTimer;
+	float	invincibleTimer;
 };

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Scene.h"
+#include "UISystem.h"
 
-class Options : public EventListener, public Scene
+class Options : public Scene
 {
 public:
 	Options();
@@ -18,7 +19,7 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput() override;
@@ -26,21 +27,21 @@ private:
 	void							LoadContent() override;
 	void							CleanUp() override;
 
-private:
-	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
-	CameraSystem					_cameraSystem;
-	UISystem						_uiSystem;
-
-private:
 	void							MoveUp();
 	void							MoveDown();
 
 	int								GetPressedItem();
-	int								_selectedItemIndex;
-
 
 	std::string						GetMusicVolume();
 	std::string						GetHumVolume();
+	std::string						GetWeaponVolume();
+	std::string						GetCheckpointVolume();
+	std::string						GetCollisionVolume();
+	std::string						GetUIVolume();
+
+private:
+	UISystem						_uiSystem;
+
+	int								_selectedItemIndex;
 };
 

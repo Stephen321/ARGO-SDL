@@ -18,7 +18,7 @@ Graph::~Graph() {
 }
 
 
-void Graph::addNode(std::string data, helper::Vector2 position)
+void Graph::addNode(pair<GraphNode::EntityData,int> data, helper::Vector2 position)
 {
 	GraphNode* node = new GraphNode();
 	node->setData(data);
@@ -149,7 +149,7 @@ void Graph::aStar(GraphNode* pStart, GraphNode* pDest, std::vector<GraphNode *>&
 				}
 			}
 			pq.pop_back();
-			std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
+			//std::sort(pq.begin(), pq.end(), NodeSearchCostComparer());
 		}
 
 		if (pq.size() != 0 && pq.back() == pDest) {

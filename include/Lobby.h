@@ -2,12 +2,19 @@
 
 #include "Scene.h"
 #include "NetworkHandler.h"
+#include "UISystem.h"
 
 class Lobby : public Scene
 {
+private:
+	struct Session {
+		int id;
+		int currentPlayers;
+	};
+
 public:
-	Lobby();
-	~Lobby();
+									Lobby();
+									~Lobby();
 
 	void							Initialize(SDL_Renderer* renderer, std::vector<int>* ids);
 
@@ -19,40 +26,37 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput() override;
 
 	void							LoadContent() override;
 	void							CleanUp() override;
-
-private:
-	struct Session {
-		int id;
-		int currentPlayers;
-	};
-
-	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
-	CameraSystem					_cameraSystem;
-	UISystem						_uiSystem;
-
-private:
 	void							MoveUp();
 	void							MoveDown();
-
-	float							_connectTimer;
-	bool							_startingGame;
-	int								GetPressedItem();
-	int								_selectedItemIndex;
-	std::vector<int>*				_ids;
-	float							_readyTimer;
-	const int						READY_COUNTDOWN = 3;
-	bool							_startReadyTimer;
-	int								_countdownTextId;
 	
 	void							Refresh(const std::vector<Session>& sessions = std::vector<Session>(), int maxPlayers = 0);
 	void							Refresh(const std::vector<int>& players, std::vector<bool> ready = std::vector<bool>());
+
+	int								GetPressedItem();
+
+private:
+	UISystem						_uiSystem;
+
+	std::vector<int>*				_ids;
+
+	float							_connectTimer;
+	float							_readyTimer;
+
+	int								_selectedItemIndex;
+	int								_countdownTextId;
+
+	std::vector<Session>			_session;
+
+	bool							_startReadyTimer;
+	bool							_startingGame;
+
+	const int						READY_COUNTDOWN = 3;
 };
 

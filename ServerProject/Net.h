@@ -6,7 +6,8 @@
 
 namespace Network
 {
-	enum class MessageType : Uint8 {
+	enum class MessageType : Uint8 
+	{
 		Connect,
 		Disconnect,
 		State,
@@ -20,37 +21,44 @@ namespace Network
 		Fire
 	};
 
-	struct MessageData {
+	struct MessageData 
+	{
 		MessageData() : id(-1), sessionID(-1) {};
-		int id;
-		int sessionID;
-		MessageType GetType() const {
+
+		MessageType GetType() const 
+		{
 			return type;
 		}
+
+		int id;
+		int sessionID;
+
 	protected:
 		MessageType type;
 	};
 
 	struct StateData : MessageData {
-		StateData() : host(false), hasWeapon(false) { type = MessageType::State; }
+		StateData() : host(false) { type = MessageType::State; }
 		float xPos;
 		float yPos;
 		float xVel;
 		float yVel;
 		bool host;
 		int remoteID;
-		bool hasWeapon;
-		float weaponAngle;
 	};
-	struct ConnectData : MessageData {
+
+	struct ConnectData : MessageData 
+	{
 		ConnectData() { type = MessageType::Connect; }
 	};
 
-	struct DisconnectData : MessageData {
+	struct DisconnectData : MessageData 
+	{
 		DisconnectData() { type = MessageType::Disconnect; }
 	};
 
-	struct SessionListData : MessageData {
+	struct SessionListData : MessageData 
+	{
 		SessionListData() { type = MessageType::SessionList; }
 		int count;
 		int maxPlayers;
@@ -67,13 +75,15 @@ namespace Network
 		SetHostData()  { type = MessageType::SetHost; }
 	};
 
-	struct PlayerListData : MessageData {
+	struct PlayerListData : MessageData 
+	{
 		PlayerListData() { type = MessageType::PlayerList; }
 		int count;
 		std::vector<int> players;
 	};
 
-	struct ReadyData : MessageData {
+	struct ReadyData : MessageData 
+	{
 		ReadyData() { type = MessageType::Ready; }
 		std::vector<int> ids;
 		std::vector<bool> ready;
@@ -81,7 +91,8 @@ namespace Network
 		int seed;
 	};
 
-	struct PickUpFlagData : MessageData {
+	struct PickUpFlagData : MessageData 
+	{
 		PickUpFlagData() { type = MessageType::PickUpFlag; }
 	};
 
@@ -99,12 +110,14 @@ namespace Network
 	//id in MessageData?
 	//sessionId in MessageData?
 
-	class ReceivedData {
+	class ReceivedData 
+	{
 	public:
 		ReceivedData()
 			: _data(nullptr)
 		{
 		}
+
 		ReceivedData(const ReceivedData& rhs)
 		{
 			if (!rhs._data)
@@ -114,60 +127,48 @@ namespace Network
 			switch (rhs._data->GetType())
 			{ //template specialization to use enum type in order to determine Type
 			case MessageType::Connect:
-			{
 				_data = new ConnectData(rhs.GetData<ConnectData>());
 				break;
-			}
+
 			case MessageType::Disconnect:
-			{
 				_data = new DisconnectData(rhs.GetData<DisconnectData>());
 				break;
-			}
+
 			case MessageType::State:
-			{
 				_data = new StateData(rhs.GetData<StateData>());
 				break;
-			}
+
 			case MessageType::SessionList:
-			{
 				_data = new SessionListData(rhs.GetData<SessionListData>());
 				break;
-			}
+
 			case MessageType::JoinSession:
-			{
 				_data = new JoinSessionData(rhs.GetData<JoinSessionData>());
 				break;
-			}
+
 			case MessageType::SetHost:
-			{
 				_data = new SetHostData(rhs.GetData<SetHostData>());
 				break;
-			}
+
 			case MessageType::PlayerList:
-			{
 				_data = new PlayerListData(rhs.GetData<PlayerListData>());
 				break;
-			}
+
 			case MessageType::Ready:
-			{
 				_data = new ReadyData(rhs.GetData<ReadyData>());
 				break;
-			}
+
 			case MessageType::PickUpFlag:
-			{
 				_data = new PickUpFlagData(rhs.GetData<PickUpFlagData>());
 				break;
-			}
+
 			case MessageType::CreatePowerUp:
-			{
 				_data = new CreatePowerUpData(rhs.GetData<CreatePowerUpData>());
 				break;
-			}
+
 			case MessageType::Fire:
-			{
 				_data = new FireData(rhs.GetData<FireData>());
 				break;
-			}
 			}
 		}
 
@@ -221,33 +222,42 @@ namespace Network
 		}
 
 	private:
-		IPaddress	_srcAddress;
-		MessageData* _data;
-		int _id;
-		int _sessionID;
+		IPaddress		_srcAddress;
+		MessageData*	_data;
+
+		int				_id;
+		int				_sessionID;
 	};
 
 	class Net
 	{
 	public:
-		Net(int port, int packetSize = 256);
-		Net();
-		void Send(MessageData* data, const char * destHost, int destPort);
-		void Send(MessageData* data, IPaddress destAddr);
-		ReceivedData Receive();
-		bool	_testSocketCreated;
-	private:
-		void WriteInt(int value);
-		int ReadInt(int& byteOffset);
-		void WriteFloat(float valueF);
-		float ReadFloat(int & byteOffset);
-		void WriteString(std::string& s);
-		std::string ReadString(int& byteOffset);
-		std::string GetTypeAsString(MessageType type);
-		void WriteBool(bool value);
-		bool ReadBool(int & byteOffset);
+						Net();
+						Net(int port, int packetSize = 256);
 
-		UDPpacket* _packet;
-		UDPsocket _socket;
+		void			Send(MessageData* data, const char * destHost, int destPort);
+		void			Send(MessageData* data, IPaddress destAddr);
+
+		ReceivedData	Receive();
+
+		//TEMP
+		bool			_testSocketCreated;
+
+	private:
+		void			WriteInt(int value);
+		void			WriteFloat(float valueF);
+		void			WriteString(std::string& s);
+		void			WriteBool(bool value);
+
+		int				ReadInt(int& byteOffset);
+		float			ReadFloat(int & byteOffset);
+		bool			ReadBool(int & byteOffset);
+		
+		std::string		ReadString(int& byteOffset);
+		std::string		GetTypeAsString(MessageType type);
+
+	private:
+		UDPpacket*		_packet;
+		UDPsocket		_socket;
 	};
 }

@@ -14,6 +14,27 @@
 #include "CreationSystem.h"
 #include "RemoteSystem.h"
 #include "StatusEffectSystem.h"
+#include "AnimationSystem.h"
+
+#include "InteractionSystemEvents.h"
+#include "SystemTypes.h"
+
+
+#pragma once
+
+#include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "CameraSystem.h"
+#include "CollisionSystem.h"
+#include "GunSystem.h"
+#include "AISystem.h"
+#include "DestructionSystem.h"
+#include "UISystem.h"
+#include "WeaponSystem.h"
+#include "FlagCheckpointSystem.h"
+#include "WaypointSystem.h"
+#include "CreationSystem.h"
+#include "StatusEffectSystem.h"
 
 #include "InteractionSystemEvents.h"
 #include "SystemTypes.h"
@@ -25,20 +46,16 @@ public:
 	typedef std::map<InteractionSystemType, InteractionSystem*>::iterator InteractionSystemMapIterator;
 	typedef std::map<SystemType, System*>::iterator SystemMapIterator;
 
-										SystemManager();
-										~SystemManager();
+	SystemManager();
+	~SystemManager();
 
-	void								Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
-	void								InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, Graph* waypoints, int width, int height);
+
+	void								Initialize(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
+	void								InitializeSystems(SDL_Renderer*& renderer, EntityFactory* entityFactory, BodyFactory* bodyFactory, b2World* world, int width, int height);
 	void								InitializeInteractionSystems();
-	void								PostInitialize(Entity*& player);
+	void								PostInitialize(Entity*& player, Graph* waypoints);
 
 	void								Process(float dt = 0.f);
-	void								TryToCreateEntities(float dt);
-	void								TryToDestroy(SystemMapIterator& it, float dt);
-	void								ProcessAllSystems(SystemMapIterator& it, float dt);
-	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
-	void								DestroyBasedOnType(Entity*& entity);
 	void								Render(float dt = 0.f);
 
 	void								AddRequest(std::pair<EntityType, std::vector<float>>& creationRequest);
@@ -60,22 +77,31 @@ public:
 	AISystem*							GetAISystem();
 	RemoteSystem*						GetRemoteSystem();
 	StatusEffectSystem*					GetStatusEffectSystem();
+	WaypointSystem*						GetWaypointSystem();
+	AnimationSystem*					GetAnimationSystem();
 	WeaponSystem*						GetWeaponInteractionSystem();
 	FlagCheckpointSystem*				GetFlagCheckpointSystem();
 
 	Camera2D::Camera&					GetCamera();
 
 private:
+
+	void								TryToCreateEntities(float dt);
+	void								TryToDestroy(SystemMapIterator& it, float dt);
+	void								ProcessAllSystems(SystemMapIterator& it, float dt);
+	void								ProcessAllInteractionSystems(SystemMapIterator& it, float dt);
+	void								DestroyBasedOnType(Entity*& entity);
+
+private:
 	std::map<InteractionSystemType, 
 		InteractionSystem*>				_interactionSystems;
 	std::map<SystemType, System*>		_systems;
-	std::map<InteractionSystemEvent, 
+	std::map<InteractionSystemEvent,
 		std::vector<
 		std::pair<Entity*, Entity*>>>	_interactionSystemEvents;
 	std::vector<
-		std::pair<EntityType, 
-			std::vector<float>>>		_creationRequests;
+		std::pair<EntityType,
+		std::vector<float>>>		_creationRequests;
 
 	CreationSystem*						_creationSystem;
 };
-

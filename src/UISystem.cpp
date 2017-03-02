@@ -8,7 +8,6 @@ UISystem::UISystem(float updateRate)
 {
 }
 
-
 UISystem::~UISystem()
 {
 }
@@ -29,6 +28,7 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 	_displayTextRectangle = std::vector<SDL_Rect>();
 
 	//TTF_CloseFont(_font); // Free Font Memory
+
 }
 
 void UISystem::Process(float dt)
@@ -77,14 +77,53 @@ void UISystem::Process(float dt)
 	}
 }
 
+void UISystem::DeleteEntites()
+{
+	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	{
+		for (Entity* e : (*it).second)
+		{
+			delete e;
+		}
+	}
+	_entities.clear();
+}
+
+// Textures
+SDL_Texture* UISystem::LoadTexture(const std::string & path)
+{
+	SDL_Texture* texture = NULL;
+
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
+	}
+	else
+	{
+		texture = SDL_CreateTextureFromSurface(_renderer, surface);
+		if (texture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+
+		SDL_FreeSurface(surface);
+	}
+
+	return texture;
+}
+
+// Delete Text
 void UISystem::DeleteText()
 {
 	for (int i = 0; i < _interactiveTextTexture.size(); i++)
 	{
 		SDL_DestroyTexture(_interactiveTextTexture[i]);
 	}
+	_interactiveTextTexture.erase(_interactiveTextTexture.begin(), _interactiveTextTexture.end());
 	_interactiveTextTexture.clear();
 
+	_interactiveTextRectangle.erase(_interactiveTextRectangle.begin(), _interactiveTextRectangle.end());
 	_interactiveTextRectangle.clear();
 }
 
@@ -94,10 +133,14 @@ void UISystem::DeleteDisplayText()
 	{
 		SDL_DestroyTexture(_displayTextTexture[i]);
 	}
+	_displayTextRectangle.erase(_displayTextRectangle.begin(), _displayTextRectangle.end());
 	_displayTextRectangle.clear();
+
+	_displayTextTexture.erase(_displayTextTexture.begin(), _displayTextTexture.end());
 	_displayTextTexture.clear();
 }
 
+// Interactive Text
 void UISystem::CreateText(std::string message, int x, int y)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
@@ -180,9 +223,9 @@ void UISystem::CreateTextColoured(std::string message, int x, int y, Uint8 r, Ui
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _interactiveTextTexture.back(), NULL, &_interactiveTextRectangle.back());
-
 }
 
+//Update Interactive Text
 void UISystem::UpdateText(std::string message, int index)
 {
 	// Destroy Previous Image
@@ -252,6 +295,7 @@ void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8
 	SDL_RenderCopy(_renderer, _interactiveTextTexture[index], NULL, &_interactiveTextRectangle[index]);
 }
 
+// Display Text
 void UISystem::CreateDisplayText(std::string message, int x, int y)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });

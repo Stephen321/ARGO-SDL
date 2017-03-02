@@ -6,18 +6,8 @@
 class RemoteComponent : public Component
 {
 public:
-	RemoteComponent(int _id)
-		: id(_id)
-		, Component::Component(Component::Type::Remote)
+	struct State 
 	{
-	}
-
-	~RemoteComponent()
-	{
-	}
-
-public:
-	struct State {
 		State() : xPos(-100000.f), yPos(-100000.f), xVel(0.f), yVel(0.f), ts(0.f) {}
 		float xPos;
 		float yPos;
@@ -32,8 +22,21 @@ public:
 				return false;
 		}
 	};
-	State startState;
-	State endState;
-	int id;
-	float timeSincePacket;
+
+public:
+	RemoteComponent(int _id)
+		: id(_id)
+		, Component::Component(Component::Type::Remote)
+	{
+	}
+
+	~RemoteComponent()
+	{
+	}
+
+public:
+	State	startState;
+	State	endState;
+	int		id;
+	float	timeSincePacket;
 };

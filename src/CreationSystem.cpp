@@ -25,12 +25,14 @@ CreationSystem::~CreationSystem()
 	{
 		if (_entities.at(i) != nullptr)
 		{
-			delete _entities.at(i);
+			if (_entities.at(i)->GetComponents().size() != 0 && _entities.at(i)->GetComponents().size() < 20)
+			{
+				delete _entities.at(i);
+			}
 		}
 	}
 
 	_entities.clear();
-
 }
 
 
@@ -128,10 +130,16 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(player->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(player->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x = 0;
+	spriteComponent->sourceRect.y = 0;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		  b2BodyType::b2_dynamicBody
@@ -149,10 +157,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	systemTypes.push_back(SystemType::Render);
 	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Camera);
-	systemTypes.push_back(SystemType::World);
+	systemTypes.push_back(SystemType::Waypoint);
 	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
 		systemTypes.push_back(SystemType::Remote);
+
 	systemTypes.push_back(SystemType::StatusEffect);
+	systemTypes.push_back(SystemType::Animation);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, player);
 
@@ -165,10 +175,16 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(remotePlayer->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(remotePlayer->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(remotePlayer->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x = 0;
+	spriteComponent->sourceRect.y = 0;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
@@ -187,6 +203,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 	//systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Remote);
 	systemTypes.push_back(SystemType::StatusEffect);
+	systemTypes.push_back(SystemType::Animation);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, remotePlayer);
 
@@ -199,10 +216,16 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(ai->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(ai->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(ai->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
-	SetupSize(transform, information.second, index);
+	/*SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x = 0;
+	spriteComponent->sourceRect.y = 0;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;*/
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
@@ -225,11 +248,13 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 		if (NetworkHandler::Instance().GetHost()) //only the host in the multiplayer game adds physics component
 		{
 			systemTypes.push_back(SystemType::Physics);
+			systemTypes.push_back(SystemType::Animation);
 		}
 	}
 	else
 	{
 		systemTypes.push_back(SystemType::Physics);
+		systemTypes.push_back(SystemType::Animation);
 	}
 	systemTypes.push_back(SystemType::StatusEffect);
 
@@ -380,8 +405,26 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
-	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Collision);
+	systemTypes.push_back(SystemType::Waypoint);
+
+
+	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
+	{
+		systemTypes.push_back(SystemType::Remote);
+		if (NetworkHandler::Instance().GetHost()) //only the host in the multiplayer game adds physics component
+		{
+			systemTypes.push_back(SystemType::Physics);
+		}
+		else //non hosts dont need to detect flag collisions
+		{
+			collider->setActive = false;
+		}
+	}
+	else
+	{
+		systemTypes.push_back(SystemType::Physics);
+	}
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, flag);
 
@@ -417,10 +460,16 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupUIEntity(const 
 	Entity* uiEntity = _entityFactory->CreateEntity(EntityType::UI, information.second[0]);
 
 	TransformComponent* transform = static_cast<TransformComponent*>(uiEntity->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(uiEntity->GetComponent(Component::Type::Sprite));
 
 	int index = 1;
 	SetupPosition(transform, information.second, index);
 	SetupSize(transform, information.second, index);
+
+	spriteComponent->sourceRect.x *= transform->rect.w;
+	spriteComponent->sourceRect.y *= transform->rect.h;
+	spriteComponent->sourceRect.w = transform->rect.w;
+	spriteComponent->sourceRect.h = transform->rect.h;
 
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 

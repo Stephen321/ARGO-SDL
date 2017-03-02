@@ -9,10 +9,19 @@ using namespace Camera2D;
 
 using namespace std;
 
+
+
 class GraphArc;
 class GraphNode {
 
 public:
+	enum class EntityData
+	{
+		Null,
+		Checkpoint,
+		PowerUp
+	};
+
 	GraphNode();
 	~GraphNode();
 	GraphArc* getArc(GraphNode* pNode);
@@ -28,8 +37,8 @@ public:
 	// Accessor functions
 	list<GraphArc> & arcList() ;
 	bool marked() const;
-	std::string const & data() const;
-	void setData(std::string data);
+	std::pair<EntityData,int> const & data() const;
+	void setData(const pair<GraphNode::EntityData, int> &data);
 	void setHCost(int hCost);
 	void setGCost(int gCost);
 	int const & hCost() const;
@@ -46,7 +55,7 @@ private:
 	list<GraphArc>		_arcList;
 	GraphNode*			_prevNode;
 	SDL_Color			_color;
-	string				_data;
+	pair<EntityData,int>  _data;
 
 	helper::Vector2		_position;
 

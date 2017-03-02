@@ -1,8 +1,6 @@
 #include "FunctionMaster.h"
 
 #include "PhysicsComponent.h"
-#include "TransformComponent.h"
-#include "GunComponent.h"
 #include "StatusEffectComponent.h"
 
 

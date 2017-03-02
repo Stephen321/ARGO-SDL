@@ -45,6 +45,8 @@ void WeaponSystem::Process(float dt)
 			transform2->rect.x = transform1->rect.x;
 			transform2->rect.y = transform1->rect.y;
 
+			transform2->angle = transform1->angle;
+
 			WeaponComponent* weapon = static_cast<WeaponComponent*>(it->first->GetComponent(Component::Type::Weapon));
 			if (weapon->fired)
 			{
@@ -56,26 +58,6 @@ void WeaponSystem::Process(float dt)
 				}
 
 				weapon->fired = false;
-			}
-
-			if (it->first->GetType() == EntityType::Player)
-			{
-				TransformComponent* transform = static_cast<TransformComponent*>(it->second->GetComponent(Component::Type::Transform));
-
-				//initialize mouuse position
-				SDL_Point mouse;
-				SDL_GetMouseState(&mouse.x, &mouse.y);
-
-				//calculate mouse position to world
-				Camera2D::Point convertedPoint = _camera->screenToWorld(Camera2D::Point(mouse.x, mouse.y));
-
-				Camera2D::Point difference = { convertedPoint.x - transform->rect.x + transform->origin.x, convertedPoint.y - transform->rect.y + transform->origin.y };
-				transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
-				weapon->angle = transform->angle;
-			}
-			else if (it->first->GetType() == EntityType::Remote)
-			{
-				transform2->angle = weapon->angle;
 			}
 		}
 	}

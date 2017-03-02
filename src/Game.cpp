@@ -23,14 +23,14 @@ Game::Game()
 
 Game::~Game()
 {
-	_world.~b2World();
 }
 
 void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 {
 	_renderer = renderer;
 
-	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 
 	_world.SetAllowSleeping(false);
 
@@ -40,9 +40,11 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Start();
 	LoadContent(ids);
 
-	player = nullptr;
+	_player = nullptr;
 
-	_systemManager.PostInitialize(player);
+	CreateUI();
+
+	_systemManager.PostInitialize(_player, &_waypoints);
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -50,17 +52,21 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 void Game::LoadContent(const std::vector<int>& ids)
 {
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/playerSS.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
+	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
+
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints, ids);
+
+	_levelLoader.LoadJson("Media/Json/NormalMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
+
 }
 
 
@@ -105,79 +111,105 @@ void Game::Start()
 {
 	_running = true;
 	_swapScene = CurrentScene::GAME;
+
+	if (!_audioManager->IsMusicPlaying())
+	{
+		int random = std::rand() % 3;
+		if (random == 0) { _audioManager->PlayMusic("Music1"); }
+		else if (random == 1) { _audioManager->PlayMusic("Music2"); }
+		else if (random == 2) { _audioManager->PlayMusic("Music3"); }
+	}
 }
 
 void Game::Stop()
 {
 	_running = false;
 	CleanUp();
-	_inputManager->EmptyKeys();
+	_audioManager->StopMusic();
 }
 
-void Game::OnEvent(EventListener::Event evt)
+void Game::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			//_inputManager->saveFile();
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				//_inputManager->saveFile();
+				_running = false;
+				break;
+			}
+			break;
 
-		case Event::w:
+		case Type::Down:
+			switch (evt)
+			{
+			case Event::w:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::a:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::s:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::d:
+				_audioManager->PlayFX("Hum");
+				break;
+			}
+			break;
 
-		case Event::a:
-			_audioManager->PlayFX("Hum");
-		case Event::s:
-			_audioManager->PlayFX("Hum");
-		case Event::d:
-			_audioManager->PlayFX("Hum");
+		default:
+			break;
 		}
 	}
 }
 
+
 void Game::BindInput()
 {
-	// Delete Key binding
-	Command* nIn = new InputCommand([&]()
-	{
-		_inputManager->EmptyKey(Event::BACKSPACE);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_0, nIn, this);
-
-	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, player), Type::Down);
+	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, _player), Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, player), Type::Down);
+	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, _player), Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, player), Type::Down);
+	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, _player), Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, player), Type::Down);
+	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, _player), Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
+
+	// Up
+	Command* wUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::w, wUp, this);
+
+	Command* aUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::a, aUp, this);
+
+	Command* sUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::s, sUp, this);
+
+	Command* dUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	_inputManager->AddKey(Event::d, dUp, this);
+
+
+	// Back to Main Menu
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
-	// Recreate key binding
-	Command* noIn = new InputCommand([&]()
-	{
-		Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
-		_inputManager->AddKey(Event::BACKSPACE, backIn, this);
-	}, Type::Press);
-
-	_inputManager->AddKey(Event::NUM_1, noIn, this);
-
+	// Exit Game
 	_inputManager->AddListener(Event::ESCAPE, this);
 
 	Command* spaceIn = new InputCommand([&]()
 	{
-		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
-		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-
-		if (!statusEffect->staggered && weapon->hasWeapon)
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(_player->GetComponent(Component::Type::Weapon));
+		
+		if ( weapon->hasWeapon)
 		{
 			if (NetworkHandler::Instance().GetPlayerID() != -1)
 			{
@@ -185,46 +217,22 @@ void Game::BindInput()
 				NetworkHandler::Instance().Send(&data);
 				std::cout << "sending fire data" << std::endl;
 			}
-			else
+			else if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
 			{
 				weapon->fired = true;
 			}
 		}
-
 	}, Type::Hold);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
+
 }
 
 void Game::CleanUp()
 {
 	//DESTROY HERE
+	_inputManager->EmptyKeys();
+
 	_world.SetAllowSleeping(true);
-	_world.~b2World();
-	_systemManager.~SystemManager();
-}
-
-
-SDL_Texture* Game::LoadTexture(const std::string & path)
-{
-	SDL_Texture* texture = NULL;
-
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(_renderer, surface);
-		if (texture == NULL)
-		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-		}
-
-		SDL_FreeSurface(surface);
-	}
-
-	return texture;
 }
 
 void Game::DebugBox2D()
@@ -282,6 +290,7 @@ void Game::DebugBox2D()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
+
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
 					int lenght = (int)polygonShape->GetVertexCount();
@@ -326,9 +335,7 @@ void Game::DebugBox2D()
 
 					points[lenght].y = points[0].y;
 					points[lenght].x = points[0].x;
-
-
-
+					
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
 					delete points;
 				}
@@ -338,4 +345,56 @@ void Game::DebugBox2D()
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(_renderer);
+}
+
+void Game::CreateUI()
+{
+	// Poll
+	std::vector<float> pollPosition1 = std::vector<float>();
+	pollPosition1.push_back(0); //id
+	pollPosition1.push_back(64); //xPosition
+	pollPosition1.push_back(64); //yPosition
+	pollPosition1.push_back(64); //width
+	pollPosition1.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition1));
+
+	std::vector<float> pollPosition2 = std::vector<float>();
+	pollPosition2.push_back(2); //id
+	pollPosition2.push_back(64); //xPosition
+	pollPosition2.push_back(128); //yPosition
+	pollPosition2.push_back(64); //width
+	pollPosition2.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition2));
+
+	std::vector<float> pollPosition3 = std::vector<float>();
+	pollPosition3.push_back(3); //id
+	pollPosition3.push_back(64); //xPosition
+	pollPosition3.push_back(192); //yPosition
+	pollPosition3.push_back(64); //width
+	pollPosition3.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition3));
+
+	// Weapon
+	std::vector<float> weapon = std::vector<float>();
+	weapon.push_back(4); //id
+	weapon.push_back(SCREEN_WIDTH - 128); //xPosition
+	weapon.push_back(64); //yPosition
+	weapon.push_back(64); //width
+	weapon.push_back(64); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, weapon));
+
+	// Text
+	_systemManager.GetUISystem()->CreateDisplayText("1", 48, 64);
+	_systemManager.GetUISystem()->CreateDisplayText("2", 48, 128);
+	_systemManager.GetUISystem()->CreateDisplayText("3", 48, 192);
+
+	// Next Checkpoint Text
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 64);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 128);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 192);
+}
+
+void Game::UpdateUI()
+{
+
 }

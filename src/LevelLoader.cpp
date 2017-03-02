@@ -1,5 +1,4 @@
 #include "LevelLoader.h"
-#include "PowerUpComponent.h"
 #include "BasicTypes.h"
 #include "Helpers.h"
 #include "NetworkHandler.h"
@@ -24,10 +23,12 @@ void LevelLoader::LoadJson(const char* path, SystemManager& systemManager, BodyF
 	fclose(fp);
 
 	const Value& layerArray = doc["layers"];
+
 	LoadTiles(layerArray[0u], systemManager,  doc["tilewidth"].GetInt(), doc["tileheight"].GetInt());
 	LoadEntities(layerArray[1], systemManager, ids);
 	LoadWaypoints(layerArray[2], systemManager, waypoints);
 	LoadColliders(layerArray[3], systemManager, bodyFactory);
+
 }
 
 void LevelLoader::LoadTiles(const Value &tileLayer, SystemManager& systemManager, int tileWidth, int tileHeight)
@@ -61,13 +62,11 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 
 	int playerCount = 0;
 	bool playerCreated = false;
-	int aiID = (ids.empty()) ? -1 : 10000; //ai ids set to big number (server should do this)
+	int aiID = (ids.empty()) ? -1 : 10000; //ai ids cant be too close to player ids
 	for (int i = 0; i < entityDataArray.Size(); i++)
 	{
 		const Value& entity = entityDataArray[i];
 		string entityName = entity["name"].GetString();
-		
-		int	checkpointID = 0;
 
 		float x = entity["x"].GetFloat();
 		float y = entity["y"].GetFloat();
@@ -75,6 +74,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		float h = entity["height"].GetFloat();
 		if (entityName == "PlayerSolo")
 		{
+
 			//TODO: use ids here to determine type AI/Player/RemotePlayer, then use other stuff to create them
 			if (playerCount < ids.size())
 			{
@@ -107,6 +107,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 			else if (ids.size() == 0 && playerCreated == false) //no remote players so first is player
 			{
 				playerCreated = true;
+
 				std::vector<float> data = std::vector<float>();
 
 				data.push_back(-1);
@@ -120,6 +121,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 			}
 			else //fill rest with ai
 			{
+
 				std::vector<float> data = std::vector<float>();
 
 				if (aiID == -1)
@@ -136,14 +138,16 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				data.push_back(h); //height
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
+			
 			}
+
 		}
 		else if (entityName == "Checkpoint")
 		{
-			checkpointID++;
+			std::string dataString = entity["type"].GetString();
 			std::vector<float> data = std::vector<float>();
 
-			data.push_back(checkpointID); //id
+			data.push_back(atoi(dataString.c_str())); //id
 			data.push_back(x); //xPosition
 			data.push_back(y); //yPosition
 			data.push_back(w); //width
@@ -155,7 +159,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 		{
 			std::vector<float> data = std::vector<float>();
 
-			data.push_back(-1); //id
+			data.push_back((ids.empty()) ? -1 : 20000); //id -1 if not multiplayer else number that isnt remote player or ai id
 			data.push_back(x); //xPosition
 			data.push_back(y); //yPosition
 			data.push_back(w); //width
@@ -185,8 +189,19 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 
 		const Value& properties = entity["properties"];
 
-		waypoints->addNode("", position);
+		std::string dataString = entity["type"].GetString();
+		pair<GraphNode::EntityData, int> nodeData;
+		if (dataString.empty())
+		{
+			nodeData = make_pair(GraphNode::EntityData::Null, 0);
+		}
+		else
+		{
+			nodeData = make_pair(GraphNode::EntityData::Checkpoint, atoi(dataString.c_str()));
+		}
+		waypoints->addNode(nodeData, position);
 	}
+	int test = waypoints->getNodesSize();
 	//arc
 	for (int i = 0; i < wayPointSize; i++)
 	{
@@ -203,7 +218,8 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 			waypoints->addArc(fromNode, toNode, lenght, false);
 		}
 	}
-	waypoints->addNode("flag", helper::Vector2(0, 0));
+	//flag node
+	waypoints->addNode(make_pair(GraphNode::EntityData::Null, 1), helper::Vector2(0, 0));
 }
 
 void LevelLoader::LoadColliders(const Value &colliderLayer, SystemManager& systemManager, BodyFactory* bodyFactory)
