@@ -62,13 +62,13 @@
                  "y":3200
                 }, 
                 {
-                 "height":128,
+                 "height":64,
                  "id":21,
                  "name":"Flag",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":128,
+                 "width":64,
                  "x":2496.42,
                  "y":1407.75
                 }, 
