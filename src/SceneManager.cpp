@@ -3,21 +3,14 @@
 #include "ConstHolder.h"
 #include "Helpers.h"
 #include "LTimer.h"
-
-#include "Debug.h"
-
+#include "NetworkHandler.h"
 
 SceneManager::SceneManager()
 {
 }
 
-
 SceneManager::~SceneManager()
 {
-	DEBUG_MSG("Calling Cleanup");
-
-	//_game->CleanUp();
-
 	SDL_DestroyWindow(_window);
 	SDL_DestroyRenderer(_renderer);
 	SDL_Quit();
@@ -29,29 +22,12 @@ bool SceneManager::Initialize(const char* title, int xpos, int ypos, int width, 
 
 	if (_running)
 	{
-		_cameraSystem.Initialize(width, height);
-
-		_menu = new MainMenu();
-		_menu->Initialize(_renderer);
-		_currentScene.push_back(_menu);
-
-		//_game = new Game();
-		//_game->Initialize(_renderer);
-		//_currentScene.push_back(_game);
-
-		//_lobby = new Lobby();
-		//_lobby->Initialize(_renderer);
-		//_currentScene.push_back(_lobby);
-
-		//_options = new Options();
-		//_options->Initialize(_renderer);
-		//_currentScene.push_back(_options);
-
-		//_about = new About();
-		//_about->Initialize(_renderer);
-		//_currentScene.push_back(_about);
+		MainMenu* menu = new MainMenu();
+		menu->Initialize(_renderer);
+		_currentScene.push_back(menu);
 
 		_runningScene = 0;
+		_currentScene[_runningScene]->Start();
 	}
 
 	return _running;
@@ -61,34 +37,32 @@ bool SceneManager::SetupSDL(const char* title, int xpos, int ypos, int width, in
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		DEBUG_MSG("SDL Init success");
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
 		if (_window != 0)
 		{
-			DEBUG_MSG("Window creation success");
 			_renderer = SDL_CreateRenderer(_window, -1, 0);
 			if (_renderer != 0)
 			{
-				DEBUG_MSG("Renderer creation success");
 				SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+				if (SDLNet_Init() != 0)
+				{
+
+				}
 			}
 			else
 			{
-				DEBUG_MSG("Renderer init fail");
 				return false;
 			}
 		}
 		else
 		{
-			DEBUG_MSG("Window init fail");
 			return false;
 		}
 	}
 
 	else
 	{
-		DEBUG_MSG("SDL init fail");
 		return false;
 	}
 
@@ -109,42 +83,44 @@ void SceneManager::Update()
 			_currentScene.back()->Stop();
 
 			// Delete Object
+			//Change numbers into enums, use switch instead of ifs
+			//delete _currentScene.back();
 
 			_currentScene.pop_back();
 
 			if (_runningScene == 0)
 			{
-				_menu = new MainMenu();
-				_menu->Initialize(_renderer);
-				_currentScene.push_back(_menu);
+				MainMenu* menu = new MainMenu();
+				menu->Initialize(_renderer);
+				_currentScene.push_back(menu);
 			}
 
 			else if (_runningScene == 1)
 			{
-				_game = new Game();
-				_game->Initialize(_renderer);
-				_currentScene.push_back(_game);
+				Game* game = new Game();
+				game->Initialize(_renderer, _ids);
+				_currentScene.push_back(game);
 			}
 
 			else if (_runningScene == 2)
 			{
-				_lobby = new Lobby();
-				_lobby->Initialize(_renderer);
-				_currentScene.push_back(_lobby);
+				Lobby* lobby = new Lobby();
+				lobby->Initialize(_renderer, &_ids);
+				_currentScene.push_back(lobby);
 			}
 
 			else if (_runningScene == 3)
 			{
-				_options = new Options();
-				_options->Initialize(_renderer);
-				_currentScene.push_back(_options);
+				Options* options = new Options();
+				options->Initialize(_renderer);
+				_currentScene.push_back(options);
 			}
 
 			else if (_runningScene == 4)
 			{
-				_about = new About();
-				_about->Initialize(_renderer);
-				_currentScene.push_back(_about);
+				About* about = new About();
+				about->Initialize(_renderer);
+				_currentScene.push_back(about);
 			}
 		}
 	}
@@ -152,6 +128,8 @@ void SceneManager::Update()
 	else
 	{
 		_running = false;
+		if (NetworkHandler::Instance().GetConnected())
+			NetworkHandler::Instance().Disconnect();
 	}
 }
 

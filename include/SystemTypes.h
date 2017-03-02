@@ -11,7 +11,9 @@ enum class SystemType
 	Gun,
 	AI,
 	Waypoint,
+	Remote,
 	StatusEffect,
+	Animation
 };
 
 enum class InteractionSystemType

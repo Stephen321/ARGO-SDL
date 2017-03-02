@@ -8,7 +8,6 @@ SystemManager::SystemManager()
 {
 }
 
-
 SystemManager::~SystemManager()
 {
 	delete _creationSystem;
@@ -56,11 +55,11 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP RENDER SYSTEM
 	RenderSystem* rendererSystem = new RenderSystem(0);
-	rendererSystem->Initialize(renderer, &cameraSystem->getCamera());
+	rendererSystem->Initialize(renderer, &cameraSystem->GetCamera());
 	_systems[SystemType::Render] = rendererSystem;
 
 	//SETUP PHYSICS SYSTEM
-	PhysicsSystem* physicsSystem = new PhysicsSystem(0);
+	PhysicsSystem* physicsSystem = new PhysicsSystem(PHYSICS_SYSTEM_UPDATE);
 	_systems[SystemType::Physics] = physicsSystem;
 
 	//SETUP COLLISION SYSTEM
@@ -85,18 +84,29 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	AISystem* aiSystem = new AISystem(0);
 	_systems[SystemType::AI] = aiSystem;
 
-	//SETUP WORLD SYSTEM
-	WaypointSystem* waypointSystem = new WaypointSystem(0);
+	//SETUP Waypoint SYSTEM
+	WaypointSystem* waypointSystem = new WaypointSystem(_creationRequests, _interactionSystemEvents, 0);
 	_systems[SystemType::Waypoint] = waypointSystem;
 
-	//SETUP Destroy SYSTEM
+
+	//SETUP DESTROY SYSTEM
 	DestructionSystem* destructionSystem = new DestructionSystem(0);
 	destructionSystem->Initialize(world);
 	_systems[SystemType::Destruction] = destructionSystem;
 
-	//SETUP Destroy SYSTEM
+	//SETUP CREATION SYSTEM
 	_creationSystem = new CreationSystem(_creationRequests);
 	_creationSystem->Initialize(entityFactory, bodyFactory);
+
+	//SETUP Animation SYSTEM
+	AnimationSystem* animationSystem = new AnimationSystem();
+	animationSystem->Initialize();
+	_systems[SystemType::Animation] = animationSystem;
+
+	//SETUP remote SYSTEM
+	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
+	_remoteSystem->Initialize();
+	_systems[SystemType::Remote] = _remoteSystem;
 }
 
 #pragma endregion
@@ -336,6 +346,11 @@ AISystem* SystemManager::GetAISystem()
 	return static_cast<AISystem*>(_systems[SystemType::AI]);
 }
 
+RemoteSystem * SystemManager::GetRemoteSystem()
+{
+	return static_cast<RemoteSystem*>(_systems[SystemType::Remote]);
+}
+
 StatusEffectSystem* SystemManager::GetStatusEffectSystem()
 {
 	return static_cast<StatusEffectSystem*>(_systems[SystemType::StatusEffect]);
@@ -347,11 +362,15 @@ WaypointSystem* SystemManager::GetWaypointSystem()
 }
 
 
+AnimationSystem * SystemManager::GetAnimationSystem()
+{
+	return static_cast<AnimationSystem*>(_systems[SystemType::Animation]);
+}
+
 UISystem * SystemManager::GetUISystem()
 {
 	return static_cast<UISystem*>(_systems[SystemType::UI]);
 }
-
 #pragma endregion
 
 #pragma region Get Interaction Systems
@@ -370,5 +389,5 @@ FlagCheckpointSystem* SystemManager::GetFlagCheckpointSystem()
 
 Camera2D::Camera& SystemManager::GetCamera()
 {
-	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->getCamera();
+	return static_cast<CameraSystem*>(_systems[SystemType::Camera])->GetCamera();
 }

@@ -7,9 +7,8 @@
 About::About()
 	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
 	, _renderSystem()
-	, _functionMaster()
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.getCamera());
+	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
@@ -71,6 +70,7 @@ void About::Stop()
 {
 	_running = false;
 	CleanUp();
+	_inputManager->EmptyKeys();
 }
 
 void About::OnEvent(EventListener::Event evt)

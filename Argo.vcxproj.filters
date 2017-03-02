@@ -52,15 +52,18 @@
     <Filter Include="Source Files\AStar">
       <UniqueIdentifier>{d40d044d-eac5-4ce9-89f0-17611edc615a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Other\Enums">
+      <UniqueIdentifier>{718127f5-f04d-42fa-81b8-36927d6b7ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Other\Helpers">
+      <UniqueIdentifier>{6e3874dc-39a3-4434-9f18-98507c58893d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\PhysicsComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="include\HealthComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Component.h">
@@ -75,16 +78,7 @@
     <ClInclude Include="include\PhysicsSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\Debug.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\Entity.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LTimer.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FLInputManager.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Camera2D.h">
@@ -108,9 +102,6 @@
     <ClInclude Include="include\LevelLoader.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="include\ResourceIdentifier.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\CollisionSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -119,12 +110,6 @@
     </ClInclude>
     <ClInclude Include="include\EntityFactory.h">
       <Filter>Header Files\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Helpers.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="include\EntityType.h">
-      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\Game.h">
       <Filter>Header Files\Scenes</Filter>
@@ -159,9 +144,6 @@
     <ClInclude Include="include\EntityType.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="include\BasicTypes.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="include\GunSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -186,9 +168,6 @@
     <ClInclude Include="include\AIComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\WaypointComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\WaypointSystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -207,6 +186,9 @@
     <ClInclude Include="include\Options.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="ServerProject\Net.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
     <ClInclude Include="include\FlagComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -219,14 +201,11 @@
     <ClInclude Include="include\UISystem.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="include\InteractionSystemEvents.h">
+    <ClInclude Include="include\NetworkHandler.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\CreationSystem.h">
       <Filter>Header Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SystemTypes.h">
-      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="include\StatusEffectComponent.h">
       <Filter>Header Files\Components</Filter>
@@ -239,6 +218,45 @@
     </ClInclude>
     <ClInclude Include="include\AudioManager.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationSystem.h">	
+      <Filter>Header Files\Components</Filter>
+	</ClInclude>
+    <ClInclude Include="include\RemoteComponent.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RemoteSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WeaponComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityType.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InteractionSystemEvents.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceIdentifier.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SystemTypes.h">
+      <Filter>Header Files\Other\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BasicTypes.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Helpers.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FLInputManager.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LTimer.h">
+      <Filter>Header Files\Other\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -343,20 +361,32 @@
     <ClCompile Include="src\Options.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="ServerProject\Net.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\FlagCheckpointSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\UISystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\NetworkHandler.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="src\CreationSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\StatusEffectSystem.cpp">
       <Filter>Source Files\Systems</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="src\AudioManager.cpp">
       <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+	  </ClCompile>
+      <ClCompile Include="src\RemoteSystem.cpp">
+        <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

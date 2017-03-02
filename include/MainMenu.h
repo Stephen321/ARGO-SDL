@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Scene.h"
+#include "RenderSystem.h"
+#include "UISystem.h"
+#include "CameraSystem.h"
 
 class MainMenu : public Scene
 {
 public:
-	MainMenu();
-	~MainMenu();
+									MainMenu();
+									~MainMenu();
 
 	void							Initialize(SDL_Renderer* renderer) override;
 
@@ -26,19 +29,15 @@ private:
 	void							LoadContent() override;
 	void							CleanUp() override;
 
-private:
-	LevelLoader						_levelLoader;
+	void							MoveUp();
+	void							MoveDown();
 
+private:
 	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;
-
-private:
-	void							MoveUp();
-	void							MoveDown();
 
 	int								GetPressedItem();
 	int								_selectedItemIndex;

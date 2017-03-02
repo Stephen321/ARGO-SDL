@@ -40,4 +40,5 @@ public:
 	bool flagDetectionRange;
 
 	AIState state;
+
 };

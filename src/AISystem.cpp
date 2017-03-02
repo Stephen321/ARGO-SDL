@@ -1,5 +1,7 @@
 #include "AISystem.h"
 #include "StatusEffectComponent.h"
+#include "PhysicsComponent.h"
+
 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)

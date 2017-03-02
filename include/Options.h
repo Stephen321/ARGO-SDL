@@ -1,25 +1,9 @@
 #pragma once
 
-#include <SDL.h>
-
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-
-#include "Debug.h"
-
-#include "Camera2D.h"
-#include "FLInputManager.h"
 #include "Scene.h"
-
-#include "CameraSystem.h"
-
-#include <vector>
-#include <queue>
-#include <map>
-
-#include "ResourceIdentifier.h"
-#include "FunctionMaster.h"
 #include "RenderSystem.h"
+#include "UISystem.h"
+#include "CameraSystem.h"
 
 class Options : public EventListener, public Scene
 {
@@ -45,9 +29,23 @@ private:
 	void							LoadContent() override;
 	void							CleanUp() override;
 
+	void							MoveUp();
+	void							MoveDown();
+
+	int								GetPressedItem();
+
+	std::string						GetMusicVolume();
+	std::string						GetHumVolume();
+	std::string						GetWeaponVolume();
+	std::string						GetCheckpointVolume();
+	std::string						GetCollisionVolume();
+	std::string						GetUIVolume();
+
 private:
 	RenderSystem					_renderSystem;
-	FunctionMaster					_functionMaster;
 	CameraSystem					_cameraSystem;
+	UISystem						_uiSystem;
+
+	int								_selectedItemIndex;
 };
 

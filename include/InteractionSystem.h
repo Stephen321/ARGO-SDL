@@ -13,8 +13,8 @@ public:
 									InteractionSystem(float updateRate = 0.f);
 									~InteractionSystem();
 
-	void							AddEntity(Entity* gameObject, Entity* otherObject);
-	void							RemoveEntity(Entity* gameObject, bool firstObject);
+	virtual void					AddEntity(Entity* gameObject, Entity* otherObject);
+	virtual void					RemoveEntity(Entity* gameObject, bool firstObject);
 
 	virtual void					Process(float dt = 0.f);
 
