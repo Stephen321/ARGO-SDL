@@ -27,7 +27,7 @@ Game::~Game()
 
 void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 {
-	_renderer = renderer;
+	Scene::Initialize(renderer);
 
 	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
 
