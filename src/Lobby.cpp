@@ -144,8 +144,8 @@ int Lobby::Update()
 
 	if (_startReadyTimer)
 	{
-		_uiSystem.DeleteDisplayTextByID(_countdownTextId);
-		_countdownTextId = _uiSystem.CreateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85, 255, 0, 0, 255);
+		_uiSystem.UpdateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), 
+			_uiSystem.GetDisplayTextRectangle().size(), 255, 0, 0, 255); // Update back text - is blank
 		_readyTimer -= dt;
 		if (_readyTimer < 0.f)
 		{//TODO: this has to be in sync
@@ -228,8 +228,7 @@ void Lobby::OnEvent(Event evt, Type typ)
 
 void Lobby::LoadContent()
 {
-	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 }
 
 void Lobby::CleanUp()
@@ -341,8 +340,7 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
-	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	if (sessions.empty())
 	{
@@ -381,6 +379,7 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 
 	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	for (int i = 0; i < players.size(); i++)
 	{

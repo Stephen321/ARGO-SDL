@@ -2,6 +2,10 @@
 
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
+#include "WeaponComponent.h"
+#include "GunComponent.h"
+#include "CheckpointComponent.h"
+#include "FlagComponent.h"
 
 UISystem::UISystem(float updateRate)
 	: System(updateRate)
@@ -29,6 +33,29 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 
 	//TTF_CloseFont(_font); // Free Font Memory
 
+}
+
+void UISystem::PostInitialize(std::vector<Entity*> characters, std::vector<Entity*> checkpoints, Entity* flag)
+{
+	_characters.push_back(characters[0]);
+	_checkpoints = checkpoints;
+	_flag = flag;
+
+	WeaponComponent* weapon = static_cast<WeaponComponent*>(_characters[0]->GetComponent(Component::Type::Weapon));
+	FlagComponent* fla = static_cast<FlagComponent*>(_characters[0]->GetComponent(Component::Type::Flag));
+
+	CheckpointComponent* check = static_cast<CheckpointComponent*>(checkpoints[0]->GetComponent(Component::Type::Checkpoint));
+
+	check->highlighted; // 
+	check->id; //
+
+	fla->currentLap; // current lap
+	fla->hasFlag; // entity has flag
+	fla->currentCheckpointID; // next checkpoint
+
+	weapon->fired; // has fired
+	weapon->hasWeapon; // has a weapon
+	weapon->id; // type of weapon
 }
 
 void UISystem::Process(float dt)
@@ -317,7 +344,7 @@ void UISystem::CreateDisplayText(std::string message, int x, int y)
 	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
 }
 
-int UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+void UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
 
@@ -336,14 +363,36 @@ int UISystem::CreateDisplayTextColoured(std::string message, int x, int y, Uint8
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _displayTextTexture.back(), NULL, &_displayTextRectangle.back());
-
-	return _displayTextTexture.size() - 1;
 }
 
 void UISystem::DeleteDisplayTextByID(int id)
 {
 	if (id >= 0 && id < _displayTextTexture.size())
 		SDL_DestroyTexture(_displayTextTexture[id]);
+}
+
+void UISystem::UpdateDisplayTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
+{
+	// Destroy Previous Image
+	SDL_DestroyTexture(_displayTextTexture[index]);
+
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_displayTextTexture[index] = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_displayTextTexture[index], NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = _displayTextRectangle[index].x;
+	textRectangle.y = _displayTextRectangle[index].y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_interactiveTextRectangle[index] = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _displayTextTexture[index], NULL, &_displayTextRectangle[index]);
 }
 
 std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle()

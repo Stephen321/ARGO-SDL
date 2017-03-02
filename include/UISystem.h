@@ -21,6 +21,7 @@ public:
 	~UISystem();
 
 	void							Initialize(SDL_Renderer * renderer);
+	void							PostInitialize(std::vector<Entity*> player, std::vector<Entity*> checkpoints, Entity* flag);
 
 	void							Process(float dt = 0.f) override;
 
@@ -41,12 +42,21 @@ public:
 	void							UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
 	void							CreateDisplayText(std::string message, int x, int y);
-	int								CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
+	void							CreateDisplayTextColoured(std::string message, int x, int y, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 	void							DeleteDisplayTextByID(int id);
+	void							UpdateDisplayTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a);
 
 	void							CreateBackButton(std::string message, int x, int y);
 	void							DeleteBackButton();
 	SDL_Rect&						GetBackButton();
+
+	void							CreateReadyButton(std::string message, int x, int y);
+	void							DeleteReadyButton();
+	SDL_Rect&						GetReadyButton();
+
+	void							CreateLobbyButton(std::string message, int x, int y);
+	void							DeleteLobbyButton();
+	SDL_Rect&						GetLobbyButton();
 
 	std::vector<SDL_Rect>&			GetInteractiveTextRectangle();
 	std::vector<SDL_Rect>&			GetDisplayTextRectangle();
@@ -60,11 +70,17 @@ private:
 	std::vector<SDL_Rect>			_displayTextRectangle;
 	std::vector<SDL_Rect>			_interactiveTextRectangle;
 	SDL_Rect						_backButton;
+	SDL_Rect						_readyButton;
+	SDL_Rect						_createButton;
 
 	std::vector<SDL_Texture*>		_displayTextTexture;
 	std::vector<SDL_Texture*>		_interactiveTextTexture;
 
 	std::map<TextureID, SDL_Texture*>_textureHolder;
+
+	std::vector<Entity*>			_characters;
+	std::vector<Entity*>			_checkpoints;
+	Entity*							_flag;
 };
 
 // process - entities

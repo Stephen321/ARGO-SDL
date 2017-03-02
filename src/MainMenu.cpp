@@ -101,6 +101,9 @@ void MainMenu::OnEvent(Event evt, Type typ)
 			case Event::s:
 				_audioManager->PlayFX("Click");
 				break;
+			case Event::RETURN:
+				_audioManager->PlayFX("Enter");
+				break;
 			}
 			break;
 
@@ -139,7 +142,6 @@ void MainMenu::BindInput()
 		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() -1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 		if (_swapScene == CurrentScene::GAME) { _audioManager->StopMusic(); }
-		_audioManager->PlayFX("Enter");
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);

@@ -390,5 +390,5 @@ void Game::CreateUI()
 
 void Game::UpdateUI()
 {
-
+	
 }
