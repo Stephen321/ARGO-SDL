@@ -130,7 +130,6 @@ void Game::Stop()
 
 void Game::OnEvent(Event evt, Type typ)
 {
-	/*
 	if (_running)
 	{
 		switch (typ)
@@ -166,7 +165,7 @@ void Game::OnEvent(Event evt, Type typ)
 		default:
 			break;
 		}
-	}*/
+	}
 }
 
 
