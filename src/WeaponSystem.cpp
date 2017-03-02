@@ -45,6 +45,8 @@ void WeaponSystem::Process(float dt)
 			transform2->rect.x = transform1->rect.x;
 			transform2->rect.y = transform1->rect.y;
 
+			transform2->angle = transform1->angle;
+
 			WeaponComponent* weapon = static_cast<WeaponComponent*>(it->first->GetComponent(Component::Type::Weapon));
 			
 			if (weapon->fired)
@@ -54,24 +56,10 @@ void WeaponSystem::Process(float dt)
 				if (gun->canFire)
 				{
 					gun->triggered = true;
+					weapon->ammo--;
 				}
 
 				weapon->fired = false;
-			}
-
-			if (it->first->GetType() == EntityType::Player)
-			{
-				TransformComponent* transform = static_cast<TransformComponent*>(it->second->GetComponent(Component::Type::Transform));
-
-				//initialize mouuse position
-				SDL_Point mouse;
-				SDL_GetMouseState(&mouse.x, &mouse.y);
-
-				//calculate mouse position to world
-				Camera2D::Point convertedPoint = _camera->screenToWorld(Camera2D::Point(mouse.x, mouse.y));
-
-				Camera2D::Point difference = { convertedPoint.x - transform->rect.x + transform->origin.x, convertedPoint.y - transform->rect.y + transform->origin.y };
-				transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 			}
 		}
 	}
@@ -98,6 +86,12 @@ void WeaponSystem::WeaponCreationEvent()
 						break;
 					}
 				}
+
+				WeaponComponent* weapon = static_cast<WeaponComponent*>(_interactionSystemEvents[WEAPON_CREATED].at(i).first->GetComponent(Component::Type::Weapon));
+				GunComponent* gun = static_cast<GunComponent*>(_interactionSystemEvents[WEAPON_CREATED].at(i).second->GetComponent(Component::Type::Gun));
+				
+				weapon->ammo = gun->ammo;
+
 				AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
 				_interactionSystemEvents[WEAPON_CREATED].erase(_interactionSystemEvents[WEAPON_CREATED].begin() + i);
 				i--;
@@ -116,8 +110,11 @@ void WeaponSystem::WeaponBulletAddition()
 			{
 				if (_entities.at(j).first == _interactionSystemEvents[BULLET_ADDITION].at(i).first)
 				{
+					WeaponComponent* weapon = static_cast<WeaponComponent*>(_entities.at(j).first->GetComponent(Component::Type::Weapon));
 					GunComponent* gun = static_cast<GunComponent*>(_entities.at(j).second->GetComponent(Component::Type::Gun));
+
 					gun->ammo += AMMO[gun->id];
+					weapon->ammo = gun->ammo;
 					break;
 				}
 			}

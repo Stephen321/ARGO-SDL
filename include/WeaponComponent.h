@@ -20,7 +20,7 @@ public:
 
 public:
 	int id;
-
+	int ammo;
 	bool fired;
 	bool hasWeapon;
 };
