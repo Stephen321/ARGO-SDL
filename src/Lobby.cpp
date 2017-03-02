@@ -144,8 +144,8 @@ int Lobby::Update()
 
 	if (_startReadyTimer)
 	{
-		_uiSystem.DeleteDisplayTextByID(_countdownTextId);
-		_countdownTextId = _uiSystem.CreateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85, 255, 0, 0, 255);
+		_uiSystem.UpdateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), 
+			_uiSystem.GetDisplayTextRectangle().size(), 255, 0, 0, 255); // Update back text - is blank
 		_readyTimer -= dt;
 		if (_readyTimer < 0.f)
 		{//TODO: this has to be in sync
@@ -228,16 +228,12 @@ void Lobby::OnEvent(Event evt, Type typ)
 
 void Lobby::LoadContent()
 {
-	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 }
 
 void Lobby::CleanUp()
 {
 	_inputManager->EmptyKeys();
-	_uiSystem.DeleteDisplayText();
-	_uiSystem.DeleteText();
-	_uiSystem.DeleteEntites();
 }
 
 void Lobby::BindInput()
@@ -255,14 +251,29 @@ void Lobby::BindInput()
 		SDL_Point mousePos = _inputManager->GetMousePos();
 		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
 
-		// Last Button - Create New Lobby
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle().back())))
+		// Create New Lobby
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetLobbyButton())))
 		{
 			JoinSessionData data;
 			NetworkHandler::Instance().Send(&data);
 			std::cout << "Create New Lobby" << std::endl;
 		}
 
+		// Ready
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetReadyButton())))
+		{
+			ReadyData data;
+			NetworkHandler::Instance().Send(&data);
+			std::cout << "Ready" << std::endl;
+		}
+
+		// Back
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetBackButton())))
+		{
+			NetworkHandler::Instance().Disconnect();
+			_swapScene = Scene::CurrentScene::MAIN_MENU;
+			std::cout << "Back" << std::endl;
+		}
 
 		// Lobbies
 		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size() - 1; i++)
@@ -341,8 +352,11 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
-	_uiSystem.CreateDisplayText("Sessions", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.DeleteBackButton();
+	_uiSystem.DeleteLobbyButton();
+	_uiSystem.DeleteReadyButton();
+
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	if (sessions.empty())
 	{
@@ -367,7 +381,8 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 
 	_session = sessions;
 
-	_uiSystem.CreateTextAtCenter("Create New Lobby", SCREEN_WIDTH / 2, 700);
+	_uiSystem.CreateLobbyButton("Create New Lobby", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85f);
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }
 
 void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
@@ -378,9 +393,13 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 	}
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteBackButton();
+	_uiSystem.DeleteLobbyButton();
+	_uiSystem.DeleteReadyButton();
 
 	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -417,4 +436,7 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 			}
 		}
 	}
+
+	_uiSystem.CreateReadyButton("Ready", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85f);
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }

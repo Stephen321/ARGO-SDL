@@ -119,6 +119,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	Entity* flag = nullptr;
 
 	std::vector<Entity*> checkpoints = std::vector<Entity*>();
+	std::vector<Entity*> characters = std::vector<Entity*>();
 
 	while (!_creationSystem->Empty())
 	{
@@ -142,8 +143,15 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
 
+		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::RemotePlayer)
+		{
+			characters.push_back(systemCreatedEntity.second);
+		}
+
 		_creationSystem->EntityToSystemAssigned();
 	}
+
+	characters.push_back(player);
 
 
 	//SETUP FLAG INTERACTION SYSTEM
@@ -151,6 +159,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	//SETUP WAYPOINT AND AI SYSTEM
 	GetWaypointSystem()->Initialize(waypoints);
 	GetAISystem()->Initialize(waypoints, player);
+	GetUISystem()->PostInitialize(characters, checkpoints, flag);
 }
 
 void SystemManager::Process(float dt)

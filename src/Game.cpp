@@ -9,6 +9,7 @@
 #include "LTimer.h"
 
 #include <assert.h>
+#include "PhysicsComponent.h"
 #include "WeaponComponent.h"
 #include "StatusEffectComponent.h"
 
@@ -82,6 +83,7 @@ int Game::Update()
 	_inputManager->ConstantInput();
 
 	_systemManager.Process(dt);
+	UpdateUI();
 
 	_world.Step(1 / (float)SCREEN_FPS, 8, 3);
 	//save the curent time for next frame
@@ -171,30 +173,95 @@ void Game::OnEvent(Event evt, Type typ)
 
 void Game::BindInput()
 {
-	Command* wIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, -1, _player), Type::Down);
+	// In
+	Command* wIn = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered)
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->yDir = -1;
+		}
+	} , Type::Down);
 	_inputManager->AddKey(Event::w, wIn, this);
 
-	Command* aIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, -1, _player), Type::Down);
+	Command* aIn = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered) 
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->xDir = -1;
+		}
+	} , Type::Down);
 	_inputManager->AddKey(Event::a, aIn, this);
 
-	Command* sIn = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 1, _player), Type::Down);
+	Command* sIn = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered) 
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->yDir = 1;
+		}
+	} , Type::Down);
 	_inputManager->AddKey(Event::s, sIn, this);
 
-	Command* dIn = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 1, _player), Type::Down);
+	Command* dIn = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered) 
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->xDir = 1;
+		}
+	} , Type::Down);
 	_inputManager->AddKey(Event::d, dIn, this);
 
 
 	// Up
-	Command* wUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	Command* wUp = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered)
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->yDir = 0;
+		}
+	}, Type::Release);
 	_inputManager->AddKey(Event::w, wUp, this);
 
-	Command* aUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	Command* aUp = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered)
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->xDir = 0;
+		}
+	}, Type::Release);
 	_inputManager->AddKey(Event::a, aUp, this);
 
-	Command* sUp = new InputCommand(std::bind(&FunctionMaster::MoveVertical, &_functionMaster, 0, _player), Type::Release);
+	Command* sUp = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered)
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->yDir = 0;
+		}
+	}, Type::Release);
 	_inputManager->AddKey(Event::s, sUp, this);
 
-	Command* dUp = new InputCommand(std::bind(&FunctionMaster::MoveHorizontal, &_functionMaster, 0, _player), Type::Release);
+	Command* dUp = new InputCommand([&]()
+	{
+		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
+		if (!effects->staggered)
+		{
+			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+			physics->xDir = 0;
+		}
+	}, Type::Release);
 	_inputManager->AddKey(Event::d, dUp, this);
 
 
@@ -214,6 +281,7 @@ void Game::BindInput()
 			if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
 			{
 				weapon->fired = true;
+				_audioManager->PlayFX("Weapon");
 			}
 		}
 	}, Type::Hold);
@@ -343,52 +411,64 @@ void Game::DebugBox2D()
 
 void Game::CreateUI()
 {
-	// Poll
+	// Poll Boxes
 	std::vector<float> pollPosition1 = std::vector<float>();
 	pollPosition1.push_back(0); //id
-	pollPosition1.push_back(64); //xPosition
-	pollPosition1.push_back(64); //yPosition
-	pollPosition1.push_back(64); //width
-	pollPosition1.push_back(64); //height
+	pollPosition1.push_back(UI_BOX_X); //xPosition
+	pollPosition1.push_back(UI_BOX_Y); //yPosition
+	pollPosition1.push_back(UI_BOX_SIZE); //width
+	pollPosition1.push_back(UI_BOX_SIZE); //height
 	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition1));
 
 	std::vector<float> pollPosition2 = std::vector<float>();
 	pollPosition2.push_back(2); //id
-	pollPosition2.push_back(64); //xPosition
-	pollPosition2.push_back(128); //yPosition
-	pollPosition2.push_back(64); //width
-	pollPosition2.push_back(64); //height
+	pollPosition2.push_back(UI_BOX_X); //xPosition
+	pollPosition2.push_back(UI_BOX_Y * 2); //yPosition
+	pollPosition2.push_back(UI_BOX_SIZE); //width
+	pollPosition2.push_back(UI_BOX_SIZE); //height
 	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition2));
 
 	std::vector<float> pollPosition3 = std::vector<float>();
 	pollPosition3.push_back(3); //id
-	pollPosition3.push_back(64); //xPosition
-	pollPosition3.push_back(192); //yPosition
-	pollPosition3.push_back(64); //width
-	pollPosition3.push_back(64); //height
+	pollPosition3.push_back(UI_BOX_X); //xPosition
+	pollPosition3.push_back(UI_BOX_X * 3); //yPosition
+	pollPosition3.push_back(UI_BOX_SIZE); //width
+	pollPosition3.push_back(UI_BOX_SIZE); //height
 	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, pollPosition3));
 
-	// Weapon
+	// Weapon Box
 	std::vector<float> weapon = std::vector<float>();
 	weapon.push_back(4); //id
-	weapon.push_back(SCREEN_WIDTH - 128); //xPosition
-	weapon.push_back(64); //yPosition
-	weapon.push_back(64); //width
-	weapon.push_back(64); //height
+	weapon.push_back(SCREEN_WIDTH * 0.925f); //xPosition
+	weapon.push_back(UI_BOX_Y); //yPosition
+	weapon.push_back(UI_BOX_SIZE); //width
+	weapon.push_back(UI_BOX_SIZE); //height
 	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, weapon));
 
-	// Text
-	_systemManager.GetUISystem()->CreateDisplayText("1", 48, 64);
-	_systemManager.GetUISystem()->CreateDisplayText("2", 48, 128);
-	_systemManager.GetUISystem()->CreateDisplayText("3", 48, 192);
+	// Lap Text
+	_systemManager.GetUISystem()->CreateDisplayText("Lap : " + std::to_string(_systemManager.GetUISystem()->currentLapLocal),
+		SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.05f);
+
+	// Poll Text
+	_systemManager.GetUISystem()->CreateDisplayText("1", UI_POLL_TEXT_X, UI_POLL_TEXT_Y);
+	_systemManager.GetUISystem()->CreateDisplayText("2", UI_POLL_TEXT_X, UI_POLL_TEXT_Y * 2);
+	_systemManager.GetUISystem()->CreateDisplayText("3", UI_POLL_TEXT_X, UI_POLL_TEXT_Y * 3);
 
 	// Next Checkpoint Text
-	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 64);
-	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 128);
-	_systemManager.GetUISystem()->CreateTextAtCenter("1", 160, 192);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", UI_NEXT_TEXT_X, UI_NEXT_TEXT_Y);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", UI_NEXT_TEXT_X, UI_NEXT_TEXT_Y * 2);
+	_systemManager.GetUISystem()->CreateTextAtCenter("1", UI_NEXT_TEXT_X, UI_NEXT_TEXT_Y * 3);
+
+	// Ammo Text
+	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
 }
 
 void Game::UpdateUI()
 {
-
+	_systemManager.GetUISystem()->HUD();
+	_systemManager.GetUISystem()->UpdateDisplayText("Lap : " + std::to_string(_systemManager.GetUISystem()->currentLapLocal), 0);
+	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[0]), 0);
+	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
+	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
+	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
 }

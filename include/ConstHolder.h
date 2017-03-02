@@ -59,3 +59,13 @@ const uint16	FLAG_BODY_MASK = (uint16)EntityType::Obstacle;
 const uint16	POWERUP_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI;
 const uint16	OBSTACLE_MASK = (uint16)EntityType::Player | (uint16)EntityType::AI | (uint16)EntityType::Bullet | (uint16)EntityType::Flag;
 
+const int		UI_POLL_TEXT_X = 48;
+const int		UI_POLL_TEXT_Y = 64;
+
+const int		UI_NEXT_TEXT_X = 160;
+const int		UI_NEXT_TEXT_Y = 64;
+
+const int		UI_BOX_X = 64;
+const int		UI_BOX_Y = 64;
+const int		UI_BOX_SIZE = 64;
+

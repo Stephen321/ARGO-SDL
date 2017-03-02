@@ -21,7 +21,6 @@
 
 #include "LevelLoader.h"
 #include "Graph.h"
-#include "FunctionMaster.h"
 
 
 using namespace Camera2D;
@@ -67,7 +66,6 @@ private:
 	Graph							_waypoints;
 
 	SystemManager					_systemManager;
-	FunctionMaster					_functionMaster;
 
 	Entity*							_player;
 

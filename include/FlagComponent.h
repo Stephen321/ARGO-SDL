@@ -8,6 +8,7 @@ class FlagComponent : public Component
 public:
 	FlagComponent()
 		: currentCheckpointID(0)
+		, totalCheckpoints(0)
 		, currentLap(1)
 		, hasFlag(false)
 		, Component::Component(Component::Type::Flag)
@@ -23,4 +24,6 @@ public:
 	int currentLap;
 
 	bool hasFlag;
+
+	int totalCheckpoints;
 };
