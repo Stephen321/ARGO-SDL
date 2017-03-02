@@ -83,14 +83,29 @@ void MainMenu::Stop()
 	CleanUp();
 }
 
-void MainMenu::OnEvent(EventListener::Event evt)
+void MainMenu::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				_running = false;
+				break;
+			case Event::w:
+				_audioManager->PlayFX("Click");
+				break;
+			case Event::s:
+				_audioManager->PlayFX("Click");
+				break;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -124,6 +139,7 @@ void MainMenu::BindInput()
 		if (_selectedItemIndex == _uiSystem.GetInteractiveTextRectangle().size() -1) { _running = false; }
 		else { _swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1); }
 		if (_swapScene == CurrentScene::GAME) { _audioManager->StopMusic(); }
+		_audioManager->PlayFX("Enter");
 	}, Type::Press);
 
 	_inputManager->AddKey(Event::RETURN, enterIn, this);

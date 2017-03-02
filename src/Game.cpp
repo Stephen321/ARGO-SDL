@@ -108,35 +108,63 @@ void Game::Start()
 {
 	_running = true;
 	_swapScene = CurrentScene::GAME;
+
+	if (!_audioManager->IsMusicPlaying())
+	{
+		int random = std::rand() % 3;
+		if (random == 0) { _audioManager->PlayMusic("Music1"); }
+		else if (random == 1) { _audioManager->PlayMusic("Music2"); }
+		else if (random == 2) { _audioManager->PlayMusic("Music3"); }
+	}
 }
 
 void Game::Stop()
 {
 	_running = false;
 	CleanUp();
+	_audioManager->StopMusic();
 }
 
-void Game::OnEvent(EventListener::Event evt)
+void Game::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			//_inputManager->saveFile();
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				//_inputManager->saveFile();
+				_running = false;
+				break;
+			}
+			break;
 
-		case Event::w:
-			_audioManager->PlayFX("Hum");
-		case Event::a:
-			_audioManager->PlayFX("Hum");
-		case Event::s:
-			_audioManager->PlayFX("Hum");
-		case Event::d:
-			_audioManager->PlayFX("Hum");
+		case Type::Down:
+			switch (evt)
+			{
+			case Event::w:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::a:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::s:
+				_audioManager->PlayFX("Hum");
+				break;
+			case Event::d:
+				_audioManager->PlayFX("Hum");
+				break;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }
+
 
 void Game::BindInput()
 {

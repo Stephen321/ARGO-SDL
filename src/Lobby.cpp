@@ -199,14 +199,29 @@ void Lobby::Stop()
 	CleanUp();
 }
 
-void Lobby::OnEvent(EventListener::Event evt)
+void Lobby::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				_running = false;
+				break;
+			//case Event::w:
+			//	_audioManager->PlayFX("Click");
+			//	break;
+			//case Event::s:
+			//	_audioManager->PlayFX("Click");
+			//	break;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }

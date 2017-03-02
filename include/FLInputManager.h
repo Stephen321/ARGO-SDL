@@ -170,7 +170,7 @@ public:
 
 	//* Pure virtual function that can be overriden inside any class that inherites from EventListener if needed
 	//* Not required to execute keys, ideal for standard event dispatch/ listen procedure for custom events
-	virtual void OnEvent(Event) = 0;
+	virtual void OnEvent(Event, Type) = 0;
 
 	virtual ~EventListener();
 };

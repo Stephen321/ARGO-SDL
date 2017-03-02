@@ -49,46 +49,6 @@ void InputManager::AddListener(EventListener::Event evt, EventListener *listener
 	}
 }
 
-void InputManager::EmptyKeys()
-{
-	for (auto& commandVector : commands)
-	{
-		for (auto command : *commandVector.second)
-		{
-			delete command;
-		}
-
-		delete commandVector.second;
-	}
-	commands.erase(commands.begin(), commands.end());
-
-	for (auto& listenerVector : listeners)
-	{
-		//for (auto listener : *listenerVector.second)
-		//{
-		//	delete listener;
-		//}
-
-		delete listenerVector.second;
-	}
-	listeners.erase(listeners.begin(), listeners.end());
-}
-
-void InputManager::EmptyKey(EventListener::Event evt)
-{
-	if (commands.count(evt) == 1)
-	{
-		for (auto command : *commands[evt])
-		{
-			delete command;
-		}
-
-		delete commands[evt];
-	}
-
-	commands.erase(evt);
-}
-
 //* Find a specific Event listener in the listeners dictionary, and call its onEvent() function
 void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 {
@@ -96,7 +56,7 @@ void InputManager::Dispatch(EventListener::Type type, EventListener::Event evt)
 	{
 		for (auto const &listener : *listeners[evt])
 		{
-			listener->OnEvent(evt);
+			listener->OnEvent(evt, type);
 		}
 	}
 
@@ -223,6 +183,42 @@ void InputManager::ResetKey(EventListener::Event evt)
 {
 	commands[evt]->clear();
 	listeners[evt]->clear();
+}
+
+//* Used to delete all key comands, and empty listeners
+void InputManager::EmptyKeys()
+{
+	for (auto& commandVector : commands)
+	{
+		for (auto command : *commandVector.second)
+		{
+			delete command;
+		}
+
+		delete commandVector.second;
+	}
+	commands.erase(commands.begin(), commands.end());
+
+	for (auto& listenerVector : listeners)
+	{
+		delete listenerVector.second;
+	}
+	listeners.erase(listeners.begin(), listeners.end());
+}
+
+// Used to delete a specific Key
+void InputManager::EmptyKey(EventListener::Event evt)
+{
+	if (commands.count(evt) == 1)
+	{
+		for (auto command : *commands[evt])
+		{
+			delete command;
+		}
+
+		delete commands[evt];
+	}
+	commands.erase(evt);
 }
 
 //* Combine a Command* and an EventListener to work together
