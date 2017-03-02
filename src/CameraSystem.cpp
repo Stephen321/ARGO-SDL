@@ -1,6 +1,7 @@
 #include "CameraSystem.h"
 #include "TransformComponent.h"
 #include "ConstHolder.h"
+#include <iostream>
 
 CameraSystem::CameraSystem(float updateRate)
 	: System(updateRate)
@@ -23,6 +24,8 @@ void CameraSystem::Process(float dt)
 	{
 		_canUpdate = false;
 		Camera2D::Vector2 centre;
+		centre.x = 0;
+		centre.y = 0;
 		for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
 			for (Entity* e : (*it).second)
@@ -30,6 +33,7 @@ void CameraSystem::Process(float dt)
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				centre.x += transform->rect.x + transform->rect.w * 0.5f;
 				centre.y += transform->rect.y + transform->rect.h * 0.5f;
+				
 			}
 			if ((*it).second.empty() == false)
 			{
