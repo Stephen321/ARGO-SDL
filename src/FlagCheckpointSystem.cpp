@@ -100,6 +100,15 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 				{
 					sumSpeed = flagPhysics->maxVelocity;
 				}
+				else
+				{
+					float halfMaxVel = flagPhysics->maxVelocity * 0.5f;
+
+					if (sumSpeed < halfMaxVel)
+					{
+						sumSpeed = flagPhysics->maxVelocity * 0.5f;
+					}
+				}
 
 				flagPhysics->xVelocity = (xDir / directionLenght) * sumSpeed;
 				flagPhysics->yVelocity = (yDir / directionLenght) * sumSpeed;
