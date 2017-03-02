@@ -10,7 +10,6 @@ public:
 		: id(-1)
 		, hasWeapon(false)
 		, fired(false)
-		, angle(0.f)
 		, Component::Component(Component::Type::Weapon)
 	{
 	}
@@ -21,7 +20,7 @@ public:
 
 public:
 	int id;
-	float angle;
+	int ammo;
 	bool fired;
 	bool hasWeapon;
 };

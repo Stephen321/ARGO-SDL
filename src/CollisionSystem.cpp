@@ -162,17 +162,17 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 		{
 		case PowerUpComponent::Type::Invicibility:
 			statusEffects->invincible = true;
-			statusEffects->invincibleTimer += INVINCIBLE_MAX_TIMER;
+			statusEffects->invincibleTimer = INVINCIBLE_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Invisibility:
 			statusEffects->invisible = true;
-			statusEffects->invisibleTimer += INVISIBLE_MAX_TIMER;
+			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Speed:
 			statusEffects->speedUp = true;
-			statusEffects->speedUpTimer += SPEED_UP_MAX_TIMER;
+			statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
 			break;
 		default:
@@ -185,8 +185,6 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {
 	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-	statusEffects->staggered = true;
-	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
 	if (!statusEffects->invincible)
 	{
@@ -199,7 +197,7 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 		}
 
 		statusEffects->staggered = true;
-		statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+		statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 	}
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
@@ -249,7 +247,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
 		{
 			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 		}
@@ -259,7 +257,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
 		{
 			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}

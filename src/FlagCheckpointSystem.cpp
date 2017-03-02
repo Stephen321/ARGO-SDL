@@ -94,27 +94,24 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 				float yDir = rand() % 20000 - 10000;
 
 				float directionLenght = sqrt(xDir * xDir + yDir * yDir);
+				float sumSpeed = ownerSpeed + characterSpeed;
 
-				flagPhysics->xVelocity = (xDir / directionLenght) * (ownerSpeed + characterSpeed);
-				flagPhysics->yVelocity = (yDir / directionLenght) * (ownerSpeed + characterSpeed);
+				if (sumSpeed > flagPhysics->maxVelocity)
+				{
+					sumSpeed = flagPhysics->maxVelocity;
+				}
+				else
+				{
+					float halfMaxVel = flagPhysics->maxVelocity * 0.5f;
 
-				if (flagPhysics->xVelocity > flagPhysics->maxVelocity)
-				{
-					flagPhysics->xVelocity = flagPhysics->maxVelocity;
-				}
-				else if (flagPhysics->xVelocity < -flagPhysics->maxVelocity)
-				{
-					flagPhysics->xVelocity = -flagPhysics->maxVelocity;
+					if (sumSpeed < halfMaxVel)
+					{
+						sumSpeed = flagPhysics->maxVelocity * 0.5f;
+					}
 				}
 
-				if (flagPhysics->yVelocity > flagPhysics->maxVelocity)
-				{
-					flagPhysics->yVelocity = flagPhysics->maxVelocity;
-				}
-				else if (flagPhysics->yVelocity < -flagPhysics->maxVelocity)
-				{
-					flagPhysics->yVelocity = -flagPhysics->maxVelocity;
-				}
+				flagPhysics->xVelocity = (xDir / directionLenght) * sumSpeed;
+				flagPhysics->yVelocity = (yDir / directionLenght) * sumSpeed;
 
 				FlagComponent* flag = static_cast<FlagComponent*>(it->first->GetComponent(Component::Type::Flag));
 				flag->hasFlag = false;

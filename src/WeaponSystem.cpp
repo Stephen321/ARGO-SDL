@@ -55,6 +55,7 @@ void WeaponSystem::Process(float dt)
 				if (gun->canFire)
 				{
 					gun->triggered = true;
+					weapon->ammo--;
 				}
 
 				weapon->fired = false;
@@ -84,6 +85,12 @@ void WeaponSystem::WeaponCreationEvent()
 						break;
 					}
 				}
+
+				WeaponComponent* weapon = static_cast<WeaponComponent*>(_interactionSystemEvents[WEAPON_CREATED].at(i).first->GetComponent(Component::Type::Weapon));
+				GunComponent* gun = static_cast<GunComponent*>(_interactionSystemEvents[WEAPON_CREATED].at(i).second->GetComponent(Component::Type::Gun));
+				
+				weapon->ammo = gun->ammo;
+
 				AddEntity(_interactionSystemEvents[WEAPON_CREATED].at(i).first, _interactionSystemEvents[WEAPON_CREATED].at(i).second);
 				_interactionSystemEvents[WEAPON_CREATED].erase(_interactionSystemEvents[WEAPON_CREATED].begin() + i);
 				i--;
@@ -102,8 +109,11 @@ void WeaponSystem::WeaponBulletAddition()
 			{
 				if (_entities.at(j).first == _interactionSystemEvents[BULLET_ADDITION].at(i).first)
 				{
+					WeaponComponent* weapon = static_cast<WeaponComponent*>(_entities.at(j).first->GetComponent(Component::Type::Weapon));
 					GunComponent* gun = static_cast<GunComponent*>(_entities.at(j).second->GetComponent(Component::Type::Gun));
+
 					gun->ammo += AMMO[gun->id];
+					weapon->ammo = gun->ammo;
 					break;
 				}
 			}
