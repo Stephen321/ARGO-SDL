@@ -119,6 +119,18 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		FireData* sendData = (FireData*)data;
 		break;
 	}
+	case MessageType::PickUpFlag:
+	{
+		PickUpFlagData* sendData = (PickUpFlagData*)data;
+		WriteInt(sendData->remoteID);
+		break;
+	}
+	case MessageType::DroppedFlag:
+	{
+		DroppedFlagData* sendData = (DroppedFlagData*)data;
+		WriteInt(sendData->remoteID);
+		break;
+	}
 	}
 
 	_packet->address.host = destAddr.host;
@@ -232,6 +244,20 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::Fire:
 		{
 			FireData data;
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::PickUpFlag:
+		{
+			PickUpFlagData data;
+			data.remoteID = ReadInt(byteOffset);
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::DroppedFlag:
+		{
+			DroppedFlagData data;
+			data.remoteID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

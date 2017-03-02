@@ -10,6 +10,7 @@
 RemoteSystem::RemoteSystem(float updateRate, std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests)
 	: System(updateRate)
 	, _creationRequests(creationRequests)
+	, _flagHolderID(-1)
 {
 }
 
@@ -41,6 +42,10 @@ void RemoteSystem::Process(float dt)
 			{
 				for (Entity* e : it->second)
 				{
+					if (e->GetType() == EntityType::Flag && _flagHolderID != -1) 
+					{
+						break;
+					}
 					RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
@@ -124,12 +129,14 @@ void RemoteSystem::Process(float dt)
 							physics->xVelocity = data.xVel;
 							physics->yVelocity = data.yVel;
 
-							if (remote->timeSincePacket > _updateRate * 1.5f) //recover from packet loss, need to converge back to new position
+							bool converge = false;
+							if (remote->timeSincePacket > _updateRate * 2.f) //recover from packet loss, need to converge back to new position
 							{
+								converge = true;
 								remote->startState.xPos = collider->body->GetPosition().x;
 								remote->startState.yPos = collider->body->GetPosition().y;
 
-								b2Vec2 target = b2Vec2(data.xPos, data.yPos) + (b2Vec2(physics->xVelocity * _updateRate, physics->yVelocity * _updateRate));
+								b2Vec2 target = b2Vec2(data.xPos, data.yPos);// +(b2Vec2(physics->xVelocity * _updateRate, physics->yVelocity * _updateRate));
 								remote->endState.xPos = target.x;
 								remote->endState.yPos = target.y;
 							}
@@ -145,7 +152,7 @@ void RemoteSystem::Process(float dt)
 								remote->startState.yVel = data.yVel;
 								remote->endState = remote->startState;
 							}
-							else //every other packet
+							else if (converge == false)//every other packet
 							{
 								remote->startState = remote->endState; //if we havnt reached the endState then we will snap to it...this is if a message arrives early
 
@@ -196,14 +203,61 @@ void RemoteSystem::Process(float dt)
 				}
 				break;
 			}
+			case MessageType::PickUpFlag:
+			{
+				PickUpFlagData data = receivedData.GetData<PickUpFlagData>();
+
+				for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+				{
+					for (Entity* e : it->second)
+					{
+						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+						if (data.remoteID == remote->id)
+						{ 
+							_flagHolderID = data.remoteID;
+						}
+					}
+
+				}
+				break;
+			}
+			case MessageType::DroppedFlag:
+			{
+				DroppedFlagData data = receivedData.GetData<DroppedFlagData>();
+				//stagger here
+				//first check if invincable
+				_flagHolderID = -1;
+				break;
+			}
 		}
 	}
 
+	if (_flagHolderID != -1)
+	{
+		Entity* flag = _entities[EntityType::Flag][0];
+		bool findFlagHolder = true;
+		for (EntityMapIterator it = _entities.begin(); it != _entities.end() && findFlagHolder; ++it)
+		{
+			for (Entity* e : it->second)
+			{
+				RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+				if (remote->id == _flagHolderID)
+				{
+					TransformComponent* transform = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
+					transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+					transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+					findFlagHolder = false;
+					break;
+				}
+			}
+		}
+	}
 	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
 	{
 		for (Entity* e : it->second)
 		{
-			if (e->GetType() == EntityType::Player) //don't do any lerping for the local player
+			if (e->GetType() == EntityType::Player || (e->GetType() == EntityType::Flag && _flagHolderID != -1)) //don't do any lerping for the local player
 			{
 				break;
 			}
@@ -250,7 +304,7 @@ void RemoteSystem::Process(float dt)
 
 
 			//calculate angle lerped between start and end state velocities
-			if (remote->startState.xVel + remote->startState.yVel != 0)
+			if (e->GetType() != EntityType::Flag && remote->startState.xVel + remote->startState.yVel != 0)
 			{
 				if (remote->endState.xVel + remote->endState.yVel != 0)
 				{

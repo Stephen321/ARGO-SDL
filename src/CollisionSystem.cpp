@@ -64,7 +64,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || other->GetType() == EntityType::Remote)
+			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || (other->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost()))
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
@@ -229,6 +229,13 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 			collider->checkpointCollision = std::pair<bool, int>(false, -1);
 		}
 
+		if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+		{
+			RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+			PickUpFlagData data;
+			data.remoteID = remote->id;
+			NetworkHandler::Instance().Send(&data);
+		}
 		_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
 	}
 }
@@ -249,6 +256,13 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 			playerStatusEffects->staggered = true;
 			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
+			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+			{
+				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+				DroppedFlagData data;
+				data.remoteID = remote->id;
+				NetworkHandler::Instance().Send(&data);
+			}
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 		}
 	}
@@ -259,6 +273,13 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 			otherStatusEffects->staggered = true;
 			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
+			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+			{
+				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+				DroppedFlagData data;
+				data.remoteID = remote->id;
+				NetworkHandler::Instance().Send(&data);
+			}
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
 	}
@@ -434,12 +455,12 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			player = b;
 			other = a;
 		}
-		else if (a->GetType() == EntityType::Remote)
+		else if (a->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost())
 		{
 			player = a;
 			other = b;
 		}
-		else if (b->GetType() == EntityType::Remote)
+		else if (b->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost())
 		{
 			player = b;
 			other = a;

@@ -16,6 +16,7 @@ public:
 	void Process(float dt = 0.f) override;
 
 private:
+	int									_flagHolderID;
 	Graph*								_waypoints;
 	std::vector<
 		std::pair<EntityType,

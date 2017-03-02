@@ -29,4 +29,5 @@ private:
 	};
 	std::map<int, Player> _players;
 	bool _waiting;
+	int _hostID;
 };

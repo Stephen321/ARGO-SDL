@@ -18,7 +18,8 @@ namespace Network
 		Ready,
 		PickUpFlag,
 		CreatePowerUp,
-		Fire
+		Fire, 
+		DroppedFlag
 	};
 
 	struct MessageData 
@@ -91,9 +92,16 @@ namespace Network
 		int seed;
 	};
 
-	struct PickUpFlagData : MessageData 
+	struct PickUpFlagData : MessageData
 	{
 		PickUpFlagData() { type = MessageType::PickUpFlag; }
+		int remoteID;
+	};
+
+	struct DroppedFlagData : MessageData
+	{
+		DroppedFlagData() { type = MessageType::DroppedFlag; }
+		int remoteID;
 	};
 
 	struct CreatePowerUpData : MessageData {
@@ -168,7 +176,10 @@ namespace Network
 
 			case MessageType::Fire:
 				_data = new FireData(rhs.GetData<FireData>());
-				break;
+				break; 
+			case MessageType::DroppedFlag:
+				_data = new DroppedFlagData(rhs.GetData<DroppedFlagData>());
+				break; 
 			}
 		}
 

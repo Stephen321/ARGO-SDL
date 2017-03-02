@@ -151,7 +151,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 	collider->body->SetUserData(player);
 	collider->body->SetFixedRotation(true);
-
+	
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);

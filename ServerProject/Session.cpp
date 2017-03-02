@@ -2,6 +2,7 @@
 
 Session::Session()
 	: _waiting(true)
+	, _hostID(-1)
 {
 }
 
@@ -12,6 +13,10 @@ int Session::GetPlayerCount() const
 
 void Session::AddPlayer(int playerID, IPaddress addr)
 {
+	if (_players.empty())
+	{
+		_hostID = playerID; //first to join is host
+	}
 	Player p;
 	p.address = addr;
 	p.ready = false;
@@ -39,11 +44,7 @@ bool Session::RemovePlayer(int playerID)
 
 int Session::GetHostID()
 {
-	if (_players.empty())
-	{
-		return -1;
-	}
-	return _players.begin()->first;
+	return _hostID;
 }
 
 IPaddress Session::GetPlayerIP(int playerID)

@@ -289,13 +289,13 @@ int main(int argc, char** argv)
 							if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
 							{
 								net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
-								std::cout << "Relay data " << data.remoteID << ", to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
+								//std::cout << "Relay data " << data.remoteID << ", to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
 							}
 						}
 					}
 					else //this is a player sending data to host
 					{//send data to host
-						std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
+						//std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
 						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetHostID()));
 					}
 				}
@@ -327,6 +327,38 @@ int main(int argc, char** argv)
 					{
 						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
 						std::cout << "Send fire event to all players in session: " << data.sessionID << std::endl;
+					}
+				}
+				break;
+			}
+			case MessageType::PickUpFlag:
+			{
+				PickUpFlagData data = receiveData.GetData<PickUpFlagData>();
+				if (data.sessionID != -1)
+				{
+					std::cout << "got pick up flag packet " << std::endl;
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send data back to the original player
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						}
+					}
+				}
+				break;
+			}
+			case MessageType::DroppedFlag:
+			{
+				DroppedFlagData data = receiveData.GetData<DroppedFlagData>();
+				if (data.sessionID != -1)
+				{
+					std::cout << "got dropped flag packet " << std::endl;
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send data back to the original player
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						}
 					}
 				}
 				break;
