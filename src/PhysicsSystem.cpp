@@ -80,8 +80,6 @@ void PhysicsSystem::Process(float dt)
 					if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 					if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
 
-
-
 					if (collider->body->IsActive())
 					{
 						collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
@@ -139,6 +137,13 @@ void PhysicsSystem::Process(float dt)
 
 					transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
 					transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+				}
+				else if (e->GetType() == EntityType::Flag)
+				{
+					b2Vec2 p;
+					p.x = pixelsToMeters(transform->rect.x);
+					p.y = pixelsToMeters(transform->rect.y);
+					collider->body->SetTransform(p, collider->body->GetAngle());
 				}
 
 				//if (e->GetType() == EntityType::Player)

@@ -53,25 +53,22 @@ void RemoteSystem::Process(float dt)
 					data.yPos = collider->body->GetPosition().y;
 					data.host = true;
 					data.remoteID = remote->id;
-					if (e->GetType() == EntityType::Flag)
-					{
-						//find which entity has the flag
-						for (EntityMapIterator it2 = _entities.begin(); it2 != _entities.end(); ++it2)
-						{
-							for (Entity* e2 : it2->second)
-							{
-								FlagComponent* flag = static_cast<FlagComponent*>(e2->GetComponent(Component::Type::Flag));
-								if (flag != nullptr && flag->hasFlag)
-								{//player has a flag so flag collider pos is not correct. need to find which player has it and set flag pos to there
-									ColliderComponent* collider2 = static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider));
-									data.xPos = collider2->body->GetPosition().x;
-									data.yPos = collider2->body->GetPosition().y;
-									break;
-								}
-							}
-						}
-						std::cout << "Host sending flag data " << remote->id << ". with xVel " << data.xVel << " yVel " << data.yVel << ".xPos " << data.xPos << ".yPos " << data.yPos << std::endl;
-					}
+					//	//find which entity has the flag
+					//	for (EntityMapIterator it2 = _entities.begin(); it2 != _entities.end(); ++it2)
+					//	{
+					//		for (Entity* e2 : it2->second)
+					//		{
+					//			FlagComponent* flag = static_cast<FlagComponent*>(e2->GetComponent(Component::Type::Flag));
+					//			if (flag != nullptr && flag->hasFlag)
+					//			{//player has a flag so flag collider pos is not correct. need to find which player has it and set flag pos to there
+					//				ColliderComponent* collider2 = static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider));
+					//				data.xPos = collider2->body->GetPosition().x;
+					//				data.yPos = collider2->body->GetPosition().y;
+					//				break;
+					//			}
+					//		}
+					//	}
+					//	std::cout << "Host sending flag data " << remote->id << ". with xVel " << data.xVel << " yVel " << data.yVel << ".xPos " << data.xPos << ".yPos " << data.yPos << std::endl;
 					//std::cout << "@@@Host sends player " << remote->id << " with xVel " << data.xVel << " yVel " << data.yVel << " . xPos " << data.xPos << " . yPos " << data.yPos << std::endl;
 					network.Send(&data);
 				}
