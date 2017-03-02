@@ -10,6 +10,7 @@ public:
 	ColliderComponent()
 		: body(nullptr)
 		, setActive(true)
+		, checkpointCollision(std::pair<bool, int>(false, -1))
 		, Component::Component(Component::Type::Collider)
 	{
 	}
@@ -19,6 +20,7 @@ public:
 	}
 
 public:
-	b2Body* body;
-	bool	setActive;
+	b2Body*					body;
+	bool					setActive;
+	std::pair<bool, int>	checkpointCollision;
 };

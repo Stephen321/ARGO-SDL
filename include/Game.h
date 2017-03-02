@@ -12,6 +12,13 @@
 #include "Entity.h"
 #include "SystemManager.h"
 
+#include <SDL.h>
+#include <vector>
+#include <queue>
+#include <map>
+
+#include "ResourceIdentifier.h"
+
 #include "LevelLoader.h"
 #include "Graph.h"
 #include "FunctionMaster.h"

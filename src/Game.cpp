@@ -29,7 +29,8 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 {
 	_renderer = renderer;
 
-	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, &_waypoints, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 
 	_world.SetAllowSleeping(false);
 
@@ -43,7 +44,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	CreateUI();
 
-	_systemManager.PostInitialize(_player);
+	_systemManager.PostInitialize(_player, &_waypoints);
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -51,7 +52,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 void Game::LoadContent(const std::vector<int>& ids)
 {
-	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/BackgroundSprite.png");
+	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
@@ -63,7 +64,9 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
-	_levelLoader.LoadJson("Media/Json/Map.json", _systemManager, &_bodyFactory, &_waypoints, ids);
+
+	_levelLoader.LoadJson("Media/Json/NormalMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
+
 }
 
 
@@ -127,6 +130,7 @@ void Game::Stop()
 
 void Game::OnEvent(Event evt, Type typ)
 {
+	/*
 	if (_running)
 	{
 		switch (typ)
@@ -162,7 +166,7 @@ void Game::OnEvent(Event evt, Type typ)
 		default:
 			break;
 		}
-	}
+	}*/
 }
 
 
@@ -205,15 +209,17 @@ void Game::BindInput()
 	Command* spaceIn = new InputCommand([&]()
 	{
 		WeaponComponent* weapon = static_cast<WeaponComponent*>(_player->GetComponent(Component::Type::Weapon));
-		StatusEffectComponent* statusEffect = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-
-		if (!statusEffect->staggered && weapon->hasWeapon)
+		
+		if ( weapon->hasWeapon)
 		{
-			weapon->fired = true;
+			if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
+			{
+				weapon->fired = true;
+			}
 		}
-
 	}, Type::Hold);
 	_inputManager->AddKey(Event::SPACE, spaceIn, this);
+
 }
 
 void Game::CleanUp()
@@ -279,6 +285,7 @@ void Game::DebugBox2D()
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
+
 					b2PolygonShape* polygonShape = (b2PolygonShape*)b2Fixture->GetShape();
 
 					int lenght = (int)polygonShape->GetVertexCount();
@@ -323,9 +330,7 @@ void Game::DebugBox2D()
 
 					points[lenght].y = points[0].y;
 					points[lenght].x = points[0].x;
-
-
-
+					
 					SDL_RenderDrawLines(_renderer, points, lenght + 1);
 					delete points;
 				}

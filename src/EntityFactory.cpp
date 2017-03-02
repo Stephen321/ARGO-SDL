@@ -1,3 +1,4 @@
+
 #include "EntityFactory.h"
 
 #include "ColliderComponent.h"
@@ -16,7 +17,6 @@
 #include "WeaponComponent.h"
 
 #include "ConstHolder.h"
-
 
 
 EntityFactory::EntityFactory()	
@@ -81,10 +81,13 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 Entity* EntityFactory::CreatePlayerEntity(int id)
 {
 	Entity* player = new Entity(EntityType::Player);
+
 	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+	player->AddComponent(new TransformComponent(0, 0, 96, 96));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
@@ -101,9 +104,11 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 {
 	Entity* remotePlayer = new Entity(EntityType::RemotePlayer);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	remotePlayer->AddComponent(spriteComponent);
-	remotePlayer->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+	remotePlayer->AddComponent(new TransformComponent(0, 0, 96, 96));
 	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	remotePlayer->AddComponent(new ColliderComponent());
 	remotePlayer->AddComponent(new FlagComponent());
@@ -117,9 +122,12 @@ Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	spriteComponent->sourceRect.w /= 2;
+	spriteComponent->sourceRect.h /= 7;
 
 	ai->AddComponent(spriteComponent);
-	ai->AddComponent(new TransformComponent(0, 0, spriteComponent->sourceRect.w / 2, spriteComponent->sourceRect.h / 7));
+
+	ai->AddComponent(new TransformComponent(0, 0, 96, 96));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
@@ -220,6 +228,66 @@ Entity* EntityFactory::CreateTileEntity(int id)
 	case 3:
 	{
 		spriteComponent->sourceRect = { 2, 0, 0, 0 };
+		break;
+	}
+	case 4:
+	{
+		spriteComponent->sourceRect = { 3, 0, 0, 0 };
+		break;
+	}
+	case 5:
+	{
+		spriteComponent->sourceRect = { 4, 0, 0, 0 };
+		break;
+	}
+	case 6:
+	{
+		spriteComponent->sourceRect = { 0, 1, 0, 0 };
+		break;
+	}
+	case 7:
+	{
+		spriteComponent->sourceRect = { 1, 1, 0, 0 };
+		break;
+	}
+	case 8:
+	{
+		spriteComponent->sourceRect = { 2, 1, 0, 0 };
+		break;
+	}
+	case 9:
+	{
+		spriteComponent->sourceRect = { 3, 1, 0, 0 };
+		break;
+	}
+	case 10:
+	{
+		spriteComponent->sourceRect = { 4, 1, 0, 0 };
+		break;
+	}
+	case 11:
+	{
+		spriteComponent->sourceRect = { 0, 2, 0, 0 };
+		break;
+	}
+	case 12:
+	{
+		spriteComponent->sourceRect = { 1, 2, 0, 0 };
+		break;
+	}
+	case 13:
+	{
+		spriteComponent->sourceRect = { 2, 2, 0, 0 };
+		break;
+	}
+	case 14:
+	{
+		spriteComponent->sourceRect = { 3, 2, 0, 0 };
+		break;
+	}
+	case 15:
+	{
+		spriteComponent->sourceRect = { 4, 2, 0, 0 };
 		break;
 	}
 	default:

@@ -1,4 +1,7 @@
 #include "WaypointSystem.h"
+#include "TransformComponent.h" 
+#include "ColliderComponent.h"
+#include "Helpers.h"
 #include "AIComponent.h"
 #include "TransformComponent.h"
 #include "PowerUpComponent.h"
@@ -38,9 +41,11 @@ void WaypointSystem::Process(float dt)
 		{
 			for (Entity* e : (*it).second)
 			{
+			
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 				helper::Vector2 position = helper::Vector2(transform->rect.x, transform->rect.y);
-
+				
 				int maxNode = _waypoints->getNodesSize();
 				int flagNode = maxNode - 1;
 				GraphNode* node = _waypoints->getNodes()[flagNode];
@@ -52,7 +57,7 @@ void WaypointSystem::Process(float dt)
 				for (int i = 0; i < size; i++)
 				{
 					float distance = (position - _waypoints->getNodes()[i]->getPosition()).length();
-					if (distance < 300.0f)
+					if (distance < FLAG_CONNECTION_RADIUS)
 					{
 						GraphArc* arcFromFlag = _waypoints->getArc(flagNode, i);
 						if (arcFromFlag == nullptr)
@@ -106,7 +111,7 @@ void WaypointSystem::PowerUpDestructionEvent()
 		{
 			PowerUpComponent* powerUp = static_cast<PowerUpComponent*>(_interactionSystemEvents[POWER_UP_DESTRUCTION].at(i).first->GetComponent(Component::Type::PowerUp));
 
-			nodes[powerUp->waypointIndex]->setData("");
+			nodes[powerUp->waypointIndex]->setData(make_pair(GraphNode::EntityData::Null, 0));
 			static_cast<DestructionComponent*>(_interactionSystemEvents[POWER_UP_DESTRUCTION].at(i).first->GetComponent(Component::Type::Destroy))->destroy = true;
 
 			_interactionSystemEvents[POWER_UP_DESTRUCTION].erase(_interactionSystemEvents[POWER_UP_DESTRUCTION].begin() + i);
@@ -128,21 +133,19 @@ void WaypointSystem::CreatePowerUp(float dt)
 
 		while (powerUpsToSpawn != 0 && _powerUpCount < maxPowerUps)
 		{
-			bool spawned = false;
-
 			int index = rand() % nodes.size();
 
-			if (nodes[index]->data().empty())
+			if (nodes[index]->data().first == GraphNode::EntityData::Null)
 			{
 				std::vector<float> data = std::vector<float>();
-
-				data.push_back(rand() % ((int)PowerUpComponent::Type::Count)); //id
+				int powerUpType = rand() % ((int)PowerUpComponent::Type::Count);
+				data.push_back(powerUpType); //id
 				data.push_back(nodes[index]->getPosition().x); //xPosition
 				data.push_back(nodes[index]->getPosition().y); //yPosition
-				data.push_back(index); //yPosition
+				data.push_back(index); //node index
 
 				_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::PowerUp, data));
-				nodes[index]->setData("PowerUp");
+				nodes[index]->setData(make_pair(GraphNode::EntityData::PowerUp, powerUpType));
 				powerUpsToSpawn--;
 				_powerUpCount++;
 			}

@@ -9,9 +9,9 @@
 
 class EntityFactory
 {
-public: 
-										EntityFactory();
-										~EntityFactory();
+public:
+	EntityFactory();
+	~EntityFactory();
 
 	void								Initialize(std::map<TextureID, SDL_Texture*>* th);
 
