@@ -14,6 +14,13 @@ UISystem::UISystem(float updateRate)
 
 UISystem::~UISystem()
 {
+	TTF_CloseFont(_font);
+	DeleteEntites();
+	DeleteText();
+	DeleteDisplayText();
+	DeleteBackButton();
+	DeleteLobbyButton();
+	DeleteReadyButton();
 }
 
 void UISystem::Initialize(SDL_Renderer* renderer)
@@ -37,25 +44,18 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 
 void UISystem::PostInitialize(std::vector<Entity*> characters, std::vector<Entity*> checkpoints, Entity* flag)
 {
-	_characters.push_back(characters[0]);
+
+	_characters = characters;
 	_checkpoints = checkpoints;
 	_flag = flag;
 
-	WeaponComponent* weapon = static_cast<WeaponComponent*>(_characters[0]->GetComponent(Component::Type::Weapon));
-	FlagComponent* fla = static_cast<FlagComponent*>(_characters[0]->GetComponent(Component::Type::Flag));
-
-	CheckpointComponent* check = static_cast<CheckpointComponent*>(checkpoints[0]->GetComponent(Component::Type::Checkpoint));
-
-	check->highlighted; // 
-	check->id; //
-
-	fla->currentLap; // current lap
-	fla->hasFlag; // entity has flag
-	fla->currentCheckpointID; // next checkpoint
-
-	weapon->fired; // has fired
-	weapon->hasWeapon; // has a weapon
-	weapon->id; // type of weapon
+	for (int i = 0; i < 3; i++)
+	{
+		topPlayers[i] = i;
+		topCheckpoint[i] = 0;
+		topLap[i] = 1;
+		nextCheckpoint[i] = 1;
+	}
 }
 
 void UISystem::Process(float dt)
@@ -99,7 +99,67 @@ void UISystem::Process(float dt)
 				{
 					SDL_RenderCopy(_renderer, _displayTextTexture[i], NULL, &_displayTextRectangle[i]);
 				}
+
+				SDL_RenderCopy(_renderer, _backButtonTexture, NULL, &_backButton);
+				SDL_RenderCopy(_renderer, _lobbyButtonTexture, NULL, &_lobbyButton);
+				SDL_RenderCopy(_renderer, _readyButtonTexture, NULL, &_readyButton);
 			}
+		}
+	}
+}
+
+void UISystem::HUD(float dt)
+{
+	CheckpointComponent* check = static_cast<CheckpointComponent*>(_checkpoints[0]->GetComponent(Component::Type::Checkpoint));
+
+	check->highlighted; //  is active checkpoint
+	check->id; // id of checkpoint
+
+	for (int i = 0; i < _characters.size(); i++)
+	{
+		WeaponComponent* weapon = static_cast<WeaponComponent*>(_characters[i]->GetComponent(Component::Type::Weapon));
+		FlagComponent* flag = static_cast<FlagComponent*>(_characters[i]->GetComponent(Component::Type::Flag));
+		
+		// Top 3 Players
+		if (flag->totalCheckpoints > topCheckpoint[0])
+		{
+			topCheckpoint[0] = flag->totalCheckpoints;
+			topPlayers[0] = i;
+			topLap[0] = flag->currentLap;
+			nextCheckpoint[0] = flag->currentCheckpointID + 1;
+		}
+
+		else if (flag->totalCheckpoints > topCheckpoint[1] && topPlayers[0] != i)
+		{
+			topCheckpoint[1] = flag->totalCheckpoints;
+			topPlayers[1] = i;
+			topLap[1] = flag->currentLap;
+			nextCheckpoint[1] = flag->currentCheckpointID + 1;
+		}
+
+		else if (flag->totalCheckpoints > topCheckpoint[2] && topPlayers[0] != i && topPlayers[1] != i)
+		{
+			topCheckpoint[2] = flag->totalCheckpoints;
+			topPlayers[2] = i;
+			topLap[2] = flag->currentLap;
+			nextCheckpoint[2] = flag->currentCheckpointID + 1;
+		}
+
+
+		flag->currentLap; // current lap
+		flag->hasFlag; // entity has flag
+		flag->currentCheckpointID; // next checkpoint
+
+		weapon->ammo; // ammo count
+		weapon->fired; // has fired
+		weapon->hasWeapon; // has a weapon
+		weapon->id; // type of weapon
+
+		if (i == _characters.size() - 1) // Back is local player
+		{
+			currentLapLocal = flag->currentLap;
+			if (weapon->id != -1) { currentAmmoLocal = weapon->ammo; }
+			else { currentAmmoLocal = 0; }
 		}
 	}
 }
@@ -371,6 +431,30 @@ void UISystem::DeleteDisplayTextByID(int id)
 		SDL_DestroyTexture(_displayTextTexture[id]);
 }
 
+void UISystem::UpdateDisplayText(std::string message, int index)
+{
+	// Destroy Previous Image
+	SDL_DestroyTexture(_displayTextTexture[index]);
+
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_displayTextTexture[index] = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_displayTextTexture[index], NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = _displayTextRectangle[index].x;
+	textRectangle.y = _displayTextRectangle[index].y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_displayTextRectangle[index] = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _displayTextTexture[index], NULL, &_displayTextRectangle[index]);
+}
+
 void UISystem::UpdateDisplayTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
 	// Destroy Previous Image
@@ -389,17 +473,127 @@ void UISystem::UpdateDisplayTextColoured(std::string message, int index, Uint8 r
 	textRectangle.y = _displayTextRectangle[index].y;
 	textRectangle.w = width;
 	textRectangle.h = height;
-	_interactiveTextRectangle[index] = textRectangle;
+	_displayTextRectangle[index] = textRectangle;
 
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(_renderer, _displayTextTexture[index], NULL, &_displayTextRectangle[index]);
 }
 
+void UISystem::CreateBackButton(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_backButtonTexture = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_backButtonTexture, NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_backButton = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _backButtonTexture, NULL, &_backButton);
+}
+
+void UISystem::CreateLobbyButton(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_lobbyButtonTexture = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_lobbyButtonTexture, NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_lobbyButton = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _lobbyButtonTexture, NULL, &_lobbyButton);
+}
+
+void UISystem::CreateReadyButton(std::string message, int x, int y)
+{
+	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ 255, 255, 255, 255 });
+
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);
+	_readyButtonTexture = textTexture;
+
+	int width, height;
+	SDL_QueryTexture(_readyButtonTexture, NULL, NULL, &width, &height);
+
+	SDL_Rect textRectangle;
+	textRectangle.x = x - width / 2;
+	textRectangle.y = y;
+	textRectangle.w = width;
+	textRectangle.h = height;
+	_readyButton = textRectangle;
+
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _readyButtonTexture, NULL, &_readyButton);
+}
+
+
 std::vector<SDL_Rect>& UISystem::GetDisplayTextRectangle()
 {
 	return _displayTextRectangle;
 }
+
 std::vector<SDL_Rect>& UISystem::GetInteractiveTextRectangle()
 {
 	return _interactiveTextRectangle;
+}
+
+SDL_Rect & UISystem::GetBackButton()
+{
+	return _backButton;
+}
+
+SDL_Rect & UISystem::GetLobbyButton()
+{
+	return _lobbyButton;
+}
+
+SDL_Rect & UISystem::GetReadyButton()
+{
+	return _readyButton;
+}
+
+void UISystem::DeleteBackButton()
+{
+	SDL_DestroyTexture(_backButtonTexture);
+}
+
+void UISystem::DeleteLobbyButton()
+{
+	SDL_DestroyTexture(_lobbyButtonTexture);
+}
+
+void UISystem::DeleteReadyButton()
+{
+	SDL_DestroyTexture(_readyButtonTexture);
+}
+
+std::vector<Entity*> UISystem::GetCharacters()
+{
+	return _characters;
+}
+
+std::vector<Entity*> UISystem::GetCheckpoints()
+{
+	return _checkpoints;
+}
+
+Entity * UISystem::GetFlag()
+{
+	return _flag;
 }

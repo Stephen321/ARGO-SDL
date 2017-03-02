@@ -234,9 +234,6 @@ void Lobby::LoadContent()
 void Lobby::CleanUp()
 {
 	_inputManager->EmptyKeys();
-	_uiSystem.DeleteDisplayText();
-	_uiSystem.DeleteText();
-	_uiSystem.DeleteEntites();
 }
 
 void Lobby::BindInput()
@@ -254,14 +251,29 @@ void Lobby::BindInput()
 		SDL_Point mousePos = _inputManager->GetMousePos();
 		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
 
-		// Last Button - Create New Lobby
-		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle().back())))
+		// Create New Lobby
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetLobbyButton())))
 		{
 			JoinSessionData data;
 			NetworkHandler::Instance().Send(&data);
 			std::cout << "Create New Lobby" << std::endl;
 		}
 
+		// Ready
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetReadyButton())))
+		{
+			ReadyData data;
+			NetworkHandler::Instance().Send(&data);
+			std::cout << "Ready" << std::endl;
+		}
+
+		// Back
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetBackButton())))
+		{
+			NetworkHandler::Instance().Disconnect();
+			_swapScene = Scene::CurrentScene::MAIN_MENU;
+			std::cout << "Back" << std::endl;
+		}
 
 		// Lobbies
 		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size() - 1; i++)
@@ -340,6 +352,10 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 {
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteBackButton();
+	_uiSystem.DeleteLobbyButton();
+	_uiSystem.DeleteReadyButton();
+
 	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	if (sessions.empty())
@@ -365,7 +381,8 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 
 	_session = sessions;
 
-	_uiSystem.CreateTextAtCenter("Create New Lobby", SCREEN_WIDTH / 2, 700);
+	_uiSystem.CreateLobbyButton("Create New Lobby", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85f);
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }
 
 void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
@@ -376,6 +393,9 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 	}
 	_uiSystem.DeleteText();
 	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteBackButton();
+	_uiSystem.DeleteLobbyButton();
+	_uiSystem.DeleteReadyButton();
 
 	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
 	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
@@ -416,4 +436,7 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 			}
 		}
 	}
+
+	_uiSystem.CreateReadyButton("Ready", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85f);
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }

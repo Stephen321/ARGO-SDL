@@ -159,6 +159,7 @@ void MainMenu::BindInput()
 				_selectedItemIndex = i;
 				_swapScene = static_cast<CurrentScene>(_selectedItemIndex + 1);
 				if (_swapScene == CurrentScene::GAME) { _audioManager->StopMusic(); }
+				_audioManager->PlayFX("Enter");
 			}
 		}
 

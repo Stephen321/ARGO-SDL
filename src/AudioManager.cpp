@@ -39,6 +39,7 @@ void AudioManager::InitAudioDevice()
 		else
 		{
 			_currentState = WAITING;
+			Mix_AllocateChannels(16);
 		}
 	}
 	else
@@ -46,7 +47,6 @@ void AudioManager::InitAudioDevice()
 		std::cerr << "Error initializing SDL audio subsystem...\n";
 		_currentState = ERROR;
 	}
-
 	LoadSounds();
 }
 
@@ -140,7 +140,13 @@ void AudioManager::PlayFX(const std::string& fileName)
 {
 	if (_currentState != ERROR)
 	{
-		int SChannel = std::rand() % 100;
+		int SChannel = 0;
+		if (fileName == "Hum") { SChannel = 1; }
+		else if (fileName == "Checkpoint") { SChannel = 2; }
+		else if (fileName == "Enter") { SChannel = 3; }
+		else if (fileName == "Click") { SChannel = 4; }
+		else if (fileName == "Collision") { SChannel = rand() % 6 + 5; }
+		else if (fileName == "Weapon") { SChannel =  rand() % 7 + 10; }
 
 		if (_soundMap.at(fileName) == NULL)
 		{
@@ -150,7 +156,7 @@ void AudioManager::PlayFX(const std::string& fileName)
 
 		else if(Mix_Playing(SChannel) == 0)
 		{
-			SChannel = Mix_PlayChannel(-1, _soundMap.at(fileName), 0);
+			Mix_PlayChannel(SChannel, _soundMap.at(fileName), 0);
 			_currentState = PLAYING;
 		}
 	}
@@ -171,21 +177,6 @@ void AudioManager::ClearSounds()
 
 void AudioManager::SetMusicVolume(bool volume)
 {
-	//if (!volume) 
-	//{
-	//	printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) * 1));
-	//	printf("volume is now : %d\n", Mix_VolumeMusic(-1));
-	//	_volume = Mix_VolumeMusic(-1);
-	//}
-
-	//else if (volume) 
-	//{
-	//	// set the music volume to 1/2 maximum, and then check it
-	//	printf("volume was    : %d\n", Mix_VolumeMusic(Mix_VolumeMusic(-1) + 1));
-	//	printf("volume is now : %d\n", Mix_VolumeMusic(-1));
-	//	_volume = Mix_VolumeMusic(-1);
-	//}
-
 	if (!volume)
 	{
 		if (_musicVolume >= 0 + 4) { _musicVolume -= 4; }
