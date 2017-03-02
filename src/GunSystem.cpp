@@ -12,6 +12,7 @@
 GunSystem::GunSystem(std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests, float updateRate)
 	: System(updateRate)
 	, _creationRequests(creationRequests)
+	, _recoil(0)
 {
 }
 
@@ -107,7 +108,19 @@ void GunSystem::CreateBulletRequest(Entity*& e, int id)
 	std::vector<float> data = std::vector<float>();
 
 	float barrelLenght = sqrt(gunTransform->rect.w * gunTransform->rect.w + gunTransform->rect.h * gunTransform->rect.h);
-	float offset = rand() % (int)(gunTransform->rect.h + gunTransform->rect.h) - gunTransform->rect.h;
+	//rand() % (int)(gunTransform->rect.h + gunTransform->rect.h) - gunTransform->rect.h;
+	int offset = 0;
+
+	if (_recoil == 1)
+	{
+		offset = gunTransform->rect.h;
+	}
+	else if (_recoil == 2)
+	{
+		offset = -gunTransform->rect.h;
+		_recoil = 0;
+	}
+	_recoil++;
 
 	data.push_back(id); //id
 	data.push_back(gunTransform->rect.x + cos(gunTransform->angle * M_PI / 180.0f) * barrelLenght); //xPosition

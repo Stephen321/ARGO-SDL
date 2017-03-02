@@ -154,6 +154,8 @@ Entity* EntityFactory::CreateWeaponEntity(int id)
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, 87, 26, 30, 13, 1.0f, 1.0f, 0));
 	weapon->AddComponent(spriteComponent);
 	weapon->AddComponent(new GunComponent(FIRE_RATE[id], AMMO[id], id));
+	if (id != -1)//is in multiplayer game
+		weapon->AddComponent(new RemoteComponent(id));
 	weapon->AddComponent(new DestructionComponent());
 
 	return weapon;

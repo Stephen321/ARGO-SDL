@@ -20,7 +20,7 @@ NetworkHandler::NetworkHandler()
 	, _sessionID(-1)
 	, _host(false)
 {
-	SDLNet_ResolveHost(&_serverIP, "localhost", 5228);// "localhost", 5228);
+	SDLNet_ResolveHost(&_serverIP, "34.250.8.240", 5228);// "localhost", 5228);
 }
 
 NetworkHandler::~NetworkHandler()
@@ -38,7 +38,7 @@ void NetworkHandler::Send(MessageData * data)
 {
 	if (_net._testSocketCreated == false)
 	{
-		init(6000);
+		init(5226);
 	}
 	data->id = _playerID;
 	if (data->sessionID == -1)

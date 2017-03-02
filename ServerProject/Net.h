@@ -32,13 +32,15 @@ namespace Network
 	};
 
 	struct StateData : MessageData {
-		StateData() : host(false) { type = MessageType::State; }
+		StateData() : host(false), hasWeapon(false) { type = MessageType::State; }
 		float xPos;
 		float yPos;
 		float xVel;
 		float yVel;
 		bool host;
 		int remoteID;
+		bool hasWeapon;
+		float weaponAngle;
 	};
 	struct ConnectData : MessageData {
 		ConnectData() { type = MessageType::Connect; }
@@ -76,6 +78,7 @@ namespace Network
 		std::vector<int> ids;
 		std::vector<bool> ready;
 		bool allReady;
+		int seed;
 	};
 
 	struct PickUpFlagData : MessageData {

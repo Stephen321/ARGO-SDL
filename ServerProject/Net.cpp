@@ -61,6 +61,8 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yVel);
 		WriteBool(sendData->host);
 		WriteInt(sendData->remoteID);
+		WriteBool(sendData->hasWeapon);
+		WriteInt(sendData->weaponAngle);
 		break;
 	}
 	case MessageType::SessionList:
@@ -104,6 +106,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 			WriteBool(sendData->ready[i]);
 		}
 		WriteBool(sendData->allReady);
+		WriteInt(sendData->seed);
 		break;
 	}
 	case MessageType::CreatePowerUp:
@@ -111,6 +114,11 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		CreatePowerUpData* sendData = (CreatePowerUpData*)data;
 		WriteInt(sendData->index);
 		WriteInt(sendData->powerType);
+		break;
+	}
+	case MessageType::Fire:
+	{
+		FireData* sendData = (FireData*)data;
 		break;
 	}
 	}
@@ -158,6 +166,8 @@ Network::ReceivedData Network::Net::Receive()
 			data.yVel = ReadFloat(byteOffset);
 			data.host = ReadBool(byteOffset);
 			data.remoteID = ReadInt(byteOffset);
+			data.hasWeapon = ReadBool(byteOffset);
+			data.weaponAngle = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -211,6 +221,7 @@ Network::ReceivedData Network::Net::Receive()
 				data.ready.push_back(ReadBool(byteOffset));
 			}
 			data.allReady = ReadBool(byteOffset);
+			data.seed = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -219,6 +230,12 @@ Network::ReceivedData Network::Net::Receive()
 			CreatePowerUpData data;
 			data.index = ReadInt(byteOffset);
 			data.powerType = ReadInt(byteOffset);
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::Fire:
+		{
+			FireData data;
 			receiveData.SetData(data);
 			break;
 		}

@@ -139,6 +139,8 @@ int Lobby::Update()
 			if (data.allReady)
 			{
 				_startReadyTimer = true;
+				std::cout << "Seeded" << std::endl;
+				srand(data.seed);
 			}
 			Refresh(data.ids, data.ready);
 			break;

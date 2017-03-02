@@ -1,6 +1,7 @@
 #include "Net.h"
 #include "Session.h"
 #include <unordered_map>
+#include <time.h>
 
 using namespace Network;
 
@@ -264,6 +265,7 @@ int main(int argc, char** argv)
 					if (sessions[data.sessionID].AllReady()) //all readied up
 					{
 						data.allReady = true;
+						data.seed = time(NULL);
 						std::cout << "Session fully ready, start that game!" << std::endl;
 					}
 					//send to all needs to have time synced up correctly whern AllReady is true
@@ -287,7 +289,7 @@ int main(int argc, char** argv)
 							if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
 							{
 								net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
-								std::cout << "Relay data " << data.remoteID << " to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
+								std::cout << "Relay data " << data.remoteID << ", to: " << sessions[data.sessionID].GetPlayerIDs()[i] << std::endl;
 							}
 						}
 					}

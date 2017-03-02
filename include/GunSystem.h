@@ -16,4 +16,5 @@ private:
 	std::vector<
 		std::pair<EntityType,
 			std::vector<float>>>&	_creationRequests;
+	int _recoil;
 };

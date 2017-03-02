@@ -44,12 +44,16 @@ void RemoteSystem::Process(float dt)
 					PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 					ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 
+					WeaponComponent* weapon = static_cast<WeaponComponent*>(e->GetComponent(Component::Type::Weapon));
+
 					data.xVel = physics->xVelocity;
 					data.yVel = physics->yVelocity;
 					data.xPos = collider->body->GetPosition().x;
 					data.yPos = collider->body->GetPosition().y;
 					data.host = true;
 					data.remoteID = remote->id;
+					data.hasWeapon = weapon->hasWeapon;
+					data.weaponAngle = weapon->angle;
 					//std::cout << "@@@Host sends player " << remote->id << " with xVel " << data.xVel << " yVel " << data.yVel << " . xPos " << data.xPos << " . yPos " << data.yPos << std::endl;
 					network.Send(&data);
 				}
@@ -63,12 +67,16 @@ void RemoteSystem::Process(float dt)
 
 			ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
 
+			WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
+
 			data.xVel = physics->xVelocity;
 			data.yVel = physics->yVelocity;
 			data.xPos = collider->body->GetPosition().x;
 			data.yPos = collider->body->GetPosition().y;
 			data.host = false;
 			data.remoteID = remote->id;
+			data.hasWeapon = weapon->hasWeapon;
+			data.weaponAngle = weapon->angle;
 			network.Send(&data);
 		}
 	}
@@ -99,6 +107,7 @@ void RemoteSystem::Process(float dt)
 							//std::cout << "other receives" << remote->id << " with xVel " << data.xVel << " yVel " << data.yVel << " . xPos " << data.xPos << " . yPos " << data.yPos << std::endl;	
 							PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 							ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+							WeaponComponent* weapon = static_cast<WeaponComponent*>(e->GetComponent(Component::Type::Weapon));
 
 							physics->xVelocity = data.xVel;
 							physics->yVelocity = data.yVel;
@@ -132,6 +141,11 @@ void RemoteSystem::Process(float dt)
 								remote->endState.yPos = data.yPos;
 								remote->endState.xVel = data.xVel;
 								remote->endState.yVel = data.yVel;
+							}
+
+							if (e->GetType() == EntityType::Remote && data.hasWeapon)
+							{
+								weapon->angle = data.weaponAngle;
 							}
 
 							collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));

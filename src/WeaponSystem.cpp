@@ -46,7 +46,6 @@ void WeaponSystem::Process(float dt)
 			transform2->rect.y = transform1->rect.y;
 
 			WeaponComponent* weapon = static_cast<WeaponComponent*>(it->first->GetComponent(Component::Type::Weapon));
-			
 			if (weapon->fired)
 			{
 				GunComponent* gun = static_cast<GunComponent*>(it->second->GetComponent(Component::Type::Gun));
@@ -72,6 +71,11 @@ void WeaponSystem::Process(float dt)
 
 				Camera2D::Point difference = { convertedPoint.x - transform->rect.x + transform->origin.x, convertedPoint.y - transform->rect.y + transform->origin.y };
 				transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
+				weapon->angle = transform->angle;
+			}
+			else if (it->first->GetType() == EntityType::Remote)
+			{
+				transform2->angle = weapon->angle;
 			}
 		}
 	}
