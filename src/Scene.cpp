@@ -13,6 +13,7 @@ Scene::~Scene()
 
 void Scene::Initialize(SDL_Renderer* renderer)
 {
+	_renderer = renderer;
 }
 
 int Scene::Update()

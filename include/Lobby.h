@@ -2,9 +2,7 @@
 
 #include "Scene.h"
 #include "NetworkHandler.h"
-#include "RenderSystem.h"
 #include "UISystem.h"
-#include "CameraSystem.h"
 
 class Lobby : public Scene
 {
@@ -28,7 +26,7 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput() override;
@@ -44,8 +42,6 @@ private:
 	int								GetPressedItem();
 
 private:
-	RenderSystem					_renderSystem;
-	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
 	std::vector<int>*				_ids;

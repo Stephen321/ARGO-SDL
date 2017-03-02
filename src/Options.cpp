@@ -6,11 +6,8 @@
 #include <sstream>
 
 Options::Options()
-	: _cameraSystem(CAMERA_SYSTEM_UPDATE)
-	, _renderSystem()
-	, _uiSystem(0)
+	: _uiSystem(0)
 {
-	_renderSystem.Initialize(_renderer, &_cameraSystem.GetCamera());
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
@@ -21,15 +18,12 @@ Options::~Options()
 
 void Options::Initialize(SDL_Renderer* renderer)
 {
-	_renderer = renderer;
-
-	_cameraSystem.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	Scene::Initialize(renderer);
 
 	//UI
 	_uiSystem.Initialize(_renderer);
 
-	Entity* ui = new Entity(EntityType::UI);
-	_uiSystem.AddEntity(ui);
+	_uiSystem.AddEntity(new Entity(EntityType::UI));
 
 	// Scene
 	Start();
@@ -59,7 +53,6 @@ void Options::Render()
 	SDL_RenderClear(_renderer);
 
 	// RENDER HERE
-	_renderSystem.Process();
 	_uiSystem.Process();
 
 	SDL_RenderPresent(_renderer);
@@ -81,17 +74,32 @@ void Options::Stop()
 {
 	_running = false;
 	CleanUp();
-	_inputManager->EmptyKeys();
 }
 
-void Options::OnEvent(EventListener::Event evt)
+void Options::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
-		switch (evt)
+
+		switch (typ)
 		{
-		case Event::ESCAPE:
-			_running = false;
+		case Type::Press:
+			switch (evt)
+			{
+			case Event::ESCAPE:
+				_running = false;
+				break;
+			//case Event::w:
+			//	_audioManager->PlayFX("Click");
+			//	break;
+			//case Event::s:
+			//	_audioManager->PlayFX("Click");
+			//	break;
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -103,62 +111,47 @@ void Options::LoadContent()
 
 	// Music Volume 0 -2
 	_uiSystem.CreateDisplayText("Music Volume    =    ", SCREEN_WIDTH / 4, 200);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 200);
-
 	_uiSystem.CreateTextAtCenter(GetMusicVolume(), SCREEN_WIDTH / 2, 200);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 200);
 
 	// Hum 3 - 5
 	_uiSystem.CreateDisplayText("Hum Volume    =    ", SCREEN_WIDTH / 4, 300);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 300);
-
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 300);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 300);
 
 	// Weapons 6 - 8
 	_uiSystem.CreateDisplayText("Weapon Volume    =    ", SCREEN_WIDTH / 4, 400);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 400);
-
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 400);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 400);
 
 	// Checkpoint 9 - 11
 	_uiSystem.CreateDisplayText("Checkpoint Volume    =    ", SCREEN_WIDTH / 4, 500);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 500);
-
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 500);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 500);
 
 	// Collision 12 - 14
 	_uiSystem.CreateDisplayText("Collision Volume    =    ", SCREEN_WIDTH / 4, 600);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 600);
-
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 600);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 600);
 
 	// UI 15 - 17
 	_uiSystem.CreateDisplayText("UI Volume    =    ", SCREEN_WIDTH / 4, 700);
-
 	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 700);
-
 	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 700);
-
 	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 700);
 }
 
 void Options::CleanUp()
 {
-
+	_inputManager->EmptyKeys();
+	_uiSystem.DeleteDisplayText();
+	_uiSystem.DeleteText();
+	_uiSystem.DeleteEntites();
 }
 
 void Options::BindInput()

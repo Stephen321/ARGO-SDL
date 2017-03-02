@@ -77,6 +77,18 @@ void UISystem::Process(float dt)
 	}
 }
 
+void UISystem::DeleteEntites()
+{
+	for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+	{
+		for (Entity* e : (*it).second)
+		{
+			delete e;
+		}
+	}
+	_entities.clear();
+}
+
 // Textures
 SDL_Texture* UISystem::LoadTexture(const std::string & path)
 {
@@ -108,8 +120,10 @@ void UISystem::DeleteText()
 	{
 		SDL_DestroyTexture(_interactiveTextTexture[i]);
 	}
+	_interactiveTextTexture.erase(_interactiveTextTexture.begin(), _interactiveTextTexture.end());
 	_interactiveTextTexture.clear();
 
+	_interactiveTextRectangle.erase(_interactiveTextRectangle.begin(), _interactiveTextRectangle.end());
 	_interactiveTextRectangle.clear();
 }
 
@@ -119,7 +133,10 @@ void UISystem::DeleteDisplayText()
 	{
 		SDL_DestroyTexture(_displayTextTexture[i]);
 	}
+	_displayTextRectangle.erase(_displayTextRectangle.begin(), _displayTextRectangle.end());
 	_displayTextRectangle.clear();
+
+	_displayTextTexture.erase(_displayTextTexture.begin(), _displayTextTexture.end());
 	_displayTextTexture.clear();
 }
 

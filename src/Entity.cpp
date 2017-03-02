@@ -14,6 +14,7 @@ Entity::~Entity()
 	{
 		delete _components[i];
 	}
+	_components.clear();
 }
 
 

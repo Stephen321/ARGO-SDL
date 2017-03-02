@@ -24,8 +24,9 @@ public:
 
 	void							Process(float dt = 0.f) override;
 
-	SDL_Texture *					LoadTexture(const std::string & path);
+	SDL_Texture*					LoadTexture(const std::string & path);
 
+	void							DeleteEntites();
 
 	void							DeleteText();
 	void							DeleteDisplayText();
@@ -58,7 +59,7 @@ private:
 
 	std::vector<SDL_Rect>			_displayTextRectangle;
 	std::vector<SDL_Rect>			_interactiveTextRectangle;
-	SDL_Rect						_backButton();
+	SDL_Rect						_backButton;
 
 	std::vector<SDL_Texture*>		_displayTextTexture;
 	std::vector<SDL_Texture*>		_interactiveTextTexture;

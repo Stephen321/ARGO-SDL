@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "RenderSystem.h"
 #include "UISystem.h"
-#include "CameraSystem.h"
 
 class MainMenu : public Scene
 {
@@ -21,7 +19,7 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput() override;
@@ -33,8 +31,6 @@ private:
 	void							MoveDown();
 
 private:
-	RenderSystem					_renderSystem;
-	CameraSystem					_cameraSystem;
 	UISystem						_uiSystem;
 
 	CurrentScene					_swapScene;
