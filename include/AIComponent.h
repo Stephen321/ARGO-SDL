@@ -6,6 +6,7 @@
 enum class AIState
 {
 	Entry,
+	Chase,
 	SeekFlag,
 	Camp,
 	SeekCheckpoint,
@@ -40,5 +41,4 @@ public:
 	bool flagDetectionRange;
 
 	AIState state;
-
 };

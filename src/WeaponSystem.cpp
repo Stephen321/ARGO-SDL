@@ -4,7 +4,6 @@
 #include "GunComponent.h"
 #include "DestructionComponent.h"
 #include "WeaponComponent.h"
-
 #include "ConstHolder.h"
 
 
@@ -73,6 +72,7 @@ void WeaponSystem::Process(float dt)
 				Camera2D::Point difference = { convertedPoint.x - transform->rect.x + transform->origin.x, convertedPoint.y - transform->rect.y + transform->origin.y };
 				transform->angle = atan2(difference.y, difference.x) * 180.f / M_PI;
 			}
+			
 		}
 	}
 }

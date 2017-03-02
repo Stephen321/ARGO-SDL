@@ -154,7 +154,6 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	systemTypes.push_back(SystemType::Render);
 	systemTypes.push_back(SystemType::Physics);
 	systemTypes.push_back(SystemType::Camera);
-	systemTypes.push_back(SystemType::Waypoint);
 	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
 		systemTypes.push_back(SystemType::Remote);
 
