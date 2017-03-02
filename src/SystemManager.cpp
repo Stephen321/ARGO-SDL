@@ -92,7 +92,6 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP Animation SYSTEM
 	AnimationSystem* animationSystem = new AnimationSystem();
-	animationSystem->Initialize();
 	_systems[SystemType::Animation] = animationSystem;
 
 	//SETUP remote SYSTEM
