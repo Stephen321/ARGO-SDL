@@ -71,90 +71,87 @@ void PhysicsSystem::UpdateFlag(Entity*& e, float dt)
 void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
-	
+	TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+	ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+
 	float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
 
-	if (currentVelocity != 0)
+	if (e->GetType() == EntityType::Player)
 	{
-		TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
-		ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 		StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
 
-		if (e->GetType() == EntityType::Player)
+		float maxVelocity = physics->maxVelocity;
+
+		float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
+		float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
+
+		physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
+		physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
+
+
+		float xAccel = physics->xAcceleration;
+		float yAccel = physics->yAcceleration;
+
+		if (statusEffects->speedUp)
 		{
-			float maxVelocity = physics->maxVelocity;
-
-			float xDrag = (physics->xDir == 0) ? -physics->xVelocity * DRAG : 0.f;
-			float yDrag = (physics->yDir == 0) ? -physics->yVelocity * DRAG : 0.f;
-
-			physics->xVelocity += (xDrag + (physics->xDir * physics->xAcceleration)) * dt;//change dt to _updateRate?//maybe?
-			physics->yVelocity += (yDrag + (physics->yDir * physics->yAcceleration)) * dt;
-
-
-			float xAccel = physics->xAcceleration;
-			float yAccel = physics->yAcceleration;
-
-			if (statusEffects->speedUp)
-			{
-				xAccel += xAccel;
-				yAccel += yAccel;
-			}
-
-			physics->xVelocity += (xDrag + (physics->xDir * xAccel)) * dt;//change dt to _updateRate?//maybe?
-			physics->yVelocity += (yDrag + (physics->yDir * yAccel)) * dt;
-
-			transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
-
-			if (currentVelocity > maxVelocity)
-			{
-				physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
-				physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
-			}
-
-			if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
-			if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
-			physics->xDir = 0;
-			physics->yDir = 0;
-		}
-		else if (e->GetType() == EntityType::AI)
-		{
-			float maxVelocity = physics->maxVelocity;
-
-			if (currentVelocity > maxVelocity)
-			{
-				physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
-				physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
-			}
-
-			transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
-
-			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-		}
-		else if (e->GetType() == EntityType::Bullet)
-		{
-			physics->xVelocity = physics->xVelocity * BULLET_DRAG;
-			physics->yVelocity = physics->yVelocity * BULLET_DRAG;
-
-			if (currentVelocity < MAX_BULLET_VELOCITY * 0.25f)
-			{
-				static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
-			}
+			xAccel += xAccel;
+			yAccel += yAccel;
 		}
 
-		if (collider->body->IsActive())
-		{
-			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+		physics->xVelocity += (xDrag + (physics->xDir * xAccel)) * dt;//change dt to _updateRate?//maybe?
+		physics->yVelocity += (yDrag + (physics->yDir * yAccel)) * dt;
 
-			transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-			transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
-		}
-		else
-		{
-			transform->rect.x += physics->xVelocity;
-			transform->rect.y += physics->yVelocity;
+		transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
 
-			collider->body->SetTransform(b2Vec2(transform->rect.x, transform->rect.y), collider->body->GetAngle());
+		if (currentVelocity > maxVelocity)
+		{
+			physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
+			physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
 		}
+
+		if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
+		if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
+
+		physics->xDir = 0;
+		physics->yDir = 0;
+	}
+	else if (e->GetType() == EntityType::AI)
+	{
+		float maxVelocity = physics->maxVelocity;
+
+		if (currentVelocity > maxVelocity)
+		{
+			physics->xVelocity = (physics->xVelocity / currentVelocity) * maxVelocity;
+			physics->yVelocity = (physics->yVelocity / currentVelocity) * maxVelocity;
+		}
+
+		transform->angle = atan2(physics->yVelocity, physics->xVelocity) * 180.f / M_PI;
+
+		collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+	}
+	else if (e->GetType() == EntityType::Bullet)
+	{
+		physics->xVelocity = physics->xVelocity * BULLET_DRAG;
+		physics->yVelocity = physics->yVelocity * BULLET_DRAG;
+
+		if (currentVelocity < MAX_BULLET_VELOCITY * 0.25f)
+		{
+			static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
+		}
+	}
+
+	if (collider->body->IsActive())
+	{
+		collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+
+		transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+		transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+	}
+	else
+	{
+		transform->rect.x += physics->xVelocity;
+		transform->rect.y += physics->yVelocity;
+
+		collider->body->SetTransform(b2Vec2(transform->rect.x, transform->rect.y), collider->body->GetAngle());
 	}
 }
