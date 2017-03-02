@@ -3,6 +3,14 @@
 #include "Component.h"
 #include "GraphNode.h"
 
+enum class AIState
+{
+	Entry,
+	SeekFlag,
+	Camp,
+	SeekCheckpoint,
+	SeekPowerUp,
+};
 
 class AIComponent : public Component
 {
@@ -10,9 +18,11 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		updateRate(2.f),
-		updateTimer(0),
-		callAstar(false)
+		pathFinderUpdateRate(2.0f),
+		pathfinderUpdateTimer(0),
+		nextNode(nullptr),
+		flagDetectionRange(false),
+		state(AIState::Entry)
 	{
 	}
 
@@ -22,11 +32,13 @@ public:
 
 public:
 	vector<GraphNode*> path;
+	float pathFinderUpdateRate;
+	float pathfinderUpdateTimer;
+	GraphNode* destNode;
+	GraphNode* nextNode;
 
-	GraphNode*			startingNode;
+	bool flagDetectionRange;
 
-	float				updateRate;
-	float				updateTimer;
+	AIState state;
 
-	bool				callAstar;
 };

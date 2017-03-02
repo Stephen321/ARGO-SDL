@@ -103,22 +103,22 @@ void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entit
 {
 	FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 	CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(other->GetComponent(Component::Type::Checkpoint));
+	static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->checkpointCollision = std::pair<bool, int>(true, checkpoint->id);
 
 	if (flagComponent->hasFlag)
 	{
 		if (flagComponent->currentCheckpointID + 1 == checkpoint->id)
 		{
 			flagComponent->currentCheckpointID++;
-
 			if (flagComponent->currentCheckpointID == 4)
 			{
 				flagComponent->currentCheckpointID = 0;
 				flagComponent->currentLap++;
-
 				if (flagComponent->currentLap == 4)
 				{
 					//WINNER
 				}
+
 			}
 		}
 	}
@@ -208,8 +208,27 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 {
 	if (!static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect))->staggered)
 	{
-		static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag))->hasFlag = true;
 		static_cast<ColliderComponent*>(other->GetComponent(Component::Type::Collider))->setActive = false;
+
+		FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+		flagComponent->hasFlag = true;
+
+		ColliderComponent* collider = static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider));
+
+		if (collider->checkpointCollision.first)
+		{
+			if (flagComponent->currentCheckpointID + 1 == collider->checkpointCollision.second)
+			{
+				flagComponent->currentCheckpointID++;
+				if (flagComponent->currentCheckpointID == 4)
+				{
+					flagComponent->currentCheckpointID = 0;
+					flagComponent->currentLap++;
+				}
+			}
+
+			collider->checkpointCollision = std::pair<bool, int>(false, -1);
+		}
 
 		_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
 	}
@@ -262,7 +281,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 void CollisionSystem::EndContact(b2Contact* contact)
 {
-	/*void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
+	void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
 	void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
 
 	if (bodyAUserData != "Obstacle" && bodyBUserData != "Obstacle")
@@ -274,9 +293,12 @@ void CollisionSystem::EndContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			std::cout << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
+			if (other->GetType() == EntityType::Checkpoint)
+			{
+				static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->checkpointCollision = std::pair<bool, int>(false, -1);
+			}
 		}
-	}*/
+	}
 }
 
 
