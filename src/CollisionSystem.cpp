@@ -77,6 +77,51 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 	}
 }
 
+void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity*& other)
+{
+	FlagComponent* pFlag = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+	FlagComponent* oFlag = static_cast<FlagComponent*>(other->GetComponent(Component::Type::Flag));
+
+	StatusEffectComponent* playerStatusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
+	StatusEffectComponent* otherStatusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
+
+	if (pFlag->hasFlag)
+	{
+		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
+		{
+			playerStatusEffects->staggered = true;
+			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+
+			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
+		}
+	}
+	else if (oFlag->hasFlag)
+	{
+		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
+		{
+			otherStatusEffects->staggered = true;
+			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+
+			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
+		}
+	}
+
+	if (playerStatusEffects->invisible)
+	{
+		playerStatusEffects->invisible = false;
+		playerStatusEffects->invisibleTimer = 0;
+	}
+	if (otherStatusEffects->invisible)
+	{
+		otherStatusEffects->invisible = false;
+		otherStatusEffects->invisibleTimer = 0;
+	}
+
+	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
+	animation->state = AnimationComponent::State::Bumping;
+}
+
+
 void CollisionSystem::CheckCharacterToObjectCollision(Entity*& player, Entity*& other)
 {
 	switch (other->GetType())
@@ -141,8 +186,8 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			std::vector<float> data = std::vector<float>();
 
 			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back(powerUpTransform->rect.x); //xPosition
+			data.push_back(powerUpTransform->rect.y); //yPosition
 
 			weapon->fired = false;
 			weapon->hasWeapon = true;
@@ -232,50 +277,6 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 	}
 }
 
-
-void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity*& other)
-{
-	FlagComponent* pFlag = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
-	FlagComponent* oFlag = static_cast<FlagComponent*>(other->GetComponent(Component::Type::Flag)); 
-
-	StatusEffectComponent* playerStatusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-	StatusEffectComponent* otherStatusEffects = static_cast<StatusEffectComponent*>(other->GetComponent(Component::Type::StatusEffect));
-
-	if (pFlag->hasFlag)
-	{
-		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
-		{
-			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
-
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
-		}
-	}
-	else if (oFlag->hasFlag)
-	{
-		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
-		{
-			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
-
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
-		}
-	}
-
-	if (playerStatusEffects->invisible)
-	{
-		playerStatusEffects->invisible = false;
-		playerStatusEffects->invisibleTimer = 0;
-	}
-	if (otherStatusEffects->invisible)
-	{
-		otherStatusEffects->invisible = false;
-		otherStatusEffects->invisibleTimer = 0;
-	}
-
-	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
-	animation->state = AnimationComponent::State::Bumping;
-}
 
 void CollisionSystem::EndContact(b2Contact* contact)
 {
