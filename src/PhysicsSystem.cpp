@@ -66,7 +66,7 @@ void PhysicsSystem::UpdateFlag(Entity*& e, float dt)
 	}
 	else
 	{
-		collider->body->SetTransform(b2Vec2(transform->rect.x, transform->rect.y), collider->body->GetAngle());
+		collider->body->SetTransform(b2Vec2(pixelsToMeters(transform->rect.x), pixelsToMeters(transform->rect.y)), collider->body->GetAngle());
 	}
 }
 void PhysicsSystem::UpdateOther(Entity*& e, float dt)
@@ -158,8 +158,8 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 	}
 	else
 	{
-		transform->rect.x += physics->xVelocity;
-		transform->rect.y += physics->yVelocity;
+		transform->rect.x += physics->xVelocity * dt;
+		transform->rect.y += physics->yVelocity * dt;
 
 		collider->body->SetTransform(b2Vec2(pixelsToMeters(transform->rect.x), pixelsToMeters(transform->rect.y)), collider->body->GetAngle());
 	}
