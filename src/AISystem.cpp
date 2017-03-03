@@ -73,7 +73,7 @@ void AISystem::Process(float dt)
 								ai->nextNode = closestNode;
 						}
 						
-						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 0.3f);
+						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 0.3f + ai->avoidanceForce);
 
 						Entity* entityWithFlag = FindEntityWithFlag(e);
 						if (entityWithFlag != nullptr)
@@ -118,7 +118,7 @@ void AISystem::Process(float dt)
 								if (entityWithFlag != _players[i])
 								{
 									TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
-									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f);
+									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
 								}
 							}
 							//loop through all AI and calculate distance and then add avoidance force
@@ -129,7 +129,7 @@ void AISystem::Process(float dt)
 									if (e != otherAI && entityWithFlag != otherAI) //check if not self.
 									{
 										TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
-										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f);
+										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
 									}
 								}
 							}
@@ -200,20 +200,20 @@ void AISystem::Process(float dt)
 						ai->state = AIState::SeekFlag;
 					}
 
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 2.0f);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 2.0f + ai->avoidanceForce);
 					
 					break;
 				}
 				case AIState::SeekCheckpoint:
 				{
 					SeekCheckpoint(ai, f, t);
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
 					AStarUpdate(dt, ai, AIPosition);
 					break;
 				}
 				case AIState::SeekPowerUp:
 				{				
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
 					//update Astar
 					AStarUpdate(dt, ai, AIPosition);
 
@@ -289,7 +289,12 @@ void AISystem::Process(float dt)
 							
 						}
 					}
-
+				}
+				ai->avoidanceColliderTimer -= dt;
+				if (ai->avoidanceColliderTimer < -5.0f)
+				{
+					ai->avoidanceForce -= 0.05f;
+					ai->avoidanceColliderTimer = 0;
 				}
 			}		
 		}
@@ -497,12 +502,11 @@ void AISystem::TranverseNode(AIComponent* ai, TransformComponent* t)
 void AISystem::AStarUpdate(float dt, AIComponent* ai,  helper::Vector2& AIPosition)
 {
 	//update Astar
-	float updateRate = ai->pathFinderUpdateRate;
 	float updateTimer = ai->pathfinderUpdateTimer;
 	updateTimer += dt;
-	if (updateTimer > updateRate)
+	if (updateTimer > AI_PATHFINDING_UPDATE_RATE)
 	{
-		updateTimer -= updateRate;
+		updateTimer -= AI_PATHFINDING_UPDATE_RATE;
 		AStar(ai);
 		//fast check to wipe out nodes in radius
 		/*
