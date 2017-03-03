@@ -12,7 +12,8 @@ Entity::~Entity()
 {
 	for (int i = 0; i < _components.size(); i++)
 	{
-		delete _components[i];
+		if (_components[i] != nullptr)
+			delete _components[i];
 	}
 	_components.clear();
 }

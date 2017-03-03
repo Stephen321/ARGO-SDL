@@ -5,6 +5,7 @@
 #include "StatusEffectComponent.h"
 #include "DestructionComponent.h"
 #include "RemoteComponent.h"
+#include "FlagComponent.h"
 
 #include "ConstHolder.h"
 #include "Helpers.h"
@@ -162,6 +163,20 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 		transform->rect.y += physics->yVelocity * dt;
 
 		collider->body->SetTransform(b2Vec2(pixelsToMeters(transform->rect.x), pixelsToMeters(transform->rect.y)), collider->body->GetAngle());
+	}
+
+	if (e->GetType() == EntityType::Remote)
+	{
+		RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+		if (remote->disconnected)
+		{
+			collider->body->SetTransform(b2Vec2(-10000, -10000), 0.f);
+			collider->setActive = false;
+			transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+			transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+			FlagComponent* flag = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+			flag->hasFlag = false;
+		}
 	}
 }
 

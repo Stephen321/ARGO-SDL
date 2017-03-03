@@ -27,6 +27,7 @@ public:
 	RemoteComponent(int _id)
 		: id(_id)
 		, Component::Component(Component::Type::Remote)
+		, disconnected(false)
 	{
 	}
 
@@ -39,4 +40,5 @@ public:
 	State	endState;
 	int		id;
 	float	timeSincePacket;
+	bool	disconnected;
 };

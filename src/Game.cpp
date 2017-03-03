@@ -199,7 +199,9 @@ void Game::BindInput()
 
 
 	// Back to Main Menu
-	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
+	Command* backIn = new InputCommand([&]() {
+		NetworkHandler::Instance().Disconnect(); 
+		_swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
 	// Exit Game

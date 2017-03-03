@@ -5,7 +5,6 @@
 #include <vector>
 
 const int MAX_PLAYERS = 4;
-const float TIME_OUT = 2000000000.f; //2 billion nanoseconds == 2 seconds
 
 class Session {
 public:
@@ -18,8 +17,9 @@ public:
 	bool Joinable() const;
 	std::vector<int> GetPlayerIDs() const;
 	void Ready(int playerID);
-	bool AllReady() const;
+	bool AllReady();
 	std::vector<bool> GetReadied() const;
+	bool GetWaiting() const;
 	int id;
 private:
 	struct Player

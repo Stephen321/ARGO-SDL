@@ -131,6 +131,12 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteInt(sendData->remoteID);
 		break;
 	}
+	case MessageType::Invis:
+	{
+		InvisData* sendData = (InvisData*)data;
+		WriteInt(sendData->remoteID);
+		break;
+	}
 	}
 
 	_packet->address.host = destAddr.host;
@@ -257,6 +263,19 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::DroppedFlag:
 		{
 			DroppedFlagData data;
+			data.remoteID = ReadInt(byteOffset);
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::CheckConnection:
+		{
+			CheckConnectionData data;
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::Invis:
+		{
+			InvisData data;
 			data.remoteID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;

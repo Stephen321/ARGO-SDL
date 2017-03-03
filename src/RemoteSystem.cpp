@@ -6,6 +6,8 @@
 #include "Helpers.h"
 #include "WeaponComponent.h"
 #include "FlagComponent.h"
+#include "DestructionComponent.h"
+#include "StatusEffectComponent.h"
 
 RemoteSystem::RemoteSystem(float updateRate, std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests)
 	: System(updateRate)
@@ -18,9 +20,10 @@ RemoteSystem::~RemoteSystem()
 {
 }
 
-void RemoteSystem::Initialize(Graph* waypoints)
+void RemoteSystem::Initialize(Graph* waypoints, SystemManager* systemManager)
 {
 	_waypoints = waypoints;
+	_systemManager = systemManager;
 }
 
 void RemoteSystem::Process(float dt)
@@ -58,23 +61,6 @@ void RemoteSystem::Process(float dt)
 					data.yPos = collider->body->GetPosition().y;
 					data.host = true;
 					data.remoteID = remote->id;
-					//	//find which entity has the flag
-					//	for (EntityMapIterator it2 = _entities.begin(); it2 != _entities.end(); ++it2)
-					//	{
-					//		for (Entity* e2 : it2->second)
-					//		{
-					//			FlagComponent* flag = static_cast<FlagComponent*>(e2->GetComponent(Component::Type::Flag));
-					//			if (flag != nullptr && flag->hasFlag)
-					//			{//player has a flag so flag collider pos is not correct. need to find which player has it and set flag pos to there
-					//				ColliderComponent* collider2 = static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider));
-					//				data.xPos = collider2->body->GetPosition().x;
-					//				data.yPos = collider2->body->GetPosition().y;
-					//				break;
-					//			}
-					//		}
-					//	}
-					//	std::cout << "Host sending flag data " << remote->id << ". with xVel " << data.xVel << " yVel " << data.yVel << ".xPos " << data.xPos << ".yPos " << data.yPos << std::endl;
-					//std::cout << "@@@Host sends player " << remote->id << " with xVel " << data.xVel << " yVel " << data.yVel << " . xPos " << data.xPos << " . yPos " << data.yPos << std::endl;
 					network.Send(&data);
 				}
 			}
@@ -224,9 +210,136 @@ void RemoteSystem::Process(float dt)
 			case MessageType::DroppedFlag:
 			{
 				DroppedFlagData data = receivedData.GetData<DroppedFlagData>();
-				//stagger here
-				//first check if invincable
+				//stagger player
+				bool staggered = false;
+				for (EntityMapIterator it = _entities.begin(); it != _entities.end() && staggered == false; ++it)
+				{
+					for (Entity* e : it->second)
+					{
+						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+						if (data.remoteID == remote->id)
+						{
+							StatusEffectComponent* playerStatusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
+							playerStatusEffects->staggered = true;
+							playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+							staggered = true;
+							break;
+						}
+					}
+
+				}
 				_flagHolderID = -1;
+				break;
+			}
+			case MessageType::Invis:
+			{
+				InvisData data = receivedData.GetData<InvisData>();
+				
+				bool invised = false;
+				for (EntityMapIterator it = _entities.begin(); it != _entities.end() && invised == false; ++it)
+				{
+					for (Entity* e : it->second)
+					{
+						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+						if (data.remoteID == remote->id)
+						{
+							StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
+							statusEffects->invisible = true;
+							statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
+							invised = true;
+							break;
+						}
+					}
+
+				}
+				_flagHolderID = -1;
+				break;
+			}
+			case MessageType::CheckConnection:
+			{
+				CheckConnectionData data = receivedData.GetData<CheckConnectionData>();
+				network.Send(&data);
+				break;
+			}
+			case MessageType::Disconnect:
+			{
+				DisconnectData data = receivedData.GetData<DisconnectData>();
+
+				if (data.id == NetworkHandler::Instance().GetPlayerID())
+				{
+					break;
+				}
+				std::cout << data.id << " disconnected." << std::endl;
+				for (EntityMapIterator it = _entities.begin(); it != _entities.end(); ++it)
+				{
+					for (Entity* e : it->second)
+					{
+						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote)); 
+						if (data.id == remote->id)
+						{ //found the player which disconnected 
+							//...replace with ai???...
+							DestructionComponent* destroy = static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy));
+							//destroy->destroy = true;			 //doesnt remote it from all systems and delete components
+							
+							
+							//move offscreen...doesnt work either..
+							std::cout << "moving disconnected player" << std::endl;
+							remote->disconnected = true;
+							//temp move off the map?? (what happens if it has flag)
+							ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
+							collider->body->SetTransform(b2Vec2(-10000, -10000), 0.f);
+							collider->setActive = false;
+							TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+							transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+							transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+						}
+						
+					}
+				}
+				break;
+			}
+			case MessageType::SetHost:
+			{
+				std::cout << "Becoming new host" << std::endl;
+				SetHostData data = receivedData.GetData<SetHostData>();
+				network.SetHost(true);
+
+				bool findFlagHolder = true;
+				Entity* flag = _entities[EntityType::Flag][0];
+				ColliderComponent* collider = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
+				collider->setActive = true;
+				for (EntityMapIterator it = _entities.begin(); it != _entities.end() && findFlagHolder; ++it)
+				{
+					for (Entity* e : it->second)
+					{
+						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+						if (remote->id == _flagHolderID)
+						{
+							FlagComponent* flagComp = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+							flagComp->hasFlag = true;
+							findFlagHolder = false;
+							//_flagHolderID = -1;
+
+							//TransformComponent* transform = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
+						/*	b2Vec2 p;
+							p.x = (int)pixelsToMeters(transform->rect.x);
+							p.y = (int)pixelsToMeters(transform->rect.y);
+							collider->body->SetTransform(p, collider->body->GetAngle());*/
+							break;
+						}
+					}
+				}
+				//host migration
+				for (Entity* e : _entities[EntityType::AI])
+				{
+					_systemManager->AddEntity(SystemType::Physics, e);
+					_systemManager->AddEntity(SystemType::Animation, e);
+				}
+				for (Entity* e : _entities[EntityType::Flag])
+				{
+					_systemManager->AddEntity(SystemType::Physics, e);
+				}
+				//what else to do??
 				break;
 			}
 		}
@@ -271,7 +384,24 @@ void RemoteSystem::Process(float dt)
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 			ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 			TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
+			
+			if (remote->disconnected)
+			{
+				FlagComponent* flagcomp = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+				if (flagcomp != nullptr)
+				{
+					flagcomp->hasFlag = false;
 
+					if (_flagHolderID != remote->id)
+					{
+						collider->body->SetTransform(b2Vec2(-10000, -10000), 0.f);
+						collider->setActive = false;
+						transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+						transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+					}
+				}
+
+			}
 			//if (e->GetType() == EntityType::Remote)
 			//{
 			//	std::cout << "remote velocity: " << physics->xVelocity << " , y: " << physics->yVelocity << std::endl;
@@ -288,7 +418,7 @@ void RemoteSystem::Process(float dt)
 
 			float percent = remote->timeSincePacket / _updateRate; //0 to 100%
 
-			if (percent > 1.2f)//start extrapolating as the packet is late
+			if (percent > 1.1f)//start extrapolating as the packet is late
 			{
 				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
 			}

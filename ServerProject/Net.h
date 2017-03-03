@@ -19,7 +19,9 @@ namespace Network
 		PickUpFlag,
 		CreatePowerUp,
 		Fire, 
-		DroppedFlag
+		DroppedFlag,
+		CheckConnection,
+		Invis
 	};
 
 	struct MessageData 
@@ -113,6 +115,15 @@ namespace Network
 		FireData() { type = MessageType::Fire; }
 	};
 
+	struct CheckConnectionData : MessageData {
+		CheckConnectionData()  { type = MessageType::CheckConnection; }
+	};
+
+	struct InvisData : MessageData {
+		InvisData() { type = MessageType::Invis;  }
+		int remoteID;
+	};
+
 
 
 	//id in MessageData?
@@ -176,10 +187,16 @@ namespace Network
 
 			case MessageType::Fire:
 				_data = new FireData(rhs.GetData<FireData>());
-				break; 
+				break;
 			case MessageType::DroppedFlag:
 				_data = new DroppedFlagData(rhs.GetData<DroppedFlagData>());
-				break; 
+				break;
+			case MessageType::CheckConnection:
+				_data = new CheckConnectionData(rhs.GetData<CheckConnectionData>());
+				break;
+			case MessageType::Invis:
+				_data = new InvisData(rhs.GetData<InvisData>());
+				break;
 			}
 		}
 

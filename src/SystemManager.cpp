@@ -152,7 +152,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	//SETUP WAYPOINT AND AI SYSTEM
 	GetWaypointSystem()->Initialize(waypoints);
 	GetAISystem()->Initialize(waypoints, player);
-	GetRemoteSystem()->Initialize(waypoints);
+	GetRemoteSystem()->Initialize(waypoints, this);
 }
 
 void SystemManager::Process(float dt)

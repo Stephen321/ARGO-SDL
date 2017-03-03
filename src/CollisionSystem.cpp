@@ -43,7 +43,6 @@ void CollisionSystem::Process(float dt)
 			for (Entity* e : (*it).second)
 			{
 				ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
-
 				collider->body->SetActive(collider->setActive);
 			}
 		}
@@ -166,8 +165,16 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Invisibility:
+
 			statusEffects->invisible = true;
 			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
+			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+			{
+				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+				InvisData data;
+				data.remoteID = remote->id;
+				NetworkHandler::Instance().Send(&data);
+			}
 			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Speed:

@@ -85,6 +85,12 @@ int Lobby::Update()
 			network.SetConnected(true);
 			break;
 		}
+		case MessageType::CheckConnection:
+		{
+			CheckConnectionData data = receivedData.GetData<CheckConnectionData>();
+			network.Send(&data);
+			break;
+		}
 		case MessageType::SessionList:
 		{
 			SessionListData data = receivedData.GetData<SessionListData>();
@@ -140,6 +146,13 @@ int Lobby::Update()
 				srand(data.seed);
 			}
 			Refresh(data.ids, data.ready);
+			break;
+		}
+		case MessageType::SetHost:
+		{
+			std::cout << "Becoming new host" << std::endl;
+			SetHostData data = receivedData.GetData<SetHostData>();
+			network.SetHost(true);
 			break;
 		}
 		//TODO: have to add in host change here, need host? make it so 4 players required to start and then they ready up
@@ -273,10 +286,13 @@ void Lobby::BindInput()
 		{
 			if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[i])))
 			{
-				JoinSessionData data;
-				data.sessionID = _session[i].id;
-				NetworkHandler::Instance().Send(&data);
-				std::cout << "ID: " << data.sessionID << std::endl;
+				if (_session.size() > 0)
+				{
+					JoinSessionData data;
+					data.sessionID = _session[i].id;
+					NetworkHandler::Instance().Send(&data);
+					std::cout << "ID: " << data.sessionID << std::endl;
+				}
 			}
 		}
 

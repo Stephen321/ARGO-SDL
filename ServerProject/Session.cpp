@@ -30,14 +30,21 @@ void Session::AddPlayer(int playerID, IPaddress addr)
 bool Session::RemovePlayer(int playerID)
 {
 	bool removingHost = false;
-	std::map<int, Player>::const_iterator idToErase = _players.find(playerID);
 	if (playerID == GetHostID()) //host is being removed!
 	{
 		removingHost = true;
 	}
-	if (idToErase != _players.end())
+	if (_players.find(playerID) != _players.end())
 	{
-		_players.erase(idToErase); //also removes ready value 
+		_players.erase(_players.find(playerID)); //remove player
+	}
+	if (_players.empty())
+	{
+		_hostID = -1;
+	}
+	else if (removingHost)
+	{
+		_hostID = _players.begin()->first;
 	}
 	return removingHost;
 }
@@ -64,6 +71,11 @@ bool Session::Joinable() const
 	return GetPlayerCount() < MAX_PLAYERS;
 }
 
+bool Session::GetWaiting() const
+{
+	return _waiting;
+}
+
 std::vector<int> Session::GetPlayerIDs() const
 {
 	std::vector<int> players;
@@ -81,7 +93,7 @@ void Session::Ready(int playerID)
 	_players[playerID].ready = true;
 }
 
-bool Session::AllReady() const
+bool Session::AllReady()
 {
 	bool allready = true;
 	for (std::map<int, Player>::const_iterator it = _players.begin(); it != _players.end(); ++it)
@@ -92,6 +104,7 @@ bool Session::AllReady() const
 			break;
 		}
 	}
+	_waiting = !allready;
 	return allready;
 }
 

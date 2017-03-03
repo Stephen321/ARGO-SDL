@@ -203,6 +203,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 	systemTypes.push_back(SystemType::Remote);
 	systemTypes.push_back(SystemType::StatusEffect);
 	systemTypes.push_back(SystemType::Animation);
+	systemTypes.push_back(SystemType::Destruction);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, remotePlayer);
 

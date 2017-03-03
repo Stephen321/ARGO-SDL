@@ -2,10 +2,12 @@
 #include "Session.h"
 #include <unordered_map>
 #include <time.h>
+#include <chrono>
 
 using namespace Network;
 
 typedef std::unordered_map<int, Session> SessionMap;
+typedef std::chrono::time_point<std::chrono::system_clock> Clock;
 
 
 struct Spectator {
@@ -42,13 +44,16 @@ bool exists(const std::vector<Spectator>& spectators, int id)
 SessionListData CreateSessionListData(const SessionMap& sessions)
 {
 	SessionListData data;
-	data.count = sessions.size();
 	data.maxPlayers = MAX_PLAYERS;
 	for (SessionMap::const_iterator it = sessions.begin(); it != sessions.end(); ++it)
 	{
-		data.sessionIDs.push_back(it->first);
-		data.currentPlayers.push_back(it->second.GetPlayerCount());
+		if (it->second.GetWaiting())
+		{
+			data.sessionIDs.push_back(it->first);
+			data.currentPlayers.push_back(it->second.GetPlayerCount());
+		}
 	}
+	data.count = data.sessionIDs.size();
 
 	return data;
 }
@@ -92,22 +97,118 @@ bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress addr
 	return false;
 }
 
+const float CHECK_CONNECTION = 1.f;
+const float TIME_OUT = 3.5f; 
+
+struct Connection
+{
+	float timeSinceResponse;
+	IPaddress addr;
+	int sessionID;
+};
+
+void Disconnect(DisconnectData data, SessionMap& sessions, Net& net, std::vector<Spectator>& spectators, IPaddress srcAddr)
+{
+	if (data.sessionID >= 0) //is within a session
+	{
+		std::cout << "Removing a player from a session." << std::endl;
+		if (sessions[data.sessionID].RemovePlayer(data.id))
+		{
+			//removed a host
+			//need to let new host know
+			int newHostId = sessions[data.sessionID].GetHostID();
+			std::cout << "Removed " << data.id << " as host. New host is: " << newHostId << std::endl;
+			if (newHostId >= 0)
+			{
+				SetHostData shdata;
+				net.Send(&shdata, sessions[data.sessionID].GetPlayerIP(newHostId));
+			}
+		}
+		if (sessions[data.sessionID].GetPlayerCount() == 0)
+		{
+			std::cout << "Session: " << data.sessionID << " has 0 players and will be removed." << std::endl;
+			if (sessions.find(data.sessionID) != sessions.end())
+			{
+				sessions.erase(sessions.find(data.sessionID));
+			}
+			else
+			{
+				std::cout << "Tried to erase session " << data.sessionID << " which doesnt exist." << std::endl;
+			}
+		}
+		else
+		{ //update the other players player lists
+			std::cout << "Notify other players. " << std::endl;
+			PlayerListData pldata;
+			pldata.count = sessions[data.sessionID].GetPlayerCount();
+			pldata.players = sessions[data.sessionID].GetPlayerIDs();
+
+			for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+			{
+				if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)
+				{
+					net.Send(&pldata, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
+					net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i])); //send disconnect to everyboy in the session
+				}
+			}
+		}
+	}
+	else //only a spectator
+	{
+		std::cout << "Removed spectator." << std::endl;
+		RemoveSpectator(spectators, srcAddr);
+		std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
+	}
+}
+
 #undef main
 int main(int argc, char** argv)
 {
 
 	SDLNet_Init();
-
+	float checkTimer = 0.f;
 	//std::unordered_map<IPaddress, Client> clients; //player and session id to ip address mapping
 	std::vector<Spectator> spectators;
 	SessionMap sessions;
-
+	std::unordered_map<int, Connection> connections; //all connected players
 	Net net(5228);
-
+	Clock currentTime;
+	Clock lastTime;
 	int playerCount = 0;
 	int sessionCount = 0;
 	while (true)
 	{
+		currentTime = std::chrono::system_clock::now();
+		float dt = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count() / 1000000000.f;
+
+		checkTimer += dt;
+		for (std::unordered_map<int, Connection>::iterator it = connections.begin(); it != connections.end();)
+		{
+			it->second.timeSinceResponse += dt;
+			if (it->second.timeSinceResponse > TIME_OUT)
+			{
+				std::cout << "Disconnect " << it->first << " due to time out." << std::endl;
+				DisconnectData data;
+				data.id = it->first;
+				data.sessionID = it->second.sessionID;
+				Disconnect(data, sessions, net, spectators, it->second.addr);
+				it = connections.erase(it);
+			}
+			else
+			{
+				++it;
+			}
+		}
+		if (checkTimer > CHECK_CONNECTION)
+		{
+			checkTimer = 0.f;
+			for (std::unordered_map<int, Connection>::iterator it = connections.begin(); it != connections.end(); ++it)
+			{
+				CheckConnectionData data;
+				net.Send(&data, it->second.addr);
+			}
+		}
+
 		ReceivedData receiveData = net.Receive();
 		if (receiveData.Empty() == false)
 		{
@@ -115,9 +216,14 @@ int main(int argc, char** argv)
 			
 			switch (receiveData.GetType())
 			{
+			case MessageType::CheckConnection:
+			{
+				CheckConnectionData data = receiveData.GetData<CheckConnectionData>();
+				connections[data.id].timeSinceResponse = 0.f;
+				break;
+			}
 			case MessageType::Connect:
 			{
-				std::cout << "Sessions Connect: " << sessions.size() << std::endl;
 				ConnectData data = receiveData.GetData<ConnectData>();
 				std::cout << "spectators " << spectators.size() << std::endl;
 				if (exists(spectators, srcAddr) == false)//if the server isnt restarted and the same player trys to join again this isnt true
@@ -132,10 +238,15 @@ int main(int argc, char** argv)
 						s.address = srcAddr;
 						spectators.push_back(s);
 
+						Connection c;
+						c.timeSinceResponse = 0.f;
+						c.addr = srcAddr;
+						c.sessionID = data.sessionID;
+						connections.insert(std::pair<int, Connection>(data.id, c));
+
 						net.Send(&data, srcAddr);
 					}
 				}
-				std::cout << "Sessions Connect: " << sessions.size() << std::endl;
 				SessionListData sessionData = CreateSessionListData(sessions);
 				std::cout << "Sending session list of size " << sessionData.count << " to player: " << data.id << std::endl;
 				net.Send(&sessionData, srcAddr);
@@ -143,9 +254,7 @@ int main(int argc, char** argv)
 			}
 			case MessageType::JoinSession:
 			{
-				std::cout << "Sessions JoinSession: " << sessions.size() << std::endl;
 				JoinSessionData data = receiveData.GetData<JoinSessionData>();
-				std::cout << "JoinSession SessionID: " << data.sessionID << std::endl;
 				if (exists(spectators, data.id) == false)//first check that the player isn't a spectator
 				{
 					break;
@@ -157,6 +266,7 @@ int main(int argc, char** argv)
 					{
 						std::cout << "Player " << data.id << " joining session " << data.sessionID << std::endl;
 						sessions[data.sessionID].AddPlayer(data.id, srcAddr);
+						connections[data.id].sessionID = data.sessionID;
 					}
 					else
 					{
@@ -177,6 +287,7 @@ int main(int argc, char** argv)
 					//now tell the player what session they have just joined and the player list?. player list is in different scene so that scene could send a seperate message
 					data.sessionID = sessionID;
 					data.host = true; //if made a new session then we are the host
+					connections[data.id].sessionID = data.sessionID;
 				}
 				RemoveSpectator(spectators, srcAddr);
 				net.Send(&data, srcAddr); //send joinsession
@@ -201,51 +312,17 @@ int main(int argc, char** argv)
 			case MessageType::Disconnect:
 			{
 				DisconnectData data = receiveData.GetData<DisconnectData>();
-				std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
 				std::cout << "Disconnecting player: " << data.id << " from session: " << data.sessionID << std::endl;
 				if (data.id >= 0) //is a valid id
 				{
-					std::cout << "spectators " << spectators.size() << std::endl;
-					if (data.sessionID >= 0) //is within a session
+					Disconnect(data, sessions, net, spectators, srcAddr);
+					if (connections.find(data.id) != connections.end())
 					{
-						std::cout << "Removing a player from a session." << std::endl;
-						if (sessions[data.sessionID].RemovePlayer(data.id))
-						{
-							//removed a host
-							//need to let new host know
-							int newHostId = sessions[data.sessionID].GetHostID();
-							std::cout << "Removed " << data.id << " as host. New host is: " << newHostId << std::endl;
-							if (newHostId >= 0)
-							{
-								SetHostData shdata;
-								net.Send(&shdata, sessions[data.sessionID].GetPlayerIP(newHostId));
-							}
-						}
-						if (sessions[data.sessionID].GetPlayerCount() == 0)
-						{
-							std::cout << "Session: " << data.sessionID << " has 0 players and will be removed." << std::endl;
-							sessions.erase(sessions.find(data.sessionID));
-						}
-						else
-						{ //update the other players player lists
-							std::cout << "Notify other players. " << std::endl;
-							PlayerListData pldata;
-							pldata.count = sessions[data.sessionID].GetPlayerCount();
-							pldata.players = sessions[data.sessionID].GetPlayerIDs();
-							for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
-							{
-								if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)
-								{
-									net.Send(&pldata, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));//send player list to everybody in the session
-								}
-							}
-						}
+						connections.erase(connections.find(data.id));
 					}
-					else //only a spectator
+					else
 					{
-						std::cout << "Removed spectator." << std::endl;
-						RemoveSpectator(spectators, srcAddr);
-						std::cout << "Sessions Disconnect: " << sessions.size() << std::endl;
+						std::cout << "Tried to erase " << data.id << " which doesnt exist." << std::endl;
 					}
 				}
 				break;
@@ -255,9 +332,9 @@ int main(int argc, char** argv)
 				ReadyData data = receiveData.GetData<ReadyData>();
 				data.allReady = false;
 				std::cout << "Ready message from: " << data.id << " who is in session: " << data.sessionID << std::endl;
-				if (data.sessionID != -1)
+				if (data.sessionID != -1 && sessions[data.sessionID].GetWaiting())
 				{
-					std::cout << "Session has " << sessions[data.sessionID].GetPlayerCount() << " players." << std::endl;
+					std::cout << "Session " << data.sessionID << " has " << sessions[data.sessionID].GetPlayerCount() << " players." << std::endl;
 					std::cout << "That player id is " << sessions[data.sessionID].GetPlayerIDs()[0] << std::endl;
 					sessions[data.sessionID].Ready(data.id); //tell session that the player is ready
 					data.ready = sessions[data.sessionID].GetReadied();
@@ -363,8 +440,25 @@ int main(int argc, char** argv)
 				}
 				break;
 			}
+			case MessageType::Invis:
+			{
+				InvisData data = receiveData.GetData<InvisData>();
+				if (data.sessionID != -1)
+				{
+					std::cout << "got invis packet " << std::endl;
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send data back to the original player
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						}
+					}
+				}
+				break;
+			}
 			}
 		}
+		lastTime = currentTime;
 	};
 
 	SDLNet_Quit();

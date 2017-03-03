@@ -117,6 +117,7 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 	remotePlayer->AddComponent(new StatusEffectComponent());
 	remotePlayer->AddComponent(new AnimationComponent());
 	remotePlayer->AddComponent(new WeaponComponent());
+	remotePlayer->AddComponent(new DestructionComponent());
 
 	return remotePlayer;
 }
