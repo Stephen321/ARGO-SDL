@@ -23,7 +23,8 @@ public:
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
 		flagDetectionRange(false),
-		state(AIState::Entry)
+		state(AIState::Entry),
+		lastEntityWithFlag(nullptr)
 	{
 	}
 
@@ -41,4 +42,6 @@ public:
 	bool flagDetectionRange;
 
 	AIState state;
+
+	Entity* lastEntityWithFlag;
 };

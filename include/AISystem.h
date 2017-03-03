@@ -33,33 +33,11 @@ private:
 
 	void SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t);
 	
-	pair<float, int> DeterminePowerUp(helper::Vector2& velocity, AIComponent* ai, TransformComponent* t)
-	{
-		std::vector<GraphNode*> nodes = _waypoints->getNodes();
-		int size = _waypoints->getNodesSize();
-		int closestIndex;
-		float closestPowerup = 999999999.0f;
-		for (int i = 0;i < size;i++)
-		{
-			if (nodes[i]->data().first == GraphNode::EntityData::PowerUp)
-			{
-				
-				float distanceToPowerUp = nodes[i]->getPosition().distance(helper::Vector2(t->rect.x, t->rect.x));
-				if (distanceToPowerUp < closestPowerup)
-				{
-					closestPowerup = distanceToPowerUp;
-					closestIndex = i;
-				}
-			}
-		}
+	GraphNode* FindClosestPowerUp(helper::Vector2& velocity, AIComponent* ai, TransformComponent* t);
 
-		return make_pair(closestPowerup, closestIndex);
-		
-	}
-
-	void AStarUpdate(AIComponent* ai, TransformComponent* t, float dt);
+	void AStarUpdate(float dt, AIComponent* ai,  helper::Vector2& AIPosition);
 	void AStar(AIComponent* ai);
-	GraphNode* DetermineClosestNode(TransformComponent* t);
+	GraphNode* FindClosestNode(AIComponent* ai, TransformComponent* t);
 
 	void TranverseNode(AIComponent* ai, TransformComponent* t);
 	void Prediction(Entity* entityWithFlag, AIComponent* ai, TransformComponent* t);
