@@ -44,7 +44,6 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 
 void UISystem::PostInitialize(std::vector<Entity*> characters, std::vector<Entity*> checkpoints, Entity* flag)
 {
-
 	_characters = characters;
 	_checkpoints = checkpoints;
 	_flag = flag;
@@ -72,39 +71,24 @@ void UISystem::Process(float dt)
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-				SDL_Rect scaledRect;
-				if (transform != nullptr)
-				{
-					scaledRect = transform->rect;
-					scaledRect.w *= transform->scaleX;
-					scaledRect.h *= transform->scaleY;
-					scaledRect.x -= transform->origin.x * transform->scaleX;
-					scaledRect.y -= transform->origin.y * transform->scaleY;
-				}
-
-				if (transform != nullptr && sprite != nullptr)
-				{
-					//Render to screen
-					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &scaledRect, 
-						transform->angle, &transform->origin, SDL_FLIP_NONE);
-				}
-
-				// Draw Text
-				for (int i = 0; i < _interactiveTextTexture.size(); i++)
-				{
-					SDL_RenderCopy(_renderer, _interactiveTextTexture[i], NULL, &_interactiveTextRectangle[i]);
-				}
-
-				for (int i = 0; i < _displayTextTexture.size(); i++)
-				{
-					SDL_RenderCopy(_renderer, _displayTextTexture[i], NULL, &_displayTextRectangle[i]);
-				}
-
-				SDL_RenderCopy(_renderer, _backButtonTexture, NULL, &_backButton);
-				SDL_RenderCopy(_renderer, _lobbyButtonTexture, NULL, &_lobbyButton);
-				SDL_RenderCopy(_renderer, _readyButtonTexture, NULL, &_readyButton);
+				SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &transform->rect, transform->angle, &transform->origin, SDL_FLIP_NONE);
 			}
 		}
+
+		// Draw Text
+		for (int i = 0; i < _interactiveTextTexture.size(); i++)
+		{
+			SDL_RenderCopy(_renderer, _interactiveTextTexture[i], NULL, &_interactiveTextRectangle[i]);
+		}
+
+		for (int i = 0; i < _displayTextTexture.size(); i++)
+		{
+			SDL_RenderCopy(_renderer, _displayTextTexture[i], NULL, &_displayTextRectangle[i]);
+		}
+
+		SDL_RenderCopy(_renderer, _backButtonTexture, NULL, &_backButton);
+		SDL_RenderCopy(_renderer, _lobbyButtonTexture, NULL, &_lobbyButton);
+		SDL_RenderCopy(_renderer, _readyButtonTexture, NULL, &_readyButton);
 	}
 }
 

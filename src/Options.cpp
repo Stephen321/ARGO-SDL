@@ -22,8 +22,6 @@ void Options::Initialize(SDL_Renderer* renderer)
 	//UI
 	_uiSystem.Initialize(_renderer);
 
-	_uiSystem.AddEntity(new Entity(EntityType::UI));
-
 	// Scene
 	Start();
 	LoadContent();

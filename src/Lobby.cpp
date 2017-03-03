@@ -33,9 +33,6 @@ void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 	// UI
 	_uiSystem.Initialize(_renderer);
 
-	Entity* ui = new Entity(EntityType::UI);
-	_uiSystem.AddEntity(ui);
-
 	Start();// - activate when loaded
 	LoadContent();
 

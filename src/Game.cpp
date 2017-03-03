@@ -55,8 +55,8 @@ void Game::LoadContent(const std::vector<int>& ids)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
-	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullets.png");
+	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapons.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");

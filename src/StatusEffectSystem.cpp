@@ -24,7 +24,6 @@ void StatusEffectSystem::Process(float dt)
 				StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
 				
 				UpdateStatusEffect(statusEffects->staggered, statusEffects->staggeredTimer, dt);
-				UpdateStatusEffect(statusEffects->invincible, statusEffects->invincibleTimer, dt);
 				UpdateStatusEffect(statusEffects->speedUp, statusEffects->speedUpTimer, dt);
 				UpdateStatusEffect(statusEffects->invisible, statusEffects->invisibleTimer, dt);
 			}

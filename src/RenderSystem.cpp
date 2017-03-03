@@ -46,17 +46,8 @@ void RenderSystem::Process(float dt)
 					TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 					SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-					SDL_Rect scaledRect = transform->rect;
-					scaledRect.w *= transform->scaleX;
-					scaledRect.h *= transform->scaleY;
-					scaledRect.x -= transform->origin.x * transform->scaleX;
-					scaledRect.y -= transform->origin.y * transform->scaleY;
-
-					if (transform != nullptr && sprite != nullptr)
-					{
-						//Render to screen
-						SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(scaledRect), transform->angle, &transform->origin, SDL_FLIP_NONE);
-					}
+					//Render to screen
+					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(transform->rect), transform->angle, &transform->origin, SDL_FLIP_NONE);
 				}
 			}
 		}
