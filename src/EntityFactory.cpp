@@ -87,7 +87,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	spriteComponent->sourceRect.h /= 7;
 
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, 275, 175));
+	player->AddComponent(new TransformComponent(0, 0, 275 * 0.8f, 175 * 0.8f));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
@@ -108,7 +108,7 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 	spriteComponent->sourceRect.h /= 7;
 
 	remotePlayer->AddComponent(spriteComponent);
-	remotePlayer->AddComponent(new TransformComponent(0, 0, 275, 175));
+	remotePlayer->AddComponent(new TransformComponent(0, 0, 275 * 0.8f, 175 * 0.8f));
 	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	remotePlayer->AddComponent(new ColliderComponent());
 	remotePlayer->AddComponent(new FlagComponent());
@@ -127,7 +127,7 @@ Entity* EntityFactory::CreateAIEntity(int id)
 
 	ai->AddComponent(spriteComponent);
 
-	ai->AddComponent(new TransformComponent(0, 0, 275, 175));
+	ai->AddComponent(new TransformComponent(0, 0, 275 * 0.8f, 175 * 0.8f));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());
@@ -141,11 +141,12 @@ Entity* EntityFactory::CreateAIEntity(int id)
 Entity* EntityFactory::CreatePowerUpEntity(int id)
 {
 	Entity* powerUp = new Entity(EntityType::PowerUp);
+
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::PowerUp], id);
-	spriteComponent->sourceRect = { id * 48, 0, 48, 48 };
+	spriteComponent->sourceRect = { id * 120, 0, 120, 120 };
 
 	powerUp->AddComponent(spriteComponent);
-	powerUp->AddComponent(new TransformComponent(0, 0, 48, 48));
+	powerUp->AddComponent(new TransformComponent(0, 0, 64, 64));
 	powerUp->AddComponent(new ColliderComponent());
 	powerUp->AddComponent(new DestructionComponent());
 	powerUp->AddComponent(new PowerUpComponent(static_cast<PowerUpComponent::Type>(id)));
@@ -157,9 +158,9 @@ Entity* EntityFactory::CreateWeaponEntity(int id)
 	Entity* weapon = new Entity(EntityType::Weapon);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon], id);
-	spriteComponent->sourceRect = { id * 87, 0, 87, 26 };
+	spriteComponent->sourceRect = { id * 275, 0, 275, 175 };
 
-	weapon->AddComponent(new TransformComponent(0.f, 0.f, 87, 26, 30, 13, 1.0f, 1.0f, 0));
+	weapon->AddComponent(new TransformComponent(0.f, 0.f, 275 * 0.8f, 175 * 0.8f));
 	weapon->AddComponent(spriteComponent);
 	weapon->AddComponent(new GunComponent(FIRE_RATE[id], AMMO[id], id));
 	weapon->AddComponent(new DestructionComponent());
@@ -173,7 +174,7 @@ Entity* EntityFactory::CreateBulletEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet], id);
 	spriteComponent->sourceRect = { id * 16, 0, 16, 16 };
 
-	bullet->AddComponent(new TransformComponent(0.f, 0.f, 16, 16, 8, 8, 1.0f, 1.0f, 0));
+	bullet->AddComponent(new TransformComponent(0.f, 0.f, 16, 16));
 	bullet->AddComponent(spriteComponent);
 	bullet->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_BULLET_VELOCITY));
 	bullet->AddComponent(new ColliderComponent());
@@ -188,7 +189,7 @@ Entity* EntityFactory::CreateCheckpointEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint], id);
 
 	checkpoint->AddComponent(spriteComponent);
-	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w * 0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	checkpoint->AddComponent(new ColliderComponent());
 	checkpoint->AddComponent(new CheckpointComponent(id));
 
@@ -201,7 +202,7 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Flag], id);
 
 	flag->AddComponent(spriteComponent);
-	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h, spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, 1.0f, 1.0f, 0));
+	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	flag->AddComponent(new ColliderComponent());
 	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 
@@ -214,7 +215,7 @@ Entity* EntityFactory::CreateTileEntity(int id)
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet], id);
 
 	switch (id)
-	{
+	{//FIX THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 	case 1:
 	{
 		spriteComponent->sourceRect = { 0, 0, 0, 0 };

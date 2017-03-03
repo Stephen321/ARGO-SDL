@@ -5,6 +5,9 @@
 #include <string>
 #include <sstream>
 
+#include "TransformComponent.h"
+#include "SpriteComponent.h"
+
 Lobby::Lobby()
 	: _uiSystem(0.f)
 	, _startingGame(false)
@@ -33,12 +36,14 @@ void Lobby::Initialize(SDL_Renderer* renderer, std::vector<int>* ids)
 	// UI
 	_uiSystem.Initialize(_renderer);
 
-	Entity* ui = new Entity(EntityType::UI);
-	_uiSystem.AddEntity(ui);
-
 	Start();// - activate when loaded
 	LoadContent();
 
+	Entity* ui = new Entity(EntityType::UI);
+	SpriteComponent* spriteComponent = new SpriteComponent((_textureHolder)[TextureID::UI], 0);
+	ui->AddComponent(spriteComponent);
+	ui->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	_uiSystem.AddEntity(ui);
 
 	Refresh();
 
@@ -229,6 +234,7 @@ void Lobby::OnEvent(Event evt, Type typ)
 void Lobby::LoadContent()
 {
 	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
+	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/SessionsMenu.png");
 }
 
 void Lobby::CleanUp()
@@ -360,7 +366,7 @@ void Lobby::Refresh(const std::vector<Session>& sessions, int maxPlayers)
 
 	if (sessions.empty())
 	{
-		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 200);
+		_uiSystem.CreateText("No sessions available. Create a new one or refresh.", 50, 300);
 	}
 	for (int i = 0; i < sessions.size(); i++)
 	{
@@ -397,8 +403,8 @@ void Lobby::Refresh(const std::vector<int>& players, std::vector<bool> ready)
 	_uiSystem.DeleteLobbyButton();
 	_uiSystem.DeleteReadyButton();
 
-	_uiSystem.CreateDisplayText("Players", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, 60);
+	_uiSystem.CreateDisplayText("Lobbies", SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.5f);
+	_uiSystem.CreateDisplayText("________", SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.51f);
 	_uiSystem.CreateDisplayText("", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.85); // Ready Up Text
 
 	for (int i = 0; i < players.size(); i++)

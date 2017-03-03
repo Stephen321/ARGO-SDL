@@ -69,3 +69,5 @@ const int		UI_BOX_X = 64;
 const int		UI_BOX_Y = 64;
 const int		UI_BOX_SIZE = 64;
 
+const int		OPTIONS_OFFSET = 100;
+

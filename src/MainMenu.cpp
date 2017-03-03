@@ -25,11 +25,14 @@ void MainMenu::Initialize(SDL_Renderer* renderer)
 
 	_uiSystem.Initialize(_renderer);
 
-	Entity* ui = new Entity(EntityType::UI);
-	_uiSystem.AddEntity(ui);
-
 	Start();
 	LoadContent();
+
+	Entity* ui = new Entity(EntityType::UI);
+	SpriteComponent* spriteComponent = new SpriteComponent((_textureHolder)[TextureID::UI], 0);
+	ui->AddComponent(spriteComponent);
+	ui->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	_uiSystem.AddEntity(ui);
 	
 	//Input
 	BindInput();
@@ -125,14 +128,13 @@ void MainMenu::LoadContent()
 	_uiSystem.CreateDisplayTextColoured(">", _uiSystem.GetInteractiveTextRectangle()[0].x + _uiSystem.GetInteractiveTextRectangle()[0].w + 50, _uiSystem.GetInteractiveTextRectangle()[0].y, 255, 0, 0, 255);
 
 	//TTF_CloseFont(_font); // Free Font Memory
+
+	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/MainMenu.png");
 }
 
 void MainMenu::CleanUp()
 {
 	_inputManager->EmptyKeys();
-	_uiSystem.DeleteDisplayText();
-	_uiSystem.DeleteText();
-	_uiSystem.DeleteEntites();
 }
 
 void MainMenu::BindInput()

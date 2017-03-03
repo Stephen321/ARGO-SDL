@@ -161,11 +161,6 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 
 		switch (powerUp->type)
 		{
-		case PowerUpComponent::Type::Invicibility:
-			statusEffects->invincible = true;
-			statusEffects->invincibleTimer = INVINCIBLE_MAX_TIMER;
-			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
-			break;
 		case PowerUpComponent::Type::Invisibility:
 			statusEffects->invisible = true;
 			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
@@ -187,19 +182,14 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 {
 	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-	if (!statusEffects->invincible)
+	if (statusEffects->invisible)
 	{
-		//static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(0, 0));
-
-		if (statusEffects->invisible)
-		{
-			statusEffects->invisible = false;
-			statusEffects->invisibleTimer = 0;
-		}
-
-		statusEffects->staggered = true;
-		statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		statusEffects->invisible = false;
+		statusEffects->invisibleTimer = 0;
 	}
+
+	statusEffects->staggered = true;
+	statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Staggered;
@@ -248,23 +238,17 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	if (pFlag->hasFlag)
 	{
-		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
-		{
-			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		playerStatusEffects->staggered = true;
+		playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
-		}
+		_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 	}
 	else if (oFlag->hasFlag)
 	{
-		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
-		{
-			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		otherStatusEffects->staggered = true;
+		otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
-		}
+		_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 	}
 
 	if (playerStatusEffects->invisible)
@@ -336,7 +320,9 @@ void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, 
 	float e1speed = sqrt(e1Physics->xVelocity * e1Physics->xVelocity + e1Physics->yVelocity * e1Physics->yVelocity);
 	float e2speed = sqrt(e2Physics->xVelocity * e2Physics->xVelocity + e2Physics->yVelocity * e2Physics->yVelocity);
 
-	if (e1speed != 0 && e2speed != 0)
+	float maxVelocity = e1Physics->maxVelocity * 0.1f;
+
+	if (e1speed > maxVelocity && e2speed > maxVelocity)
 	{
 		float xVelocityTemp = e1Physics->xVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 		float yVelocityTemp = e1Physics->yVelocity * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
@@ -349,7 +335,7 @@ void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, 
 	}
 	else
 	{
-		if (e1speed != 0)
+		if (e1speed > maxVelocity)
 		{
 			e2Physics->xVelocity = e1Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 			e2Physics->yVelocity = e1Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
@@ -357,7 +343,7 @@ void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, 
 			e1Physics->xVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 			e1Physics->yVelocity *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
-		else if (e2speed != 0)
+		else if (e2speed > maxVelocity)
 		{
 			e1Physics->xVelocity = e2Physics->xVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 			e1Physics->yVelocity = e2Physics->yVelocity * PLAYER_STATIONARY_PLAYER_RESTITUTION;
@@ -367,8 +353,8 @@ void CollisionSystem::EntityBounce(b2WorldManifold& worldManifold, Entity*& e1, 
 		}
 	}
 
-	static_cast<ColliderComponent*>(e1->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity, e1Physics->yVelocity));
-	static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity, e2Physics->yVelocity));
+	static_cast<ColliderComponent*>(e1->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity*2.f, e1Physics->yVelocity*2.f));
+	static_cast<ColliderComponent*>(e2->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity*2.f, e2Physics->yVelocity*2.f));
 }
 
 void CollisionSystem::CharacterObstacleBounce(b2WorldManifold& worldManifold, Entity*& player)

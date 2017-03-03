@@ -71,30 +71,7 @@ void UISystem::Process(float dt)
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-				SDL_Rect scaledRect;
-				if (transform != nullptr)
-				{
-					scaledRect = transform->rect;
-					scaledRect.w *= transform->scaleX;
-					scaledRect.h *= transform->scaleY;
-					scaledRect.x -= transform->origin.x * transform->scaleX;
-					scaledRect.y -= transform->origin.y * transform->scaleY;
-				}
-
-				if (transform != nullptr && sprite != nullptr)
-				{
-					//Render to screen
-					if (sprite->id == 5)
-					{
-					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &scaledRect,
-						radarAngle, &transform->origin, SDL_FLIP_NONE);
-					}
-					else
-					{
-						SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &scaledRect,
-							transform->angle, &transform->origin, SDL_FLIP_NONE);
-					}
-				}
+				SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &transform->rect, transform->angle, &transform->origin, SDL_FLIP_NONE);
 			}
 		}
 
