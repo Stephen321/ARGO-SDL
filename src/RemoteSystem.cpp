@@ -277,11 +277,25 @@ void RemoteSystem::Process(float dt)
 						RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote)); 
 						if (data.id == remote->id)
 						{ //found the player which disconnected 
+
+							Entity* flag = _entities[EntityType::Flag][0];
+							//check if it had the flag first!!!!!
+
+							ColliderComponent* colliderFlag = static_cast<ColliderComponent*>(flag->GetComponent(Component::Type::Collider));
+							TransformComponent* transformFlag = static_cast<TransformComponent*>(flag->GetComponent(Component::Type::Transform));
+							colliderFlag->setActive = true;
+							transformFlag->rect.x = (int)metersToPixels(colliderFlag->body->GetPosition().x);
+							transformFlag->rect.y = (int)metersToPixels(colliderFlag->body->GetPosition().y);
+							//_flagHolderID = -1;
+
 							//...replace with ai???...
 							DestructionComponent* destroy = static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy));
 							//destroy->destroy = true;			 //doesnt remote it from all systems and delete components
 							
-							
+
+							FlagComponent* flagComp = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
+							if (flagComp != nullptr)
+								flagComp->hasFlag = false;
 							//move offscreen...doesnt work either..
 							std::cout << "moving disconnected player" << std::endl;
 							remote->disconnected = true;
@@ -345,7 +359,7 @@ void RemoteSystem::Process(float dt)
 		}
 	}
 
-	if (_flagHolderID != -1)
+	if (_flagHolderID != -1 && NetworkHandler::Instance().GetHost() == false)
 	{
 		Entity* flag = _entities[EntityType::Flag][0];
 		bool findFlagHolder = true;
@@ -370,11 +384,12 @@ void RemoteSystem::Process(float dt)
 	{
 		for (Entity* e : it->second)
 		{
-			if (e->GetType() == EntityType::Player || (e->GetType() == EntityType::Flag && _flagHolderID != -1)) //don't do any lerping for the local player
+			RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
+
+			if (remote->disconnected && e->GetType() == EntityType::Player || (e->GetType() == EntityType::Flag && _flagHolderID != -1)) //don't do any lerping for the local player
 			{
 				break;
 			}
-			RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
 
 			if (remote->startState == NULL) //dont attempt to lerp if no packets where received for this entity yet
 			{
@@ -385,23 +400,6 @@ void RemoteSystem::Process(float dt)
 			ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 			TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 			
-			if (remote->disconnected)
-			{
-				FlagComponent* flagcomp = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
-				if (flagcomp != nullptr)
-				{
-					flagcomp->hasFlag = false;
-
-					if (_flagHolderID != remote->id)
-					{
-						collider->body->SetTransform(b2Vec2(-10000, -10000), 0.f);
-						collider->setActive = false;
-						transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
-						transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
-					}
-				}
-
-			}
 			//if (e->GetType() == EntityType::Remote)
 			//{
 			//	std::cout << "remote velocity: " << physics->xVelocity << " , y: " << physics->yVelocity << std::endl;

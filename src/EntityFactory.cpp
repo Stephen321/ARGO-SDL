@@ -88,7 +88,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 	spriteComponent->sourceRect.h /= 7;
 
 	player->AddComponent(spriteComponent);
-	player->AddComponent(new TransformComponent(0, 0, 96, 96));
+	player->AddComponent(new TransformComponent(0, 0, 275, 175));
 	player->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	player->AddComponent(new ColliderComponent());
 	player->AddComponent(new FlagComponent());
@@ -109,7 +109,7 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 	spriteComponent->sourceRect.h /= 7;
 
 	remotePlayer->AddComponent(spriteComponent);
-	remotePlayer->AddComponent(new TransformComponent(0, 0, 96, 96));
+	remotePlayer->AddComponent(new TransformComponent(0, 0, 275, 175));
 	remotePlayer->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	remotePlayer->AddComponent(new ColliderComponent());
 	remotePlayer->AddComponent(new FlagComponent());
@@ -131,7 +131,7 @@ Entity* EntityFactory::CreateAIEntity(int id)
 
 	ai->AddComponent(spriteComponent);
 
-	ai->AddComponent(new TransformComponent(0, 0, 96, 96));
+	ai->AddComponent(new TransformComponent(0, 0, 275, 175));
 	ai->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
 	ai->AddComponent(new ColliderComponent());
 	ai->AddComponent(new FlagComponent());

@@ -12,7 +12,8 @@ public:
 		Slow,
 		Medium,
 		Fast, 
-		Turning,
+		TurningLeft,
+		TurningRight,
 		Bumping,
 		Staggered
 	};

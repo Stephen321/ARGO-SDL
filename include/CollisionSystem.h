@@ -3,6 +3,7 @@
 #include "System.h"
 #include "Box2D\Box2D.h"
 #include "InteractionSystemEvents.h"
+#include "AudioManager.h"
 
 
 class CollisionSystem : public System, public b2ContactListener
@@ -35,5 +36,7 @@ private:
 private:
 	std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;
 	std::vector<std::pair<EntityType, std::vector<float>>>&						_creationRequests;
+
+	AudioManager*																_audioManager = AudioManager::GetInstance();
 };
 

@@ -142,7 +142,6 @@ void Disconnect(DisconnectData data, SessionMap& sessions, Net& net, std::vector
 			PlayerListData pldata;
 			pldata.count = sessions[data.sessionID].GetPlayerCount();
 			pldata.players = sessions[data.sessionID].GetPlayerIDs();
-
 			for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
 			{
 				if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)

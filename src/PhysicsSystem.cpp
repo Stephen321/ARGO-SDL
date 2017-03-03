@@ -121,6 +121,17 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 	}
 	else if (e->GetType() == EntityType::AI)
 	{
+		StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
+
+		if (statusEffects->staggered)
+		{
+			float xDrag = -physics->xVelocity * DRAG;
+			float yDrag = -physics->yVelocity * DRAG;
+
+			physics->xVelocity += xDrag * dt;
+			physics->yVelocity += yDrag * dt;
+		}
+
 		float maxVelocity = physics->maxVelocity;
 
 		float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);

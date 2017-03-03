@@ -110,6 +110,8 @@ void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entit
 		if (flagComponent->currentCheckpointID + 1 == checkpoint->id)
 		{
 			flagComponent->currentCheckpointID++;
+			flagComponent->totalCheckpoints++;
+			_audioManager->PlayFX("Checkpoint");
 			if (flagComponent->currentCheckpointID == 4)
 			{
 				flagComponent->currentCheckpointID = 0;
@@ -141,8 +143,8 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			std::vector<float> data = std::vector<float>();
 
 			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back(powerUpTransform->rect.x); //xPosition
+			data.push_back(powerUpTransform->rect.y); //yPosition
 
 			weapon->fired = false;
 			weapon->hasWeapon = true;
@@ -209,6 +211,7 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Staggered;
+	_audioManager->PlayFX("Collision");
 }
 void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
 {
@@ -226,6 +229,8 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 			if (flagComponent->currentCheckpointID + 1 == collider->checkpointCollision.second)
 			{
 				flagComponent->currentCheckpointID++;
+				flagComponent->totalCheckpoints++;
+				_audioManager->PlayFX("Checkpoint");
 				if (flagComponent->currentCheckpointID == 4)
 				{
 					flagComponent->currentCheckpointID = 0;
@@ -304,6 +309,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Bumping;
+	_audioManager->PlayFX("Collision");
 }
 
 void CollisionSystem::EndContact(b2Contact* contact)
@@ -514,6 +520,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			{
 				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 				animation->state = AnimationComponent::State::Bumping;
+				_audioManager->PlayFX("Collision");
 			}
 		}
 		else
@@ -525,6 +532,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			{
 				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 				animation->state = AnimationComponent::State::Bumping;
+				_audioManager->PlayFX("Collision");
 			}
 		}
 	}

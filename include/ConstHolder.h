@@ -60,3 +60,12 @@ const float		POWER_UP_SPAWN_RATE = 5.0f;
 const int		SCREEN_WIDTH = 1600;
 const int		SCREEN_HEIGHT = 900;
 
+const int		UI_POLL_TEXT_X = 48;
+const int		UI_POLL_TEXT_Y = 64;
+
+const int		UI_NEXT_TEXT_X = 160;
+const int		UI_NEXT_TEXT_Y = 64;
+
+const int		UI_BOX_X = 64;
+const int		UI_BOX_Y = 64;
+const int		UI_BOX_SIZE = 64;

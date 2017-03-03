@@ -17,10 +17,6 @@ AnimationSystem::~AnimationSystem()
 {
 }
 
-void AnimationSystem::Initialize()
-{
-
-}
 
 void AnimationSystem::Process(float dt)
 {
@@ -65,8 +61,8 @@ void AnimationSystem::Process(float dt)
 					}
 
 					if (physics->xDir != 0 && physics->yDir != 0)
-					{
-						animation->state = AnimationComponent::State::Turning;
+					{//CHECK WICH DIRECTION??? LEFT/RIGHT
+						animation->state = AnimationComponent::State::TurningLeft;
 					}
 				}
 
@@ -111,7 +107,7 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 	case AnimationComponent::State::Slow:
 	{
 		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
+/*
 		if (animation->counter > 2)
 		{
 			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
@@ -122,13 +118,13 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 			spriteComponent->sourceRect.x = 0;
 			animation->counter -= 2.2;
 		}
-
+		*/
 		break;
 	}
 	case AnimationComponent::State::Medium:
 	{
 		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
+		/*
 		if (animation->counter > 2)
 		{
 			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
@@ -139,10 +135,27 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 			spriteComponent->sourceRect.x = 0;
 			animation->counter -= 2.2;
 		}
-
+		*/
 		break;
 	}
 	case AnimationComponent::State::Fast:
+	{
+		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
+		/*
+		if (animation->counter > 2)
+		{
+			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
+		}
+
+		if (animation->counter > 2.2)
+		{
+			spriteComponent->sourceRect.x = 0;
+			animation->counter -= 2.2;
+		}
+		*/
+		break;
+	}
+	case AnimationComponent::State::TurningLeft:
 	{
 		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
 
@@ -159,7 +172,7 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 
 		break;
 	}
-	case AnimationComponent::State::Turning:
+	case AnimationComponent::State::TurningRight:
 	{
 		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
 
@@ -179,7 +192,7 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 	case AnimationComponent::State::Bumping:
 	{
 		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
+		/*
 		if (animation->counter > 2)
 		{
 			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
@@ -190,7 +203,7 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 			spriteComponent->sourceRect.x = 0;
 			animation->counter -= 2.2;
 		}
-
+		*/
 		if (animation->bumpingCounter > 0.2f)
 		{
 			animation->state = AnimationComponent::State::Idle;
@@ -201,8 +214,8 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 	}
 	case AnimationComponent::State::Staggered:
 	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
+		spriteComponent->sourceRect.y = (int)/*animation->state*/AnimationComponent::State::Bumping * spriteComponent->sourceRect.h;
+		/*
 		if (animation->counter > 2)
 		{
 			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
@@ -213,7 +226,7 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 			spriteComponent->sourceRect.x = 0;
 			animation->counter -= 2.2;
 		}
-
+		*/
 		StatusEffectComponent* status = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
 		if (!status->staggered)
 		{
