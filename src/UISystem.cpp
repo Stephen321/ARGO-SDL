@@ -6,6 +6,7 @@
 #include "GunComponent.h"
 #include "CheckpointComponent.h"
 #include "FlagComponent.h"
+#include <math.h>
 
 UISystem::UISystem(float updateRate)
 	: System(updateRate)
@@ -21,6 +22,7 @@ UISystem::~UISystem()
 	DeleteBackButton();
 	DeleteLobbyButton();
 	DeleteReadyButton();
+	//TTF_CloseFont(_font); // Free Font Memory
 }
 
 void UISystem::Initialize(SDL_Renderer* renderer)
@@ -37,8 +39,6 @@ void UISystem::Initialize(SDL_Renderer* renderer)
 
 	_displayTextTexture = std::vector<SDL_Texture*>();
 	_displayTextRectangle = std::vector<SDL_Rect>();
-
-	//TTF_CloseFont(_font); // Free Font Memory
 
 }
 
@@ -100,8 +100,8 @@ void UISystem::HUD(float dt)
 {
 	CheckpointComponent* check = static_cast<CheckpointComponent*>(_checkpoints[0]->GetComponent(Component::Type::Checkpoint));
 
-	check->highlighted; //  is active checkpoint
-	check->id; // id of checkpoint
+	//check->highlighted; //  is active checkpoint
+	//check->id; // id of checkpoint
 
 	for (int i = 0; i < _characters.size(); i++)
 	{
@@ -133,21 +133,37 @@ void UISystem::HUD(float dt)
 			nextCheckpoint[2] = flag->currentCheckpointID + 1;
 		}
 
+		//flag->currentLap; // current lap
+		//flag->hasFlag; // entity has flag
+		//flag->currentCheckpointID; // next checkpoint
 
-		flag->currentLap; // current lap
-		flag->hasFlag; // entity has flag
-		flag->currentCheckpointID; // next checkpoint
-
-		weapon->ammo; // ammo count
-		weapon->fired; // has fired
-		weapon->hasWeapon; // has a weapon
-		weapon->id; // type of weapon
+		//weapon->ammo; // ammo count
+		//weapon->fired; // has fired
+		//weapon->hasWeapon; // has a weapon
+		//weapon->id; // type of weapon
 
 		if (i == _characters.size() - 1) // Back is local player
 		{
 			currentLapLocal = flag->currentLap;
 			if (weapon->id != -1) { currentAmmoLocal = weapon->ammo; }
 			else { currentAmmoLocal = 0; }
+
+			if (flag->hasFlag == true) // Find Next Checkpoint
+			{
+				TransformComponent* checkTran = static_cast<TransformComponent*>(_checkpoints[flag->currentCheckpointID]->GetComponent(Component::Type::Transform));
+				TransformComponent* playTran = static_cast<TransformComponent*>(_characters[i]->GetComponent(Component::Type::Transform));
+
+				int rads = atan2(checkTran->rect.y - playTran->rect.y, checkTran->rect.x - playTran->rect.x);
+
+				radarAngle = (rads * 180) / M_PI;
+				if (radarAngle < 0) { radarAngle += 360; }
+
+				
+			}
+			else // Find flag
+			{
+				//radarAngle =
+			}
 		}
 	}
 }

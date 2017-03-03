@@ -11,7 +11,10 @@
 #include <assert.h>
 #include "PhysicsComponent.h"
 #include "WeaponComponent.h"
+#include "ParticleComponent.h"
 #include "StatusEffectComponent.h"
+
+#include "Vector2b.h"
 
 Game::Game() 
 	: _gravity(0.f, 0.f)
@@ -24,6 +27,7 @@ Game::Game()
 
 Game::~Game()
 {
+
 }
 
 void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
@@ -47,6 +51,26 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_systemManager.PostInitialize(_player, &_waypoints);
 
+	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
+	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
+	settings._minTTL = 10000;
+	settings._startingVelocity = 125;
+	settings._endingVelocity = 0;
+	settings._texture = _textureHolder[TextureID::Particle];
+	settings._particleSize = 1300;
+	settings._offsetFromParent = Vector2b(0, 0);
+	settings._emissionRate = 1.025;
+	settings._startingDirection = new Vector2b(0, -1);
+	settingsVec.push_back(settings);
+
+	vector<Vector2b *> pos = vector<Vector2b*>();
+	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
+	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
+	pos.push_back(&trans);
+
+	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
+	_player->AddComponent(partcle);
+
 	_swapScene = CurrentScene::GAME;
 	BindInput();
 }
@@ -61,6 +85,9 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
+
+
+	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/PowerUps.png");
 
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
@@ -461,6 +488,15 @@ void Game::CreateUI()
 
 	// Ammo Text
 	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
+
+	// Radar
+	std::vector<float> radar = std::vector<float>();
+	radar.push_back(5); //id
+	radar.push_back(SCREEN_WIDTH * 0.5f); //xPosition
+	radar.push_back(SCREEN_HEIGHT * 0.5f); //yPosition
+	radar.push_back(UI_BOX_SIZE); //width
+	radar.push_back(UI_BOX_SIZE); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, radar));
 }
 
 void Game::UpdateUI()

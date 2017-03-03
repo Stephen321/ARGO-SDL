@@ -2,6 +2,7 @@
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 #include "StatusEffectComponent.h"
+#include "ConstHolder.h"
 
 RenderSystem::RenderSystem(float updateRate)
 	: System(updateRate)
@@ -11,7 +12,6 @@ RenderSystem::RenderSystem(float updateRate)
 RenderSystem::~RenderSystem()
 {
 }
-
 
 void RenderSystem::Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera)
 {

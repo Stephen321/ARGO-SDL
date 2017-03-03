@@ -82,7 +82,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 {
 	Entity* player = new Entity(EntityType::Player);
 
-	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	SpriteComponent* spriteComponent= new SpriteComponent((*_textureHolder)[TextureID::Player], id);
 	spriteComponent->sourceRect.w /= 2;
 	spriteComponent->sourceRect.h /= 7;
 
@@ -103,7 +103,7 @@ Entity* EntityFactory::CreatePlayerEntity(int id)
 Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 {
 	Entity* remotePlayer = new Entity(EntityType::RemotePlayer);
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player], id);
 	spriteComponent->sourceRect.w /= 2;
 	spriteComponent->sourceRect.h /= 7;
 
@@ -121,7 +121,7 @@ Entity* EntityFactory::CreateRemotePlayerEntity(int id)
 Entity* EntityFactory::CreateAIEntity(int id)
 {
 	Entity* ai = new Entity(EntityType::AI);
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Player], id);
 	spriteComponent->sourceRect.w /= 2;
 	spriteComponent->sourceRect.h /= 7;
 
@@ -141,7 +141,8 @@ Entity* EntityFactory::CreateAIEntity(int id)
 Entity* EntityFactory::CreatePowerUpEntity(int id)
 {
 	Entity* powerUp = new Entity(EntityType::PowerUp);
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::PowerUp]);
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::PowerUp], id);
 	spriteComponent->sourceRect = { id * 120, 0, 120, 120 };
 
 	powerUp->AddComponent(spriteComponent);
@@ -156,7 +157,7 @@ Entity* EntityFactory::CreateWeaponEntity(int id)
 {
 	Entity* weapon = new Entity(EntityType::Weapon);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Weapon], id);
 	spriteComponent->sourceRect = { id * 275, 0, 275, 175 };
 
 	weapon->AddComponent(new TransformComponent(0.f, 0.f, 275 * 0.8f, 175 * 0.8f));
@@ -170,7 +171,7 @@ Entity* EntityFactory::CreateBulletEntity(int id)
 {
 	Entity* bullet = new Entity(EntityType::Bullet);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Bullet], id);
 	spriteComponent->sourceRect = { id * 16, 0, 16, 16 };
 
 	bullet->AddComponent(new TransformComponent(0.f, 0.f, 16, 16));
@@ -185,7 +186,7 @@ Entity* EntityFactory::CreateCheckpointEntity(int id)
 {
 	Entity* checkpoint = new Entity(EntityType::Checkpoint);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint], id);
 
 	checkpoint->AddComponent(spriteComponent);
 	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
@@ -198,7 +199,7 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 {
 	Entity* flag = new Entity(EntityType::Flag);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Flag]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Flag], id);
 
 	flag->AddComponent(spriteComponent);
 	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
@@ -211,7 +212,7 @@ Entity* EntityFactory::CreateTileEntity(int id)
 {
 	Entity* tile = new Entity(EntityType::Tile);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::TilemapSpriteSheet], id);
 
 	switch (id)
 	{//FIX THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
@@ -303,7 +304,7 @@ Entity* EntityFactory::CreateUIEntity(int id)
 {
 	Entity* ui = new Entity(EntityType::UI);
 
-	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::UI]);
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::UI], id);
 
 	switch (id)
 	{
@@ -327,6 +328,12 @@ Entity* EntityFactory::CreateUIEntity(int id)
 		spriteComponent->sourceRect = { 3, 0, 0, 0 };
 		break;
 	}
+	case 5:
+	{
+		spriteComponent->sourceRect = { 4, 0, 0, 0 }; // radar
+		break;
+	}
+
 	default:
 		break;
 	}

@@ -36,7 +36,7 @@ private:
 	std::pair<std::vector<SystemType>, Entity*>	SetupCheckpointEntity(const std::pair<EntityType, std::vector<float>>& information);
 	std::pair<std::vector<SystemType>, Entity*>	SetupFlagEntity(const std::pair<EntityType, std::vector<float>>& information);
 	std::pair<std::vector<SystemType>, Entity*>	SetupTileEntity(const std::pair<EntityType, std::vector<float>>& information);
-	std::pair<std::vector<SystemType>, Entity*> SetupUIEntity(const std::pair<EntityType, std::vector<float>>& information); 
+	std::pair<std::vector<SystemType>, Entity*> SetupUIEntity(const std::pair<EntityType, std::vector<float>>& information);
 
 	void										SetupPosition(TransformComponent*& transform, const std::vector<float> &information, int& index);
 	void										SetupSize(TransformComponent*& transform, const std::vector<float> &information, int& index);

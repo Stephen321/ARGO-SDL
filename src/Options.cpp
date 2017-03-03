@@ -5,6 +5,9 @@
 #include <string>
 #include <sstream>
 
+#include "TransformComponent.h"
+#include "SpriteComponent.h"
+
 Options::Options()
 	: _uiSystem(0)
 {
@@ -25,6 +28,12 @@ void Options::Initialize(SDL_Renderer* renderer)
 	// Scene
 	Start();
 	LoadContent();
+
+	Entity* ui = new Entity(EntityType::UI);
+	SpriteComponent* spriteComponent = new SpriteComponent((_textureHolder)[TextureID::UI], 0);
+	ui->AddComponent(spriteComponent);
+	ui->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	_uiSystem.AddEntity(ui);
 
 	//Input
 	BindInput();
@@ -103,52 +112,50 @@ void Options::OnEvent(Event evt, Type typ)
 
 void Options::LoadContent()
 {
-	_uiSystem.CreateDisplayText("Options", SCREEN_WIDTH / 2, 50);
-	_uiSystem.CreateDisplayText("_______", SCREEN_WIDTH / 2, 60);
+	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/OptionsMenu.png");
 
 	// Music Volume 0 -2
-	_uiSystem.CreateDisplayText("Music Volume    =    ", SCREEN_WIDTH / 4, 200);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 200);
-	_uiSystem.CreateTextAtCenter(GetMusicVolume(), SCREEN_WIDTH / 2, 200);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 200);
+	_uiSystem.CreateDisplayText("Music Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 2.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 2.5f);
+	_uiSystem.CreateTextAtCenter(GetMusicVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 2.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 2.5f);
 
 	// Hum 3 - 5
-	_uiSystem.CreateDisplayText("Hum Volume    =    ", SCREEN_WIDTH / 4, 300);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 300);
-	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 300);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 300);
+	_uiSystem.CreateDisplayText("Hum Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 3.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 3.5f);
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 3.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 3.5f);
 
 	// Weapons 6 - 8
-	_uiSystem.CreateDisplayText("Weapon Volume    =    ", SCREEN_WIDTH / 4, 400);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 400);
-	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 400);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 400);
+	_uiSystem.CreateDisplayText("Weapon Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 4.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 4.5f);
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 4.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 4.5f);
 
 	// Checkpoint 9 - 11
-	_uiSystem.CreateDisplayText("Checkpoint Volume    =    ", SCREEN_WIDTH / 4, 500);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 500);
-	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 500);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 500);
+	_uiSystem.CreateDisplayText("Checkpoint Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 5.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 5.5f);
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 5.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 5.5f);
 
 	// Collision 12 - 14
-	_uiSystem.CreateDisplayText("Collision Volume    =    ", SCREEN_WIDTH / 4, 600);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 600);
-	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 600);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 600);
+	_uiSystem.CreateDisplayText("Collision Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 6.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 6.5f);
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 6.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 6.5f);
 
 	// UI 15 - 17
-	_uiSystem.CreateDisplayText("UI Volume    =    ", SCREEN_WIDTH / 4, 700);
-	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - 100, 700);
-	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, 700);
-	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + 100, 700);
+	_uiSystem.CreateDisplayText("UI Volume    =    ", SCREEN_WIDTH / 4, OPTIONS_OFFSET * 7.5f);
+	_uiSystem.CreateTextAtCenter("<", SCREEN_WIDTH / 2 - OPTIONS_OFFSET, OPTIONS_OFFSET * 7.5f);
+	_uiSystem.CreateTextAtCenter(GetHumVolume(), SCREEN_WIDTH / 2, OPTIONS_OFFSET * 7.5f);
+	_uiSystem.CreateTextAtCenter(">", SCREEN_WIDTH / 2 + OPTIONS_OFFSET, OPTIONS_OFFSET * 7.5f);
+
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }
 
 void Options::CleanUp()
 {
 	_inputManager->EmptyKeys();
-	_uiSystem.DeleteDisplayText();
-	_uiSystem.DeleteText();
-	_uiSystem.DeleteEntites();
 }
 
 void Options::BindInput()
@@ -157,6 +164,13 @@ void Options::BindInput()
 	{
 		SDL_Point mousePos = _inputManager->GetMousePos();
 		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
+
+		// Back
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetBackButton())))
+		{
+			_swapScene = Scene::CurrentScene::MAIN_MENU;
+			std::cout << "Back" << std::endl;
+		}
 
 		// Music
 		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[0]))) 
