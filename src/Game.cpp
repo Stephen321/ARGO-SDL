@@ -461,6 +461,15 @@ void Game::CreateUI()
 
 	// Ammo Text
 	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
+
+	// Radar
+	std::vector<float> radar = std::vector<float>();
+	radar.push_back(5); //id
+	radar.push_back(SCREEN_WIDTH * 0.5f); //xPosition
+	radar.push_back(SCREEN_HEIGHT * 0.5f); //yPosition
+	radar.push_back(UI_BOX_SIZE); //width
+	radar.push_back(UI_BOX_SIZE); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, radar));
 }
 
 void Game::UpdateUI()

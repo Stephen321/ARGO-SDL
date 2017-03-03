@@ -13,7 +13,6 @@ RenderSystem::~RenderSystem()
 {
 }
 
-
 void RenderSystem::Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera)
 {
 	_renderer = renderer;
