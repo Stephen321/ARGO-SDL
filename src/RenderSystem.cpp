@@ -47,8 +47,8 @@ void RenderSystem::Process(float dt)
 					SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
 					SDL_Rect drawRectangle = transform->rect;
-					drawRectangle.x += transform->origin.x;
-					drawRectangle.y += transform->origin.y;
+					drawRectangle.x -= transform->origin.x;
+					drawRectangle.y -= transform->origin.y;
 
 					//Render to screen
 					SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &_camera->worldToScreen(drawRectangle), transform->angle, &transform->origin, SDL_FLIP_NONE);
