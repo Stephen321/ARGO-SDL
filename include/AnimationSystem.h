@@ -20,6 +20,7 @@ public:
 
 private:
 	void FSM(AnimationComponent*& animation, Entity* e);
+	void AnimationCounter(SDL_Rect& sourceRect, float& timer);
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;

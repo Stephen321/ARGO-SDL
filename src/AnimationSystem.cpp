@@ -60,10 +60,10 @@ void AnimationSystem::Process(float dt)
 						}
 					}
 
-					if (physics->xDir != 0 && physics->yDir != 0)
+				/*	if (physics->xDir != 0 && physics->yDir != 0)
 					{//CHECK WICH DIRECTION??? LEFT/RIGHT
 						animation->state = AnimationComponent::State::TurningLeft;
-					}
+					}*/
 				}
 
 				// Blink Counter
@@ -87,157 +87,51 @@ void AnimationSystem::FSM(AnimationComponent*& animation, Entity* e)
 
 	switch (animation->state)
 	{
-	case AnimationComponent::State::Idle:
-	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
-		if (animation->counter > 2)
+		case AnimationComponent::State::Bumping:
 		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
+			spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
+			AnimationCounter(spriteComponent->sourceRect, animation->counter);
+
+			if (animation->bumpingCounter > 0.2f)
+			{
+				animation->state = AnimationComponent::State::Idle;
+				animation->bumpingCounter -= 0.2f;
+			}
+			break;
 		}
 
-		if (animation->counter > 2.2)
+		case AnimationComponent::State::Staggered:
 		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
+			spriteComponent->sourceRect.y = (int)AnimationComponent::State::Bumping * spriteComponent->sourceRect.h;
+			AnimationCounter(spriteComponent->sourceRect, animation->counter);
+
+			StatusEffectComponent* status = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
+			if (!status->staggered)
+			{
+				animation->state = AnimationComponent::State::Idle;
+			}
+			break;
 		}
 
-		break;
+		default:
+		{
+			spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
+			AnimationCounter(spriteComponent->sourceRect, animation->counter);
+			break;
+		}
 	}
-	case AnimationComponent::State::Slow:
+}
+
+void AnimationSystem::AnimationCounter(SDL_Rect& sourceRect, float& timer)
+{
+	if (timer > 2.2)
 	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-/*
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-		*/
-		break;
+		sourceRect.x = 0;
+		timer -= 2.2;
 	}
-	case AnimationComponent::State::Medium:
+	else if (timer > 2)
 	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-		/*
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-		*/
-		break;
-	}
-	case AnimationComponent::State::Fast:
-	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-		/*
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-		*/
-		break;
-	}
-	case AnimationComponent::State::TurningLeft:
-	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-
-		break;
-	}
-	case AnimationComponent::State::TurningRight:
-	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-
-		break;
-	}
-	case AnimationComponent::State::Bumping:
-	{
-		spriteComponent->sourceRect.y = (int)animation->state * spriteComponent->sourceRect.h;
-		/*
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-		*/
-		if (animation->bumpingCounter > 0.2f)
-		{
-			animation->state = AnimationComponent::State::Idle;
-			animation->bumpingCounter -= 0.2f;
-		}
-
-		break;
-	}
-	case AnimationComponent::State::Staggered:
-	{
-		spriteComponent->sourceRect.y = (int)/*animation->state*/AnimationComponent::State::Bumping * spriteComponent->sourceRect.h;
-		/*
-		if (animation->counter > 2)
-		{
-			spriteComponent->sourceRect.x = spriteComponent->sourceRect.w;
-		}
-
-		if (animation->counter > 2.2)
-		{
-			spriteComponent->sourceRect.x = 0;
-			animation->counter -= 2.2;
-		}
-		*/
-		StatusEffectComponent* status = static_cast<StatusEffectComponent*>(e->GetComponent(Component::Type::StatusEffect));
-		if (!status->staggered)
-		{
-			animation->state = AnimationComponent::State::Idle;
-		}
-
-		break;
-	}
-
-	default:
-		break;
+		sourceRect.x = sourceRect.w;
 	}
 }
 
