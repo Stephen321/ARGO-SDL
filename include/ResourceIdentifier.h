@@ -11,4 +11,5 @@ enum class TextureID
 	TilemapSpriteSheet,
 	UI,
 	Radar,
+	Particle
 };

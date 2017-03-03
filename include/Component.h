@@ -24,6 +24,7 @@ public:
 		Animation,
 		Remote,
 		Weapon,
+		Particle
 	};
 
 public:
@@ -35,7 +36,6 @@ public:
 	~Component()
 	{
 	}
-
 
 	Type GetType() const
 	{
