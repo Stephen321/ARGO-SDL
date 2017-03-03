@@ -71,7 +71,11 @@ void UISystem::Process(float dt)
 				TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 				SpriteComponent* sprite = static_cast<SpriteComponent*>(e->GetComponent(Component::Type::Sprite));
 
-				SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &transform->rect, transform->angle, &transform->origin, SDL_FLIP_NONE);
+				SDL_Rect drawRectangle = transform->rect;
+				drawRectangle.x += transform->origin.x;
+				drawRectangle.y += transform->origin.y;
+
+				SDL_RenderCopyEx(_renderer, sprite->texture, &sprite->sourceRect, &drawRectangle, transform->angle, &transform->origin, SDL_FLIP_NONE);
 			}
 		}
 
