@@ -219,9 +219,6 @@
     <ClInclude Include="include\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimationSystem.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\RemoteComponent.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -254,6 +251,9 @@
     </ClInclude>
     <ClInclude Include="include\LTimer.h">
       <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

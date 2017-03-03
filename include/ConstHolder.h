@@ -3,7 +3,7 @@
 #include "EntityType.h"
 
 const int		SCREEN_FPS = 60;
-const float		CAMERA_SYSTEM_UPDATE = 16.f / 1000.f;
+const float		CAMERA_SYSTEM_UPDATE = 0;// 16.f / 1000.f;
 const float		PHYSICS_SYSTEM_UPDATE = 0.f;// 16.f / 1000.f;
 const float		COLLISION_SYSTEM_UPDATE = 16.f / 1000.f;
 const float		REMOTE_PACKET_RATE = (1000.f / 10.f) / 1000.f; //10 packets a second
