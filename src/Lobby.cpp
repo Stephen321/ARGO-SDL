@@ -276,7 +276,7 @@ void Lobby::BindInput()
 		}
 
 		// Lobbies
-		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size() - 1; i++)
+		for (int i = 0; i < _uiSystem.GetInteractiveTextRectangle().size(); i++)
 		{
 			if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[i])))
 			{

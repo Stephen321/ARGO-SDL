@@ -2,6 +2,7 @@
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 #include "StatusEffectComponent.h"
+#include "ConstHolder.h"
 
 RenderSystem::RenderSystem(float updateRate)
 	: System(updateRate)
