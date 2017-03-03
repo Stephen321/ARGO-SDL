@@ -21,7 +21,6 @@
 
 #include "LevelLoader.h"
 #include "Graph.h"
-#include "FunctionMaster.h"
 
 
 using namespace Camera2D;
@@ -42,7 +41,7 @@ public:
 	void							Start() override;
 	void							Stop() override;
 
-	void							OnEvent(Event evt) override;
+	void							OnEvent(Event evt, Type typ) override;
 
 private:
 	void							BindInput();
@@ -67,7 +66,6 @@ private:
 	Graph							_waypoints;
 
 	SystemManager					_systemManager;
-	FunctionMaster					_functionMaster;
 
 	Entity*							_player;
 

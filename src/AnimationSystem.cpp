@@ -17,10 +17,6 @@ AnimationSystem::~AnimationSystem()
 {
 }
 
-void AnimationSystem::Initialize()
-{
-
-}
 
 void AnimationSystem::Process(float dt)
 {

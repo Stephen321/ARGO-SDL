@@ -87,34 +87,38 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 				PhysicsComponent* characterPhysics = static_cast<PhysicsComponent*>(_interactionSystemEvents[FLAG_DROPPED].at(i).second->GetComponent(Component::Type::Physics));
 				PhysicsComponent* flagPhysics = static_cast<PhysicsComponent*>(it->second->GetComponent(Component::Type::Physics));
 
+				TransformComponent* ownerTransform = static_cast<TransformComponent*>(_interactionSystemEvents[FLAG_DROPPED].at(i).first->GetComponent(Component::Type::Transform));
+				TransformComponent* otherTransform = static_cast<TransformComponent*>(_interactionSystemEvents[FLAG_DROPPED].at(i).second->GetComponent(Component::Type::Transform));
+				TransformComponent* flagTransform = static_cast<TransformComponent*>(it->second->GetComponent(Component::Type::Transform));
+
 				float ownerSpeed = sqrt(ownerPhysics->xVelocity * ownerPhysics->xVelocity + ownerPhysics->yVelocity * ownerPhysics->yVelocity);
 				float characterSpeed = sqrt(characterPhysics->xVelocity * characterPhysics->xVelocity + characterPhysics->yVelocity * characterPhysics->yVelocity);
 
-				float xDir = rand() % 20000 - 10000;
-				float yDir = rand() % 20000 - 10000;
+				float xDir = ownerTransform->rect.x - otherTransform->rect.x;
+				float yDir = ownerTransform->rect.y - otherTransform->rect.y;
 
 				float directionLenght = sqrt(xDir * xDir + yDir * yDir);
+				float sumSpeed = ownerSpeed + characterSpeed;
 
-				flagPhysics->xVelocity = (xDir / directionLenght) * (ownerSpeed + characterSpeed);
-				flagPhysics->yVelocity = (yDir / directionLenght) * (ownerSpeed + characterSpeed);
+				if (sumSpeed > flagPhysics->maxVelocity)
+				{
+					sumSpeed = flagPhysics->maxVelocity;
+				}
+				else
+				{
+					float mostVelocity = flagPhysics->maxVelocity * 0.75f;
 
-				if (flagPhysics->xVelocity > flagPhysics->maxVelocity)
-				{
-					flagPhysics->xVelocity = flagPhysics->maxVelocity;
-				}
-				else if (flagPhysics->xVelocity < -flagPhysics->maxVelocity)
-				{
-					flagPhysics->xVelocity = -flagPhysics->maxVelocity;
+					if (sumSpeed < mostVelocity)
+					{
+						sumSpeed = mostVelocity;
+					}
 				}
 
-				if (flagPhysics->yVelocity > flagPhysics->maxVelocity)
-				{
-					flagPhysics->yVelocity = flagPhysics->maxVelocity;
-				}
-				else if (flagPhysics->yVelocity < -flagPhysics->maxVelocity)
-				{
-					flagPhysics->yVelocity = -flagPhysics->maxVelocity;
-				}
+				flagPhysics->xVelocity = (xDir / directionLenght) * sumSpeed;
+				flagPhysics->yVelocity = (yDir / directionLenght) * sumSpeed;
+
+				flagTransform->rect.x += flagPhysics->xVelocity;
+				flagTransform->rect.y += flagPhysics->yVelocity;
 
 				FlagComponent* flag = static_cast<FlagComponent*>(it->first->GetComponent(Component::Type::Flag));
 				flag->hasFlag = false;
@@ -124,6 +128,7 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 
 				collider->setActive = true;
 				collider->body->SetTransform(b2Vec2(pixelsToMeters(actorTransform->rect.x), pixelsToMeters(actorTransform->rect.y)), 0);
+				collider->body->SetLinearVelocity(b2Vec2(flagPhysics->xVelocity, flagPhysics->yVelocity));
 				static_cast<CheckpointComponent*>(_checkpoints.at(flag->currentCheckpointID)->GetComponent(Component::Type::Checkpoint))->highlighted = false;
 			}
 

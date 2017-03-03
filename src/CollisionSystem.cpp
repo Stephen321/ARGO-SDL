@@ -63,7 +63,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player)
+			if (other->GetType() == EntityType::AI)
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
@@ -110,6 +110,8 @@ void CollisionSystem::CheckCharacterToCheckpointCollision(Entity*& player, Entit
 		if (flagComponent->currentCheckpointID + 1 == checkpoint->id)
 		{
 			flagComponent->currentCheckpointID++;
+			flagComponent->totalCheckpoints++;
+			_audioManager->PlayFX("Checkpoint");
 			if (flagComponent->currentCheckpointID == 4)
 			{
 				flagComponent->currentCheckpointID = 0;
@@ -141,8 +143,8 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 			std::vector<float> data = std::vector<float>();
 
 			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x * powerUpTransform->scaleX); //xPosition
-			data.push_back(powerUpTransform->rect.y * powerUpTransform->scaleY); //yPosition
+			data.push_back(powerUpTransform->rect.x); //xPosition
+			data.push_back(powerUpTransform->rect.y); //yPosition
 
 			weapon->fired = false;
 			weapon->hasWeapon = true;
@@ -161,17 +163,17 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 		{
 		case PowerUpComponent::Type::Invicibility:
 			statusEffects->invincible = true;
-			statusEffects->invincibleTimer += INVINCIBLE_MAX_TIMER;
+			statusEffects->invincibleTimer = INVINCIBLE_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Invisibility:
 			statusEffects->invisible = true;
-			statusEffects->invisibleTimer += INVISIBLE_MAX_TIMER;
+			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
 			break;
 		case PowerUpComponent::Type::Speed:
 			statusEffects->speedUp = true;
-			statusEffects->speedUpTimer += SPEED_UP_MAX_TIMER;
+			statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
 			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
 			break;
 		default:
@@ -184,8 +186,6 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {
 	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-	statusEffects->staggered = true;
-	statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
 
 	if (!statusEffects->invincible)
 	{
@@ -198,11 +198,12 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 		}
 
 		statusEffects->staggered = true;
-		statusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+		statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 	}
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Staggered;
+	_audioManager->PlayFX("Collision");
 }
 void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& other)
 {
@@ -220,6 +221,8 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 			if (flagComponent->currentCheckpointID + 1 == collider->checkpointCollision.second)
 			{
 				flagComponent->currentCheckpointID++;
+				flagComponent->totalCheckpoints++;
+				_audioManager->PlayFX("Checkpoint");
 				if (flagComponent->currentCheckpointID == 4)
 				{
 					flagComponent->currentCheckpointID = 0;
@@ -248,7 +251,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
 		{
 			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 		}
@@ -258,7 +261,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
 		{
 			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer += STAGGER_MAX_TIMER;
+			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 		}
@@ -277,6 +280,7 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Bumping;
+	_audioManager->PlayFX("Collision");
 }
 
 void CollisionSystem::EndContact(b2Contact* contact)
@@ -466,6 +470,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			{
 				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 				animation->state = AnimationComponent::State::Bumping;
+				_audioManager->PlayFX("Collision");
 			}
 		}
 		else
@@ -477,6 +482,7 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			{
 				AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 				animation->state = AnimationComponent::State::Bumping;
+				_audioManager->PlayFX("Collision");
 			}
 		}
 	}

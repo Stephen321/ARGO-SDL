@@ -16,7 +16,6 @@ public:
 	AnimationSystem();
 	~AnimationSystem();
 
-	void Initialize();
 	void Process(float dt = 0.f) override;
 
 private:

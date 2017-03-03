@@ -49,7 +49,7 @@ void AISystem::Process(float dt)
 				helper::Vector2 velocity = helper::Vector2(0, 0);
 
 				helper::Vector2 AIPosition = helper::Vector2(t->rect.x, t->rect.y);
-
+				
 				switch (ai->state)
 				{
 				case AIState::Entry:
@@ -66,7 +66,6 @@ void AISystem::Process(float dt)
 					}
 					else
 					{
-	
 						if (ai->nextNode == ai->destNode)
 						{
 							GraphNode* closestNode = FindClosestNode(ai, t);
@@ -74,19 +73,21 @@ void AISystem::Process(float dt)
 								ai->nextNode = closestNode;
 						}
 						
-						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 0.1f);
+						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 0.3f);
 
 						Entity* entityWithFlag = FindEntityWithFlag(e);
-						if(entityWithFlag != nullptr)
+						if (entityWithFlag != nullptr)
+						{
 							Prediction(entityWithFlag, ai, t);
 
-						if (!w->hasWeapon)
-						{
-							GraphNode* powerUpNode = FindClosestPowerUp(velocity, ai, t);
-							if (powerUpNode != nullptr)
+							if (!w->hasWeapon)
 							{
-								ai->state = AIState::SeekPowerUp;
-								ai->destNode = powerUpNode;
+								GraphNode* powerUpNode = FindClosestPowerUp(velocity, ai, t);
+								if (powerUpNode != nullptr)
+								{
+									ai->state = AIState::SeekPowerUp;
+									ai->destNode = powerUpNode;
+								}
 							}
 						}
 					}
@@ -117,7 +118,7 @@ void AISystem::Process(float dt)
 								if (entityWithFlag != _players[i])
 								{
 									TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
-									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + 0.1f);
+									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f);
 								}
 							}
 							//loop through all AI and calculate distance and then add avoidance force
@@ -128,7 +129,7 @@ void AISystem::Process(float dt)
 									if (e != otherAI && entityWithFlag != otherAI) //check if not self.
 									{
 										TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
-										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE - 3.0f);
+										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f);
 									}
 								}
 							}
@@ -212,6 +213,7 @@ void AISystem::Process(float dt)
 				}
 				case AIState::SeekPowerUp:
 				{				
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f);
 					//update Astar
 					AStarUpdate(dt, ai, AIPosition);
 
@@ -229,19 +231,7 @@ void AISystem::Process(float dt)
 				}
 
 				
-				if (w->hasWeapon)
-				{
-					Entity* entityWithFlag = FindEntityWithFlag(e);
-					if(entityWithFlag != nullptr)
-					{
-						TransformComponent* otherTransform = static_cast<TransformComponent*>(entityWithFlag->GetComponent(Component::Type::Transform));
-						if (AIPosition.distance(helper::Vector2(otherTransform->rect.x, otherTransform->rect.y)) < 200)
-						{
-							w->fired = true;
-						}
-					}
-					
-				}
+				
 
 				if (!ai->path.empty())
 					TranverseNode(ai, t);
@@ -272,9 +262,36 @@ void AISystem::Process(float dt)
 					float yDrag = -p->yVelocity * DRAG;
 					p->xVelocity += (velocity.x + xDrag) * dt;
 					p->yVelocity += (velocity.y + yDrag) * dt;
-				}		
-			}
-			
+				}	
+				/*
+				TransformComponent* playerpos = static_cast<TransformComponent*>(_players[0]->GetComponent(Component::Type::Transform));
+				helper::Vector2 dir = (helper::Vector2(playerpos->rect.x, playerpos->rect.y) - AIPosition).normalize();
+				p->xVelocity =  dir.y * 0.21f;
+				p->yVelocity =  dir.x * 0.21f;*/
+
+				if (w->hasWeapon)
+				{
+					Entity* entityWithFlag = FindEntityWithFlag(e);
+					if (entityWithFlag != nullptr)
+					{
+						TransformComponent* otherTransform = static_cast<TransformComponent*>(entityWithFlag->GetComponent(Component::Type::Transform));
+
+						if (AIPosition.distance(helper::Vector2(otherTransform->rect.x, otherTransform->rect.y)) < AI_FIRING_RADIUS)
+						{
+							float dot = p->yVelocity * otherTransform->rect.x + p->xVelocity * otherTransform->rect.y;
+							float det = p->xVelocity * otherTransform->rect.y - p->yVelocity * otherTransform->rect.y;
+							float angleInRad = atan2(dot, det);
+							float angleInDeg = angleInRad * 180.0f / PI;
+							if ((angleInDeg < 115.0f && angleInDeg > 65.0f) || (angleInDeg < -115.0f && angleInDeg > -65.0f))
+							{
+								w->fired = true;
+							}
+							
+						}
+					}
+
+				}
+			}		
 		}
 	}
 }
@@ -292,50 +309,8 @@ void AISystem::Entry(AIComponent* ai, TransformComponent* t)
 	if (closestNode != nullptr)
 		ai->nextNode = closestNode; //AI doesn't know starting node, so we search for the closest one. this is a manual update.
 	ai->destNode = _flagNode;
-	ai->pathfinderUpdateTimer = 0;
-	AStar(ai);
-}
-
-void AISystem::SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t, float distanceToDest)
-{
-	if (!f->hasFlag)
-	{
-		
-		if (distanceToDest < AI_CHASE_RADIUS)
-		{
-			ai->nextNode = ai->destNode;
-			ai->flagDetectionRange = true;
-		}
-		else
-		{
-			if (ai->flagDetectionRange)
-			{
-				ai->flagDetectionRange = false; //not in anymore, call and determin closest node
-				GraphNode* closestNode = FindClosestNode(ai, t);
-				if (closestNode != nullptr)
-					ai->nextNode = closestNode;
-				ai->pathfinderUpdateTimer = 0;
-			}		
-		}
-	}
-	else
-	{
-		//has flag, transition to seekCheckpoint
-		ai->state = AIState::SeekCheckpoint;
-
-		int size = _checkpointNode.size();
-		for (int i = 0; i < size; i++)
-		{
-			if (f->currentCheckpointID + 1 == _checkpointNode[i]->data().second)
-			{
-				ai->destNode = _checkpointNode[i];
-				break;
-			}
-		}
-		ai->pathfinderUpdateTimer = 0;
-		AStar(ai);   //manual call on AStar.
-
-	}
+	//ai->pathfinderUpdateTimer = 0;
+	//AStar(ai);
 }
 
 void AISystem::Prediction(Entity* entityWithFlag, AIComponent* ai, TransformComponent* t)

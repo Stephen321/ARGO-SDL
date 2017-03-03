@@ -14,7 +14,7 @@ CameraSystem::~CameraSystem()
 void CameraSystem::Initialize(int w, int h)
 {
 	_camera.init(w, h);
-	_camera.setSize(5120, 3840);
+	//_camera.setSize(5120, 3840);
 }
 
 void CameraSystem::Process(float dt)

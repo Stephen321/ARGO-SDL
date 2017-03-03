@@ -14,9 +14,6 @@ RemoteSystem::~RemoteSystem()
 {
 }
 
-void RemoteSystem::Initialize()
-{
-}
 
 void RemoteSystem::Process(float dt)
 {

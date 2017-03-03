@@ -11,7 +11,6 @@ public:
 			RemoteSystem(float updateRate = 0.f);
 			~RemoteSystem();
 
-	void	Initialize();
 	void	Process(float dt = 0.f) override;
 };
 

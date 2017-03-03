@@ -12,6 +12,9 @@ SystemManager::~SystemManager()
 {
 	delete _creationSystem;
 
+	GetUISystem()->DeleteDisplayText();
+	GetUISystem()->DeleteText();
+
 	SystemMapIterator it = _systems.begin();
 	for (; it != _systems.end(); ++it)
 	{
@@ -30,17 +33,6 @@ void SystemManager::Initialize(SDL_Renderer*& renderer, EntityFactory* entityFac
 {
 	InitializeSystems(renderer, entityFactory, bodyFactory, world, width, height);
 	InitializeInteractionSystems();
-}
-
-void SystemManager::InitializeInteractionSystems()
-{
-	//SETUP WEAPON INTERACTION SYSTEM
-	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
-	weaponSystem->Initialize(&GetCamera());
-	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
-
-	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
-	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
 }
 
 
@@ -100,13 +92,22 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 
 	//SETUP Animation SYSTEM
 	AnimationSystem* animationSystem = new AnimationSystem();
-	animationSystem->Initialize();
 	_systems[SystemType::Animation] = animationSystem;
 
 	//SETUP remote SYSTEM
 	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE);
-	_remoteSystem->Initialize();
 	_systems[SystemType::Remote] = _remoteSystem;
+}
+
+void SystemManager::InitializeInteractionSystems()
+{
+	//SETUP WEAPON INTERACTION SYSTEM
+	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
+	weaponSystem->Initialize(&GetCamera());
+	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
+
+	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
+	_interactionSystems[InteractionSystemType::Flag] = flagSystem;
 }
 
 #pragma endregion
@@ -118,6 +119,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	Entity* flag = nullptr;
 
 	std::vector<Entity*> checkpoints = std::vector<Entity*>();
+	std::vector<Entity*> characters = std::vector<Entity*>();
 
 	while (!_creationSystem->Empty())
 	{
@@ -141,8 +143,15 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
 
+		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::RemotePlayer)
+		{
+			characters.push_back(systemCreatedEntity.second);
+		}
+
 		_creationSystem->EntityToSystemAssigned();
 	}
+
+	characters.push_back(player);
 
 
 	//SETUP FLAG INTERACTION SYSTEM
@@ -150,6 +159,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	//SETUP WAYPOINT AND AI SYSTEM
 	GetWaypointSystem()->Initialize(waypoints);
 	GetAISystem()->Initialize(waypoints, player);
+	GetUISystem()->PostInitialize(characters, checkpoints, flag);
 }
 
 void SystemManager::Process(float dt)

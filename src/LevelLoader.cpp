@@ -120,7 +120,6 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 			}
 			else //fill rest with ai
 			{
-
 				std::vector<float> data = std::vector<float>();
 
 				data.push_back(-1); //id
@@ -130,7 +129,6 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 				data.push_back(h); //height
 
 				systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::AI, data));
-			
 			}
 
 		}
@@ -193,7 +191,7 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 		}
 		waypoints->addNode(nodeData, position);
 	}
-	int test = waypoints->getNodesSize();
+
 	//arc
 	for (int i = 0; i < wayPointSize; i++)
 	{
@@ -211,7 +209,7 @@ void LevelLoader::LoadWaypoints(const Value &waypointLayer, SystemManager& syste
 		}
 	}
 	//flag node
-	waypoints->addNode(make_pair(GraphNode::EntityData::Null, 1), helper::Vector2(0, 0));
+	waypoints->addNode(make_pair(GraphNode::EntityData::Flag, 0), helper::Vector2(0, 0));
 }
 
 void LevelLoader::LoadColliders(const Value &colliderLayer, SystemManager& systemManager, BodyFactory* bodyFactory)

@@ -42,7 +42,7 @@
   <object id="17" name="Checkpoint" type="2" x="4480" y="256" width="384" height="384"/>
   <object id="18" name="Checkpoint" type="1" x="256" y="3200" width="384" height="384"/>
   <object id="20" name="Checkpoint" type="4" x="4480" y="3200" width="384" height="384"/>
-  <object id="21" name="Flag" x="2496.42" y="1407.75" width="128" height="128"/>
+  <object id="21" name="Flag" x="2526.39" y="1599.87" width="64" height="64"/>
   <object id="22" name="PlayerSolo" x="412" y="410" width="64" height="64"/>
   <object id="23" name="PlayerSolo" x="4640" y="406" width="64" height="64"/>
   <object id="24" name="PlayerSolo" x="4640" y="3356" width="64" height="64"/>
