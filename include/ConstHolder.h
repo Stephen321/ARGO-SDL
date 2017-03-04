@@ -12,7 +12,7 @@ const int		WORLD_WIDTH = 5120;
 const int		WORLD_HEIGHT = 3840;
 
 const float		DRAG = 0.95f;
-const float		BULLET_DRAG = 0.99f;
+const float		BULLET_DRAG = 0.999f;
 const float		FLAG_DRAG = 0.99f;
 
 const int		PIXELS_PER_METER = 100;

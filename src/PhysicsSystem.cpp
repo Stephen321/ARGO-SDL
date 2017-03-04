@@ -151,7 +151,7 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 		physics->yVelocity = physics->yVelocity * BULLET_DRAG;
 
 		float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-		if (currentVelocity < MAX_BULLET_VELOCITY * 0.25f)
+		if (currentVelocity < MAX_PLAYER_VELOCITY)
 		{
 			static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
 		}
