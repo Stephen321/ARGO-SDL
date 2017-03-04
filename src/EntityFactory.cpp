@@ -70,6 +70,9 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 	case EntityType::UI:
 		entity = CreateUIEntity(id);
 		break;
+	case EntityType::Radar:
+		entity = CreateRadarEntity(id);
+		break;
 
 	default:
 		break;
@@ -343,4 +346,15 @@ Entity* EntityFactory::CreateUIEntity(int id)
 	ui->AddComponent(new TransformComponent(0, 0, 0, 0));
 
 	return ui;
+}
+Entity* EntityFactory::CreateRadarEntity(int id)
+{
+	Entity* radar = new Entity(EntityType::Radar);
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Radar], id);
+
+	radar->AddComponent(spriteComponent);
+	radar->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+
+	return radar;
 }

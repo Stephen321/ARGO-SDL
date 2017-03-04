@@ -103,7 +103,6 @@ void SystemManager::InitializeInteractionSystems()
 {
 	//SETUP WEAPON INTERACTION SYSTEM
 	WeaponSystem* weaponSystem = new WeaponSystem(_interactionSystemEvents, 0);
-	weaponSystem->Initialize(&GetCamera());
 	_interactionSystems[InteractionSystemType::Weapon] = weaponSystem;
 
 	FlagCheckpointSystem* flagSystem = new FlagCheckpointSystem(_interactionSystemEvents, 0);
@@ -117,6 +116,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	_creationSystem->Process(0);
 
 	Entity* flag = nullptr;
+	Entity* radar = nullptr;
 
 	std::vector<Entity*> checkpoints = std::vector<Entity*>();
 	std::vector<Entity*> characters = std::vector<Entity*>();
@@ -142,7 +142,10 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 		{
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
-
+		else if (systemCreatedEntity.second->GetType() == EntityType::Radar)
+		{
+			radar = systemCreatedEntity.second;
+		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::RemotePlayer)
 		{
 			characters.push_back(systemCreatedEntity.second);
@@ -150,6 +153,8 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 
 		_creationSystem->EntityToSystemAssigned();
 	}
+
+	_radarSystem.Initialize(player, radar, flag, characters, checkpoints);
 
 	characters.push_back(player);
 
@@ -176,6 +181,8 @@ void SystemManager::Process(float dt)
 	ProcessAllSystems(it, dt);
 
 	ProcessAllInteractionSystems(it, dt);
+
+	_radarSystem.Process(dt);
 }
 
 void SystemManager::TryToCreateEntities(float dt)
