@@ -109,24 +109,9 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 				float yDir = ownerTransform->rect.y - otherTransform->rect.y;
 
 				float directionLenght = sqrt(xDir * xDir + yDir * yDir);
-				float sumSpeed = ownerSpeed + characterSpeed;
 
-				if (sumSpeed > flagPhysics->maxVelocity)
-				{
-					sumSpeed = flagPhysics->maxVelocity;
-				}
-				else
-				{
-					float mostVelocity = flagPhysics->maxVelocity * 0.75f;
-
-					if (sumSpeed < mostVelocity)
-					{
-						sumSpeed = mostVelocity;
-					}
-				}
-
-				flagPhysics->xVelocity = (xDir / directionLenght) * sumSpeed;
-				flagPhysics->yVelocity = (yDir / directionLenght) * sumSpeed;
+				flagPhysics->xVelocity = (xDir / directionLenght) * flagPhysics->maxVelocity;
+				flagPhysics->yVelocity = (yDir / directionLenght) * flagPhysics->maxVelocity;
 
 				flagTransform->rect.x += flagPhysics->xVelocity;
 				flagTransform->rect.y += flagPhysics->yVelocity;

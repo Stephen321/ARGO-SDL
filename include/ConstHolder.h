@@ -16,8 +16,6 @@ const float		BULLET_DRAG = 0.999f;
 const float		FLAG_DRAG = 0.99f;
 
 const int		PIXELS_PER_METER = 100;
-
-const int		MAX_FLAG_VELOCITY = 100;
 const int		MAX_PLAYER_VELOCITY = 10;
 const float		PLAYER_ACCEL_RATE = 2.0f;
 
