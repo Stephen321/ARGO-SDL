@@ -192,6 +192,12 @@ void Game::BindInput()
 		if (!effects->staggered)
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->yVelocity > 0)
+			{
+				physics->yVelocity *= 0.95f;
+			}
+
 			physics->yDir = -1;
 		}
 	} , Type::Down);
@@ -203,6 +209,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->xVelocity > 0)
+			{
+				physics->xVelocity *= 0.95f;
+			}
+
 			physics->xDir = -1;
 		}
 	} , Type::Down);
@@ -214,6 +226,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->yVelocity < 0)
+			{
+				physics->yVelocity *= 0.95f;
+			}
+
 			physics->yDir = 1;
 		}
 	} , Type::Down);
@@ -225,6 +243,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->xVelocity < 0)
+			{
+				physics->xVelocity *= 0.95f;
+			}
+
 			physics->xDir = 1;
 		}
 	} , Type::Down);
