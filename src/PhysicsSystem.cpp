@@ -47,8 +47,8 @@ void PhysicsSystem::UpdateFlag(Entity*& e, float dt)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 
-	physics->xVelocity = physics->xVelocity * DRAG;
-	physics->yVelocity = physics->yVelocity * DRAG;
+	physics->xVelocity = physics->xVelocity * FLAG_DRAG;
+	physics->yVelocity = physics->yVelocity * FLAG_DRAG;
 
 	if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 	if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }

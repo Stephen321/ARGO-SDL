@@ -208,7 +208,7 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 	flag->AddComponent(spriteComponent);
 	flag->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	flag->AddComponent(new ColliderComponent());
-	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
+	flag->AddComponent(new PhysicsComponent(0, 0, 0, 0, FLAG_DRAG));
 
 	return flag;
 }

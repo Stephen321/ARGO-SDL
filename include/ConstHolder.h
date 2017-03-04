@@ -13,6 +13,7 @@ const int		WORLD_HEIGHT = 3840;
 
 const float		DRAG = 0.95f;
 const float		BULLET_DRAG = 0.99f;
+const float		FLAG_DRAG = 0.99f;
 
 const int		PIXELS_PER_METER = 100;
 
@@ -23,6 +24,7 @@ const float		PLAYER_ACCEL_RATE = 2.0f;
 const float		CONNECT_RETRY = 1.5f;
 
 const int		MAX_BULLET_VELOCITY = MAX_PLAYER_VELOCITY * 2.0f;
+const int		MAX_FLAG_VELOCITY = MAX_PLAYER_VELOCITY * 2.0f;
 const int		AMMO[] { 8, 5, 15 };
 const float		FIRE_RATE[]{ 1.0f, 2.5f, 0.1f };
 
@@ -40,7 +42,6 @@ const int		AI_FLAG_DETECTION_RADIUS = 700;
 const int		AI_NODE_COLLISION_RADIUS = 300;
 
 const float		STAGGER_MAX_TIMER = 2.0f;
-const float		INVINCIBLE_MAX_TIMER = 5.0f;
 const float		INVISIBLE_MAX_TIMER = 5.0f;
 const float		SPEED_UP_MAX_TIMER = 7.5f;
 const float		POWER_UP_SPAWN_RATE = 5.0f;
