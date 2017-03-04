@@ -193,6 +193,11 @@ void Game::BindInput()
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
 
+			if (physics->yVelocity > 0)
+			{
+				physics->yVelocity *= 0.975f;
+			}
+
 			physics->yDir = -1;
 		}
 	} , Type::Down);
@@ -204,6 +209,11 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->xVelocity > 0)
+			{
+				physics->xVelocity *= 0.975f;
+			}
 
 			physics->xDir = -1;
 		}
@@ -217,6 +227,11 @@ void Game::BindInput()
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
 
+			if (physics->yVelocity < 0)
+			{
+				physics->yVelocity *= 0.975f;
+			}
+
 			physics->yDir = 1;
 		}
 	} , Type::Down);
@@ -229,6 +244,11 @@ void Game::BindInput()
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
 
+			if (physics->xVelocity < 0)
+			{
+				physics->xVelocity *= 0.975f;
+			}
+
 			physics->xDir = 1;
 		}
 	} , Type::Down);
@@ -238,45 +258,29 @@ void Game::BindInput()
 	// Up
 	Command* wUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->yDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->yDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::w, wUp, this);
 
 	Command* aUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->xDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->xDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::a, aUp, this);
 
 	Command* sUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->yDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->yDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::s, sUp, this);
 
 	Command* dUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->xDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->xDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::d, dUp, this);
 
