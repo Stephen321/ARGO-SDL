@@ -157,6 +157,9 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	collider->body->SetUserData(player);
 	collider->body->SetFixedRotation(true);
 
+	transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+	transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
@@ -203,6 +206,9 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 	collider->body->SetUserData(remotePlayer);
 	collider->body->SetFixedRotation(true);
 
+	transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+	transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
+
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
@@ -245,6 +251,9 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 
 	collider->body->SetUserData(ai);
 	collider->body->SetFixedRotation(true);
+
+	transform->rect.x = (int)metersToPixels(collider->body->GetPosition().x);
+	transform->rect.y = (int)metersToPixels(collider->body->GetPosition().y);
 
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 

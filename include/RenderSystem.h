@@ -11,11 +11,16 @@ public:
 						~RenderSystem();
 
 	void				Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera);
+	void				PostInitialize(std::vector<Entity*> thingsForMinimap);
 
 	void				Process(float dt = 0.f) override;
+
+	virtual void		AddEntity(Entity* gameObject) override;
+	virtual void		RemoveEntity(EntityType tag, Entity* gameObject) override;
 
 private:
 	Camera2D::Camera*	_camera;
 	SDL_Renderer*		_renderer;
+	std::vector<Entity*>_minimapThings;
 };
 

@@ -12,8 +12,8 @@ public:
 									System(float updateRate = 0.f);
 									~System();
 
-	void							AddEntity(Entity* gameObject);
-	void							RemoveEntity(EntityType tag, Entity* gameObject);
+	virtual void					AddEntity(Entity* gameObject);
+	virtual void					RemoveEntity(EntityType tag, Entity* gameObject);
 
 	virtual void					Process(float dt = 0.f);
 
