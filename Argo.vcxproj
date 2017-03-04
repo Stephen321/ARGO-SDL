@@ -257,6 +257,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClInclude Include="include\ParticleManager.h" />
     <ClInclude Include="include\ParticleObj.h" />
     <ClInclude Include="include\PowerUpComponent.h" />
+    <ClInclude Include="include\RadarSystem.h" />
     <ClInclude Include="include\RemoteComponent.h" />
     <ClInclude Include="include\RemoteSystem.h" />
     <ClInclude Include="include\Shape.h" />
@@ -326,6 +327,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
     <ClCompile Include="src\ParticleObj.cpp" />
     <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
+    <ClCompile Include="src\RadarSystem.cpp" />
     <ClCompile Include="src\RemoteSystem.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\Scene.cpp" />

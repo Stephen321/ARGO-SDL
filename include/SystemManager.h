@@ -15,26 +15,7 @@
 #include "RemoteSystem.h"
 #include "StatusEffectSystem.h"
 #include "AnimationSystem.h"
-
-#include "InteractionSystemEvents.h"
-#include "SystemTypes.h"
-
-
-#pragma once
-
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "CameraSystem.h"
-#include "CollisionSystem.h"
-#include "GunSystem.h"
-#include "AISystem.h"
-#include "DestructionSystem.h"
-#include "UISystem.h"
-#include "WeaponSystem.h"
-#include "FlagCheckpointSystem.h"
-#include "WaypointSystem.h"
-#include "CreationSystem.h"
-#include "StatusEffectSystem.h"
+#include "RadarSystem.h"
 
 #include "InteractionSystemEvents.h"
 #include "SystemTypes.h"
@@ -101,7 +82,8 @@ private:
 		std::pair<Entity*, Entity*>>>	_interactionSystemEvents;
 	std::vector<
 		std::pair<EntityType,
-		std::vector<float>>>		_creationRequests;
+		std::vector<float>>>			_creationRequests;
 
 	CreationSystem*						_creationSystem;
+	RadarSystem							_radarSystem;
 };

@@ -79,6 +79,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
+	_textureHolder[TextureID::Radar] = LoadTexture("Media/Player/Radar.png");
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullets.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapons.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
@@ -490,13 +491,9 @@ void Game::CreateUI()
 	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
 
 	// Radar
-	std::vector<float> radar = std::vector<float>();
-	radar.push_back(5); //id
-	radar.push_back(SCREEN_WIDTH * 0.5f); //xPosition
-	radar.push_back(SCREEN_HEIGHT * 0.5f); //yPosition
-	radar.push_back(UI_BOX_SIZE); //width
-	radar.push_back(UI_BOX_SIZE); //height
-	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, radar));
+	std::vector<float> data = std::vector<float>();
+	data.push_back(0); //id
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Radar, data));
 }
 
 void Game::UpdateUI()
