@@ -1,13 +1,14 @@
 #pragma once
+#pragma once
 
 #include "Scene.h"
 #include "UISystem.h"
 
-class About : public Scene
+class GameOver : public Scene
 {
 public:
-	About();
-	~About();
+	GameOver();
+	~GameOver();
 
 	void							Initialize(SDL_Renderer* renderer) override;
 
@@ -29,5 +30,5 @@ private:
 
 private:
 	UISystem						_uiSystem;
+	bool							_win;
 };
-
