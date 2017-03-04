@@ -5,6 +5,7 @@
 #include "CheckpointComponent.h"
 #include "PhysicsComponent.h"
 #include "ColliderComponent.h"
+#include "SpriteComponent.h"
 
 #include "Helpers.h"
 
@@ -51,8 +52,18 @@ void FlagCheckpointSystem::Process(float dt)
 			for (int i = 0; i < _checkpoints.size(); i++)
 			{
 				CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Checkpoint));
+				SpriteComponent* checkpointSprite = static_cast<SpriteComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Sprite));
 
-				checkpoint->highlighted = (flag->currentCheckpointID + 1 == i);
+				checkpoint->highlighted = (flag->currentCheckpointID + 1 == checkpoint->id);
+
+				if (checkpoint->highlighted)
+				{
+					checkpointSprite->sourceRect.x = checkpointSprite->sourceRect.w;
+				}
+				else
+				{
+					checkpointSprite->sourceRect.x = 0;
+				}
 			}
 		}
 	}
@@ -129,7 +140,17 @@ void FlagCheckpointSystem::FlagDroppedEvent()
 				collider->setActive = true;
 				collider->body->SetTransform(b2Vec2(pixelsToMeters(actorTransform->rect.x), pixelsToMeters(actorTransform->rect.y)), 0);
 				collider->body->SetLinearVelocity(b2Vec2(flagPhysics->xVelocity, flagPhysics->yVelocity));
-				static_cast<CheckpointComponent*>(_checkpoints.at(flag->currentCheckpointID)->GetComponent(Component::Type::Checkpoint))->highlighted = false;
+				
+				for (int i = 0; i < _checkpoints.size(); i++)
+				{
+					CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Checkpoint));
+					
+					if (checkpoint->highlighted)
+					{
+						checkpoint->highlighted = false;
+						static_cast<SpriteComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Sprite))->sourceRect.x = 0;
+					}
+				}
 			}
 
 			RemoveEntity(_interactionSystemEvents[FLAG_DROPPED].at(i).first, true);
