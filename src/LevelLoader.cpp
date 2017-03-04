@@ -100,7 +100,7 @@ void LevelLoader::LoadEntities(const Value &entitiesLayer, SystemManager& system
 					data.push_back(w); //width
 					data.push_back(h); //height
 
-					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Remote, data));
+					systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::RemotePlayer, data));
 				}
 				playerCount++;
 			}

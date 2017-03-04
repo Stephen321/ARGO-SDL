@@ -32,7 +32,7 @@ const float		PLAYER_HEAD_ON_PLAYER_RESTITUTION = 0.6f;
 
 const int		FLAG_CONNECTION_RADIUS = 400;
 
-const uint16 CHARACTER_MASK = (uint16)EntityType::Remote | (uint16)EntityType::AI | (uint16)EntityType::Player;
+const uint16 CHARACTER_MASK = (uint16)EntityType::RemotePlayer | (uint16)EntityType::AI | (uint16)EntityType::Player;
 const uint16 PLAYER_MASK =  CHARACTER_MASK | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 AI_MASK =		CHARACTER_MASK | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::Obstacle | (uint16)EntityType::PowerUp;
 const uint16 REMOTE_MASK =  CHARACTER_MASK | (uint16)EntityType::Bullet | (uint16)EntityType::Checkpoint | (uint16)EntityType::Flag | (uint16)EntityType::PowerUp;
@@ -69,3 +69,6 @@ const int		UI_NEXT_TEXT_Y = 64;
 const int		UI_BOX_X = 64;
 const int		UI_BOX_Y = 64;
 const int		UI_BOX_SIZE = 64;
+
+const int		OPTIONS_OFFSET = 100;
+

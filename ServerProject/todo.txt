@@ -1,4 +1,5 @@
 docs
+GunSystem not applies random offset using rand.....
 non host collision with ai but doesnt get flag (not colliding on host)
 invisibility power up not sent to remote
 clock sync

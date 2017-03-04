@@ -176,7 +176,7 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 		collider->body->SetTransform(b2Vec2(pixelsToMeters(transform->rect.x), pixelsToMeters(transform->rect.y)), collider->body->GetAngle());
 	}
 
-	if (e->GetType() == EntityType::Remote)
+	if (e->GetType() == EntityType::RemotePlayer)
 	{
 		RemoteComponent* remote = static_cast<RemoteComponent*>(e->GetComponent(Component::Type::Remote));
 		if (remote->disconnected)

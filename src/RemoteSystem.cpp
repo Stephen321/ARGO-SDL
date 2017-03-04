@@ -400,7 +400,7 @@ void RemoteSystem::Process(float dt)
 			ColliderComponent* collider = static_cast<ColliderComponent*>(e->GetComponent(Component::Type::Collider));
 			TransformComponent* transform = static_cast<TransformComponent*>(e->GetComponent(Component::Type::Transform));
 			
-			//if (e->GetType() == EntityType::Remote)
+			//if (e->GetType() == EntityType::RemotePlayer)
 			//{
 			//	std::cout << "remote velocity: " << physics->xVelocity << " , y: " << physics->yVelocity << std::endl;
 			//}

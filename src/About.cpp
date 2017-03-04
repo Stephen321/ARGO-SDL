@@ -1,8 +1,9 @@
 #include "About.h"
 
 #include "ConstHolder.h"
-#include "Helpers.h"
-#include "LTimer.h"
+
+#include "TransformComponent.h"
+#include "SpriteComponent.h"
 
 About::About()
 	: _uiSystem(0)
@@ -18,8 +19,18 @@ About::~About()
 void About::Initialize(SDL_Renderer* renderer)
 {
 	Scene::Initialize(renderer);
+
+	// UI
+	_uiSystem.Initialize(_renderer);
 	
 	Start();
+	LoadContent();
+
+	Entity* ui = new Entity(EntityType::UI);
+	SpriteComponent* spriteComponent = new SpriteComponent((_textureHolder)[TextureID::UI], 0);
+	ui->AddComponent(spriteComponent);
+	ui->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	_uiSystem.AddEntity(ui);
 
 	//Input
 	BindInput();
@@ -97,6 +108,20 @@ void About::OnEvent(Event evt, Type typ)
 
 void About::BindInput()
 {
+	Command* mlIn = new InputCommand([&]()
+	{
+		SDL_Point mousePos = _inputManager->GetMousePos();
+		SDL_Rect mouseRect = { mousePos.x, mousePos.y, 1, 1 };
+
+		// Back
+		if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetBackButton())))
+		{
+			_swapScene = Scene::CurrentScene::MAIN_MENU;
+			std::cout << "Back" << std::endl;
+		}
+	}, Type::Press);
+	_inputManager->AddKey(Event::MOUSE_LEFT, mlIn, this);
+
 	Command* backIn = new InputCommand([&]() { _swapScene = Scene::CurrentScene::MAIN_MENU; }, Type::Press);
 	_inputManager->AddKey(Event::BACKSPACE, backIn, this);
 
@@ -105,13 +130,11 @@ void About::BindInput()
 
 void About::LoadContent()
 {
-
+	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/Credits.png");
+	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
 }
 
 void About::CleanUp()
 {
 	_inputManager->EmptyKeys();
-	_uiSystem.DeleteDisplayText();
-	_uiSystem.DeleteText();
-	_uiSystem.DeleteEntites();
 }

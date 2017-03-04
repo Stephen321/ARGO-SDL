@@ -11,11 +11,9 @@ public:
 		, staggered(false)
 		, speedUp(false)
 		, invisible(false)
-		, invincible(false)
 		, staggeredTimer(0)
 		, speedUpTimer(0)
 		, invisibleTimer(0)
-		, invincibleTimer(0)
 	{
 		
 	}
@@ -28,10 +26,8 @@ public:
 	bool	staggered;
 	bool	speedUp;
 	bool	invisible;
-	bool	invincible;
 
 	float	staggeredTimer;
 	float	speedUpTimer;
 	float	invisibleTimer;
-	float	invincibleTimer;
 };

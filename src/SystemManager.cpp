@@ -143,7 +143,7 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 			checkpoints.push_back(systemCreatedEntity.second);
 		}
 
-		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::Remote)
+		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::RemotePlayer)
 		{
 			characters.push_back(systemCreatedEntity.second);
 		}

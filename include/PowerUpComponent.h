@@ -11,7 +11,6 @@ public:
 		Handgun,
 		Shotgun,
 		SMG,
-		Invicibility,
 		Invisibility,
 		Speed,
 

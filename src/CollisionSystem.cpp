@@ -63,7 +63,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 
 		if (player != nullptr && other != nullptr)
 		{
-			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || (other->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost()))
+			if (other->GetType() == EntityType::AI || other->GetType() == EntityType::Player || (other->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost()))
 			{
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
@@ -161,11 +161,6 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 
 		switch (powerUp->type)
 		{
-		case PowerUpComponent::Type::Invicibility:
-			statusEffects->invincible = true;
-			statusEffects->invincibleTimer = INVINCIBLE_MAX_TIMER;
-			std::cout << player->GetTypeAsString().c_str() << "INVINCIBLE" << std::endl;
-			break;
 		case PowerUpComponent::Type::Invisibility:
 
 			statusEffects->invisible = true;
@@ -195,19 +190,14 @@ void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& 
 {
 	StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-	if (!statusEffects->invincible)
+	if (statusEffects->invisible)
 	{
-		//static_cast<ColliderComponent*>(player->GetComponent(Component::Type::Collider))->body->SetLinearVelocity(b2Vec2(0, 0));
-
-		if (statusEffects->invisible)
-		{
-			statusEffects->invisible = false;
-			statusEffects->invisibleTimer = 0;
-		}
-
-		statusEffects->staggered = true;
-		statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		statusEffects->invisible = false;
+		statusEffects->invisibleTimer = 0;
 	}
+
+	statusEffects->staggered = true;
+	statusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 	AnimationComponent* animation = static_cast<AnimationComponent*>(player->GetComponent(Component::Type::Animation));
 	animation->state = AnimationComponent::State::Staggered;
@@ -263,10 +253,8 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 	if (pFlag->hasFlag)
 	{
-		if (!otherStatusEffects->staggered && !playerStatusEffects->invincible)
-		{
-			playerStatusEffects->staggered = true;
-			playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		playerStatusEffects->staggered = true;
+		playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
 			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
 			{
@@ -276,24 +264,20 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 				NetworkHandler::Instance().Send(&data);
 			}
 			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
-		}
 	}
 	else if (oFlag->hasFlag)
 	{
-		if (!playerStatusEffects->staggered && !otherStatusEffects->invincible)
-		{
-			otherStatusEffects->staggered = true;
-			otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
+		otherStatusEffects->staggered = true;
+		otherStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
-			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
-			{
-				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
-				DroppedFlagData data;
-				data.remoteID = remote->id;
-				NetworkHandler::Instance().Send(&data);
-			}
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
+		if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+		{
+			RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+			DroppedFlagData data;
+			data.remoteID = remote->id;
+			NetworkHandler::Instance().Send(&data);
 		}
+		_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
 	}
 
 	if (playerStatusEffects->invisible)
@@ -369,7 +353,9 @@ void CollisionSystem::EntityBounce(b2Contact * contact, Entity*& e1, Entity*& e2
 	float e1speed = sqrt(e1XVel * e1XVel + e1YVel * e1YVel);
 	float e2speed = sqrt(e2XVel * e2XVel + e2YVel * e2YVel);
 
-	if (e1speed != 0 && e2speed != 0)
+	float maxVelocity = e1Physics->maxVelocity * 0.1f;
+
+	if (e1speed > maxVelocity && e2speed > maxVelocity)
 	{
 		float xVelocityTemp = e1XVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
 		float yVelocityTemp = e1YVel * PLAYER_HEAD_ON_PLAYER_RESTITUTION;
@@ -382,7 +368,7 @@ void CollisionSystem::EntityBounce(b2Contact * contact, Entity*& e1, Entity*& e2
 	}
 	else
 	{
-		if (e1speed != 0)
+		if (e1speed > maxVelocity)
 		{
 			e2XVel = e1XVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 			e2YVel = e1YVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
@@ -390,7 +376,7 @@ void CollisionSystem::EntityBounce(b2Contact * contact, Entity*& e1, Entity*& e2
 			e1XVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 			e1YVel *= (1 - PLAYER_STATIONARY_PLAYER_RESTITUTION);
 		}
-		else if (e2speed != 0)
+		else if (e2speed > maxVelocity)
 		{
 			e1XVel = e2XVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
 			e1YVel = e2YVel * PLAYER_STATIONARY_PLAYER_RESTITUTION;
@@ -404,8 +390,8 @@ void CollisionSystem::EntityBounce(b2Contact * contact, Entity*& e1, Entity*& e2
 	e1Physics->yVelocity = e1YVel;
 	e2Physics->xVelocity = e2XVel;
 	e2Physics->yVelocity = e2YVel;
-	e1Collider->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity, e1Physics->yVelocity));
-	e2Collider->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity, e2Physics->yVelocity));
+	e1Collider->body->SetLinearVelocity(b2Vec2(e1Physics->xVelocity*2.f, e1Physics->yVelocity*2.f));
+	e2Collider->body->SetLinearVelocity(b2Vec2(e2Physics->xVelocity*2.f, e2Physics->yVelocity*2.f));
 }
 
 void CollisionSystem::CharacterObstacleBounce(b2Contact * contact, Entity*& player)
@@ -468,12 +454,12 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			player = b;
 			other = a;
 		}
-		else if (a->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost())
+		else if (a->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost())
 		{
 			player = a;
 			other = b;
 		}
-		else if (b->GetType() == EntityType::Remote && NetworkHandler::Instance().GetHost())
+		else if (b->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost())
 		{
 			player = b;
 			other = a;

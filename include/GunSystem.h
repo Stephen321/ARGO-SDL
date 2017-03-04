@@ -10,6 +10,7 @@ public:
 
 	void							Process(float dt = 0.f) override;
 
+private:
 	void							CreateBulletRequest(Entity*& e, int id);
 
 private:

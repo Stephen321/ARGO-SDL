@@ -70,7 +70,7 @@ void CreationSystem::Process(float dt)
 			_systemCreatedEntities.push_back(SetupPlayerEntity(_creationRequests.at(index)));
 			_entities.push_back(_systemCreatedEntities.back().second);
 			break;
-		case EntityType::Remote:
+		case EntityType::RemotePlayer:
 			_systemCreatedEntities.push_back(SetupRemotePlayerEntity(_creationRequests.at(index)));
 			_entities.push_back(_systemCreatedEntities.back().second);
 			break;
@@ -145,7 +145,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		  b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
 		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)player->GetType()
 		, PLAYER_MASK
@@ -172,7 +172,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 
 std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEntity(const std::pair<EntityType, std::vector<float>>& information)
 {
-	Entity* remotePlayer = _entityFactory->CreateEntity(EntityType::Remote, information.second[0]);
+	Entity* remotePlayer = _entityFactory->CreateEntity(EntityType::RemotePlayer, information.second[0]);
 
 	ColliderComponent* collider = static_cast<ColliderComponent*>(remotePlayer->GetComponent(Component::Type::Collider));
 	TransformComponent* transform = static_cast<TransformComponent*>(remotePlayer->GetComponent(Component::Type::Transform));
@@ -191,7 +191,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
 		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)remotePlayer->GetType()
 		, REMOTE_MASK
@@ -235,7 +235,7 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
 		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)ai->GetType()
 		, AI_MASK
@@ -356,8 +356,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupCheckpointEntit
 	SetupSize(transform, information.second, index);
 
 	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
-	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
-					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+	transform->rect = { (int)(transform->rect.x + transform->origin.x)
+					  , (int)(transform->rect.y + transform->origin.y)
 					  , (int)transform->rect.w
 					  , (int)transform->rect.h };
 
@@ -392,8 +392,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	SetupSize(transform, information.second, index);
 
 	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
-	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
-					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+	transform->rect = { (int)(transform->rect.x + transform->origin.x)
+					  , (int)(transform->rect.y + transform->origin.y)
 					  , (int)transform->rect.w
 					  , (int)transform->rect.h };
 

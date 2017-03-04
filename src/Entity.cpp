@@ -84,7 +84,7 @@ std::string Entity::GetTypeAsString() const
 	case EntityType::AI:
 		s = "AI";
 		break;
-	case EntityType::Remote:
+	case EntityType::RemotePlayer:
 		s = "RemotePlayer";
 		break;
 	case EntityType::Player:
