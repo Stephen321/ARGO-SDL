@@ -1,7 +1,6 @@
 #pragma once
-
+#include <queue>
 #include "Component.h"
-
 
 class RemoteComponent : public Component
 {
@@ -38,6 +37,7 @@ public:
 public:
 	State	startState;
 	State	endState;
+	std::queue<State> states;
 	int		id;
 	float	timeSincePacket;
 	bool	disconnected;

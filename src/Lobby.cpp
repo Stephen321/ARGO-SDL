@@ -15,6 +15,8 @@ Lobby::Lobby()
 	, _readyTimer(READY_COUNTDOWN)
 	, _startReadyTimer(false)
 	, _countdownTextId(-1)
+	, _pingTimer(0.f)
+	, _pinging(true)
 {
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
@@ -55,7 +57,7 @@ int Lobby::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
-	
+	NetworkHandler::Instance().gameTime += dt;
 	//UPDATE HERE	
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
@@ -74,7 +76,16 @@ int Lobby::Update()
 		}
 	}
 
-
+	if (_pinging)
+	{
+		_pingTimer += dt;
+		if (_pingTimer > PING_SEND_RATE)
+		{
+			PingData ping;
+			network.Send(&ping);
+			_pingTimer = 0.f;
+		}
+	}
 	ReceivedData receivedData = network.Receive();
 
 	if (receivedData.Empty() == false)
@@ -90,6 +101,38 @@ int Lobby::Update()
 			network.SetConnected(true);
 			break;
 		}
+		case MessageType::Ping:
+		{
+			PingData data = receivedData.GetData<PingData>();
+			float rtt = network.gameTime - data.ts;
+			float serverTimeDelta = (data.serverTime - network.gameTime) + (rtt * 0.5f);
+			if (_serverDeltas.empty()) //update gametime the first time
+				network.gameTime += serverTimeDelta;
+			_serverDeltas.push_back(serverTimeDelta);
+			if (_serverDeltas.size() > PING_SEND_COUNT)
+			{
+				_serverDeltas.erase(_serverDeltas.begin());
+				_pinging = false;
+				//take median
+				float median;
+				int size = _serverDeltas.size();
+
+				sort(_serverDeltas.begin(), _serverDeltas.end());
+
+				if (size % 2 == 0)
+				{
+					median = (_serverDeltas[size / 2 - 1] + _serverDeltas[size / 2]) / 2;
+				}
+				else
+				{
+					median = _serverDeltas[size / 2];
+				}
+				network.serverTimeDelta = median;
+				network.gameTime += network.serverTimeDelta;
+			}
+			std::cout << "GameTime: " << data.ts << ", serverTime: " << data.serverTime << std::endl;
+			break;
+		}		
 		case MessageType::CheckConnection:
 		{
 			CheckConnectionData data = receivedData.GetData<CheckConnectionData>();
@@ -147,6 +190,7 @@ int Lobby::Update()
 			if (data.allReady)
 			{
 				_startReadyTimer = true;
+				_gameStartTime = data.gameStartTime;
 				std::cout << "Seeded" << std::endl;
 				srand(data.seed);
 			}
@@ -169,9 +213,8 @@ int Lobby::Update()
 		_uiSystem.UpdateDisplayTextColoured("Game starting in....." + std::to_string(_readyTimer), 
 			_uiSystem.GetDisplayTextRectangle().size() - 1, 255, 0, 0, 255); // Update back text - is blank
 		_readyTimer -= dt;
-		if (_readyTimer < 0.f)
-		{//TODO: this has to be in sync
-			std::cout << "Starting game" << std::endl;
+		if (network.gameTime > _gameStartTime)
+		{
 			_startingGame = true;
 		}
 	}

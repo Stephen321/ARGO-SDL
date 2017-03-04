@@ -172,15 +172,18 @@ int main(int argc, char** argv)
 	std::unordered_map<int, Connection> connections; //all connected players
 	Net net(5228);
 	Clock currentTime;
-	Clock lastTime;
+	Clock lastTime = std::chrono::system_clock::now();
 	int playerCount = 0;
 	int sessionCount = 0;
+	float serverTime = 0.f;
 	while (true)
 	{
 		currentTime = std::chrono::system_clock::now();
 		float dt = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count() / 1000000000.f;
 
 		checkTimer += dt;
+		serverTime += dt;
+		//std::cout << serverTime << std::endl;
 		for (std::unordered_map<int, Connection>::iterator it = connections.begin(); it != connections.end();)
 		{
 			it->second.timeSinceResponse += dt;
@@ -342,6 +345,7 @@ int main(int argc, char** argv)
 					{
 						data.allReady = true;
 						data.seed = time(NULL);
+						data.gameStartTime = serverTime + 3.f;
 						std::cout << "Session fully ready, start that game!" << std::endl;
 					}
 					//send to all needs to have time synced up correctly whern AllReady is true
@@ -453,6 +457,13 @@ int main(int argc, char** argv)
 						}
 					}
 				}
+				break;
+			}
+			case MessageType::Ping:
+			{
+				PingData data = receiveData.GetData<PingData>();
+				data.serverTime = serverTime;
+				net.Send(&data, srcAddr);
 				break;
 			}
 			}

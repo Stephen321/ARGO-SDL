@@ -7,6 +7,7 @@
 
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
+#include "NetworkHandler.h"
 
 Options::Options()
 	: _uiSystem(0)
@@ -43,7 +44,7 @@ int Options::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();	//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
-
+	NetworkHandler::Instance().gameTime += dt;
 	// UPDATE HERE	
 	// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();

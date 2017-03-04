@@ -28,6 +28,8 @@ public:
 	bool GetSessionID() const { return _sessionID; };
 	int GetPlayerID() const { return _playerID; };
 	void init(int port);
+	float gameTime;
+	float serverTimeDelta;
 
 private:
 	const int PORT = 5228; 

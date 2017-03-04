@@ -21,12 +21,13 @@ namespace Network
 		Fire, 
 		DroppedFlag,
 		CheckConnection,
-		Invis
+		Invis,
+		Ping
 	};
 
 	struct MessageData 
 	{
-		MessageData() : id(-1), sessionID(-1) {};
+		MessageData() : id(-1), ts(0.f), sessionID(-1) {};
 
 		MessageType GetType() const 
 		{
@@ -35,6 +36,7 @@ namespace Network
 
 		int id;
 		int sessionID;
+		float ts;
 
 	protected:
 		MessageType type;
@@ -92,6 +94,7 @@ namespace Network
 		std::vector<bool> ready;
 		bool allReady;
 		int seed;
+		float gameStartTime;
 	};
 
 	struct PickUpFlagData : MessageData
@@ -120,8 +123,12 @@ namespace Network
 	};
 
 	struct InvisData : MessageData {
-		InvisData() { type = MessageType::Invis;  }
+		InvisData() { type = MessageType::Invis; }
 		int remoteID;
+	};
+	struct PingData : MessageData {
+		PingData() :  serverTime(0.f) { type = MessageType::Ping; }
+		float serverTime;
 	};
 
 
@@ -197,6 +204,9 @@ namespace Network
 			case MessageType::Invis:
 				_data = new InvisData(rhs.GetData<InvisData>());
 				break;
+			case MessageType::Ping:
+				_data = new PingData(rhs.GetData<PingData>());
+				break;
 			}
 		}
 
@@ -204,8 +214,9 @@ namespace Network
 		void SetData(T data)
 		{
 			_data = new T(data);
-			_data->id = _id;
+			_data->id = _id;			
 			_data->sessionID = _sessionID;
+			_data->ts = _timeStamp;
 		}
 
 		~ReceivedData()
@@ -248,6 +259,10 @@ namespace Network
 			_id = id;
 			_sessionID = sessionID;
 		}
+		void SetTimeStamp(float timeStamp)
+		{
+			_timeStamp = timeStamp;
+		}
 
 	private:
 		IPaddress		_srcAddress;
@@ -255,6 +270,7 @@ namespace Network
 
 		int				_id;
 		int				_sessionID;
+		float			_timeStamp;
 	};
 
 	class Net

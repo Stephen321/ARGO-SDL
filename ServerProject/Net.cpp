@@ -38,6 +38,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	//write id and session id which always exists
 	WriteInt(data->id);
 	WriteInt(data->sessionID);
+	WriteFloat(data->ts);
 
 	int v = 0;
 	switch (type)
@@ -105,6 +106,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		}
 		WriteBool(sendData->allReady);
 		WriteInt(sendData->seed);
+		WriteFloat(sendData->gameStartTime);
 		break;
 	}
 	case MessageType::CreatePowerUp:
@@ -137,6 +139,12 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteInt(sendData->remoteID);
 		break;
 	}
+	case MessageType::Ping:
+	{
+		PingData* sendData = (PingData*)data;
+		WriteFloat(sendData->serverTime);
+		break;
+	}
 	}
 
 	_packet->address.host = destAddr.host;
@@ -157,6 +165,8 @@ Network::ReceivedData Network::Net::Receive()
 		int id = ReadInt(byteOffset);
 		int sessionID = ReadInt(byteOffset);
 		receiveData.SetIDs(id, sessionID);
+		float timeStamp = ReadFloat(byteOffset);
+		receiveData.SetTimeStamp(timeStamp);
 
 		switch (type)
 		{
@@ -236,6 +246,7 @@ Network::ReceivedData Network::Net::Receive()
 			}
 			data.allReady = ReadBool(byteOffset);
 			data.seed = ReadInt(byteOffset);
+			data.gameStartTime = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
@@ -277,6 +288,13 @@ Network::ReceivedData Network::Net::Receive()
 		{
 			InvisData data;
 			data.remoteID = ReadInt(byteOffset);
+			receiveData.SetData(data);
+			break;
+		}
+		case MessageType::Ping:
+		{
+			PingData data;
+			data.serverTime = ReadFloat(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

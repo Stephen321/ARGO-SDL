@@ -56,6 +56,12 @@ private:
 
 	bool							_startReadyTimer;
 	bool							_startingGame;
+	std::vector<float>				_serverDeltas;
+	const float						PING_SEND_RATE = 0.2f;
+	const int						PING_SEND_COUNT = 5;
+	float							_pingTimer;
+	bool							_pinging;
+	float							_gameStartTime;
 
 	const int						READY_COUNTDOWN = 3;
 };

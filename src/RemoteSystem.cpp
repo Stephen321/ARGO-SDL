@@ -13,6 +13,8 @@ RemoteSystem::RemoteSystem(float updateRate, std::vector<std::pair<EntityType, s
 	: System(updateRate)
 	, _creationRequests(creationRequests)
 	, _flagHolderID(-1)
+	, _pinging(true)
+	, _pingTimer(0.f)
 {
 }
 
@@ -31,7 +33,30 @@ void RemoteSystem::Process(float dt)
 	if (dt > 5.f)
 		return;
 	System::Process(dt);
+
+
+
 	NetworkHandler& network = NetworkHandler::Instance();
+
+	_pingTimer += dt;
+	if (_pinging)
+	{
+		if (_pingTimer > PING_SEND_RATE)
+		{
+			PingData ping;
+			network.Send(&ping);
+			_pingTimer = 0.f;
+		}
+	}
+	else
+	{
+		if (_pingTimer > SYNC_RATE)
+		{
+			_pinging = true;
+			_pingTimer = 0.f;
+		}
+	}
+
 	if (_canUpdate)
 	{ //packet send rate (REMOTE_PACKET_RATE)
 		_canUpdate = false;
@@ -77,8 +102,8 @@ void RemoteSystem::Process(float dt)
 
 			data.xVel = physics->xVelocity;
 			data.yVel = physics->yVelocity;
-			data.xPos = collider->body->GetPosition().x;
-			data.yPos = collider->body->GetPosition().y;
+			data.xPos = collider->body->GetPosition().x + data.xVel * 0.06f;
+			data.yPos = collider->body->GetPosition().y + data.yVel * 0.06f;
 			data.host = false;
 			data.remoteID = remote->id;
 			network.Send(&data);
@@ -93,6 +118,39 @@ void RemoteSystem::Process(float dt)
 	{
 		switch (receivedData.GetType())
 		{
+			case MessageType::Ping:
+			{
+				PingData data = receivedData.GetData<PingData>();
+				float rtt = network.gameTime - data.ts;
+				float serverTimeDelta = (data.serverTime - network.gameTime) + (rtt * 0.5f);
+				if (_serverDeltas.empty()) //update gametime the first time
+					network.gameTime += serverTimeDelta;
+				_serverDeltas.push_back(serverTimeDelta);
+				if (_serverDeltas.size() > PING_SEND_COUNT)
+				{
+					_serverDeltas.erase(_serverDeltas.begin());
+					_pinging = false;
+					//take median
+					float median;
+					int size = _serverDeltas.size();
+
+					sort(_serverDeltas.begin(), _serverDeltas.end());
+
+					if (size % 2 == 0)
+					{
+						median = (_serverDeltas[size / 2 - 1] + _serverDeltas[size / 2]) / 2;
+					}
+					else
+					{
+						median = _serverDeltas[size / 2];
+					}
+					network.serverTimeDelta = median;
+					network.gameTime += network.serverTimeDelta;
+					_pingTimer = 0.f;
+				}
+				std::cout << "GameTime: " << data.ts << ", serverTime: " << data.serverTime << std::endl;
+				break;
+			}
 			case MessageType::State:
 			{
 				StateData data = receivedData.GetData<StateData>();
@@ -115,10 +173,38 @@ void RemoteSystem::Process(float dt)
 							physics->xVelocity = data.xVel;
 							physics->yVelocity = data.yVel;
 
-							bool converge = false;
+							RemoteComponent::State state;
+							state.ts = data.ts;
+							state.xPos = data.xPos;
+							state.yPos = data.yPos;
+							state.xVel = data.xVel;
+							state.yVel = data.yVel;
+							if (remote->states.empty() == false)
+							{
+								if (state.ts < remote->states.back().ts)
+								{//straggler so ignore
+									std::cout << "straggler!!!!" << std::endl;
+									break;
+								}
+							}
+							remote->states.push(state);
+							if (remote->states.size() > 5)
+								remote->states.pop();
+							if (remote->startState == NULL) //if it is the first packet
+							{
+								std::cout << "got first packet" << std::endl;
+								remote->startState = state;
+								remote->endState = remote->startState;
+							}
+							else //every other packet
+							{
+								remote->startState = remote->endState; //if we havnt reached the endState then we will snap to it...this is if a message arrives early
+
+								remote->endState = state;
+							}
+
 							if (remote->timeSincePacket > _updateRate * 2.f) //recover from packet loss, need to converge back to new position
 							{
-								converge = true;
 								remote->startState.xPos = collider->body->GetPosition().x;
 								remote->startState.yPos = collider->body->GetPosition().y;
 
@@ -129,24 +215,6 @@ void RemoteSystem::Process(float dt)
 
 							//Just got a packet, reset timer for this entity
 							remote->timeSincePacket = 0.f;
-							if (remote->startState == NULL) //if it is the first packet
-							{
-								std::cout << "got first packet" << std::endl;
-								remote->startState.xPos = data.xPos;
-								remote->startState.yPos = data.yPos;
-								remote->startState.xVel = data.xVel;
-								remote->startState.yVel = data.yVel;
-								remote->endState = remote->startState;
-							}
-							else if (converge == false)//every other packet
-							{
-								remote->startState = remote->endState; //if we havnt reached the endState then we will snap to it...this is if a message arrives early
-
-								remote->endState.xPos = data.xPos;
-								remote->endState.yPos = data.yPos;
-								remote->endState.xVel = data.xVel;
-								remote->endState.yVel = data.yVel;
-							}
 
 							collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
 							break; //we've dealt with the data we received so we can break
@@ -416,11 +484,9 @@ void RemoteSystem::Process(float dt)
 
 			float percent = remote->timeSincePacket / _updateRate; //0 to 100%
 
-			if (percent > 1.1f)//start extrapolating as the packet is late
-			{
-				collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
-			}
-			else //lerp between last packet and current packet receivedsss
+			collider->body->SetLinearVelocity(b2Vec2(physics->xVelocity, physics->yVelocity));
+
+			if (percent < 1.f)//lerp between last packet and current packet receivedsss
 			{
 				b2Vec2 newPosition;
 				newPosition.x = lerp(remote->startState.xPos, remote->endState.xPos, percent);

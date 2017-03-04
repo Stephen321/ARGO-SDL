@@ -76,7 +76,7 @@ void SceneManager::Update()
 		_previousScene = _runningScene;
 		_currentScene.back()->Render();
 		_runningScene = _currentScene.back()->Update();
-
+		//std::cout << NetworkHandler::Instance().gameTime << std::endl;
 		// Stop Previous Scene
 		if (_runningScene != _previousScene)
 		{

@@ -35,7 +35,6 @@ int main(int argc, char** argv)
 		sceneManager->Update();
 
 		int frameTicks = capTimer.getTicks();//time since start of frame
-
 		if (frameTicks < SCREEN_TICKS_PER_FRAME)
 		{
 			//Wait remaining time before going to next frame

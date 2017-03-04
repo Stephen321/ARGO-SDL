@@ -23,6 +23,16 @@ private:
 	std::vector<
 		std::pair<EntityType,
 		std::vector<float>>>& _creationRequests;
+
+
+	bool							_startReadyTimer;
+	bool							_startingGame;
+	std::vector<float>				_serverDeltas;
+	const float						PING_SEND_RATE = 0.2f;
+	const int						PING_SEND_COUNT = 5;
+	float							_pingTimer;
+	bool							_pinging;
+	const float						SYNC_RATE = 5.f; //re sync time every 5 seconds
 };
 
 #include "SystemManager.h"

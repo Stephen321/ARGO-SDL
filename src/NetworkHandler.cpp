@@ -19,6 +19,7 @@ NetworkHandler::NetworkHandler()
 		_playerID(-1)
 	, _sessionID(-1)
 	, _host(false)
+	, gameTime(0.f)
 {
 	SDLNet_ResolveHost(&_serverIP, "34.250.8.240", 5228);// "localhost", 5228);
 }
@@ -45,6 +46,7 @@ void NetworkHandler::Send(MessageData * data)
 	{
 		data->sessionID = _sessionID;
 	}
+	data->ts = gameTime;
 	_net.Send(data, _serverIP);
 }
 
