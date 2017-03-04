@@ -65,6 +65,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 		{
 			if (other->GetType() == EntityType::AI && player->GetType() == EntityType::AI)
 			{//learning
+			 /*
 				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
 				if (ai->avoidanceColliderTimer > 0)
 				{
@@ -79,18 +80,20 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 				}
 				ai2->avoidanceColliderTimer = 5.0f;
 
+				*/
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}
 			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player)
 			{
+				/*
 				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
 				if (ai->avoidanceColliderTimer > 0)
 				{
 					ai->avoidanceForce += 0.05f;
 				}
 				ai->avoidanceColliderTimer = 5.0f;
-				
+				*/
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}

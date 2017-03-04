@@ -360,6 +360,7 @@ void Game::DebugBox2D()
 				b2Shape::Type shapeType = b2Fixture->GetType();
 				if (shapeType == b2Shape::e_circle)
 				{
+					
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{

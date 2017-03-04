@@ -46,6 +46,7 @@ void AISystem::Process(float dt)
 				WeaponComponent* w = static_cast<WeaponComponent*>(e->GetComponent(Component::Type::Weapon));
 				FlagComponent* f = static_cast<FlagComponent*>(e->GetComponent(Component::Type::Flag));
 
+				
 				helper::Vector2 velocity = helper::Vector2(0, 0);
 
 				helper::Vector2 AIPosition = helper::Vector2(t->rect.x, t->rect.y);
@@ -263,13 +264,15 @@ void AISystem::Process(float dt)
 					p->xVelocity += (velocity.x + xDrag) * dt;
 					p->yVelocity += (velocity.y + yDrag) * dt;
 				}	
-				/*
+				
+/*
 				TransformComponent* playerpos = static_cast<TransformComponent*>(_players[0]->GetComponent(Component::Type::Transform));
-				helper::Vector2 dir = (helper::Vector2(playerpos->rect.x, playerpos->rect.y) - AIPosition).normalize();
-				p->xVelocity =  dir.y * 0.21f;
-				p->yVelocity =  dir.x * 0.21f;*/
+				helper::Vector2 ab = helper::Vector2(playerpos->rect.x, playerpos->rect.y) - AIPosition;
+				helper::Vector2 dir = ab.normalize();
+				p->xVelocity = dir.x * 0.21f;
+				p->yVelocity = dir.y * 0.21f;*/
 
-				if (w->hasWeapon)
+				if (w->hasWeapon && !statusEffect->staggered)
 				{
 					Entity* entityWithFlag = FindEntityWithFlag(e);
 					if (entityWithFlag != nullptr)
@@ -278,11 +281,12 @@ void AISystem::Process(float dt)
 
 						if (AIPosition.distance(helper::Vector2(otherTransform->rect.x, otherTransform->rect.y)) < AI_FIRING_RADIUS)
 						{
-							float dot = p->yVelocity * otherTransform->rect.x + p->xVelocity * otherTransform->rect.y;
-							float det = p->xVelocity * otherTransform->rect.y - p->yVelocity * otherTransform->rect.y;
-							float angleInRad = atan2(dot, det);
+	
+
+							helper::Vector2 directionToFlag = helper::Vector2(otherTransform->rect.x, otherTransform->rect.y) - AIPosition;
+							float angleInRad = atan2(directionToFlag.y, directionToFlag.x);
 							float angleInDeg = angleInRad * 180.0f / PI;
-							if ((angleInDeg < 115.0f && angleInDeg > 65.0f) || (angleInDeg < -115.0f && angleInDeg > -65.0f))
+							if (t->angle > angleInDeg - 20.0f && t->angle < angleInDeg + 20.0f)
 							{
 								w->fired = true;
 							}
@@ -290,12 +294,13 @@ void AISystem::Process(float dt)
 						}
 					}
 				}
+				/*
 				ai->avoidanceColliderTimer -= dt;
 				if (ai->avoidanceColliderTimer < -5.0f)
 				{
 					ai->avoidanceForce -= 0.05f;
 					ai->avoidanceColliderTimer = 0;
-				}
+				}*/
 			}		
 		}
 	}
