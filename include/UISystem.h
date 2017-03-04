@@ -100,6 +100,8 @@ public:
 	int								topCheckpoint[3];
 	int								nextCheckpoint[3];
 	int								topPlayers[3];
+
+	int								radarAngle;
 };
 
 // process - entities

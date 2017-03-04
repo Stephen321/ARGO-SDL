@@ -11,7 +11,11 @@
 #include <assert.h>
 #include "PhysicsComponent.h"
 #include "WeaponComponent.h"
+#include "ParticleComponent.h"
 #include "StatusEffectComponent.h"
+
+#include "SpriteComponent.h"
+#include "Vector2b.h"
 
 Game::Game() 
 	: _gravity(0.f, 0.f)
@@ -24,6 +28,7 @@ Game::Game()
 
 Game::~Game()
 {
+
 }
 
 void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
@@ -31,7 +36,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Scene::Initialize(renderer);
 
 	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+	_particleSystem.Initialize();
 
 	_world.SetAllowSleeping(false);
 
@@ -47,6 +52,8 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_systemManager.PostInitialize(_player, &_waypoints);
 
+	CreateParticles();
+
 	_swapScene = CurrentScene::GAME;
 	BindInput();
 }
@@ -55,12 +62,14 @@ void Game::LoadContent(const std::vector<int>& ids)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
-	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullet.png");
-	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapon.png");
+	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullets.png");
+	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapons.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
-	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/playerSS.png");
+	_textureHolder[TextureID::Player] = LoadTexture("Media/Player/player.png");
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
+
+	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
@@ -81,6 +90,7 @@ int Game::Update()
 	_inputManager->ProcessInput();
 	// Use to Update constantly at frame rate
 	_inputManager->ConstantInput();
+	_particleSystem.Process(dt);
 
 	_systemManager.Process(dt);
 	UpdateUI();
@@ -99,6 +109,7 @@ void Game::Render()
 	//RENDER HERE
 	_systemManager.Render();
 	DebugBox2D();
+	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
 
 	SDL_RenderPresent(_renderer);
 }
@@ -461,6 +472,15 @@ void Game::CreateUI()
 
 	// Ammo Text
 	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
+
+	// Radar
+	std::vector<float> radar = std::vector<float>();
+	radar.push_back(5); //id
+	radar.push_back(SCREEN_WIDTH * 0.5f); //xPosition
+	radar.push_back(SCREEN_HEIGHT * 0.5f); //yPosition
+	radar.push_back(UI_BOX_SIZE); //width
+	radar.push_back(UI_BOX_SIZE); //height
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, radar));
 }
 
 void Game::UpdateUI()
@@ -471,4 +491,34 @@ void Game::UpdateUI()
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
+}
+
+void Game::CreateParticles()
+{
+	// Particles
+	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
+	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
+	settings._minTTL = 5;
+	settings._maxTTL = 10;
+	settings._startingVelocity = 100;
+	settings._endingVelocity = 1;
+	settings._emissionRate = 0.25;
+	settings._particleSize = 30;
+	settings._texture = _textureHolder[TextureID::Particle];
+	settings._offsetFromParent = Vector2b(-1, -1);
+	settings._positionToParentTo = new Vector2b(-1, -1);
+	settings._startingDirection = new Vector2b(-1, -1);
+	settings._shapeType = Shape::NULL_SHAPE;
+
+	settingsVec.push_back(settings);
+
+	vector<Vector2b *> pos = vector<Vector2b*>();
+	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
+	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
+	pos.push_back(&trans);
+
+	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
+	_player->AddComponent(partcle);
+
+	_particleSystem.AddEntity(_player);
 }

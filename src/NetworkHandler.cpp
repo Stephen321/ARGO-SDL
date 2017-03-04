@@ -19,7 +19,7 @@ NetworkHandler::NetworkHandler()
 	 _playerID(-1)
 	, _sessionID(-1)
 {
-	SDLNet_ResolveHost(&_serverIP, "34.251.127.190", 5228);// "localhost", 5228);
+	SDLNet_ResolveHost(&_serverIP, "34.250.8.240", 5228);// "localhost", 5228);
 }
 
 NetworkHandler::~NetworkHandler()

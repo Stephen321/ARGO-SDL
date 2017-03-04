@@ -5,7 +5,7 @@
 const float		PI = 3.1415926;
 
 const int		SCREEN_FPS = 60;
-const float		CAMERA_SYSTEM_UPDATE = 16.f / 1000.f;
+const float		CAMERA_SYSTEM_UPDATE = 0;// 16.f / 1000.f;
 const float		PHYSICS_SYSTEM_UPDATE = 0.f;// 16.f / 1000.f;
 const float		COLLISION_SYSTEM_UPDATE = 16.f / 1000.f;
 const float		REMOTE_PACKET_RATE = (1000.f / 10.f) / 1000.f; //10 packets a second
@@ -77,4 +77,6 @@ const int		UI_NEXT_TEXT_Y = 64;
 const int		UI_BOX_X = 64;
 const int		UI_BOX_Y = 64;
 const int		UI_BOX_SIZE = 64;
+
+const int		OPTIONS_OFFSET = 100;
 

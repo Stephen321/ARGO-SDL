@@ -27,7 +27,7 @@ private:
 	Entity*								CreateCheckpointEntity(int id);
 	Entity*								CreateFlagEntity(int id);
 	Entity*								CreateTileEntity(int id);
-	Entity*								CreateUIEntity(int id); 
+	Entity*								CreateUIEntity(int id);
 
 private:
 	std::map<TextureID, SDL_Texture*>*	_textureHolder;

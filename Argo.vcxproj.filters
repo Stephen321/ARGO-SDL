@@ -58,6 +58,12 @@
     <Filter Include="Header Files\Other\Helpers">
       <UniqueIdentifier>{6e3874dc-39a3-4434-9f18-98507c58893d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Other\Particles">
+      <UniqueIdentifier>{464b324b-24ed-46df-8711-b45774340fb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Other\Particles">
+      <UniqueIdentifier>{1fbc95dc-c730-44f1-8751-c8ad6134ec60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SpriteComponent.h">
@@ -219,9 +225,6 @@
     <ClInclude Include="include\AnimationComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimationSystem.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="include\RemoteComponent.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
@@ -254,6 +257,30 @@
     </ClInclude>
     <ClInclude Include="include\LTimer.h">
       <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationSystem.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleManager.h">
+      <Filter>Header Files\Other\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleObj.h">
+      <Filter>Header Files\Other\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shape.h">
+      <Filter>Header Files\Other\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Vector2i.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Vector2b.h">
+      <Filter>Header Files\Other\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ParticleSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -380,6 +407,18 @@
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\RemoteSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shape.cpp">
+      <Filter>Source Files\Other\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleManager.cpp">
+      <Filter>Source Files\Other\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleObj.cpp">
+      <Filter>Source Files\Other\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>

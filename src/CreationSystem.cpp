@@ -140,10 +140,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupPlayerEntity(co
 	spriteComponent->sourceRect.w = transform->rect.w;
 	spriteComponent->sourceRect.h = transform->rect.h;*/
 
+	float widthOffset = 50+50;
+
 	collider->body = _bodyFactory->CreateBoxBody(
 		  b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
+		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)player->GetType()
 		, PLAYER_MASK
 		, false);
@@ -184,10 +186,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRemotePlayerEnt
 	spriteComponent->sourceRect.w = transform->rect.w;
 	spriteComponent->sourceRect.h = transform->rect.h;*/
 
+	float widthOffset = 50 + 50;
+
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
+		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)remotePlayer->GetType()
 		, REMOTE_MASK
 		, false);
@@ -225,10 +229,12 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupAIEntity(const 
 	spriteComponent->sourceRect.w = transform->rect.w;
 	spriteComponent->sourceRect.h = transform->rect.h;*/
 
+	float widthOffset = 50 + 50;
+
 	collider->body = _bodyFactory->CreateBoxBody(
 		b2BodyType::b2_dynamicBody
-		, b2Vec2(transform->rect.x - transform->origin.x * transform->scaleX, transform->rect.y - transform->origin.x * transform->scaleY)
-		, b2Vec2(transform->rect.w / 2, transform->rect.h / 2)
+		, b2Vec2(transform->rect.x - transform->origin.x, transform->rect.y - transform->origin.x)
+		, b2Vec2((transform->rect.w - widthOffset) * 0.5f, transform->rect.h * 0.5f)
 		, (uint16)ai->GetType()
 		, AI_MASK
 		, false);
@@ -336,8 +342,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupCheckpointEntit
 	SetupSize(transform, information.second, index);
 
 	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
-	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
-					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+	transform->rect = { (int)(transform->rect.x + transform->origin.x)
+					  , (int)(transform->rect.y + transform->origin.y)
 					  , (int)transform->rect.w
 					  , (int)transform->rect.h };
 
@@ -372,8 +378,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupFlagEntity(cons
 	SetupSize(transform, information.second, index);
 
 	transform->origin = { (int)(transform->rect.w*0.5f), (int)(transform->rect.h*0.5f) };
-	transform->rect = { (int)(transform->rect.x + transform->origin.x * transform->scaleX)
-					  , (int)(transform->rect.y + transform->origin.y * transform->scaleY)
+	transform->rect = { (int)(transform->rect.x + transform->origin.x)
+					  , (int)(transform->rect.y + transform->origin.y)
 					  , (int)transform->rect.w
 					  , (int)transform->rect.h };
 
