@@ -10,6 +10,7 @@
 #include "Lobby.h"
 #include "Options.h"
 #include "About.h"
+#include "GameOver.h"
 
 
 class SceneManager

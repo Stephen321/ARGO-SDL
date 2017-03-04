@@ -121,6 +121,13 @@ void SceneManager::Update()
 				about->Initialize(_renderer);
 				_currentScene.push_back(about);
 			}
+
+			else if (_runningScene == 5)
+			{
+				GameOver* gameOver = new GameOver();
+				gameOver->Initialize(_renderer);
+				_currentScene.push_back(gameOver);
+			}
 		}
 	}
 
