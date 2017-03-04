@@ -109,7 +109,7 @@ void Game::Render()
 
 	//RENDER HERE
 	_systemManager.Render();
-	DebugBox2D();
+	//DebugBox2D();
 	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
 
 	SDL_RenderPresent(_renderer);
