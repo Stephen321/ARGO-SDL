@@ -35,7 +35,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Scene::Initialize(renderer);
 
 	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+	//_particleSystem.Initialize(_renderer);
 
 	_world.SetAllowSleeping(false);
 
@@ -51,25 +51,26 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_systemManager.PostInitialize(_player, &_waypoints);
 
-	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
-	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
-	settings._minTTL = 10000;
-	settings._startingVelocity = 125;
-	settings._endingVelocity = 0;
-	settings._texture = _textureHolder[TextureID::Particle];
-	settings._particleSize = 1300;
-	settings._offsetFromParent = Vector2b(0, 0);
-	settings._emissionRate = 1.025;
-	settings._startingDirection = new Vector2b(0, -1);
-	settingsVec.push_back(settings);
+	//// Particles
+	//vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
+	//ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
+	//settings._minTTL = 10000;
+	//settings._startingVelocity = 125;
+	//settings._endingVelocity = 0;
+	//settings._texture = _textureHolder[TextureID::Particle];
+	//settings._particleSize = 1300;
+	//settings._offsetFromParent = Vector2b(0, 0);
+	//settings._emissionRate = 1.025;
+	//settings._startingDirection = new Vector2b(0, -1);
+	//settingsVec.push_back(settings);
 
-	vector<Vector2b *> pos = vector<Vector2b*>();
-	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
-	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
-	pos.push_back(&trans);
+	//vector<Vector2b *> pos = vector<Vector2b*>();
+	//TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
+	//Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
+	//pos.push_back(&trans);
 
-	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
-	_player->AddComponent(partcle);
+	//ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
+	//_player->AddComponent(partcle);
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -125,6 +126,7 @@ void Game::Render()
 
 	//RENDER HERE
 	_systemManager.Render();
+	//_particleSystem.Process();
 	DebugBox2D();
 
 	SDL_RenderPresent(_renderer);

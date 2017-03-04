@@ -22,6 +22,8 @@
 #include "LevelLoader.h"
 #include "Graph.h"
 
+#include "ParticleSystem.h"
+
 
 using namespace Camera2D;
 
@@ -66,6 +68,7 @@ private:
 	Graph							_waypoints;
 
 	SystemManager					_systemManager;
+	ParticleSystem					_particleSystem;
 
 	Entity*							_player;
 
