@@ -24,7 +24,8 @@ protected:
 		GAME,
 		LOBBY,
 		OPTIONS,
-		ABOUT
+		ABOUT,
+		GAMEOVER
 	};
 
 public:

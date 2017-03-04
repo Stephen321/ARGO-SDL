@@ -22,11 +22,6 @@ WeaponSystem::~WeaponSystem()
 }
 
 
-void WeaponSystem::Initialize(Camera2D::Camera* camera)
-{
-	_camera = camera;
-}
-
 void WeaponSystem::Process(float dt)
 {
 	InteractionSystem::Process(dt);

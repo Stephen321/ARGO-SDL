@@ -234,6 +234,9 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 	if (!static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect))->staggered)
 	{
 		static_cast<ColliderComponent*>(other->GetComponent(Component::Type::Collider))->setActive = false;
+		PhysicsComponent* flagPhysicsComponent = static_cast<PhysicsComponent*>(other->GetComponent(Component::Type::Physics));
+		flagPhysicsComponent->xVelocity = 0;
+		flagPhysicsComponent->yVelocity = 0;
 
 		FlagComponent* flagComponent = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 		flagComponent->hasFlag = true;

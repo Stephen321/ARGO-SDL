@@ -89,6 +89,10 @@ void CreationSystem::Process(float dt)
 			_systemCreatedEntities.push_back(SetupUIEntity(_creationRequests.at(index)));
 			_entities.push_back(_systemCreatedEntities.back().second);
 			break;
+		case EntityType::Radar:
+			_systemCreatedEntities.push_back(SetupRadarEntity(_creationRequests.at(index)));
+			_entities.push_back(_systemCreatedEntities.back().second);
+			break;
 
 		default:
 			std::cout << "Object to create not within the reach of a switch statement - CreationSystem.cpp" << std::endl;
@@ -451,6 +455,22 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupUIEntity(const 
 	systemTypes.push_back(SystemType::UI);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, uiEntity);
+
+	return toBeCreated;
+}
+std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRadarEntity(const std::pair<EntityType, std::vector<float>>& information)
+{
+	Entity* radar = _entityFactory->CreateEntity(EntityType::Radar, information.second[0]);
+
+	TransformComponent* transform = static_cast<TransformComponent*>(radar->GetComponent(Component::Type::Transform));
+	SpriteComponent* spriteComponent = static_cast<SpriteComponent*>(radar->GetComponent(Component::Type::Sprite));
+
+
+	std::vector<SystemType> systemTypes = std::vector<SystemType>();
+
+	systemTypes.push_back(SystemType::Render);
+
+	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, radar);
 
 	return toBeCreated;
 }

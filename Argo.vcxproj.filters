@@ -279,8 +279,14 @@
     <ClInclude Include="include\Vector2b.h">
       <Filter>Header Files\Other\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="include\RadarSystem.h">
+	  <Filter>Header Files\Systems</Filter>
+	</ClInclude>
     <ClInclude Include="include\ParticleSystem.h">
       <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameOver.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -418,8 +424,14 @@
     <ClCompile Include="src\ParticleObj.cpp">
       <Filter>Source Files\Other\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="src\RadarSystem.cpp">
+	  <Filter>Source Files\Systems</Filter>
+	</ClCompile>
     <ClCompile Include="src\ParticleSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOver.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

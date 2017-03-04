@@ -26,6 +26,7 @@ private:
 	Entity*								CreateBulletEntity(int id);
 	Entity*								CreateCheckpointEntity(int id);
 	Entity*								CreateFlagEntity(int id);
+	Entity*								CreateRadarEntity(int id);
 	Entity*								CreateTileEntity(int id);
 	Entity*								CreateUIEntity(int id);
 

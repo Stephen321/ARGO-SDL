@@ -7,14 +7,15 @@ enum class EntityType : uint16
 	Tile = 0x0001,			//0000000000000001
 	Obstacle = 0x0002,		//0000000000000010
 	Checkpoint = 0x0004,	//0000000000000100
-	PowerUp = 0x0008,		//0000000000001000
-	Weapon = 0x00010,
-	AI = 0x00020,
-	Player = 0x0040,
-	Bullet = 0x0080,
-	Flag = 0x0100,
-	Point = 0x0200,
+	Radar = 0x0008,
+	PowerUp = 0x00010,		//0000000000001000
+	Weapon = 0x00020,
+	AI = 0x0040,
+	Player = 0x0080,
+	Bullet = 0x0100,
+	Flag = 0x0200,
+	Point = 0x0400,
 	RemotePlayer = 0x0800,
-	UI = 0x1000,
-	Particle = 0x2000
+	Particle = 0x1000,
+	UI = 0x2000,
 }; //16 max
