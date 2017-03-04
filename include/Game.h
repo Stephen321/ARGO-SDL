@@ -56,6 +56,8 @@ private:
 	void							CreateUI();
 	void							UpdateUI();
 
+	void							CreateParticles();
+
 private:
 	EntityFactory					_entityFactory;
 	BodyFactory						_bodyFactory;

@@ -9,11 +9,11 @@ public:
 	ParticleSystem(float updateRate = 0.f);
 	~ParticleSystem();
 
-	void				Initialize(SDL_Renderer*& renderer);
+	void				Initialize();
 
 	void				Process(float dt = 0.f) override;
 
-private:
-	SDL_Renderer*		_renderer;
+	void				Render(SDL_Renderer*& renderer, Camera2D::Camera* camera);
+
 };
 

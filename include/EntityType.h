@@ -15,5 +15,6 @@ enum class EntityType : uint16
 	Flag = 0x0100,
 	Point = 0x0200,
 	RemotePlayer = 0x0800,
-	UI = 0x1000
+	UI = 0x1000,
+	Particle = 0x2000
 }; //16 max
