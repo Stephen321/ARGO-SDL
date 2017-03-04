@@ -3,6 +3,7 @@
 #include "ParticleManager.h"
 
 
+
 ParticleObj::ParticleObj(ParticleObjSettings pSettings, ParticleManager & pParticleSys)
 	:
 	_parentSys(pParticleSys),
@@ -61,14 +62,14 @@ bool ParticleObj::readyToRespawn() const
 	return (_timeAlive > _timeToLive);
 }
 
-void ParticleObj::render(SDL_Renderer * pRenderer)
+void ParticleObj::render(SDL_Renderer * pRenderer, Camera2D::Camera* camera)
 {
 	if (_shape == nullptr)
 	{
 		_rect.x = _position.x;
 		_rect.y = _position.y;
 		SDL_SetTextureAlphaMod(_texture, 255 - ((_timeAlive / _timeToLive) * 255));
-		SDL_RenderCopyEx(pRenderer, _texture, NULL, &_rect, _angle, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(pRenderer, _texture, NULL, &camera->worldToScreen(_rect), _angle, NULL, SDL_FLIP_NONE);
 	}
 	else
 	{

@@ -14,6 +14,7 @@
 #include "ParticleComponent.h"
 #include "StatusEffectComponent.h"
 
+#include "SpriteComponent.h"
 #include "Vector2b.h"
 
 Game::Game() 
@@ -35,7 +36,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Scene::Initialize(renderer);
 
 	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+	_particleSystem.Initialize();
 
 	_world.SetAllowSleeping(false);
 
@@ -51,25 +52,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_systemManager.PostInitialize(_player, &_waypoints);
 
-	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
-	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
-	settings._minTTL = 10000;
-	settings._startingVelocity = 125;
-	settings._endingVelocity = 0;
-	settings._texture = _textureHolder[TextureID::Particle];
-	settings._particleSize = 1300;
-	settings._offsetFromParent = Vector2b(0, 0);
-	settings._emissionRate = 1.025;
-	settings._startingDirection = new Vector2b(0, -1);
-	settingsVec.push_back(settings);
-
-	vector<Vector2b *> pos = vector<Vector2b*>();
-	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
-	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
-	pos.push_back(&trans);
-
-	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
-	_player->AddComponent(partcle);
+	CreateParticles();
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -86,8 +69,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
-
-	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/PowerUps.png");
+	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
@@ -108,6 +90,7 @@ int Game::Update()
 	_inputManager->ProcessInput();
 	// Use to Update constantly at frame rate
 	_inputManager->ConstantInput();
+	_particleSystem.Process(dt);
 
 	_systemManager.Process(dt);
 	UpdateUI();
@@ -126,6 +109,7 @@ void Game::Render()
 	//RENDER HERE
 	_systemManager.Render();
 	DebugBox2D();
+	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
 
 	SDL_RenderPresent(_renderer);
 }
@@ -507,4 +491,34 @@ void Game::UpdateUI()
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
+}
+
+void Game::CreateParticles()
+{
+	// Particles
+	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
+	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
+	settings._minTTL = 5;
+	settings._maxTTL = 10;
+	settings._startingVelocity = 100;
+	settings._endingVelocity = 1;
+	settings._emissionRate = 0.25;
+	settings._particleSize = 30;
+	settings._texture = _textureHolder[TextureID::Particle];
+	settings._offsetFromParent = Vector2b(-1, -1);
+	settings._positionToParentTo = new Vector2b(-1, -1);
+	settings._startingDirection = new Vector2b(-1, -1);
+	settings._shapeType = Shape::NULL_SHAPE;
+
+	settingsVec.push_back(settings);
+
+	vector<Vector2b *> pos = vector<Vector2b*>();
+	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
+	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
+	pos.push_back(&trans);
+
+	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
+	_player->AddComponent(partcle);
+
+	_particleSystem.AddEntity(_player);
 }

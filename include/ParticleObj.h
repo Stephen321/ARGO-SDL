@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "Vector2b.h"
+#include "Camera2D.h"
 
 class Shape;
 class ParticleManager;
@@ -83,7 +84,7 @@ public:
 	/// This will render the ParticleObj to the screen
 	/// </summary>
 	/// <param name="pRenderer">The renderer to draw to</param>
-	void render(SDL_Renderer* pRenderer);
+	void render(SDL_Renderer* pRenderer, Camera2D::Camera* camera);
 
 private:
 

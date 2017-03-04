@@ -2,6 +2,7 @@
 #include <vector>
 #include "ParticleObj.h"
 #include "Shape.h"
+#include "Camera2D.h"
 
 /// <summary>
 /// The particle manager is the only class the user should have to interact with. It contains all the particles in the system and is in charge of their creation, updates and rendering
@@ -198,12 +199,12 @@ public:
 	/// The update will check if it should remove old ParticleObj's and create new ones. It will move itself and update all the ParticleObj's it contains.
 	/// </summary>
 	/// <param name="pDT">The delta time in ms</param>
-	void update(float pDT);
+	void update(float pDT, Vector2b parentPos);
 
 	/// <summary>
 	/// This will render all the ParticleObj's to the screen
 	/// </summary>
-	void render(SDL_Renderer * pRenderer = nullptr);
+	void render(SDL_Renderer * pRenderer, Camera2D::Camera* camera);
 
 	/// <summary>
 	/// This will switch the particle system on or off.
