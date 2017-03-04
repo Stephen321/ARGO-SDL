@@ -49,8 +49,8 @@ void PhysicsSystem::UpdateFlag(Entity*& e, float dt)
 {
 	PhysicsComponent* physics = static_cast<PhysicsComponent*>(e->GetComponent(Component::Type::Physics));
 
-	physics->xVelocity = physics->xVelocity * DRAG;
-	physics->yVelocity = physics->yVelocity * DRAG;
+	physics->xVelocity = physics->xVelocity * FLAG_DRAG;
+	physics->yVelocity = physics->yVelocity * FLAG_DRAG;
 
 	if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 	if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
@@ -115,9 +115,6 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 
 		if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 		if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
-		physics->xDir = 0;
-		physics->yDir = 0;
 	}
 	else if (e->GetType() == EntityType::AI)
 	{
@@ -156,7 +153,7 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 		physics->yVelocity = physics->yVelocity * BULLET_DRAG;
 
 		float currentVelocity = sqrt(physics->xVelocity * physics->xVelocity + physics->yVelocity * physics->yVelocity);
-		if (currentVelocity < MAX_BULLET_VELOCITY * 0.25f)
+		if (currentVelocity < MAX_PLAYER_VELOCITY)
 		{
 			static_cast<DestructionComponent*>(e->GetComponent(Component::Type::Destroy))->destroy = true;
 		}

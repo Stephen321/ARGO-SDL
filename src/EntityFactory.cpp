@@ -71,6 +71,9 @@ Entity* EntityFactory::CreateEntity(EntityType t, int id)
 	case EntityType::UI:
 		entity = CreateUIEntity(id);
 		break;
+	case EntityType::Radar:
+		entity = CreateRadarEntity(id);
+		break;
 
 	default:
 		break;
@@ -195,6 +198,7 @@ Entity* EntityFactory::CreateCheckpointEntity(int id)
 	Entity* checkpoint = new Entity(EntityType::Checkpoint);
 
 	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Checkpoint], id);
+	spriteComponent->sourceRect.w *= 0.5f;
 
 	checkpoint->AddComponent(spriteComponent);
 	checkpoint->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
@@ -216,8 +220,7 @@ Entity* EntityFactory::CreateFlagEntity(int id)
 	{
 		flag->AddComponent(new RemoteComponent(id));
 	}
-	flag->AddComponent(new PhysicsComponent(0, 0, PLAYER_ACCEL_RATE, PLAYER_ACCEL_RATE, MAX_PLAYER_VELOCITY));
-
+	flag->AddComponent(new PhysicsComponent(0, 0, 0, 0, MAX_FLAG_VELOCITY));
 	return flag;
 }
 Entity* EntityFactory::CreateTileEntity(int id)
@@ -355,4 +358,15 @@ Entity* EntityFactory::CreateUIEntity(int id)
 	ui->AddComponent(new TransformComponent(0, 0, 0, 0));
 
 	return ui;
+}
+Entity* EntityFactory::CreateRadarEntity(int id)
+{
+	Entity* radar = new Entity(EntityType::Radar);
+
+	SpriteComponent* spriteComponent = new SpriteComponent((*_textureHolder)[TextureID::Radar], id);
+
+	radar->AddComponent(spriteComponent);
+	radar->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+
+	return radar;
 }

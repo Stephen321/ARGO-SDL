@@ -1,29 +1,28 @@
-#include "About.h"
+#include "GameOver.h"
 
 #include "ConstHolder.h"
 
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
-#include "NetworkHandler.h"
 
-About::About()
+GameOver::GameOver()
 	: _uiSystem(0)
 {
 	_running = false;
 	_textureHolder = std::map<TextureID, SDL_Texture*>();
 }
 
-About::~About()
+GameOver::~GameOver()
 {
 }
 
-void About::Initialize(SDL_Renderer* renderer)
+void GameOver::Initialize(SDL_Renderer* renderer)
 {
 	Scene::Initialize(renderer);
 
 	// UI
 	_uiSystem.Initialize(_renderer);
-	
+
 	Start();
 	LoadContent();
 
@@ -37,14 +36,13 @@ void About::Initialize(SDL_Renderer* renderer)
 	BindInput();
 }
 
-int About::Update()
+int GameOver::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();		//millis since game started
 	float dt = (float)(currentTime - _lastTime) / 1000.0f;	//time since last update
-	NetworkHandler::Instance().gameTime += dt;
 
-	// UPDATE HERE //
-	// Use yo Update using Poll Event (Menus, single presses)
+															// UPDATE HERE //
+															// Use yo Update using Poll Event (Menus, single presses)
 	_inputManager->ProcessInput();
 
 	//save the curent time for next frame
@@ -53,7 +51,7 @@ int About::Update()
 	return (int)_swapScene;
 }
 
-void About::Render()
+void GameOver::Render()
 {
 	SDL_RenderClear(_renderer);
 
@@ -63,25 +61,25 @@ void About::Render()
 	SDL_RenderPresent(_renderer);
 }
 
-bool About::IsRunning()
+bool GameOver::IsRunning()
 {
-	if (_swapScene != CurrentScene::ABOUT) { _swapScene = CurrentScene::ABOUT; }
+	if (_swapScene != CurrentScene::GAMEOVER) { _swapScene = CurrentScene::GAMEOVER; }
 	return _running;
 }
 
-void About::Start()
+void GameOver::Start()
 {
 	_running = true;
-	_swapScene = CurrentScene::ABOUT;
+	_swapScene = CurrentScene::GAMEOVER;
 }
 
-void About::Stop()
+void GameOver::Stop()
 {
 	_running = false;
 	CleanUp();
 }
 
-void About::OnEvent(Event evt, Type typ)
+void GameOver::OnEvent(Event evt, Type typ)
 {
 	if (_running)
 	{
@@ -108,7 +106,7 @@ void About::OnEvent(Event evt, Type typ)
 	}
 }
 
-void About::BindInput()
+void GameOver::BindInput()
 {
 	Command* mlIn = new InputCommand([&]()
 	{
@@ -130,13 +128,19 @@ void About::BindInput()
 	_inputManager->AddListener(Event::ESCAPE, this);
 }
 
-void About::LoadContent()
+void GameOver::LoadContent()
 {
-	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/Credits.png");
+	_textureHolder[TextureID::UI] = LoadTexture("Media/Menus/Blank.png");
 	_uiSystem.CreateBackButton("Back", SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.85f);
+
+	if(_win)
+		_uiSystem.CreateDisplayText("You Win!", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
+	else
+		_uiSystem.CreateDisplayText("You Lost...", SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
+
 }
 
-void About::CleanUp()
+void GameOver::CleanUp()
 {
 	_inputManager->EmptyKeys();
 }

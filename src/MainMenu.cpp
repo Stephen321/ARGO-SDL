@@ -32,7 +32,7 @@ void MainMenu::Initialize(SDL_Renderer* renderer)
 	Entity* ui = new Entity(EntityType::UI);
 	SpriteComponent* spriteComponent = new SpriteComponent((_textureHolder)[TextureID::UI], 0);
 	ui->AddComponent(spriteComponent);
-	ui->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	ui->AddComponent(new TransformComponent(spriteComponent->sourceRect.w*0.5f, spriteComponent->sourceRect.h*0.5f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
 	_uiSystem.AddEntity(ui);
 	
 	//Input

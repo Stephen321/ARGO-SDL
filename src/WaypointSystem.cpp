@@ -121,8 +121,8 @@ void WaypointSystem::PowerUpDestructionEvent()
 			_interactionSystemEvents[POWER_UP_DESTRUCTION].erase(_interactionSystemEvents[POWER_UP_DESTRUCTION].begin() + i);
 			_powerUpCount--;
 			i--;
-		}
 	}
+		}
 }
 
 void WaypointSystem::CreatePowerUp(float dt)

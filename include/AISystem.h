@@ -27,21 +27,24 @@ private:
 	vector<GraphNode*> _checkpointNode;
 	vector<Entity*> _players;
 
-	void Seek(AIComponent* ai, FlagComponent* f, TransformComponent* t);
+	void SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t, float distanceToDest);
 
 	void Entry(AIComponent* ai, TransformComponent* t);
 
 	void SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t);
 	
+	GraphNode* FindClosestPowerUp(helper::Vector2& velocity, AIComponent* ai, TransformComponent* t);
 
-	void AStarUpdate(AIComponent* ai, TransformComponent* t, float dt);
+	void AStarUpdate(float dt, AIComponent* ai,  helper::Vector2& AIPosition);
 	void AStar(AIComponent* ai);
-	GraphNode* DetermineClosestNode(TransformComponent* t);
+	GraphNode* FindClosestNode(AIComponent* ai, TransformComponent* t);
 
-	void tranverseNode(AIComponent* ai, TransformComponent* t);
-	void Prediction(Entity* currentEntity, AIComponent* ai, TransformComponent* t);
+	void TranverseNode(AIComponent* ai, TransformComponent* t);
+	void Prediction(Entity* entityWithFlag, AIComponent* ai, TransformComponent* t);
 
-	void AISystem::Avoidance(Entity* self, helper::Vector2& velocity, const helper::Vector2& AIPosition, float force);
+	void Avoidance(Entity* self, helper::Vector2& velocity, const helper::Vector2& AIPosition, float force);
 	helper::Vector2 CalculateAvoidanceForce(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force);
+
+	Entity* FindEntityWithFlag(Entity* self);
 };
 

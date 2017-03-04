@@ -60,7 +60,7 @@ ParticleManager::ParticleManager(ParticleSettings pSettings, SDL_Renderer * pRen
 }
 
 
-void ParticleManager::update(float pDT)
+void ParticleManager::update(float pDT, Vector2b parentPos)
 {
 	if (_timeToTurnOn != -1)
 	{
@@ -74,6 +74,7 @@ void ParticleManager::update(float pDT)
 		}
 	}
 
+	_positionToParentTo = &parentPos;
 	Vector2b diff = _position - (*_positionToParentTo + _offset);
 
 	if (diff.Length() > 1)
@@ -254,14 +255,14 @@ SDL_Color ParticleManager::GetColour(float pAliveTime)
 }
 
 
-void ParticleManager::render(SDL_Renderer * pRenderer)
+void ParticleManager::render(SDL_Renderer * pRenderer, Camera2D::Camera* camera)
 {
 	if (_renderer == nullptr)
 		_renderer = pRenderer;
 
 	for (int i = 0; i < _particleList.size(); i++)
 	{
-		_particleList[i]->render(_renderer);
+		_particleList[i]->render(pRenderer, camera);
 	}
 }
 

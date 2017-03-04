@@ -72,8 +72,8 @@ void GunSystem::CreateBulletRequest(Entity*& e, int id)
 
 	GunComponent* gun = static_cast<GunComponent*>(e->GetComponent(Component::Type::Gun));
 
-	float width = gunTransform->rect.w * 0.5f;
-	float height = gunTransform->rect.h * 0.5f;
+	float width = gunTransform->rect.w * 0.55f;
+	float height = gunTransform->rect.h * 0.55f;
 	float angleOffset = 7.5f;
 
 	float barrelLenght = sqrt(width * width + height * height);

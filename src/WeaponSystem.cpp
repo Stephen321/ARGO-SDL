@@ -4,7 +4,6 @@
 #include "GunComponent.h"
 #include "DestructionComponent.h"
 #include "WeaponComponent.h"
-
 #include "ConstHolder.h"
 
 
@@ -22,11 +21,6 @@ WeaponSystem::~WeaponSystem()
 {
 }
 
-
-void WeaponSystem::Initialize(Camera2D::Camera* camera)
-{
-	_camera = camera;
-}
 
 void WeaponSystem::Process(float dt)
 {
@@ -60,6 +54,7 @@ void WeaponSystem::Process(float dt)
 
 				weapon->fired = false;
 			}
+
 		}
 	}
 }

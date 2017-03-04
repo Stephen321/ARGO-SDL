@@ -19,7 +19,8 @@ public:
 	{
 		Null,
 		Checkpoint,
-		PowerUp
+		PowerUp,
+		Flag
 	};
 
 	GraphNode();

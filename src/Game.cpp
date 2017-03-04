@@ -14,6 +14,7 @@
 #include "ParticleComponent.h"
 #include "StatusEffectComponent.h"
 
+#include "SpriteComponent.h"
 #include "Vector2b.h"
 
 Game::Game() 
@@ -35,7 +36,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	Scene::Initialize(renderer);
 
 	_systemManager.Initialize(_renderer, &_entityFactory, &_bodyFactory, &_world, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+	_particleSystem.Initialize();
 
 	_world.SetAllowSleeping(false);
 
@@ -51,25 +52,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 
 	_systemManager.PostInitialize(_player, &_waypoints);
 
-	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
-	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
-	settings._minTTL = 10000;
-	settings._startingVelocity = 125;
-	settings._endingVelocity = 0;
-	settings._texture = _textureHolder[TextureID::Particle];
-	settings._particleSize = 1300;
-	settings._offsetFromParent = Vector2b(0, 0);
-	settings._emissionRate = 1.025;
-	settings._startingDirection = new Vector2b(0, -1);
-	settingsVec.push_back(settings);
-
-	vector<Vector2b *> pos = vector<Vector2b*>();
-	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
-	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
-	pos.push_back(&trans);
-
-	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
-	_player->AddComponent(partcle);
+	CreateParticles();
 
 	_swapScene = CurrentScene::GAME;
 	BindInput();
@@ -79,6 +62,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
+	_textureHolder[TextureID::Radar] = LoadTexture("Media/Player/Radar.png");
 	_textureHolder[TextureID::Bullet] = LoadTexture("Media/Player/Bullets.png");
 	_textureHolder[TextureID::Weapon] = LoadTexture("Media/Player/Weapons.png");
 	_textureHolder[TextureID::Flag] = LoadTexture("Media/Player/Flag.png");
@@ -86,8 +70,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::Checkpoint] = LoadTexture("Media/Textures/Checkpoint.png");
 	_textureHolder[TextureID::PowerUp] = LoadTexture("Media/Textures/PowerUps.png");
 
-
-	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/PowerUps.png");
+	_textureHolder[TextureID::Particle] = LoadTexture("Media/Textures/Checkpoint.png");
 
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
@@ -108,6 +91,7 @@ int Game::Update()
 	_inputManager->ProcessInput();
 	// Use to Update constantly at frame rate
 	_inputManager->ConstantInput();
+	_particleSystem.Process(dt);
 
 	_systemManager.Process(dt);
 	UpdateUI();
@@ -125,7 +109,8 @@ void Game::Render()
 
 	//RENDER HERE
 	_systemManager.Render();
-	DebugBox2D();
+	//DebugBox2D();
+	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
 
 	SDL_RenderPresent(_renderer);
 }
@@ -207,6 +192,12 @@ void Game::BindInput()
 		if (!effects->staggered)
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->yVelocity > 0)
+			{
+				physics->yVelocity *= 0.975f;
+			}
+
 			physics->yDir = -1;
 		}
 	} , Type::Down);
@@ -218,6 +209,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->xVelocity > 0)
+			{
+				physics->xVelocity *= 0.975f;
+			}
+
 			physics->xDir = -1;
 		}
 	} , Type::Down);
@@ -229,6 +226,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->yVelocity < 0)
+			{
+				physics->yVelocity *= 0.975f;
+			}
+
 			physics->yDir = 1;
 		}
 	} , Type::Down);
@@ -240,6 +243,12 @@ void Game::BindInput()
 		if (!effects->staggered) 
 		{
 			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+
+			if (physics->xVelocity < 0)
+			{
+				physics->xVelocity *= 0.975f;
+			}
+
 			physics->xDir = 1;
 		}
 	} , Type::Down);
@@ -249,45 +258,29 @@ void Game::BindInput()
 	// Up
 	Command* wUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->yDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->yDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::w, wUp, this);
 
 	Command* aUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->xDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->xDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::a, aUp, this);
 
 	Command* sUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->yDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->yDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::s, sUp, this);
 
 	Command* dUp = new InputCommand([&]()
 	{
-		StatusEffectComponent* effects = static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect));
-		if (!effects->staggered)
-		{
-			PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
-			physics->xDir = 0;
-		}
+		PhysicsComponent* physics = static_cast<PhysicsComponent*>(_player->GetComponent(Component::Type::Physics));
+		physics->xDir = 0;
 	}, Type::Release);
 	_inputManager->AddKey(Event::d, dUp, this);
 
@@ -384,6 +377,7 @@ void Game::DebugBox2D()
 				b2Shape::Type shapeType = b2Fixture->GetType();
 				if (shapeType == b2Shape::e_circle)
 				{
+					
 				}
 				else if (shapeType == b2Shape::e_polygon)
 				{
@@ -498,13 +492,9 @@ void Game::CreateUI()
 	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
 
 	// Radar
-	std::vector<float> radar = std::vector<float>();
-	radar.push_back(5); //id
-	radar.push_back(SCREEN_WIDTH * 0.5f); //xPosition
-	radar.push_back(SCREEN_HEIGHT * 0.5f); //yPosition
-	radar.push_back(UI_BOX_SIZE); //width
-	radar.push_back(UI_BOX_SIZE); //height
-	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::UI, radar));
+	std::vector<float> data = std::vector<float>();
+	data.push_back(0); //id
+	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Radar, data));
 }
 
 void Game::UpdateUI()
@@ -515,4 +505,34 @@ void Game::UpdateUI()
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
+}
+
+void Game::CreateParticles()
+{
+	// Particles
+	vector<ParticleManager::ParticleSettings> settingsVec = vector<ParticleManager::ParticleSettings>();
+	ParticleManager::ParticleSettings settings = ParticleManager::ParticleSettings();
+	settings._minTTL = 5;
+	settings._maxTTL = 10;
+	settings._startingVelocity = 100;
+	settings._endingVelocity = 1;
+	settings._emissionRate = 0.25;
+	settings._particleSize = 30;
+	settings._texture = _textureHolder[TextureID::Particle];
+	settings._offsetFromParent = Vector2b(-1, -1);
+	settings._positionToParentTo = new Vector2b(-1, -1);
+	settings._startingDirection = new Vector2b(-1, -1);
+	settings._shapeType = Shape::NULL_SHAPE;
+
+	settingsVec.push_back(settings);
+
+	vector<Vector2b *> pos = vector<Vector2b*>();
+	TransformComponent* transform = static_cast<TransformComponent*>(_player->GetComponent(Component::Type::Transform));
+	Vector2b trans = Vector2b(transform->origin.x, transform->origin.y);
+	pos.push_back(&trans);
+
+	ParticleComponent* partcle = new ParticleComponent(pos, settingsVec, _renderer);
+	_player->AddComponent(partcle);
+
+	_particleSystem.AddEntity(_player);
 }

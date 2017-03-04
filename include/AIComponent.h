@@ -6,6 +6,7 @@
 enum class AIState
 {
 	Entry,
+	Chase,
 	SeekFlag,
 	Camp,
 	SeekCheckpoint,
@@ -18,11 +19,12 @@ public:
 	AIComponent()
 		: Component::Component(Component::Type::AI),
 		path(vector<GraphNode*>()),
-		pathFinderUpdateRate(2.0f),
 		pathfinderUpdateTimer(0),
 		nextNode(nullptr),
-		flagDetectionRange(false),
-		state(AIState::Entry)
+		state(AIState::Entry),
+		lastEntityWithFlag(nullptr),
+		avoidanceColliderTimer(0),
+		avoidanceForce(0)
 	{
 	}
 
@@ -32,13 +34,13 @@ public:
 
 public:
 	vector<GraphNode*> path;
-	float pathFinderUpdateRate;
 	float pathfinderUpdateTimer;
+	float avoidanceColliderTimer;
+	float avoidanceForce;
 	GraphNode* destNode;
 	GraphNode* nextNode;
 
-	bool flagDetectionRange;
-
 	AIState state;
 
+	Entity* lastEntityWithFlag;
 };
