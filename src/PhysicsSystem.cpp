@@ -113,9 +113,6 @@ void PhysicsSystem::UpdateOther(Entity*& e, float dt)
 
 		if (physics->xDir == 0 && std::abs(physics->xVelocity) <= 0.01f) { physics->xVelocity = 0.f; }
 		if (physics->yDir == 0 && std::abs(physics->yVelocity) <= 0.01f) { physics->yVelocity = 0.f; }
-
-		physics->xDir = 0;
-		physics->yDir = 0;
 	}
 	else if (e->GetType() == EntityType::AI)
 	{
