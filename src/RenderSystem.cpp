@@ -19,11 +19,6 @@ void RenderSystem::Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera)
 	_camera = camera;
 }
 
-void RenderSystem::PostInitialize(std::vector<Entity*> thingsForMinimap)
-{
-	_minimapThings = thingsForMinimap;
-}
-
 void RenderSystem::Process(float dt)
 {
 	System::Process(dt);
@@ -117,7 +112,8 @@ void RenderSystem::AddEntity(Entity* e)
 		e->GetType() == EntityType::AI ||
 		e->GetType() == EntityType::Player ||
 		e->GetType() == EntityType::Flag ||
-		e->GetType() == EntityType::RemotePlayer)
+		e->GetType() == EntityType::RemotePlayer ||
+		e->GetType() == EntityType::Tile)
 	{
 		_minimapThings.push_back(e);
 	}
@@ -131,7 +127,8 @@ void RenderSystem::RemoveEntity(EntityType tag, Entity* e)
 		tag == EntityType::AI ||
 		tag == EntityType::Player ||
 		tag == EntityType::Flag ||
-		tag == EntityType::RemotePlayer)
+		tag == EntityType::RemotePlayer ||
+		tag == EntityType::Tile)
 	{
 		for (int i = _minimapThings.size() - 1; i > -1; i--)
 		{

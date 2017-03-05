@@ -120,7 +120,6 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 
 	std::vector<Entity*> checkpoints = std::vector<Entity*>();
 	std::vector<Entity*> characters = std::vector<Entity*>();
-	std::vector<Entity*> minimapEntities = std::vector<Entity*>();
 
 	while (!_creationSystem->Empty())
 	{
@@ -134,17 +133,14 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 		if (systemCreatedEntity.second->GetType() == EntityType::Player)
 		{
 			player = systemCreatedEntity.second;
-			minimapEntities.push_back(player);
 		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::Flag)
 		{
 			flag = systemCreatedEntity.second;
-			minimapEntities.push_back(flag);
 		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::Checkpoint)
 		{
 			checkpoints.push_back(systemCreatedEntity.second);
-			minimapEntities.push_back(checkpoints.back());
 		}
 		else if (systemCreatedEntity.second->GetType() == EntityType::Radar)
 		{
@@ -153,11 +149,6 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 		else if (systemCreatedEntity.second->GetType() == EntityType::AI || systemCreatedEntity.second->GetType() == EntityType::RemotePlayer)
 		{
 			characters.push_back(systemCreatedEntity.second);
-			minimapEntities.push_back(characters.back());
-		}
-		else if (systemCreatedEntity.second->GetType() == EntityType::PowerUp || systemCreatedEntity.second->GetType() == EntityType::Tile)
-		{
-			minimapEntities.push_back(systemCreatedEntity.second);
 		}
 
 		_creationSystem->EntityToSystemAssigned();
@@ -174,7 +165,6 @@ void SystemManager::PostInitialize(Entity*& player, Graph* waypoints)
 	GetWaypointSystem()->Initialize(waypoints);
 	GetAISystem()->Initialize(waypoints, player);
 	GetUISystem()->PostInitialize(characters, checkpoints, flag);
-	GetRenderSystem()->PostInitialize(minimapEntities);
 }
 
 void SystemManager::Process(float dt)

@@ -11,7 +11,6 @@ public:
 						~RenderSystem();
 
 	void				Initialize(SDL_Renderer*& renderer, Camera2D::Camera* camera);
-	void				PostInitialize(std::vector<Entity*> thingsForMinimap);
 
 	void				Process(float dt = 0.f) override;
 
