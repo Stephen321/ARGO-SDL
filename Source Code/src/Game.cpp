@@ -489,7 +489,7 @@ void Game::CreateUI()
 	_systemManager.GetUISystem()->CreateTextAtCenter("1", UI_NEXT_TEXT_X, UI_NEXT_TEXT_Y * 3);
 
 	// Ammo Text
-	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.9f, UI_BOX_Y);
+	_systemManager.GetUISystem()->CreateTextAtCenter("0", SCREEN_WIDTH * 0.945f, UI_BOX_Y);
 
 	// Radar
 	std::vector<float> data = std::vector<float>();
@@ -505,6 +505,26 @@ void Game::UpdateUI()
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
+
+	if (_systemManager.GetUISystem()->isTop < 3)
+	{
+		int top = _systemManager.GetUISystem()->isTop;
+		_systemManager.GetUISystem()->UpdateTextColoured(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[top]), top, 255, 0, 255, 255);
+	}
+
+	if (_systemManager.GetUISystem()->gameOver == true)
+	{
+		if (_systemManager.GetUISystem()->win == true)
+		{
+			_win = true;
+			_swapScene = Scene::CurrentScene::GAMEOVER;
+		}
+		else
+		{
+			_win = false;
+			_swapScene = Scene::CurrentScene::GAMEOVER;
+		}
+	}
 }
 
 void Game::CreateParticles()
