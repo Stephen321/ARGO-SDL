@@ -5,12 +5,13 @@
 #include "Helpers.h"
 #include "NetworkHandler.h"
 #include "Graph.h"
+#include "InteractionSystemEvents.h"
 
 class SystemManager;
 class RemoteSystem : public System
 {
 public:
-	RemoteSystem(float updateRate, std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests);
+	RemoteSystem(float updateRate, std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests, std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>& interactionSystemEvents);
 	~RemoteSystem();
 
 	void Initialize(Graph* waypoints, SystemManager* systemManager);
@@ -23,6 +24,7 @@ private:
 	std::vector<
 		std::pair<EntityType,
 		std::vector<float>>>& _creationRequests;
+	std::map<InteractionSystemEvent, std::vector<std::pair<Entity*, Entity*>>>&	_interactionSystemEvents;
 
 
 	bool							_startReadyTimer;

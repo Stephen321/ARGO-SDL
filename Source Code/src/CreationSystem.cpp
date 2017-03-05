@@ -509,6 +509,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRadarEntity(con
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
+	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
+		systemTypes.push_back(SystemType::Remote);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, radar);
 

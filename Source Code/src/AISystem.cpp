@@ -2,7 +2,9 @@
 #include "StatusEffectComponent.h"
 #include "PhysicsComponent.h"
 #include "GunComponent.h"
+#include "NetworkHandler.h"
 #include "WeaponComponent.h"
+#include "RemoteComponent.h"
 
 AISystem::AISystem(float updateRate)
 	: System(updateRate)
@@ -289,6 +291,15 @@ void AISystem::Process(float dt)
 							if (t->angle > angleInDeg - 20.0f && t->angle < angleInDeg + 20.0f)
 							{
 								w->fired = true;
+
+								if (NetworkHandler::Instance().GetPlayerID() != -1)
+								{
+									RemoteComponent* remote = static_cast<RemoteComponent*>(entityWithFlag->GetComponent(Component::Type::Remote));
+									FireData data;
+									data.remoteID = remote->id;
+									NetworkHandler::Instance().Send(&data);
+									std::cout << "sending fire data" << std::endl;
+								}
 							}
 							
 						}

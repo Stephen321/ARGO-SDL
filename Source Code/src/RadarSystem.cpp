@@ -4,6 +4,8 @@
 #include "TransformComponent.h"
 #include "ColliderComponent.h"
 
+#include "NetworkHandler.h"
+
 #include "CheckpointComponent.h"
 
 RadarSystem::RadarSystem()
@@ -61,7 +63,7 @@ void RadarSystem::Process(float dt)
 		ColliderComponent* flagCollider = static_cast<ColliderComponent*>(_flag->GetComponent(Component::Type::Collider));
 		bool flagTaken = !flagCollider->body->IsActive();
 
-		if (flagTaken)
+		if ((flagTaken && NetworkHandler::Instance().GetPlayerID() == -1) || (flagTaken && NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost()) )
 		{
 			for (int i = 0; i < _characters.size(); i++)
 			{

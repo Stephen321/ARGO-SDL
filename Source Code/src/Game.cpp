@@ -126,6 +126,7 @@ void Game::Start()
 	_running = true;
 	_swapScene = CurrentScene::GAME;
 
+	_lastTime = LTimer::gameTime();		
 	if (!_audioManager->IsMusicPlaying())
 	{
 		int random = std::rand() % 3;
@@ -300,14 +301,15 @@ void Game::BindInput()
 		
 		if ( weapon->hasWeapon)
 		{
-			if (NetworkHandler::Instance().GetPlayerID() != -1)
+			if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
 			{
-				FireData data;
-				NetworkHandler::Instance().Send(&data);
-				std::cout << "sending fire data" << std::endl;
-			}
-			else if (!static_cast<StatusEffectComponent*>(_player->GetComponent(Component::Type::StatusEffect))->staggered)
-			{
+				if (NetworkHandler::Instance().GetPlayerID() != -1)
+				{
+					FireData data;
+					data.remoteID = NetworkHandler::Instance().GetPlayerID();
+					NetworkHandler::Instance().Send(&data);
+					std::cout << "sending fire data" << std::endl;
+				}
 				weapon->fired = true;
 				_audioManager->PlayFX("Weapon");
 			}

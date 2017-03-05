@@ -116,6 +116,7 @@ namespace Network
 	};
 	struct FireData : MessageData {
 		FireData() { type = MessageType::Fire; }
+		int remoteID;
 	};
 
 	struct CheckConnectionData : MessageData {

@@ -97,8 +97,8 @@ bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress addr
 	return false;
 }
 
-const float CHECK_CONNECTION = 1.f;
-const float TIME_OUT = 3.5f; 
+const float CHECK_CONNECTION = 2.5f;
+const float TIME_OUT = 10.f; 
 
 struct Connection
 {
@@ -345,7 +345,7 @@ int main(int argc, char** argv)
 					{
 						data.allReady = true;
 						data.seed = time(NULL);
-						data.gameStartTime = serverTime + 3.f;
+						data.gameStartTime = serverTime + 4.f;
 						std::cout << "Session fully ready, start that game!" << std::endl;
 					}
 					//send to all needs to have time synced up correctly whern AllReady is true

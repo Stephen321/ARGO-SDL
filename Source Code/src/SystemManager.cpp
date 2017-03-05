@@ -95,7 +95,7 @@ void SystemManager::InitializeSystems(SDL_Renderer*& renderer, EntityFactory* en
 	_systems[SystemType::Animation] = animationSystem;
 
 	//SETUP remote SYSTEM
-	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE, _creationRequests);
+	RemoteSystem*_remoteSystem = new RemoteSystem(REMOTE_PACKET_RATE, _creationRequests, _interactionSystemEvents);
 	_systems[SystemType::Remote] = _remoteSystem;
 }
 

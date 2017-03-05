@@ -44,5 +44,5 @@ inline float lerp(float start, float end, float percent)
 	else if (percent < 0.f)
 		percent = 0.f;
 
-	return start + (percent * (end - start));
+	return (1 - percent) * start + (percent * end);
 }

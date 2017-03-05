@@ -119,6 +119,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	case MessageType::Fire:
 	{
 		FireData* sendData = (FireData*)data;
+		WriteInt(sendData->remoteID);
 		break;
 	}
 	case MessageType::PickUpFlag:
@@ -261,6 +262,7 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::Fire:
 		{
 			FireData data;
+			data.remoteID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}
