@@ -39,6 +39,8 @@ void RemoteSystem::Process(float dt)
 
 	NetworkHandler& network = NetworkHandler::Instance();
 
+	if (network.GetPlayerID() == -1)
+		return;
 	_pingTimer += dt;
 	if (_pinging)
 	{
