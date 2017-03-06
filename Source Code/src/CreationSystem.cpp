@@ -32,6 +32,15 @@ CreationSystem::~CreationSystem()
 		}
 	}
 
+	for (EntityMapIterator it = _destroyableEntities.begin(); it != _destroyableEntities.end(); ++it)
+	{
+		for (int i = 0; i < it->second.size(); i++)
+		{
+			delete it->second.at(i);
+			it->second.at(i) = nullptr;
+		}
+	}
+
 	_entities.clear();
 }
 

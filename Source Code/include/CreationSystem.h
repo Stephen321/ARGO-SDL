@@ -13,6 +13,9 @@
 class CreationSystem
 {
 public:
+	typedef std::map<EntityType, std::vector<Entity*>>::iterator EntityMapIterator;
+
+public:
 												CreationSystem(std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests);
 												~CreationSystem();
 
