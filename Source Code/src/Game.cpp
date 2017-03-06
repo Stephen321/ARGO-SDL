@@ -31,7 +31,7 @@ Game::~Game()
 
 }
 
-void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
+void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids, int level)
 {
 	Scene::Initialize(renderer);
 
@@ -44,7 +44,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	_bodyFactory.Initialize(&_world);
 
 	Start();
-	LoadContent(ids);
+	LoadContent(ids, level);
 
 	_player = nullptr;
 
@@ -58,7 +58,7 @@ void Game::Initialize(SDL_Renderer* renderer, const std::vector<int>& ids)
 	BindInput();
 }
 
-void Game::LoadContent(const std::vector<int>& ids)
+void Game::LoadContent(const std::vector<int>& ids, int level)
 {
 	_textureHolder[TextureID::TilemapSpriteSheet] = LoadTexture("Media/Textures/SpriteSheetFull.png");
 
@@ -75,9 +75,13 @@ void Game::LoadContent(const std::vector<int>& ids)
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
+	char* levelPath;
+	if (level % 2 == 1) 
+		levelPath = "Media/Json/NormalMap.json";
+	else
+		levelPath = "Media/Json/RockMap.json";
 
-	_levelLoader.LoadJson("Media/Json/RockMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
-
+	_levelLoader.LoadJson(levelPath, _systemManager, &_bodyFactory, &_waypoints, ids);
 }
 
 
@@ -109,9 +113,9 @@ void Game::Render()
 
 	//RENDER HERE
 	_systemManager.Render();
-	//DebugBox2D();
+
 	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
-	DebugBox2D();
+
 	SDL_RenderPresent(_renderer);
 }
 
@@ -500,12 +504,14 @@ void Game::CreateUI()
 void Game::UpdateUI()
 {
 	_systemManager.GetUISystem()->HUD();
+	
 	_systemManager.GetUISystem()->UpdateDisplayText("Lap : " + std::to_string(_systemManager.GetUISystem()->currentLapLocal), 0);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[0]), 0);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[1]), 1);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->nextCheckpoint[2]), 2);
 	_systemManager.GetUISystem()->UpdateTextAtCenter(std::to_string(_systemManager.GetUISystem()->currentAmmoLocal), 3);
 
+	
 	if (_systemManager.GetUISystem()->isTop < 3)
 	{
 		int top = _systemManager.GetUISystem()->isTop;

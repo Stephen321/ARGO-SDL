@@ -375,6 +375,8 @@ void UISystem::UpdateTextAtCenter(std::string message, int index)
 
 void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
+	// Destroy Previous Image
+	SDL_DestroyTexture(_interactiveTextTexture[index]);
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);

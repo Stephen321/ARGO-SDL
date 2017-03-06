@@ -33,7 +33,7 @@ public:
 									Game();
 									~Game();
 
-	void							Initialize(SDL_Renderer* renderer, const std::vector<int>& ids = std::vector<int>());
+	void							Initialize(SDL_Renderer* renderer, const std::vector<int>& ids = std::vector<int>(), int level = 1);
 
 	int								Update() override;
 	void							Render() override;
@@ -48,7 +48,7 @@ public:
 private:
 	void							BindInput();
 
-	void							LoadContent(const std::vector<int>& ids);
+	void							LoadContent(const std::vector<int>& ids, int level);
 	void							CleanUp() override;
 
 	void							DebugBox2D();
