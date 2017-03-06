@@ -140,7 +140,7 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}
-			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player)
+			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player && player->GetType() == EntityType::RemotePlayer)
 			{
 				AIComponent* aiA = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
 				FlagComponent* FlagB = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
