@@ -20,6 +20,7 @@ public:
 public:
 	PowerUpComponent(Type t)
 		: type(t)
+		, collected(false)
 		, Component::Component(Component::Type::PowerUp)
 	{
 	}
@@ -31,4 +32,5 @@ public:
 public:
 	Type	type;
 	int		waypointIndex;
+	bool	collected;
 };

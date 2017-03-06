@@ -22,6 +22,8 @@ public:
 
 	void										EntityToSystemAssigned();
 
+	void										RemoveEntitiy(EntityType type, Entity* e);
+
 	bool										Empty();
 	std::pair<
 		std::vector<SystemType>, Entity*>		GetSystemCreatedEntity() const;
@@ -57,5 +59,6 @@ private:
 	BodyFactory*								_bodyFactory;
 
 	std::vector<Entity*>						_entities;
+	std::map<EntityType, std::vector<Entity*>>	_destroyableEntities;
 };
 

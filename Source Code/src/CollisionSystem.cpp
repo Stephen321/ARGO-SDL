@@ -245,62 +245,66 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 {
 	PowerUpComponent* powerUp = static_cast<PowerUpComponent*>(other->GetComponent(Component::Type::PowerUp));
 
-	if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
+	if (!powerUp->collected)
 	{
-		TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
-		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
-
-		if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+		if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
 		{
-			_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
+			WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
+
+			if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+			{
+				_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			}
+			else
+			{
+				std::vector<float> data = std::vector<float>();
+
+				data.push_back((int)powerUp->type); //id
+				data.push_back(powerUpTransform->rect.x); //xPosition
+				data.push_back(powerUpTransform->rect.y); //yPosition
+
+				weapon->fired = false;
+				weapon->hasWeapon = true;
+				weapon->id = (int)powerUp->type;
+
+				_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+
+				_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			}
 		}
 		else
 		{
-			std::vector<float> data = std::vector<float>();
+			StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x); //xPosition
-			data.push_back(powerUpTransform->rect.y); //yPosition
-
-			weapon->fired = false;
-			weapon->hasWeapon = true;
-			weapon->id = (int)powerUp->type;
-
-			_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
-
-			_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
-		}
-	}
-	else
-	{
-		StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-
-		switch (powerUp->type)
-		{
-		case PowerUpComponent::Type::Invisibility:
-
-			statusEffects->invisible = true;
-			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
-			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+			switch (powerUp->type)
 			{
-				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
-				InvisData data;
-				data.remoteID = remote->id;
-				NetworkHandler::Instance().Send(&data);
-			}
-			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
-			break;
-		case PowerUpComponent::Type::Speed:
-			statusEffects->speedUp = true;
-			statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
-			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
-			break;
-		default:
-			break;
-		}
-	}
+			case PowerUpComponent::Type::Invisibility:
 
-	_interactionSystemEvents.at(InteractionSystemEvent::PowerUpDestoyed).push_back(std::pair<Entity*, Entity*>(other, player));
+				statusEffects->invisible = true;
+				statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
+				if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+				{
+					RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+					InvisData data;
+					data.remoteID = remote->id;
+					NetworkHandler::Instance().Send(&data);
+				}
+				std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
+				break;
+			case PowerUpComponent::Type::Speed:
+				statusEffects->speedUp = true;
+				statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
+				std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
+				break;
+			default:
+				break;
+			}
+		}
+
+		powerUp->collected = true;
+		_interactionSystemEvents.at(InteractionSystemEvent::PowerUpDestoyed).push_back(std::pair<Entity*, Entity*>(other, player));
+	}
 }
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {

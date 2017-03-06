@@ -60,7 +60,7 @@ void CreationSystem::Process(float dt)
 			break;
 		case EntityType::PowerUp:
 			_systemCreatedEntities.push_back(SetupPowerUpEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::PowerUp].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::AI:
 			_systemCreatedEntities.push_back(SetupAIEntity(_creationRequests.at(index)));
@@ -76,11 +76,11 @@ void CreationSystem::Process(float dt)
 			break;
 		case EntityType::Bullet:
 			_systemCreatedEntities.push_back(SetupBulletEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::Bullet].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::Weapon:
 			_systemCreatedEntities.push_back(SetupWeaponEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::Weapon].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::Flag:
 			_systemCreatedEntities.push_back(SetupFlagEntity(_creationRequests.at(index)));
@@ -559,4 +559,16 @@ bool CreationSystem::Empty()
 std::pair<std::vector<SystemType>, Entity*> CreationSystem::GetSystemCreatedEntity() const
 {
 	return _systemCreatedEntities.back();
+}
+
+void CreationSystem::RemoveEntitiy(EntityType type, Entity* e)
+{
+	for (int i = 0; i < _destroyableEntities[type].size(); i++)
+	{
+		if (_destroyableEntities[type][i] == e)
+		{
+			_destroyableEntities[type].erase(_destroyableEntities[type].begin() + i);
+			break;
+		}
+	}
 }
