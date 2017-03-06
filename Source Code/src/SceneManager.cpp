@@ -81,6 +81,10 @@ void SceneManager::Update()
 		if (_runningScene != _previousScene)
 		{
 			_currentScene.back()->Stop();
+			if (_previousScene == 1) // Check game over
+			{
+				_win = _currentScene.back()->_win;
+			}
 
 			// Delete Object
 			//Change numbers into enums, use switch instead of ifs
@@ -125,7 +129,7 @@ void SceneManager::Update()
 			else if (_runningScene == 5)
 			{
 				GameOver* gameOver = new GameOver();
-				gameOver->Initialize(_renderer);
+				gameOver->Initialize(_renderer, _win);
 				_currentScene.push_back(gameOver);
 			}
 		}
