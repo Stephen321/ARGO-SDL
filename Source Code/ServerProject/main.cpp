@@ -347,6 +347,12 @@ int main(int argc, char** argv)
 						data.seed = time(NULL);
 						data.gameStartTime = serverTime + 4.f;
 						std::cout << "Session fully ready, start that game!" << std::endl;
+
+						SessionListData sessionListData = CreateSessionListData(sessions);
+						for (int i = 0; i < spectators.size(); i++)
+						{
+							net.Send(&sessionListData, spectators[i].address); //send session list to all spectators
+						}
 					}
 					//send to all needs to have time synced up correctly whern AllReady is true
 					//TODO: simply this, also used in sending player list, need a SendToAll function
