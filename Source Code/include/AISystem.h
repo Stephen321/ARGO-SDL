@@ -27,8 +27,6 @@ private:
 	vector<GraphNode*> _checkpointNode;
 	vector<Entity*> _players;
 
-	void SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t, float distanceToDest);
-
 	void Entry(AIComponent* ai, TransformComponent* t);
 
 	void SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t);

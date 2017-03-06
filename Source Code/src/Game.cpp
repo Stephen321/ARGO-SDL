@@ -76,7 +76,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 
 	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 
-	_levelLoader.LoadJson("Media/Json/NormalMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
+	_levelLoader.LoadJson("Media/Json/RockMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
 
 }
 
@@ -111,7 +111,7 @@ void Game::Render()
 	_systemManager.Render();
 	//DebugBox2D();
 	_particleSystem.Render(_renderer, &_systemManager.GetCamera());
-
+	DebugBox2D();
 	SDL_RenderPresent(_renderer);
 }
 

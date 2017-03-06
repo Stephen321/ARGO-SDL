@@ -265,12 +265,10 @@ void AISystem::Process(float dt)
 					p->yVelocity += (velocity.y + yDrag) * dt;
 				}	
 				
-/*
-				TransformComponent* playerpos = static_cast<TransformComponent*>(_players[0]->GetComponent(Component::Type::Transform));
-				helper::Vector2 ab = helper::Vector2(playerpos->rect.x, playerpos->rect.y) - AIPosition;
-				helper::Vector2 dir = ab.normalize();
-				p->xVelocity = dir.x * 0.21f;
-				p->yVelocity = dir.y * 0.21f;*/
+				if (!statusEffect->speedUp)
+				{
+					velocity = velocity * 2;
+				}
 
 				if (w->hasWeapon && !statusEffect->staggered)
 				{
