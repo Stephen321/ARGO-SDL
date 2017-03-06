@@ -65,35 +65,117 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 		{
 			if (other->GetType() == EntityType::AI && player->GetType() == EntityType::AI)
 			{//learning
-			 /*
-				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
-				if (ai->avoidanceColliderTimer > 0)
-				{
-					ai->avoidanceForce += 0.05f;
-				}
-				ai->avoidanceColliderTimer = 5.0f;
 
-				AIComponent* ai2 = static_cast<AIComponent*>(player->GetComponent(Component::Type::AI));
-				if (ai2->avoidanceColliderTimer > 0)
-				{
-					ai2->avoidanceForce += 0.05f;
-				}
-				ai2->avoidanceColliderTimer = 5.0f;
+				AIComponent* aiA = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
+				AIComponent* aiB = static_cast<AIComponent*>(player->GetComponent(Component::Type::AI));
+				FlagComponent* FlagA = static_cast<FlagComponent*>(other->GetComponent(Component::Type::Flag));
+				FlagComponent* FlagB = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 
-				*/
+				switch (aiA->state)
+				{
+				case AIState::Chase:
+					if (aiA->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiA->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiA->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiA->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiA->avoidanceSeekTimer > 0)
+					{
+						if (aiA->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiA->avoidanceSeekForce += 0.02f;
+					}
+					aiA->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiA->avoidanceCheckpointTimer > 0)
+					{
+						if (aiA->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiA->avoidanceCheckpointForce += 0.02f;
+					}
+					aiA->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
+				}
+
+				switch (aiB->state)
+				{
+				case AIState::Chase:
+					if (aiB->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiB->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiB->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiB->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiB->avoidanceSeekTimer > 0)
+					{
+						if (aiB->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiB->avoidanceSeekForce += 0.02f;
+					}
+					aiB->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiB->avoidanceCheckpointTimer > 0)
+					{
+						if (aiB->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiB->avoidanceCheckpointForce += 0.02f;
+					}
+					aiB->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
+				}
+
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}
 			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player)
 			{
-				/*
-				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
-				if (ai->avoidanceColliderTimer > 0)
+				AIComponent* aiA = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
+				FlagComponent* FlagB = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+				switch (aiA->state)
 				{
-					ai->avoidanceForce += 0.05f;
+				case AIState::Chase:
+					if (aiA->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiA->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiA->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiA->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiA->avoidanceSeekTimer > 0)
+					{
+						if (aiA->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiA->avoidanceSeekForce += 0.02f;
+					}
+					aiA->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiA->avoidanceCheckpointTimer > 0)
+					{
+						if (aiA->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiA->avoidanceCheckpointForce += 0.02f;
+					}
+					aiA->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
 				}
-				ai->avoidanceColliderTimer = 5.0f;
-				*/
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}

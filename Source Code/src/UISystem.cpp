@@ -55,6 +55,9 @@ void UISystem::PostInitialize(std::vector<Entity*> characters, std::vector<Entit
 		topLap[i] = 1;
 		nextCheckpoint[i] = 1;
 	}
+
+	gameOver = false;
+	win = false;
 }
 
 void UISystem::Process(float dt)
@@ -152,18 +155,23 @@ void UISystem::HUD(float dt)
 			{
 				TransformComponent* checkTran = static_cast<TransformComponent*>(_checkpoints[flag->currentCheckpointID]->GetComponent(Component::Type::Transform));
 				TransformComponent* playTran = static_cast<TransformComponent*>(_characters[i]->GetComponent(Component::Type::Transform));
-
-				int rads = atan2(checkTran->rect.y - playTran->rect.y, checkTran->rect.x - playTran->rect.x);
-
-				radarAngle = (rads * 180) / M_PI;
-				if (radarAngle < 0) { radarAngle += 360; }
-
-				
 			}
-			else // Find flag
-			{
-				//radarAngle =
-			}
+
+			if (topCheckpoint[2] == flag->totalCheckpoints) { isTop = 2; }
+			else if (topCheckpoint[1] == flag->totalCheckpoints) { isTop = 1; }
+			else if (topCheckpoint[0] == flag->totalCheckpoints) { isTop = 0; }
+			else { isTop = 3; }
+		}
+
+		if (flag->currentLap == 4 && i == _characters.size() - 1)
+		{
+			gameOver = true;
+			win = true;
+		}
+		else if (flag->currentLap == 4 && i != _characters.size() - 1)
+		{
+			gameOver = true;
+			win = false;
 		}
 	}
 }
@@ -367,6 +375,8 @@ void UISystem::UpdateTextAtCenter(std::string message, int index)
 
 void UISystem::UpdateTextColoured(std::string message, int index, Uint8 r, Uint8 b, Uint8 g, Uint8 a)
 {
+	// Destroy Previous Image
+	SDL_DestroyTexture(_interactiveTextTexture[index]);
 	SDL_Surface* surface = TTF_RenderText_Blended(_font, message.c_str(), SDL_Color{ r, g, b, a });
 
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, surface);

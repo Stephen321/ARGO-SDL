@@ -5,7 +5,7 @@
 #include "LTimer.h"
 #include "NetworkHandler.h"
 
-SceneManager::SceneManager()
+SceneManager::SceneManager() : _level(1)
 {
 }
 
@@ -81,6 +81,10 @@ void SceneManager::Update()
 		if (_runningScene != _previousScene)
 		{
 			_currentScene.back()->Stop();
+			if (_previousScene == 1) // Check game over
+			{
+				_win = _currentScene.back()->_win;
+			}
 
 			// Delete Object
 			//Change numbers into enums, use switch instead of ifs
@@ -97,7 +101,7 @@ void SceneManager::Update()
 			else if (_runningScene == 1)
 			{
 				Game* game = new Game();
-				game->Initialize(_renderer, _ids);
+				game->Initialize(_renderer, _ids, _level);
 				_currentScene.push_back(game);
 			}
 
@@ -124,8 +128,9 @@ void SceneManager::Update()
 
 			else if (_runningScene == 5)
 			{
+				_level++;
 				GameOver* gameOver = new GameOver();
-				gameOver->Initialize(_renderer);
+				gameOver->Initialize(_renderer, _win);
 				_currentScene.push_back(gameOver);
 			}
 		}

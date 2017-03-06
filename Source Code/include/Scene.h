@@ -62,4 +62,7 @@ protected:
 	unsigned int						_lastTime; //time of last update;
 
 	CurrentScene						_swapScene;
+
+public:
+	bool								_win = false;
 };

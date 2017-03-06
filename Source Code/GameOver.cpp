@@ -16,12 +16,14 @@ GameOver::~GameOver()
 {
 }
 
-void GameOver::Initialize(SDL_Renderer* renderer)
+void GameOver::Initialize(SDL_Renderer* renderer, bool win)
 {
 	Scene::Initialize(renderer);
 
 	// UI
 	_uiSystem.Initialize(_renderer);
+
+	_win = win;
 
 	Start();
 	LoadContent();
