@@ -74,7 +74,7 @@ void AISystem::Process(float dt)
 								ai->nextNode = closestNode;
 						}
 						
-						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 0.3f + ai->avoidanceForce);
+						Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + ai->avoidanceSeekForce);
 
 						Entity* entityWithFlag = FindEntityWithFlag(e);
 						if (entityWithFlag != nullptr)
@@ -94,7 +94,14 @@ void AISystem::Process(float dt)
 					}
 					
 					AStarUpdate(dt, ai, AIPosition);
-					
+					//learning
+					ai->avoidanceSeekTimer -= dt;
+					if (ai->avoidanceSeekTimer < -AI_MAX_ABVOIDANCE_TIMER)
+					{
+						if(ai->avoidanceSeekForce > -AI_MAX_ABVOIDANCE_SEEK)
+							ai->avoidanceSeekForce -= 0.02f;
+						ai->avoidanceSeekTimer = 0;
+					}
 					break;
 				}
 				case AIState::Chase:
@@ -119,7 +126,7 @@ void AISystem::Process(float dt)
 								if (entityWithFlag != _players[i])
 								{
 									TransformComponent* playerTransfrom = static_cast<TransformComponent*>(_players[i]->GetComponent(Component::Type::Transform));
-									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
+									velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(playerTransfrom->rect.x, playerTransfrom->rect.y), AI_WAYPOINT_FORCE + ai->avoidanceChaseForce);
 								}
 							}
 							//loop through all AI and calculate distance and then add avoidance force
@@ -130,7 +137,7 @@ void AISystem::Process(float dt)
 									if (e != otherAI && entityWithFlag != otherAI) //check if not self.
 									{
 										TransformComponent* otherAITransfrom = static_cast<TransformComponent*>(otherAI->GetComponent(Component::Type::Transform));
-										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
+										velocity += CalculateAvoidanceForce(AIPosition, helper::Vector2(otherAITransfrom->rect.x, otherAITransfrom->rect.y), AI_WAYPOINT_FORCE + ai->avoidanceChaseForce);
 									}
 								}
 							}
@@ -156,6 +163,13 @@ void AISystem::Process(float dt)
 						AStar(ai);   //manual call on AStar.
 
 						ai->state = AIState::SeekCheckpoint;
+					}
+					ai->avoidanceChaseTimer -= dt;
+					if (ai->avoidanceChaseTimer < -AI_MAX_ABVOIDANCE_TIMER)
+					{
+						if (ai->avoidanceChaseForce > -AI_MAX_ABVOIDANCE_CHASE)
+							ai->avoidanceChaseForce -= 0.01f;
+						ai->avoidanceChaseTimer = 0;
 					}
 					break;
 				}
@@ -201,20 +215,20 @@ void AISystem::Process(float dt)
 						ai->state = AIState::SeekFlag;
 					}
 
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 2.0f + ai->avoidanceForce);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 2.0f );
 					
 					break;
 				}
 				case AIState::SeekCheckpoint:
 				{
 					SeekCheckpoint(ai, f, t);
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + ai->avoidanceCheckpointForce);
 					AStarUpdate(dt, ai, AIPosition);
 					break;
 				}
 				case AIState::SeekPowerUp:
 				{				
-					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE + 1.0f + ai->avoidanceForce);
+					Avoidance(e, velocity, AIPosition, AI_WAYPOINT_FORCE);
 					//update Astar
 					AStarUpdate(dt, ai, AIPosition);
 
@@ -224,6 +238,13 @@ void AISystem::Process(float dt)
 						ai->destNode = _flagNode;
 						ai->state = AIState::SeekFlag;
 
+					}
+					ai->avoidanceCheckpointTimer -= dt;
+					if (ai->avoidanceCheckpointTimer < -AI_MAX_ABVOIDANCE_TIMER)
+					{
+						if(ai->avoidanceCheckpointForce > -AI_MAX_ABVOIDANCE_CHECKPOINT)
+							ai->avoidanceCheckpointForce -= 0.02f;
+						ai->avoidanceCheckpointTimer = 0;
 					}
 					break;
 				}
@@ -287,18 +308,12 @@ void AISystem::Process(float dt)
 							if (t->angle > angleInDeg - 20.0f && t->angle < angleInDeg + 20.0f)
 							{
 								w->fired = true;
-							}
-							
+							}	
 						}
+						
 					}
 				}
-				/*
-				ai->avoidanceColliderTimer -= dt;
-				if (ai->avoidanceColliderTimer < -5.0f)
-				{
-					ai->avoidanceForce -= 0.05f;
-					ai->avoidanceColliderTimer = 0;
-				}*/
+				UpdateLearning(dt, ai);
 			}		
 		}
 	}
@@ -306,6 +321,16 @@ void AISystem::Process(float dt)
 
 
 
+void AISystem::UpdateLearning(float dt, AIComponent* ai)
+{
+	
+
+	
+
+	
+
+
+}
 
 
 

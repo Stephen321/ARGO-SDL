@@ -60,6 +60,13 @@ const int		AI_AVOIDANCE_RADIUS = 250;
 const int		AI_FIRING_RADIUS = 1000;
 const float		AI_PATHFINDING_UPDATE_RATE = 2.0f;
 
+const float		AI_MAX_ABVOIDANCE_SEEK = 4.0f;
+const float		AI_MAX_ABVOIDANCE_CHASE = 4.0f;
+const float		AI_MAX_ABVOIDANCE_CHECKPOINT = 4.0f;
+
+const float		AI_MAX_ABVOIDANCE_TIMER = 4.0f;
+
+
 const float		STAGGER_MAX_TIMER = 2.0f;
 const float		INVISIBLE_MAX_TIMER = 5.0f;
 const float		SPEED_UP_MAX_TIMER = 7.5f;

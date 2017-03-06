@@ -218,6 +218,7 @@ echo D|xcopy /E /Y "$(ProjectDir)Media" "$(TargetDir)Media"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\AIComponent.h" />
+    <ClInclude Include="include\AIState.h" />
     <ClInclude Include="include\AISystem.h" />
     <ClInclude Include="include\AnimationComponent.h" />
     <ClInclude Include="include\AnimationSystem.h" />

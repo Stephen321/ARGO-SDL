@@ -44,5 +44,7 @@ private:
 	helper::Vector2 CalculateAvoidanceForce(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force);
 
 	Entity* FindEntityWithFlag(Entity* self);
+
+	void UpdateLearning(float dt, AIComponent* ai);
 };
 
