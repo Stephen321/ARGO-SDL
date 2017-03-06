@@ -267,10 +267,11 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 	case EntityType::Bullet:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Physics]->RemoveEntity(entity->GetType(), entity);
+		_creationSystem->RemoveEntitiy(entity->GetType(), entity);
 		break;
 	case EntityType::PowerUp:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
-		//Implement Later
+		_creationSystem->RemoveEntitiy(entity->GetType(), entity);
 		break;
 	case EntityType::AI:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
@@ -288,6 +289,7 @@ void SystemManager::DestroyBasedOnType(Entity*& entity)
 	case EntityType::Weapon:
 		_systems[SystemType::Render]->RemoveEntity(entity->GetType(), entity);
 		_systems[SystemType::Gun]->RemoveEntity(entity->GetType(), entity);
+		_creationSystem->RemoveEntitiy(entity->GetType(), entity);
 		//fix weapon deletion
 		static_cast<WeaponSystem*>(_interactionSystems[InteractionSystemType::Weapon])->RemoveEntity(entity, false);
 		break;
