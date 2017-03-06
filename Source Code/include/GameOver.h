@@ -10,7 +10,7 @@ public:
 	GameOver();
 	~GameOver();
 
-	void							Initialize(SDL_Renderer* renderer) override;
+	void							Initialize(SDL_Renderer* renderer, bool win);
 
 	int								Update() override;
 	void							Render() override;
@@ -30,5 +30,4 @@ private:
 
 private:
 	UISystem						_uiSystem;
-	bool							_win;
 };

@@ -78,8 +78,8 @@ const int		SCREEN_HEIGHT = 900;
 const int		UI_POLL_TEXT_X = 48;
 const int		UI_POLL_TEXT_Y = 64;
 
-const int		UI_NEXT_TEXT_X = 160;
-const int		UI_NEXT_TEXT_Y = 64;
+const int		UI_NEXT_TEXT_X = 100;
+const int		UI_NEXT_TEXT_Y = 72;
 
 const int		UI_BOX_X = 64;
 const int		UI_BOX_Y = 64;

@@ -94,6 +94,7 @@ private:
 public:
 	int								currentLapLocal;
 	int								currentAmmoLocal;
+	int								isTop;
 
 	// Poll
 	int								topLap[3];
@@ -101,7 +102,8 @@ public:
 	int								nextCheckpoint[3];
 	int								topPlayers[3];
 
-	int								radarAngle;
+	bool							gameOver;
+	bool							win;
 };
 
 // process - entities
