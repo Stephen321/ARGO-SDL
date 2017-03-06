@@ -43,28 +43,35 @@ void FlagCheckpointSystem::Process(float dt)
 		{
 			FlagComponent* flag = static_cast<FlagComponent*>(it->first->GetComponent(Component::Type::Flag));
 
-			TransformComponent* transform1 = static_cast<TransformComponent*>(it->first->GetComponent(Component::Type::Transform));
-			TransformComponent* transform2 = static_cast<TransformComponent*>(it->second->GetComponent(Component::Type::Transform));
-
-			if (NetworkHandler::Instance().GetPlayerID() == -1 || (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost()))
+			if (flag->hasFlag)
 			{
-				transform2->rect.x = transform1->rect.x;
-				transform2->rect.y = transform1->rect.y;
+				TransformComponent* transform1 = static_cast<TransformComponent*>(it->first->GetComponent(Component::Type::Transform));
+				TransformComponent* transform2 = static_cast<TransformComponent*>(it->second->GetComponent(Component::Type::Transform));
+
+				if (NetworkHandler::Instance().GetPlayerID() == -1 || (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost()))
+				{
+					transform2->rect.x = transform1->rect.x;
+					transform2->rect.y = transform1->rect.y;
+				}
+				for (int i = 0; i < _checkpoints.size(); i++)
+				{
+					CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Checkpoint));
+					SpriteComponent* checkpointSprite = static_cast<SpriteComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Sprite));
+
+					checkpoint->highlighted = (flag->currentCheckpointID + 1 == checkpoint->id);
+					if (checkpoint->highlighted)
+					{
+						checkpointSprite->sourceRect.x = checkpointSprite->sourceRect.w;
+					}
+					else
+					{
+						checkpointSprite->sourceRect.x = 0;
+					}
+				}
 			}
-			for (int i = 0; i < _checkpoints.size(); i++)
+			else
 			{
-				CheckpointComponent* checkpoint = static_cast<CheckpointComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Checkpoint));
-				SpriteComponent* checkpointSprite = static_cast<SpriteComponent*>(_checkpoints.at(i)->GetComponent(Component::Type::Sprite));
-
-				checkpoint->highlighted = (flag->currentCheckpointID + 1 == checkpoint->id);
-				if (checkpoint->highlighted)
-				{
-					checkpointSprite->sourceRect.x = checkpointSprite->sourceRect.w;
-				}
-				else
-				{
-					checkpointSprite->sourceRect.x = 0;
-				}
+				RemoveEntity(it->first, true);
 			}
 		}
 	}
