@@ -1,8 +1,6 @@
-collisions with powerup for remote player on non host not working
 flag when disconnect???
+worst performance with more packets (update rate is too big for smaller expected time due to sdl delay in main)
+is there something wrong with lerp?
+clock sync
+sending loads of fire packets causes massive slow down
 
-worst performance with more packets (why the jitter???)
-docs
-non host remote doesnt pick up powerups
-
-why the jump motion still???????????????

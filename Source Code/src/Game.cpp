@@ -74,7 +74,7 @@ void Game::LoadContent(const std::vector<int>& ids)
 
 	_textureHolder[TextureID::UI] = LoadTexture("Media/UI/UI.png");
 
-	_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
+	//_textureHolder[TextureID::EntitySpriteSheet] = LoadTexture("Media/Textures/EntitySprite.png");
 
 	_levelLoader.LoadJson("Media/Json/NormalMap.json", _systemManager, &_bodyFactory, &_waypoints, ids);
 
@@ -495,7 +495,7 @@ void Game::CreateUI()
 
 	// Radar
 	std::vector<float> data = std::vector<float>();
-	data.push_back(0); //id
+	data.push_back(20000); //id
 	_systemManager.AddRequest(std::pair<EntityType, std::vector<float>>(EntityType::Radar, data));
 }
 

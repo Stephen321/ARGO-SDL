@@ -18,6 +18,7 @@ public:
 	void Process(float dt = 0.f) override;
 
 private:
+	void								RespondToStateData(StateData data);
 	int									_flagHolderID;
 	Graph*								_waypoints;
 	SystemManager*						_systemManager;
@@ -31,10 +32,10 @@ private:
 	bool							_startingGame;
 	std::vector<float>				_serverDeltas;
 	const float						PING_SEND_RATE = 0.2f;
-	const int						PING_SEND_COUNT = 5;
+	const int						PING_SEND_COUNT = 10;
 	float							_pingTimer;
 	bool							_pinging;
-	const float						SYNC_RATE = 5.f; //re sync time every 5 seconds
+	const float						SYNC_RATE = 1200.f; //re sync time every 20 mins
 };
 
 #include "SystemManager.h"

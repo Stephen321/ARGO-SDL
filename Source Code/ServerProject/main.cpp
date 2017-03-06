@@ -375,8 +375,23 @@ int main(int argc, char** argv)
 					}
 					else //this is a player sending data to host
 					{//send data to host
-						//std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
+					 //std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
 						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetHostID()));
+					}
+				}
+				break;
+			}
+			case MessageType::MultiState:
+			{
+				MultiStateData data = receiveData.GetData<MultiStateData>();
+				if (data.sessionID != -1)
+				{
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						}
 					}
 				}
 				break;
@@ -462,6 +477,7 @@ int main(int argc, char** argv)
 			case MessageType::Ping:
 			{
 				PingData data = receiveData.GetData<PingData>();
+				std::cout << "Recv ping with gametime: " << data.ts << " , serverTime: " << serverTime << std::endl;
 				data.serverTime = serverTime;
 				net.Send(&data, srcAddr);
 				break;
