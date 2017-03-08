@@ -97,8 +97,8 @@ bool exists(const std::unordered_map<IPaddress, Client>& clients, IPaddress addr
 	return false;
 }
 
-const float CHECK_CONNECTION = 1.f;
-const float TIME_OUT = 3.5f; 
+const float CHECK_CONNECTION = 2.5f;
+const float TIME_OUT = 10.f; 
 
 struct Connection
 {
@@ -345,8 +345,14 @@ int main(int argc, char** argv)
 					{
 						data.allReady = true;
 						data.seed = time(NULL);
-						data.gameStartTime = serverTime + 3.f;
+						data.gameStartTime = serverTime + 4.f;
 						std::cout << "Session fully ready, start that game!" << std::endl;
+
+						SessionListData sessionListData = CreateSessionListData(sessions);
+						for (int i = 0; i < spectators.size(); i++)
+						{
+							net.Send(&sessionListData, spectators[i].address); //send session list to all spectators
+						}
 					}
 					//send to all needs to have time synced up correctly whern AllReady is true
 					//TODO: simply this, also used in sending player list, need a SendToAll function
@@ -375,8 +381,23 @@ int main(int argc, char** argv)
 					}
 					else //this is a player sending data to host
 					{//send data to host
-						//std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
+					 //std::cout << "Relay data to host: " << sessions[data.sessionID].GetHostID() << std::endl;
 						net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetHostID()));
+					}
+				}
+				break;
+			}
+			case MessageType::MultiState:
+			{
+				MultiStateData data = receiveData.GetData<MultiStateData>();
+				if (data.sessionID != -1)
+				{
+					for (int i = 0; i < sessions[data.sessionID].GetPlayerIDs().size(); i++)
+					{
+						if (sessions[data.sessionID].GetPlayerIDs()[i] != data.id)//dont send state data back to the original player
+						{
+							net.Send(&data, sessions[data.sessionID].GetPlayerIP(sessions[data.sessionID].GetPlayerIDs()[i]));
+						}
 					}
 				}
 				break;
@@ -462,6 +483,7 @@ int main(int argc, char** argv)
 			case MessageType::Ping:
 			{
 				PingData data = receiveData.GetData<PingData>();
+				std::cout << "Recv ping with gametime: " << data.ts << " , serverTime: " << serverTime << std::endl;
 				data.serverTime = serverTime;
 				net.Send(&data, srcAddr);
 				break;

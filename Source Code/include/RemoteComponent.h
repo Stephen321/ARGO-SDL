@@ -1,5 +1,5 @@
 #pragma once
-#include <queue>
+#include <deque>
 #include "Component.h"
 
 class RemoteComponent : public Component
@@ -8,18 +8,11 @@ public:
 	struct State 
 	{
 		State() : xPos(-100000.f), yPos(-100000.f), xVel(0.f), yVel(0.f), ts(0.f) {}
+		float ts;
 		float xPos;
 		float yPos;
 		float xVel;
 		float yVel;
-		float ts;
-		bool operator==(int num) //if comparing to null, return true if xpos and ypos havnt been set
-		{
-			if (num == 0)
-				return (xPos == -100000.f && yPos == -100000.f);
-			else
-				return false;
-		}
 	};
 
 public:
@@ -35,9 +28,9 @@ public:
 	}
 
 public:
-	State	startState;
-	State	endState;
-	std::queue<State> states;
+	std::deque<State> states;
+	State startState;
+	State endState;
 	int		id;
 	float	timeSincePacket;
 	bool	disconnected;

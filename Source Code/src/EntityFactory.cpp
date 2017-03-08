@@ -367,6 +367,8 @@ Entity* EntityFactory::CreateRadarEntity(int id)
 
 	radar->AddComponent(spriteComponent);
 	radar->AddComponent(new TransformComponent(0.f, 0.f, spriteComponent->sourceRect.w, spriteComponent->sourceRect.h));
+	if (id != -1)//is in multiplayer game
+		radar->AddComponent(new RemoteComponent(id));
 
 	return radar;
 }

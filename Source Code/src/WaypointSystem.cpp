@@ -114,10 +114,14 @@ void WaypointSystem::PowerUpDestructionEvent()
 		for (int i = 0; i < _interactionSystemEvents[POWER_UP_DESTRUCTION].size(); i++)
 		{
 			PowerUpComponent* powerUp = static_cast<PowerUpComponent*>(_interactionSystemEvents[POWER_UP_DESTRUCTION].at(i).first->GetComponent(Component::Type::PowerUp));
-
-			nodes[powerUp->waypointIndex]->setData(make_pair(GraphNode::EntityData::Null, 0));
-			static_cast<DestructionComponent*>(_interactionSystemEvents[POWER_UP_DESTRUCTION].at(i).first->GetComponent(Component::Type::Destroy))->destroy = true;
-
+			if (powerUp != nullptr)
+			{
+				nodes[powerUp->waypointIndex]->setData(make_pair(GraphNode::EntityData::Null, 0));
+			}
+			DestructionComponent* destruction = static_cast<DestructionComponent*>(_interactionSystemEvents[POWER_UP_DESTRUCTION].at(i).first->GetComponent(Component::Type::Destroy));
+			if (destruction != nullptr)
+				destruction->destroy = true;
+			//this broke some how ^
 			_interactionSystemEvents[POWER_UP_DESTRUCTION].erase(_interactionSystemEvents[POWER_UP_DESTRUCTION].begin() + i);
 			_powerUpCount--;
 			i--;

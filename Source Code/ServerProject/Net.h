@@ -11,6 +11,7 @@ namespace Network
 		Connect,
 		Disconnect,
 		State,
+		MultiState,
 		SessionList,
 		JoinSession,
 		SetHost,
@@ -27,7 +28,7 @@ namespace Network
 
 	struct MessageData 
 	{
-		MessageData() : id(-1), ts(0.f), sessionID(-1) {};
+		MessageData() : id(-1), ts(-1.f), sessionID(-1) {};
 
 		MessageType GetType() const 
 		{
@@ -50,6 +51,11 @@ namespace Network
 		float yVel;
 		bool host;
 		int remoteID;
+	};
+	struct MultiStateData : MessageData {
+		MultiStateData() { type = MessageType::MultiState; }
+		int count;
+		std::vector<StateData> states;
 	};
 
 	struct ConnectData : MessageData 
@@ -116,6 +122,7 @@ namespace Network
 	};
 	struct FireData : MessageData {
 		FireData() { type = MessageType::Fire; }
+		int remoteID;
 	};
 
 	struct CheckConnectionData : MessageData {
@@ -162,6 +169,9 @@ namespace Network
 
 			case MessageType::State:
 				_data = new StateData(rhs.GetData<StateData>());
+				break;
+			case MessageType::MultiState:
+				_data = new MultiStateData(rhs.GetData<MultiStateData>());
 				break;
 
 			case MessageType::SessionList:
@@ -277,7 +287,8 @@ namespace Network
 	{
 	public:
 						Net();
-						Net(int port, int packetSize = 256);
+						Net(int port, int packetSize = 128);
+						~Net();
 
 		void			Send(MessageData* data, const char * destHost, int destPort);
 		void			Send(MessageData* data, IPaddress destAddr);

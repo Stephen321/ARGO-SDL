@@ -2,16 +2,7 @@
 
 #include "Component.h"
 #include "GraphNode.h"
-
-enum class AIState
-{
-	Entry,
-	Chase,
-	SeekFlag,
-	Camp,
-	SeekCheckpoint,
-	SeekPowerUp,
-};
+#include "AIState.h"
 
 class AIComponent : public Component
 {
@@ -23,8 +14,12 @@ public:
 		nextNode(nullptr),
 		state(AIState::Entry),
 		lastEntityWithFlag(nullptr),
-		avoidanceColliderTimer(0),
-		avoidanceForce(0)
+		avoidanceSeekTimer(0),
+		avoidanceSeekForce(0),
+		avoidanceChaseTimer(0),
+		avoidanceChaseForce(0),
+		avoidanceCheckpointTimer(0),
+		avoidanceCheckpointForce(0)
 	{
 	}
 
@@ -35,12 +30,23 @@ public:
 public:
 	vector<GraphNode*> path;
 	float pathfinderUpdateTimer;
-	float avoidanceColliderTimer;
-	float avoidanceForce;
 	GraphNode* destNode;
 	GraphNode* nextNode;
 
 	AIState state;
 
 	Entity* lastEntityWithFlag;
+
+	//for learning AI
+	float avoidanceSeekTimer;
+	float avoidanceSeekForce;
+
+	float avoidanceChaseTimer;
+	float avoidanceChaseForce;
+
+	float avoidanceCheckpointTimer;
+	float avoidanceCheckpointForce;
+
+
+	
 };

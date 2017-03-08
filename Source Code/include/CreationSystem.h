@@ -13,6 +13,9 @@
 class CreationSystem
 {
 public:
+	typedef std::map<EntityType, std::vector<Entity*>>::iterator EntityMapIterator;
+
+public:
 												CreationSystem(std::vector<std::pair<EntityType, std::vector<float>>>& creationRequests);
 												~CreationSystem();
 
@@ -21,6 +24,8 @@ public:
 	void										Process(float dt);
 
 	void										EntityToSystemAssigned();
+
+	void										RemoveEntitiy(EntityType type, Entity* e);
 
 	bool										Empty();
 	std::pair<
@@ -57,5 +62,6 @@ private:
 	BodyFactory*								_bodyFactory;
 
 	std::vector<Entity*>						_entities;
+	std::map<EntityType, std::vector<Entity*>>	_destroyableEntities;
 };
 

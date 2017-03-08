@@ -32,6 +32,15 @@ CreationSystem::~CreationSystem()
 		}
 	}
 
+	for (EntityMapIterator it = _destroyableEntities.begin(); it != _destroyableEntities.end(); ++it)
+	{
+		for (int i = 0; i < it->second.size(); i++)
+		{
+			delete it->second.at(i);
+			it->second.at(i) = nullptr;
+		}
+	}
+
 	_entities.clear();
 }
 
@@ -60,7 +69,7 @@ void CreationSystem::Process(float dt)
 			break;
 		case EntityType::PowerUp:
 			_systemCreatedEntities.push_back(SetupPowerUpEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::PowerUp].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::AI:
 			_systemCreatedEntities.push_back(SetupAIEntity(_creationRequests.at(index)));
@@ -76,11 +85,11 @@ void CreationSystem::Process(float dt)
 			break;
 		case EntityType::Bullet:
 			_systemCreatedEntities.push_back(SetupBulletEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::Bullet].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::Weapon:
 			_systemCreatedEntities.push_back(SetupWeaponEntity(_creationRequests.at(index)));
-			_entities.push_back(_systemCreatedEntities.back().second);
+			_destroyableEntities[EntityType::Weapon].push_back(_systemCreatedEntities.back().second);
 			break;
 		case EntityType::Flag:
 			_systemCreatedEntities.push_back(SetupFlagEntity(_creationRequests.at(index)));
@@ -509,6 +518,8 @@ std::pair<std::vector<SystemType>, Entity*> CreationSystem::SetupRadarEntity(con
 	std::vector<SystemType> systemTypes = std::vector<SystemType>();
 
 	systemTypes.push_back(SystemType::Render);
+	if (information.second[0] != -1) //has an id (i.e in multiplayer game)
+		systemTypes.push_back(SystemType::Remote);
 
 	std::pair<std::vector<SystemType>, Entity*> toBeCreated(systemTypes, radar);
 
@@ -557,4 +568,16 @@ bool CreationSystem::Empty()
 std::pair<std::vector<SystemType>, Entity*> CreationSystem::GetSystemCreatedEntity() const
 {
 	return _systemCreatedEntities.back();
+}
+
+void CreationSystem::RemoveEntitiy(EntityType type, Entity* e)
+{
+	for (int i = 0; i < _destroyableEntities[type].size(); i++)
+	{
+		if (_destroyableEntities[type][i] == e)
+		{
+			_destroyableEntities[type].erase(_destroyableEntities[type].begin() + i);
+			break;
+		}
+	}
 }

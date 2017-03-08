@@ -12,9 +12,14 @@ Network::Net::Net(int port, int packetSize)
 	_testSocketCreated = true;
 }
 
+Network::Net::~Net()
+{
+}
+
 Network::Net::Net()
 {
 }
+
 
 void Network::Net::Send(MessageData * data, const char * destHost, int destPort)
 {
@@ -62,6 +67,21 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 		WriteFloat(sendData->yVel);
 		WriteBool(sendData->host);
 		WriteInt(sendData->remoteID);
+		break;
+	}
+	case MessageType::MultiState:
+	{
+		MultiStateData* sendData = (MultiStateData*)data;
+		WriteInt(sendData->count);
+		for (int i = 0; i < sendData->count; i++)
+		{
+			WriteFloat(sendData->states[i].xPos);
+			WriteFloat(sendData->states[i].yPos);
+			WriteFloat(sendData->states[i].xVel);
+			WriteFloat(sendData->states[i].yVel);
+			WriteBool(sendData->states[i].host);
+			WriteInt(sendData->states[i].remoteID);
+		}
 		break;
 	}
 	case MessageType::SessionList:
@@ -119,6 +139,7 @@ void Network::Net::Send(MessageData * data, IPaddress destAddr)
 	case MessageType::Fire:
 	{
 		FireData* sendData = (FireData*)data;
+		WriteInt(sendData->remoteID);
 		break;
 	}
 	case MessageType::PickUpFlag:
@@ -195,6 +216,24 @@ Network::ReceivedData Network::Net::Receive()
 			receiveData.SetData(data);
 			break;
 		}
+		case MessageType::MultiState:
+		{
+			MultiStateData data;
+			data.count = ReadInt(byteOffset);
+			for (int i = 0; i < data.count; i++)
+			{
+				StateData s;
+				s.xPos = ReadFloat(byteOffset);
+				s.yPos = ReadFloat(byteOffset);
+				s.xVel = ReadFloat(byteOffset);
+				s.yVel = ReadFloat(byteOffset);
+				s.host = ReadBool(byteOffset);
+				s.remoteID = ReadInt(byteOffset);
+				data.states.push_back(s);
+			}
+			receiveData.SetData(data);
+			break;
+		}
 		case MessageType::SessionList:
 		{
 			SessionListData data;
@@ -261,6 +300,7 @@ Network::ReceivedData Network::Net::Receive()
 		case MessageType::Fire:
 		{
 			FireData data;
+			data.remoteID = ReadInt(byteOffset);
 			receiveData.SetData(data);
 			break;
 		}

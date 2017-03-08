@@ -39,4 +39,8 @@ private:
 	int								_previousScene;
 
 	bool							_running;
+
+	bool							_win = false;
+
+	int								_level;
 };

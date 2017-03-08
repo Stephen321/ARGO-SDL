@@ -65,35 +65,117 @@ void CollisionSystem::BeginContact(b2Contact* contact)
 		{
 			if (other->GetType() == EntityType::AI && player->GetType() == EntityType::AI)
 			{//learning
-			 /*
-				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
-				if (ai->avoidanceColliderTimer > 0)
-				{
-					ai->avoidanceForce += 0.05f;
-				}
-				ai->avoidanceColliderTimer = 5.0f;
 
-				AIComponent* ai2 = static_cast<AIComponent*>(player->GetComponent(Component::Type::AI));
-				if (ai2->avoidanceColliderTimer > 0)
-				{
-					ai2->avoidanceForce += 0.05f;
-				}
-				ai2->avoidanceColliderTimer = 5.0f;
+				AIComponent* aiA = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
+				AIComponent* aiB = static_cast<AIComponent*>(player->GetComponent(Component::Type::AI));
+				FlagComponent* FlagA = static_cast<FlagComponent*>(other->GetComponent(Component::Type::Flag));
+				FlagComponent* FlagB = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
 
-				*/
+				switch (aiA->state)
+				{
+				case AIState::Chase:
+					if (aiA->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiA->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiA->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiA->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiA->avoidanceSeekTimer > 0)
+					{
+						if (aiA->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiA->avoidanceSeekForce += 0.02f;
+					}
+					aiA->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiA->avoidanceCheckpointTimer > 0)
+					{
+						if (aiA->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiA->avoidanceCheckpointForce += 0.02f;
+					}
+					aiA->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
+				}
+
+				switch (aiB->state)
+				{
+				case AIState::Chase:
+					if (aiB->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiB->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiB->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiB->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiB->avoidanceSeekTimer > 0)
+					{
+						if (aiB->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiB->avoidanceSeekForce += 0.02f;
+					}
+					aiB->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiB->avoidanceCheckpointTimer > 0)
+					{
+						if (aiB->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiB->avoidanceCheckpointForce += 0.02f;
+					}
+					aiB->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
+				}
+
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}
-			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player || (other->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost()))
+			else if (other->GetType() == EntityType::AI && player->GetType() == EntityType::Player && player->GetType() == EntityType::RemotePlayer)
 			{
-				/*
-				AIComponent* ai = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
-				if (ai->avoidanceColliderTimer > 0)
+				AIComponent* aiA = static_cast<AIComponent*>(other->GetComponent(Component::Type::AI));
+				FlagComponent* FlagB = static_cast<FlagComponent*>(player->GetComponent(Component::Type::Flag));
+				switch (aiA->state)
 				{
-					ai->avoidanceForce += 0.05f;
+				case AIState::Chase:
+					if (aiA->avoidanceChaseTimer > 0)
+					{
+						if (!FlagB->hasFlag)
+						{
+							if (aiA->avoidanceChaseForce < AI_MAX_ABVOIDANCE_CHASE)
+								aiA->avoidanceChaseForce += 0.01f;
+						}
+					}
+					aiA->avoidanceChaseTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekFlag:
+					if (aiA->avoidanceSeekTimer > 0)
+					{
+						if (aiA->avoidanceSeekForce < AI_MAX_ABVOIDANCE_SEEK)
+							aiA->avoidanceSeekForce += 0.02f;
+					}
+					aiA->avoidanceSeekTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				case AIState::SeekCheckpoint:
+					if (aiA->avoidanceCheckpointTimer > 0)
+					{
+						if (aiA->avoidanceCheckpointForce < AI_MAX_ABVOIDANCE_CHECKPOINT)
+							aiA->avoidanceCheckpointForce += 0.02f;
+					}
+					aiA->avoidanceCheckpointTimer = AI_MAX_ABVOIDANCE_TIMER;
+					break;
+				default:
+					break;
 				}
-				ai->avoidanceColliderTimer = 5.0f;
-				*/
 				CheckCharacterToCharacterCollision(player, other);
 				std::cout << "CHARACTER->CHARACTER: " << player->GetTypeAsString().c_str() << " collided with " << other->GetTypeAsString().c_str() << std::endl;
 			}
@@ -163,62 +245,66 @@ void CollisionSystem::CheckCharacterToPowerUpCollision(Entity*& player, Entity*&
 {
 	PowerUpComponent* powerUp = static_cast<PowerUpComponent*>(other->GetComponent(Component::Type::PowerUp));
 
-	if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
+	if (!powerUp->collected)
 	{
-		TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
-		WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
-
-		if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+		if (powerUp->type == PowerUpComponent::Type::Handgun || powerUp->type == PowerUpComponent::Type::Shotgun || powerUp->type == PowerUpComponent::Type::SMG)
 		{
-			_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			TransformComponent* powerUpTransform = static_cast<TransformComponent*>(other->GetComponent(Component::Type::Transform));
+			WeaponComponent* weapon = static_cast<WeaponComponent*>(player->GetComponent(Component::Type::Weapon));
+
+			if (weapon->hasWeapon && weapon->id == (int)powerUp->type)
+			{
+				_interactionSystemEvents[InteractionSystemEvent::WeaponAddBullets].push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			}
+			else
+			{
+				std::vector<float> data = std::vector<float>();
+
+				data.push_back((int)powerUp->type); //id
+				data.push_back(powerUpTransform->rect.x); //xPosition
+				data.push_back(powerUpTransform->rect.y); //yPosition
+
+				weapon->fired = false;
+				weapon->hasWeapon = true;
+				weapon->id = (int)powerUp->type;
+
+				_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
+
+				_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
+			}
 		}
 		else
 		{
-			std::vector<float> data = std::vector<float>();
+			StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
 
-			data.push_back((int)powerUp->type); //id
-			data.push_back(powerUpTransform->rect.x); //xPosition
-			data.push_back(powerUpTransform->rect.y); //yPosition
-
-			weapon->fired = false;
-			weapon->hasWeapon = true;
-			weapon->id = (int)powerUp->type;
-
-			_creationRequests.push_back(std::pair<EntityType, std::vector<float>>(EntityType::Weapon, data));
-
-			_interactionSystemEvents.at(InteractionSystemEvent::WeaponCreated).push_back(std::pair<Entity*, Entity*>(player, nullptr));
-		}
-	}
-	else
-	{
-		StatusEffectComponent* statusEffects = static_cast<StatusEffectComponent*>(player->GetComponent(Component::Type::StatusEffect));
-
-		switch (powerUp->type)
-		{
-		case PowerUpComponent::Type::Invisibility:
-
-			statusEffects->invisible = true;
-			statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
-			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+			switch (powerUp->type)
 			{
-				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
-				InvisData data;
-				data.remoteID = remote->id;
-				NetworkHandler::Instance().Send(&data);
-			}
-			std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
-			break;
-		case PowerUpComponent::Type::Speed:
-			statusEffects->speedUp = true;
-			statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
-			std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
-			break;
-		default:
-			break;
-		}
-	}
+			case PowerUpComponent::Type::Invisibility:
 
-	_interactionSystemEvents.at(InteractionSystemEvent::PowerUpDestoyed).push_back(std::pair<Entity*, Entity*>(other, player));
+				statusEffects->invisible = true;
+				statusEffects->invisibleTimer = INVISIBLE_MAX_TIMER;
+				if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+				{
+					RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+					InvisData data;
+					data.remoteID = remote->id;
+					NetworkHandler::Instance().Send(&data);
+				}
+				std::cout << player->GetTypeAsString().c_str() << "INVISIBLE" << std::endl;
+				break;
+			case PowerUpComponent::Type::Speed:
+				statusEffects->speedUp = true;
+				statusEffects->speedUpTimer = SPEED_UP_MAX_TIMER;
+				std::cout << player->GetTypeAsString().c_str() << "SPEED UP" << std::endl;
+				break;
+			default:
+				break;
+			}
+		}
+
+		powerUp->collected = true;
+		_interactionSystemEvents.at(InteractionSystemEvent::PowerUpDestoyed).push_back(std::pair<Entity*, Entity*>(other, player));
+	}
 }
 void CollisionSystem::CheckCharacterToBulletCollision(Entity*& player, Entity*& other)
 {
@@ -273,6 +359,7 @@ void CollisionSystem::CheckCharacterToFlagCollision(Entity*& player, Entity*& ot
 			RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
 			PickUpFlagData data;
 			data.remoteID = remote->id;
+			std::cout << data.remoteID << " got the flag" << std::endl;
 			NetworkHandler::Instance().Send(&data);
 		}
 		_interactionSystemEvents.at(InteractionSystemEvent::FlagPicked).push_back(std::pair<Entity*, Entity*>(player, other));
@@ -293,14 +380,15 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 		playerStatusEffects->staggered = true;
 		playerStatusEffects->staggeredTimer = STAGGER_MAX_TIMER;
 
-			if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
-			{
-				RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
-				DroppedFlagData data;
-				data.remoteID = remote->id;
-				NetworkHandler::Instance().Send(&data);
-			}
-			_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
+		if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
+		{
+			RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+			DroppedFlagData data;
+			data.remoteID = remote->id;
+			std::cout << data.remoteID << " dropped the flag" << std::endl;
+			NetworkHandler::Instance().Send(&data);
+		}
+		_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(player, other));
 	}
 	else if (oFlag->hasFlag)
 	{
@@ -309,9 +397,10 @@ void CollisionSystem::CheckCharacterToCharacterCollision(Entity*& player, Entity
 
 		if (NetworkHandler::Instance().GetPlayerID() != -1 && NetworkHandler::Instance().GetHost())
 		{
-			RemoteComponent* remote = static_cast<RemoteComponent*>(player->GetComponent(Component::Type::Remote));
+			RemoteComponent* remote = static_cast<RemoteComponent*>(other->GetComponent(Component::Type::Remote));
 			DroppedFlagData data;
 			data.remoteID = remote->id;
+			std::cout << data.remoteID << " dropped the flag" << std::endl;
 			NetworkHandler::Instance().Send(&data);
 		}
 		_interactionSystemEvents.at(InteractionSystemEvent::FlagDropped).push_back(std::pair<Entity*, Entity*>(other, player));
@@ -491,12 +580,12 @@ void CollisionSystem::FindPlayer(b2Contact * contact, Entity *& player, Entity *
 			player = b;
 			other = a;
 		}
-		else if (a->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost())
+		else if (a->GetType() == EntityType::RemotePlayer)
 		{
 			player = a;
 			other = b;
 		}
-		else if (b->GetType() == EntityType::RemotePlayer && NetworkHandler::Instance().GetHost())
+		else if (b->GetType() == EntityType::RemotePlayer)
 		{
 			player = b;
 			other = a;

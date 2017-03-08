@@ -346,7 +346,7 @@ void Lobby::BindInput()
 		{
 			if (SDL_HasIntersection(&mouseRect, &(_uiSystem.GetInteractiveTextRectangle()[i])))
 			{
-				if (_session.size() > 0)
+				if (_session.size() > 0 && i != _session.size())
 				{
 					JoinSessionData data;
 					data.sessionID = _session[i].id;

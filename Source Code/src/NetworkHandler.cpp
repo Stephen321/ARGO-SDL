@@ -12,6 +12,7 @@ void NetworkHandler::Disconnect()
 	_playerID = -1;
 	_sessionID = -1;
 	_connected = false;
+	gameTime = 0.f;
 }
 
 NetworkHandler::NetworkHandler()
@@ -46,7 +47,8 @@ void NetworkHandler::Send(MessageData * data)
 	{
 		data->sessionID = _sessionID;
 	}
-	data->ts = gameTime;
+	if (data->ts == -1.f)
+		data->ts = gameTime;
 	_net.Send(data, _serverIP);
 }
 

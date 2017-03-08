@@ -27,8 +27,6 @@ private:
 	vector<GraphNode*> _checkpointNode;
 	vector<Entity*> _players;
 
-	void SeekFlag(AIComponent* ai, FlagComponent* f, TransformComponent* t, float distanceToDest);
-
 	void Entry(AIComponent* ai, TransformComponent* t);
 
 	void SeekCheckpoint(AIComponent* ai, FlagComponent* f, TransformComponent* t);
@@ -46,5 +44,7 @@ private:
 	helper::Vector2 CalculateAvoidanceForce(const helper::Vector2& AIPosition, const helper::Vector2& otherPosition, float force);
 
 	Entity* FindEntityWithFlag(Entity* self);
+
+	void UpdateLearning(float dt, AIComponent* ai);
 };
 
